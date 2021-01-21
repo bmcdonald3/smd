@@ -98,14 +98,11 @@ stages:
                         type: str
                         required: True
                         enum:
-                          - "Empty"
-                          - "Unknown"
-                          - "Populated"
-                          - "Off"
-                          - "On"
                           - "Standby"
-                          - "Halt"
                           - "Ready"
+                          - "Halt"
+                          - "On"
+                          - "Off"
                       Flag:
                         type: str
                         required: True
@@ -227,13 +224,6 @@ stages:
                         type: str
                         required: True
                         enum:
-                          - "Empty"
-                          - "Unknown"
-                          - "Populated"
-                          - "Off"
-                          - "On"
-                          - "Standby"
-                          - "Halt"
                           - "Ready"
                       Flag:
                         type: str
