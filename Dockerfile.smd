@@ -58,7 +58,7 @@ RUN set -ex \
 
 ### Final Stage ###
 FROM dtr.dev.cray.com/baseos/alpine:3.12
-LABEL maintainer="Cray, Inc."
+LABEL maintainer="Hewlett Packard Enterprise" 
 EXPOSE 27779
 STOPSIGNAL SIGTERM
 
