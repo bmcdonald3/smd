@@ -56,7 +56,7 @@ func TestSetHTTPClientInsecureSkipVerify(t *testing.T) {
 func TestRfDefaultClient(t *testing.T) {
 	SetHTTPClientTimeout(35)
 	client := RfDefaultClient()
-	if client.InsecureClient.Timeout != time.Duration(35)*time.Second {
+	if client.InsecureClient.HTTPClient.Timeout != time.Duration(35)*time.Second {
 		t.Errorf("Test 1: FAIL: Got unexpected/no timeout")
 	}
 }
