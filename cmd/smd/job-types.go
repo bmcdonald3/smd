@@ -1,4 +1,3 @@
-// Copyright 2018-2020 Hewlett Packard Enterprise Development LP
 // MIT License
 //
 // (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
@@ -32,11 +31,12 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	base "stash.us.cray.com/HMS/hms-base"
-	"stash.us.cray.com/HMS/hms-smd/pkg/sm"
 	"strings"
 	"sync"
 	"time"
+
+	base "stash.us.cray.com/HMS/hms-base"
+	"stash.us.cray.com/HMS/hms-smd/pkg/sm"
 )
 
 ///////////////////////////////////////////////////////////////////////////////

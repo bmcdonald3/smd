@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -25,12 +25,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+	"sync"
+
 	base "stash.us.cray.com/HMS/hms-base"
 	"stash.us.cray.com/HMS/hms-smd/internal/hmsds"
 	rf "stash.us.cray.com/HMS/hms-smd/pkg/redfish"
 	"stash.us.cray.com/HMS/hms-smd/pkg/sm"
-	"strings"
-	"sync"
 )
 
 var em = base.NewHMSError("sm.msgbus", "internal error")
