@@ -1,6 +1,24 @@
-/*
- * // Copyright 2020 Hewlett Packard Enterprise Development LP
- */
+// MIT License
+//
+// (C) Copyright [2020-2021] Hewlett Packard Enterprise Development LP
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
 
 package service_reservations
 
@@ -10,13 +28,14 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
-	"github.com/hashicorp/go-retryablehttp"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"sync"
 	"time"
+
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/sirupsen/logrus"
 )
 
 const HSM_DEFAULT_RESERVATION_PATH = "/hsm/v2/locks/service/reservations"
@@ -63,7 +82,7 @@ type ServiceReservation interface {
 	Init(stateManagerServer string, reservationPath string, defaultTermMinutes int, logger *logrus.Logger)
 
 	//Try to aquire the lock, renewing it within 30 seconds of expiration.
-	Aquire(xnames []string) (error)
+	Aquire(xnames []string) error
 
 	//Validate that I still own the lock for the xnames listed.
 	Check(xnames []string) bool
@@ -222,12 +241,12 @@ func (i *Production) doRenewal() {
 				continue
 			}
 
-			i.logger.WithFields(logrus.Fields{"Total":response.Counts.Total,
-				"Success":response.Counts.Success,
-				"Failure":response.Counts.Failure}).Debug("doRenewal() - renewal action complete")
-			i.logger.WithFields(logrus.Fields{"Total":response.Counts.Total,
-				"Success":response.Counts.Success,
-				"Failure":response.Counts.Failure}).Info("ServiceReservations - renewal action complete")
+			i.logger.WithFields(logrus.Fields{"Total": response.Counts.Total,
+				"Success": response.Counts.Success,
+				"Failure": response.Counts.Failure}).Debug("doRenewal() - renewal action complete")
+			i.logger.WithFields(logrus.Fields{"Total": response.Counts.Total,
+				"Success": response.Counts.Success,
+				"Failure": response.Counts.Failure}).Info("ServiceReservations - renewal action complete")
 
 			// Remove the failed ones
 			for _, v := range response.Failure {
@@ -248,7 +267,7 @@ func (i *Production) doRenewal() {
 	}
 }
 
-func (i *Production) Aquire(xnames []string) ( error) {
+func (i *Production) Aquire(xnames []string) error {
 	i.logger.Trace("Aquire() - START")
 
 	//prepare the request
@@ -324,7 +343,7 @@ func (i *Production) Aquire(xnames []string) ( error) {
 			i.reservationMutex.Unlock()
 		}
 		i.logger.Trace("Aquire() - END")
-		return  nil
+		return nil
 
 	case http.StatusBadRequest:
 		var response Problem7807
@@ -358,7 +377,7 @@ func (i *Production) Check(xnames []string) bool {
 func (i *Production) Release(xnames []string) error {
 
 	i.logger.Trace("Release() - START")
-	if len(xnames) ==0 {
+	if len(xnames) == 0 {
 		i.logger.Trace("release() - END -> nothing to do ")
 		err := errors.New("empty set; failing release operation")
 		return err
@@ -433,16 +452,16 @@ func (i *Production) Release(xnames []string) error {
 			return err
 		}
 
-		i.logger.WithFields(logrus.Fields{"Total":response.Counts.Total,
-			"Success":response.Counts.Success,
-			"Failure":response.Counts.Failure}).Debug("Release() - release action complete")
+		i.logger.WithFields(logrus.Fields{"Total": response.Counts.Total,
+			"Success": response.Counts.Success,
+			"Failure": response.Counts.Failure}).Debug("Release() - release action complete")
 
 		for _, xname := range response.Success.ComponentIDs {
-			if  _, ok := i.reservedMap[xname]; ok {
+			if _, ok := i.reservedMap[xname]; ok {
 				i.logger.WithFields(logrus.Fields{"reservation": i.reservedMap[xname]}).Trace("Release() - deleting released reservations")
 
 				i.reservationMutex.Lock()
-				delete(i.reservedMap,xname)
+				delete(i.reservedMap, xname)
 				i.reservationMutex.Unlock()
 			}
 		}
@@ -483,7 +502,7 @@ func (i *Production) update() {
 		checkParameters.DeputyKeys = append(checkParameters.DeputyKeys, key)
 	}
 
-	if len(checkParameters.DeputyKeys) ==0 {
+	if len(checkParameters.DeputyKeys) == 0 {
 		i.logger.Trace("update() - END -> nothing to do ")
 		return
 	}

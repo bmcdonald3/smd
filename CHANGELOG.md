@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.28.0] - 2021-02-01
+
+### Changed
+
+- Updated to MIT License
+- Updated HMS libraries to latest
+- Code changes to test.go code for updates to hms-cert
+
 ## [1.27.1] - 2021-01-20
 
 ### Changed
@@ -57,7 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- CASMHMS-4087 Added the NodeAccelRiser type to represent GPUSubsystem baseboards, ie Redstone 
+- CASMHMS-4087 Added the NodeAccelRiser type to represent GPUSubsystem baseboards, ie Redstone
 
 ## [1.26.1] - 2020-11-18
 

@@ -47,7 +47,7 @@ func (f RTFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 // NewTestClient returns *http.Client with Transport replaced to avoid making real calls
 func NewTestClient(f RTFunc) *hms_certs.HTTPClientPair {
 	cp, _ := hms_certs.CreateHTTPClientPair("", 5)
-	cp.InsecureClient.Transport = RTFunc(f)
+	cp.InsecureClient.HTTPClient.Transport = RTFunc(f)
 	return cp
 }
 
@@ -1492,7 +1492,7 @@ const testPayloadPRLT_redfish_v1 = `{
           "@odata.id": "/redfish/v1/UpdateService/"
         },
         "Vendor": "HPE"
-      }       
+      }
 `
 const testPathPRLT_managers = "/redfish/v1/Managers/"
 
@@ -1610,7 +1610,7 @@ const testPayloadPRLT_account_service = `{
         "Roles": {
           "@odata.id": "/redfish/v1/AccountService/Roles/"
         }
-      }      
+      }
 `
 const testPathPRLT_session_service = "/redfish/v1/SessionService/"
 
@@ -1630,7 +1630,7 @@ const testPayloadPRLT_session_service = `{
           "Health": "OK",
           "State": "Enabled"
         }
-      }            
+      }
 `
 const testPathPRLT_event_service = "/redfish/v1/EventService/"
 
@@ -1685,7 +1685,7 @@ const testPayloadPRLT_event_service = `{
         "Subscriptions": {
           "@odata.id": "/redfish/v1/EventService/Subscriptions/"
         }
-      }                  
+      }
 `
 const testPathPRLT_task_service = "/redfish/v1/TaskService/"
 
@@ -1709,7 +1709,7 @@ const testPayloadPRLT_task_service = `{
         "Tasks": {
           "@odata.id": "/redfish/v1/TaskService/Tasks/"
         }
-      }                        
+      }
 `
 const testPathPRLT_update_service = "/redfish/v1/UpdateService/"
 
@@ -2115,7 +2115,7 @@ const testPayloadPRLT_managers_1 = `{
    "VirtualMedia": {
      "@odata.id": "/redfish/v1/Managers/1/VirtualMedia"
    }
- } 
+ }
 `
 const testPathPRLT_managers_1_ethernet_interfaces = "/redfish/v1/Managers/1/EthernetInterfaces"
 
@@ -2138,7 +2138,7 @@ const testPayloadPRLT_managers_1_ethernet_interfaces = `{
      }
    ],
    "Members@odata.count": 3
- } 
+ }
 `
 const testPathPRLT_managers_1_ethernet_interfaces_1 = "/redfish/v1/Managers/1/EthernetInterfaces/1"
 
@@ -2336,7 +2336,7 @@ const testPayloadPRLT_managers_1_ethernet_interfaces_1 = `{
      "VLANEnable": false,
      "VLANId": null
    }
- } 
+ }
 `
 const testPathPRLT_managers_1_ethernet_interfaces_2 = "/redfish/v1/Managers/1/EthernetInterfaces/2"
 
@@ -2530,7 +2530,7 @@ const testPayloadPRLT_managers_1_ethernet_interfaces_2 = `{
      "VLANEnable": false,
      "VLANId": null
    }
- } 
+ }
 `
 const testPathPRLT_managers_1_ethernet_interfaces_3 = "/redfish/v1/Managers/1/EthernetInterfaces/3"
 
@@ -2578,7 +2578,7 @@ const testPayloadPRLT_managers_1_ethernet_interfaces_3 = `{
      "Health": "OK",
      "State": "Enabled"
    }
- } 
+ }
 `
 const testPathPRLT_chassis = "/redfish/v1/Chassis/"
 
@@ -2595,7 +2595,7 @@ const testPayloadPRLT_chassis = `{
      }
    ],
    "Members@odata.count": 1
- }  
+ }
 `
 const testPathPRLT_chassis_1 = "/redfish/v1/Chassis/1"
 
@@ -2696,7 +2696,7 @@ const testPayloadPRLT_chassis_1 = `{
    "Thermal": {
      "@odata.id": "/redfish/v1/Chassis/1/Thermal"
    }
- }  
+ }
 `
 const testPathPRLT_chassis_1_power = "/redfish/v1/Chassis/1/Power"
 
@@ -2846,7 +2846,7 @@ const testPayloadPRLT_chassis_1_power = `{
        }
      }
    ]
- }  
+ }
 `
 const testPathPRLT_chassis_1_network_adapters = "/redfish/v1/Chassis/1/NetworkAdapters"
 
@@ -2866,7 +2866,7 @@ const testPayloadPRLT_chassis_1_network_adapters = `{
    },
    "Members": [],
    "Members@odata.count": 0
- } 
+ }
 `
 const testPathPRLT_systems = "/redfish/v1/Systems/"
 
@@ -2883,7 +2883,7 @@ const testPayloadPRLT_systems = `{
           }
         ],
         "Members@odata.count": 1
-      }      
+      }
 `
 const testPathPRLT_systems_1 = "/redfish/v1/Systems/1"
 
@@ -3215,7 +3215,7 @@ const testPayloadPRLT_systems_1 = `{
           }
         ],
         "UUID": "36383150-3630-584D-5130-313930323048"
-      }      
+      }
 `
 const testPathPRLT_systems_1_ethernet_interfaces = "/redfish/v1/Systems/1/EthernetInterfaces"
 
@@ -3235,7 +3235,7 @@ const testPayloadPRLT_systems_1_ethernet_interfaces = `{
           }
         ],
         "Members@odata.count": 2
-      }            
+      }
 `
 const testPathPRLT_systems_1_ethernet_interfaces_1 = "/redfish/v1/Systems/1/EthernetInterfaces/1/"
 
@@ -3264,7 +3264,7 @@ const testPayloadPRLT_systems_1_ethernet_interfaces_1 = `{
           "State": "Enabled"
         },
         "UefiDevicePath": "PciRoot(0x0)/Pci(0x1,0x1)/Pci(0x0,0x0)"
-      }                
+      }
 `
 const testPathPRLT_systems_1_ethernet_interfaces_2 = "/redfish/v1/Systems/1/EthernetInterfaces/2/"
 
@@ -3309,7 +3309,7 @@ const testPayloadPRLT_systems_1_processors = `{
           }
         ],
         "Members@odata.count": 1
-      }      
+      }
 `
 const testPathPRLT_systems_1_processors_1 = "/redfish/v1/Systems/1/Processors/1"
 
@@ -3434,7 +3434,7 @@ const testPayloadPRLT_systems_1_processors_1 = `{
         },
         "TotalCores": 16,
         "TotalThreads": 32
-      }      
+      }
 `
 const testPathPRLT_systems_1_memory = "/redfish/v1/Systems/1/Memory"
 
@@ -3479,7 +3479,7 @@ const testPayloadPRLT_systems_1_memory = `{
             "@odata.id": "/redfish/v1/Systems/1/Memory/proc1dimm4"
           }
         ],
-        "Members@odata.count": 4 
+        "Members@odata.count": 4
       }
 `
 const testPathPRLT_systems_1_memory_proc1dimm1 = "/redfish/v1/Systems/1/Memory/proc1dimm1"
@@ -3542,7 +3542,7 @@ const testPayloadPRLT_systems_1_memory_proc1dimm1 = `{
         "VendorID": "44288",
         "VolatileRegionSizeLimitMiB": 16384,
         "VolatileSizeMiB": 16384
-      }      
+      }
 `
 const testPathPRLT_systems_1_memory_proc1dimm2 = "/redfish/v1/Systems/1/Memory/proc1dimm2"
 
@@ -3592,7 +3592,7 @@ const testPayloadPRLT_systems_1_memory_proc1dimm2 = `{
         "VendorID": "0",
         "VolatileRegionSizeLimitMiB": 0,
         "VolatileSizeMiB": 0
-      }            
+      }
 `
 const testPathPRLT_systems_1_memory_proc1dimm3 = "/redfish/v1/Systems/1/Memory/proc1dimm3"
 
@@ -3654,7 +3654,7 @@ const testPayloadPRLT_systems_1_memory_proc1dimm3 = `{
         "VendorID": "44288",
         "VolatileRegionSizeLimitMiB": 16384,
         "VolatileSizeMiB": 16384
-      }                  
+      }
 `
 const testPathPRLT_systems_1_memory_proc1dimm4 = "/redfish/v1/Systems/1/Memory/proc1dimm4"
 
@@ -3704,7 +3704,7 @@ const testPayloadPRLT_systems_1_memory_proc1dimm4 = `{
         "VendorID": "0",
         "VolatileRegionSizeLimitMiB": 0,
         "VolatileSizeMiB": 0
-      }                        
+      }
 `
 const testPathPRLT_systems_1_storage = "/redfish/v1/Systems/1/Storage"
 

@@ -1,4 +1,24 @@
-// Copyright 2020 Hewlett Packard Enterprise Development LP
+// MIT License
+//
+// (C) Copyright [2020-2021] Hewlett Packard Enterprise Development LP
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
 
 package hbtdapi
 
@@ -47,7 +67,7 @@ func TestMain(m *testing.M) {
 
 func TestNewHBTD(t *testing.T) {
 	tests := []struct {
-		hbtdUrlIn    string
+		hbtdUrlIn   string
 		expectedUrl string
 	}{{
 		hbtdUrlIn:   "http://cray-hbtd",
@@ -75,31 +95,31 @@ func TestGetHeartbeatStatus(t *testing.T) {
 		expectedInfo []HBState
 		expectErr    bool
 	}{{
-		HBTDUrl:      defaultUrl,
-		Client:       client,
-		ids:          []string{"x0c0s0b0n0"},
+		HBTDUrl: defaultUrl,
+		Client:  client,
+		ids:     []string{"x0c0s0b0n0"},
 		expectedInfo: []HBState{
 			HBState{
-				XName: "x0c0s0b0n0",
+				XName:        "x0c0s0b0n0",
 				Heartbeating: true,
 			},
 		},
-		expectErr:    false,
+		expectErr: false,
 	}, {
-		HBTDUrl:      goodUrl,
-		Client:       client,
-		ids:          []string{"x0c0s0b0n0","x0c0s1b0n0"},
+		HBTDUrl: goodUrl,
+		Client:  client,
+		ids:     []string{"x0c0s0b0n0", "x0c0s1b0n0"},
 		expectedInfo: []HBState{
 			HBState{
-				XName: "x0c0s0b0n0",
+				XName:        "x0c0s0b0n0",
 				Heartbeating: true,
 			},
 			HBState{
-				XName: "x0c0s1b0n0",
+				XName:        "x0c0s1b0n0",
 				Heartbeating: false,
 			},
 		},
-		expectErr:    false,
+		expectErr: false,
 	}, {
 		HBTDUrl:      badUrl,
 		Client:       client,
@@ -128,7 +148,7 @@ func TestGetHeartbeatStatus(t *testing.T) {
 
 	for i, test := range tests {
 		hbtd := HBTD{
-			Url: test.HBTDUrl,
+			Url:    test.HBTDUrl,
 			Client: test.Client,
 		}
 		out, err := hbtd.GetHeartbeatStatus(test.ids)
