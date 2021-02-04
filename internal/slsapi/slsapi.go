@@ -62,9 +62,12 @@ type ComptypeNode struct {
 	SubRole string `json:"SubRole"`
 }
 
+var serviceName string
+
 // Allocate and initialize new SLS struct.
-func NewSLS(slsUrl string, httpClient *http.Client) *SLS {
+func NewSLS(slsUrl string, httpClient *http.Client, svcName string) *SLS {
 	var err error
+	serviceName = svcName
 	sls := new(SLS)
 	if sls.Url, err = url.Parse(slsUrl); err != nil {
 		sls.Url, _ = url.Parse(DefaultSlsUrl)
@@ -163,6 +166,7 @@ func (sls *SLS) doRequest(req *http.Request) ([]byte, error) {
 	}
 
 	// Send the request
+	base.SetHTTPUserAgent(req,serviceName)
 	rsp, err := sls.Client.Do(req)
 	if err != nil {
 		return nil, err

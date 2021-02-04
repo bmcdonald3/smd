@@ -190,6 +190,8 @@ const (
 	LOG_LVL_MAX LogLevel = 4
 )
 
+var serviceName string
+
 func (s *SmD) Log(lvl LogLevel, format string, a ...interface{}) {
 	if int(lvl) <= int(s.lgLvl) {
 		// depth=2, get line num of caller, not us
@@ -765,6 +767,7 @@ func (s *SmD) setDSN() {
 
 func main() {
 	var s SmD
+	var err error
 
 	s.msgbusHandle = nil
 
@@ -821,6 +824,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	serviceName,err = base.GetServiceInstanceName()
+	if (err != nil) {
+		serviceName = "SMD"
+		s.LogAlways("WARNING, can't get service/instance name, using '%s'",
+			serviceName)
+	}
+
 	s.LogAlways("Starting...\n")
 
 	// Route logs from Redfish interrogration to main smd log.
@@ -835,12 +845,12 @@ func main() {
 
 	// Skip SLS if not given a URL.
 	if len(s.slsUrl) != 0 {
-		s.sls = slsapi.NewSLS(s.slsUrl, nil)
+		s.sls = slsapi.NewSLS(s.slsUrl, nil, serviceName)
 	}
 
 	// Skip HBTD if not given a URL.
 	if len(s.hbtdUrl) != 0 {
-		s.hbtd = hbtdapi.NewHBTD(s.hbtdUrl, nil)
+		s.hbtd = hbtdapi.NewHBTD(s.hbtdUrl, nil, serviceName)
 	}
 
 	// Use socks, etc. proxy when interrogating Redfish endpoints
@@ -912,7 +922,7 @@ func main() {
 
 	//Cert mgmt support
 
-	hms_certs.Init(nil)
+	hms_certs.InitInstance(nil,serviceName)
 	vurl := os.Getenv("SMD_VAULT_CA_URL")
 	if (vurl != "") {
 		s.LogAlways("Replacing default Vault CA URL with: '%s'",vurl)
@@ -974,7 +984,7 @@ func main() {
 	router := s.NewRouter(routes)
 
 	s.LogAlways("Listening for connections.")
-	err := s.setupCerts(s.tlsCert, s.tlsKey)
+	err = s.setupCerts(s.tlsCert, s.tlsKey)
 	if err == nil {
 		err = http.ListenAndServeTLS(s.httpListen, s.tlsCert, s.tlsKey, router)
 	} else {

@@ -33,9 +33,11 @@ import (
 	"net/url"
 	"os"
 	"testing"
+	"stash.us.cray.com/HMS/hms-base"
 )
 
 var client *http.Client
+var testSvcName = "SLSTEST"
 
 // RoundTrip method override
 type RTFunc func(req *http.Request) *http.Response
@@ -77,7 +79,7 @@ func TestNewSLS(t *testing.T) {
 		expectedUrl: "http://cray-sls",
 	}}
 	for i, test := range tests {
-		out := NewSLS(test.slsUrlIn, nil)
+		out := NewSLS(test.slsUrlIn, nil, testSvcName)
 		if test.expectedUrl != out.Url.String() {
 			t.Errorf("Test %v Failed: Expected SLS URL '%v'; Received SLS URL '%v'", i, test.expectedUrl, out.Url.String())
 		}
@@ -280,6 +282,27 @@ const testPayloadSLSAPI_comp_noData = `
 
 func NewRTFuncSLSAPI() RTFunc {
 	return func(req *http.Request) *http.Response {
+		bad := true
+		if (len(req.Header) > 0) {
+			vals,ok := req.Header[base.USERAGENT]
+			if (ok) {
+				for _,v := range(vals) {
+					if (v == testSvcName) {
+						bad = false
+						break
+					}
+				}
+			}
+		}
+		if (bad) {
+			return &http.Response{
+				StatusCode: http.StatusInternalServerError,
+				// Send mock response for rpath
+				Body:   ioutil.NopCloser(bytes.NewBufferString("Missing or incorrect User-Agent header")),
+				Header: make(http.Header),
+			}
+		}
+
 		// Test request parameters
 		switch req.URL.String() {
 		case "http://cray-sls/ready":

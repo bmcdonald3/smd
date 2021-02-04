@@ -184,7 +184,16 @@ func (j *JobSCN) Run() {
 		go func(urlStr string) {
 			defer waitGroup.Done()
 			for retry := 0; retry < 3; retry++ {
-				rsp, err := client.Post(urlStr, "application/json", bytes.NewReader(payload))
+				req,rerr := http.NewRequest("POST",urlStr,bytes.NewReader(payload))
+				if (err != nil) {
+					j.s.LogAlways("WARNING: can't create an HTTP request: %v",
+						rerr)
+					time.Sleep(5 * time.Second)
+					continue
+				}
+				base.SetHTTPUserAgent(req,serviceName)
+				req.Header.Add("Content-Type","application/json")
+				rsp, err := client.Do(req)
 				if err != nil {
 					j.s.LogAlways("WARNING: SCN POST failed for %s: %v", urlStr, err)
 				} else if rsp.StatusCode != 200 {
