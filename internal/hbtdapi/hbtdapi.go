@@ -31,6 +31,7 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"stash.us.cray.com/HMS/hms-base"
 )
 
 const DefaultHbtdUrl string = "http://cray-hbtd/hmi/v1"
@@ -53,9 +54,12 @@ type HBStatusPayload struct {
 	XNames []string `json:"XNames"`
 }
 
+var serviceName string
+
 // Allocate and initialize new HBTD struct.
-func NewHBTD(hbtdUrl string, httpClient *http.Client) *HBTD {
+func NewHBTD(hbtdUrl string, httpClient *http.Client, svcName string) *HBTD {
 	var err error
+	serviceName = svcName
 	hbtd := new(HBTD)
 	if hbtd.Url, err = url.Parse(hbtdUrl); err != nil {
 		hbtd.Url, _ = url.Parse(DefaultHbtdUrl)
@@ -132,6 +136,7 @@ func (hbtd *HBTD) doRequest(req *http.Request) ([]byte, error) {
 	}
 
 	// Send the request
+	base.SetHTTPUserAgent(req,serviceName)
 	rsp, err := hbtd.Client.Do(req)
 	if err != nil {
 		return nil, err

@@ -30,6 +30,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"stash.us.cray.com/HMS/hms-base"
 	hmshttp "stash.us.cray.com/HMS/hms-go-http-lib"
 	"syscall"
 	"time"
@@ -126,8 +127,14 @@ func main() {
 		CustomHeaders:       make(map[string]string),
 	}
 
+	svcName,serr := base.GetServiceInstanceName()
+	if (serr != nil) {
+		svcName = "SMD-LOADER"
+	}
+
 	// Set a custom header on the base request so we can later identify all connections coming from this loader.
 	baseRequest.CustomHeaders["HMS-Service"] = "smd-loader"
+	baseRequest.CustomHeaders["User-Agent"] = svcName
 
 	// Upload NodeMaps to HSM to set default NIDs to be used for discovery.
 	nodeNids(hsmURL)
