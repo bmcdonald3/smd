@@ -1,0 +1,778 @@
+openapi: "3.0.0"
+info:
+  title: Lock & Reservation Service
+  version: "1.0"
+  description: >-
+    Hello world
+
+servers:
+  - url: https://rocket-ncn-w001.us.cray.com/apis/ifs/v1
+  - url: http://localhost:28800/v1
+  - url: http://localhost:28800/
+
+paths:
+  '/locks/reservations/remove':
+    patch:
+      summary: Forcibly deletes existing reservations.
+      description: |
+        Given a list of components, forcibly deletes any existing reservation. Does not change lock state; does not disable the reservation ability of the component. An empty set of xnames will delete reservations on all xnames. This functionality should be used sparingly, the normal flow should be to release reservations, versus removing them.
+      requestBody:
+        description: list of xnames to remove reservations. A `rigid` processing model will result in the entire set of xnames not having their reservation removed if an xname does exist, or isnt reserved. A `flexible` processing model will perform all actions possible.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminReservationRemove.1.0.0'
+
+      responses:
+        '202':
+          description: >-
+            Accepted. Returns a count + list of xnames that succeeded or failed the operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request; something is wrong with the structure recieved. Will not be used to represent failure to accomplish the operation, that will be returned in the standard payload.
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-reservations
+  '/locks/reservations/release':
+    patch:
+      summary: Releases existing reservations. 
+      description: |
+        Given a list of {xname & reservation key}, releases the associated reservations.
+      requestBody:
+        description: list of {xname and reservation key} to release reservations. A `rigid` processing model will result in the entire set of xnames not having their reservation released if an xname does exist, or isnt reserved. A `flexible` processing model will perform all actions possible.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservedKeys.1.0.0'
+
+      responses:
+        '202':
+          description: >-
+            Accepted. Returns a count + list of xnames that succeeded or failed the operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request; something is wrong with the structure recieved. Will not be used to represent failure to accomplish the operation, that will be returned in the standard payload.
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-reservations
+  '/locks/reservations':
+    patch:
+      summary: Create reservations
+      description: |
+        Creates reservations on a set of xnames of infinite duration.  Component must be locked to create a reservation.
+      requestBody:
+        description: List of components to create reservations. A `rigid` processing model will result in the entire set of xnames not having reservations created if an xname does exist, or isnt locked, or if already reserved. A `flexible` processing model will perform all actions possible.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminReservationCreate.1.0.0'
+      responses:
+        '202':
+          description: accepted request.  See response for details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminReservationCreate_Response.1.0.0'
+        '400':
+          description: Bad request; something is wrong with the structure recieved. Will not be used to represent failure to accomplish the operation, that will be returned in the standard payload.
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not accept reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-reservations
+  '/locks/service/reservations/release':
+    patch:
+      summary: Releases existing reservations. 
+      description: |
+        Given a list of {xname & reservation key}, releases the associated reservations.
+      requestBody:
+        description: list of {xname and reservation key} to release reservations. A `rigid` processing model will result in the entire set of xnames not having their reservation released if an xname does exist, or isnt reserved. A `flexible` processing model will perform all actions possible.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservedKeys.1.0.0'
+
+      responses:
+        '202':
+          description: >-
+            Accepted. Returns a count + list of xnames that succeeded or failed the operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request; something is wrong with the structure recieved. Will not be used to represent failure to accomplish the operation, that will be returned in the standard payload.
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - service-reservations
+  '/locks/service/reservations':
+    post:
+      summary: Create reservations
+      description: |
+        Creates reservations on a set of xnames of infinite duration.  Component must be locked to create a reservation.
+      requestBody:
+        description: List of components to create reservations. A `rigid` processing model will result in the entire set of xnames not having reservations created if an xname does exist, or isnt locked, or if already reserved. A `flexible` processing model will perform all actions possible.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceReservationCreate.1.0.0'
+      responses:
+        '202':
+          description: accepted request.  See response for details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceReservationCreate_Response.1.0.0'
+        '400':
+          description: Bad request; something is wrong with the structure recieved. Will not be used to represent failure to accomplish the operation, that will be returned in the standard payload.
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not accept reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - service-reservations      
+  '/locks/service/reservations/renew':
+    patch:
+      summary: Renew existing reservations. 
+      description: |
+        Given a list of {xname & reservation key}, renews the associated reservations.
+      requestBody:
+        description: list of {xname and reservation key} to renew reservations. A `rigid` processing model will result in the entire set of xnames not having their reservation renewed if an xname does exist, or isnt reserved. A `flexible` processing model will perform all actions possible.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReservedKeysWithRenewal.1.0.0'
+
+      responses:
+        '202':
+          description: >-
+            Accepted. Returns a count + list of xnames that succeeded or failed the operation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request; something is wrong with the structure recieved. Will not be used to represent failure to accomplish the operation, that will be returned in the standard payload.
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - service-reservations
+  '/locks/service/reservations/check':
+    patch:
+      summary: check the validity of reservations
+      description: |
+        using xname + reservation key check on the validity of reservations.  
+      requestBody:
+        description: List of components & deputy keys to check on validity of reservations.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeputyKeys.1.0.0'
+
+      responses:
+        '202':
+          description: created reservations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceReservationCheck_Response.1.0.0'
+        '400':
+          description: Bad request
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - service-reservations
+  '/locks/status':
+    post:
+      summary: Retrieve lock status for component IDs 
+      description: |
+       Using component ID retrieve the status of any lock and/or reservation
+      requestBody:
+        description: list of components to retrieve status
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Xnames'
+
+      responses:
+        '202':
+          description: created reservations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStatusCheck_Response.1.0.0'
+        '400':
+          description: Bad request
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-locks
+  '/locks/lock':
+    patch:
+      summary: locks components
+      description: |
+        Using a component create a lock.  Cannot be locked if already locked, or if there is a current reservation. 
+      requestBody:
+        description: list of xnames to delete
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLock.1.0.0'
+
+      responses:
+        '200':
+          description: >-
+            Zero (success) error code - one or more entries deleted.
+            Message contains count of deleted items.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-locks
+  '/locks/unlock':
+    patch:
+      summary: unlocks components
+      description: |
+        Using a component unlock a lock.  Cannot be unlocked if already unlocked. 
+      requestBody:
+        description: list of xnames to delete
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLock.1.0.0'
+
+      responses:
+        '200':
+          description: >-
+            ss
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-locks
+  '/locks/repair':
+    patch:
+      summary: repair components lock and reservation ability 
+      description: |
+        Repairs the broken status of an xname allowing new reservations to be created.  
+      requestBody:
+        description: list of xnames to delete
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLock.1.0.0'
+
+      responses:
+        '200':
+          description: >-
+            ss
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-locks
+      
+  '/locks/disable':
+    patch:
+      summary: disables the ability to create a reservation on components.
+      description: |
+        Disables the ability to create a reservation on components, deletes any existing reservations. Does not change lock state. Can disable a currently disabled component.
+      requestBody:
+        description: list of xnames to delete
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminLock.1.0.0'
+
+      responses:
+        '200':
+          description: >-
+            ss
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/XnameResponse_1.0.0'
+        '400':
+          description: Bad request
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+        '500':
+          description: Server error, could not delete reservations
+          content:
+            application/error:
+              schema:
+                $ref: '#/components/schemas/Problem7807'
+      tags:
+        - admin-locks
+components:
+  schemas:
+    Problem7807:
+      description: >-
+        RFC 7807 compliant error payload.  All fields are optional except the
+        'type' field.
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          example: 'about:blank'
+        detail:
+          type: string
+          example: Detail about this specific problem occurrence. See RFC7807
+        instance:
+          type: string
+          example: ''
+        status:
+          type: number
+          format: int32
+          example: 400
+        title:
+          type: string
+          example: 'Description of HTTP Status code, e.g. 400'
+    ServiceReservationCreate.1.0.0:
+      type: object
+      properties:
+        ComponentIDs:
+          description: >-
+            An array of XName/ID values for the components to query.
+          type: array
+          items:
+            type: string
+        ProcessingModel:
+          type: string
+          enum: 
+          - rigid
+          - flexible
+          description: rigid is all or nothing, felxible is best attempt.
+        Role:  
+          $ref: '#/components/schemas/HMSRole.1.0.0'
+        SubRole:
+          $ref: '#/components/schemas/HMSSubRole.1.0.0'
+        ReservationDuration:
+          type: integer
+          minimum: 1
+          maximum: 15
+          description: length of time in minutes for the reservation to be valid for.
+          default: 1
+          example: 1
+    AdminReservationCreate.1.0.0:
+      type: object
+      properties:
+        ComponentIDs:
+          description: >-
+            An array of XName/ID values for the components to query.
+          type: array
+          items:
+            type: string
+        ProcessingModel:
+          type: string
+          enum: 
+          - rigid
+          - flexible
+          description: rigid is all or nothing, felxible is best attempt.
+        Role:  
+          $ref: '#/components/schemas/HMSRole.1.0.0'
+        SubRole:
+          $ref: '#/components/schemas/HMSSubRole.1.0.0'
+    ServiceReservationCreate_Response.1.0.0:
+      type: object
+      properties:
+        Success:
+          items:
+            $ref: '#/components/schemas/XnameKeys.1.0.0'
+          type: array
+        Failure:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailedXnames.1.0.0'
+    AdminReservationCreate_Response.1.0.0:
+      type: object
+      properties:
+        Success:
+          items:
+            $ref: '#/components/schemas/XnameKeysNoExpire.1.0.0'
+          type: array
+        Failure:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailedXnames.1.0.0'
+    ComponentStatus.1.0.0:
+      type: object
+      properties:
+        ID:
+          type: string
+          example: x1001c0s0b0
+        Locked:
+          type: boolean
+          example: false
+        Reserved:
+          type: boolean
+          example: true
+        ExpirationTime:
+          type: string
+          format: date-time
+        ReservationDisabled:
+          type: boolean
+          example: false
+    AdminStatusCheck_Response.1.0.0:
+      type: object
+      properties:
+        Components:
+          items:
+            $ref: '#/components/schemas/ComponentStatus.1.0.0'
+          type: array
+        NotFound:
+          type: array
+          items: 
+            type: string
+            example: x1000c0s0b0
+    ServiceReservationCheck_Response.1.0.0:
+      type: object
+      properties:
+        Success:
+          items:
+            $ref: '#/components/schemas/XnameKeysDeputyExpire.1.0.0'
+          type: array
+        Failure:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailedXnames.1.0.0'
+            
+    AdminLock.1.0.0:
+      type: object
+      properties:
+        ComponentIDs:
+          description: >-
+            An array of XName/ID values for the components to query.
+          type: array
+          items:
+            type: string
+        ProcessingModel:
+          type: string
+          enum: 
+          - rigid
+          - flexible
+          description: rigid is all or nothing, felxible is best attempt.
+        Role:  
+          $ref: '#/components/schemas/HMSRole.1.0.0'
+        SubRole:
+          $ref: '#/components/schemas/HMSSubRole.1.0.0'        
+    AdminReservationRemove.1.0.0:
+      type: object
+      properties:
+        ComponentIDs:
+          description: >-
+            An array of XName/ID values for the components to query.
+          type: array
+          items:
+            type: string
+        ProcessingModel:
+          type: string
+          enum: 
+          - rigid
+          - flexible
+          description: rigid is all or nothing, felxible is best attempt.
+        Role:  
+          $ref: '#/components/schemas/HMSRole.1.0.0'
+        SubRole:
+          $ref: '#/components/schemas/HMSSubRole.1.0.0'
+        
+    Xnames:
+      type: object
+      properties:
+        ComponentIDs:
+          type: array
+          items:
+            type: string
+    XnameResponse_1.0.0:
+      description: >-
+        This is a simple CAPMC-like response,intended mainly for
+        non-error messages.  For client errors, we now use RFC7807 responses.
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        Counts:
+          $ref: '#/components/schemas/Counts.1.0.0'
+        Success:
+          $ref: '#/components/schemas/Xnames'
+        Failure:
+          type: array
+          items:
+            $ref: '#/components/schemas/FailedXnames.1.0.0'
+       
+    HMSRole.1.0.0:
+      description: >-
+        This is a possibly reconfigurable role for a component, especially a node.
+        Valid values are:
+  
+        - Compute
+  
+        - Service
+  
+        - System
+  
+        - Application
+  
+        - Storage
+  
+        - Management
+  
+        Additional valid values may be added via configuration file.
+        See the results of 'GET /service/values/role' for the complete list.
+      type: string
+      example: Management
+    FailedXnames.1.0.0:
+      type: object
+      properties:
+        ID:
+          type: string
+        Reason: 
+          type: string
+          enum:
+          - NotFound
+          - Locked
+          - Disabled
+          - Reserved
+          - ServerError
+          description: the key that can be passed to a delegate
+    HMSSubRole.1.0.0:
+      description: >-
+        This is a possibly reconfigurable subrole for a component, especially a node.
+        Valid values are:
+  
+        - Master
+  
+        - Worker
+  
+        - Storage
+  
+        Additional valid values may be added via configuration file.
+        See the results of 'GET /service/values/role' for the complete list.
+      type: string
+      example: Worker
+    XnameKeysNoExpire.1.0.0:
+      type: object
+      properties:
+        ID:
+          type: string
+        DeputyKey: 
+          type: string
+          format: uuid
+          description: the key that can be passed to a delegate
+        ReservationKey:
+          type: string
+          format: uuid
+          description: the key that can be used to renew/release the reservation. Should not be delegated or shared.
+
+    XnameKeys.1.0.0:
+      type: object
+      properties:
+        ID:
+          type: string
+        DeputyKey: 
+          type: string
+          format: uuid
+          description: the key that can be passed to a delegate
+        ReservationKey:
+          type: string
+          format: uuid
+          description: the key that can be used to renew/release the reservation. Should not be delegated or shared.
+        ExpirationTime:
+          type: string
+          nullable: true
+          format: date-time
+    XnameKeysDeputyExpire.1.0.0:
+      type: object
+      properties:
+        ID:
+          type: string
+        DeputyKey: 
+          type: string
+          format: uuid
+          description: the key that can be passed to a delegate
+        ExpirationTime:
+          type: string
+          format: date-time
+    XnameWithKey.1.0.0:
+      type: object
+      properties:
+        ID:
+          type: string
+        Key:
+          type: string
+    DeputyKeys.1.0.0:
+      type: object
+      properties:
+        DeputyKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/XnameWithKey.1.0.0'
+    ReservedKeys.1.0.0:
+      type: object
+      properties:
+        ReservationKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/XnameWithKey.1.0.0'
+        ProcessingModel:
+          type: string
+          enum: 
+          - rigid
+          - flexible
+          description: rigid is all or nothing, felxible is best attempt.
+          
+    ReservedKeysWithRenewal.1.0.0:
+      type: object
+      properties:
+        ReservationKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/XnameWithKey.1.0.0'
+        ProcessingModel:
+          type: string
+          enum: 
+          - rigid
+          - flexible
+          description: rigid is all or nothing, felxible is best attempt.
+        ReservationDuration:
+          type: integer
+          minimum: 1
+          maximum: 15
+          description: length of time in minutes for the reservation to be valid for.
+          default: 1
+          example: 1
+    Counts.1.0.0:
+      type: object
+      properties:
+        Total:
+          type: integer
+        Success:
+          type: integer
+        Failure:
+          type: integer
