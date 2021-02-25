@@ -43,12 +43,12 @@ else
 fi
 
 # check for jq dependency
-WHICH_CMD="which jq"
-WHICH_OUT=$(eval ${WHICH_CMD})
-WHICH_RET=$?
-if [[ ${WHICH_RET} -ne 0 ]] ; then
-    echo "${WHICH_OUT}"
-    >&2 echo "ERROR: '${WHICH_CMD}' failed with status code: ${WHICH_RET}"
+JQ_CHECK_CMD="which jq"
+JQ_CHECK_OUT=$(eval ${JQ_CHECK_CMD})
+JQ_CHECK_RET=$?
+if [[ ${JQ_CHECK_RET} -ne 0 ]] ; then
+    echo "${JQ_CHECK_OUT}"
+    >&2 echo "ERROR: '${JQ_CHECK_CMD}' failed with status code: ${JQ_CHECK_RET}"
     exit 1
 fi
 
