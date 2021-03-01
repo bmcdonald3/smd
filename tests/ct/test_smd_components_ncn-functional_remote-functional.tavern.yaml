@@ -147,6 +147,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       NID:
                         type: int
                         required: True
@@ -459,6 +468,15 @@ stages:
               SubRole:
                 type: str
                 required: False
+                enum:
+                  - "Gateway"
+                  - "LNETRouter"
+                  - "Master"
+                  - "Storage"
+                  - "UAN"
+                  - "UserDefined"
+                  - "Visualization"
+                  - "Worker"
               Subtype:
                 type: str
                 required: False
@@ -520,6 +538,15 @@ stages:
               SubRole:
                 type: str
                 required: False
+                enum:
+                  - "Gateway"
+                  - "LNETRouter"
+                  - "Master"
+                  - "Storage"
+                  - "UAN"
+                  - "UserDefined"
+                  - "Visualization"
+                  - "Worker"
               Subtype:
                 type: str
                 required: False
@@ -588,6 +615,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -660,6 +696,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -732,6 +777,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -806,6 +860,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -878,6 +941,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -1021,6 +1093,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Type:
                         type: str
                         required: True
@@ -1150,6 +1231,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
