@@ -87,9 +87,9 @@ stages:
                           - "Chassis"
                           - "ComputeModule"
                           - "HSNBoard"
-                          - "NodeBMC"
+                          - "NodeBMC" # has ManagementEthernet MACAddress
                           - "NodeEnclosure"
-                          - "Node"
+                          - "Node" # has ManagementEthernet MACAddress
                           - "RouterBMC"
                           - "RouterModule"
                       RedfishType:
@@ -106,8 +106,8 @@ stages:
                         type: str
                         required: True
                         enum:
-                          #TODO: may be empty for CabinetPDUController
-                          #- ""
+                          #TODO: workaround for CabinetPDUController issue CASMHMS-4548
+                          - ""
                           - "Blade"
                           - "BMC"
                           - "C13"
@@ -177,9 +177,9 @@ stages:
                             required: True
                           Actions:
                             type: map
-                            #TODO: may be missing for CabinetPDUController
-                            #required: False
-                            required: True
+                            #TODO: workaround for CabinetPDUController issue CASMHMS-4548
+                            #required: True
+                            required: False
                             allowempty: True
                           EthernetNICInfo:
                             type: seq
@@ -277,13 +277,13 @@ ManagementEthernet"
                                   MACAddress:
                                     type: str
                                     required: True
-                                    #TODO: Unsure about 'Not Available'
+                                    # present for ManagementEthernet but not HPCNet IDs
                                     pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}|\
 Not Available"
                                   PermanentMACAddress:
                                     type: str
                                     required: False
-                                    #TODO: Unsure about 'Not Available'
+                                    # present for ManagementEthernet but not HPCNet IDs
                                     pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}|\
 Not Available"
                           PowerURL:
