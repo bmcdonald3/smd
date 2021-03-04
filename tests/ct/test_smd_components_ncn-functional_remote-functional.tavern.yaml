@@ -279,10 +279,10 @@ stages:
                           - "River"
                           - "Mountain"
                           - "Hill"
-                      #TODO: is this needed for NodeBMCs?
-                      #Locked:
-                      #  type: bool
-                      #  required: False
+                      # anything with an xname can be locked, including NodeBMCs
+                      Locked:
+                        type: bool
+                        required: False
 
 ---
 test_name: Ensure that we can conduct a query on the Node BMCs in the Component collection
@@ -343,10 +343,10 @@ stages:
                 required: True
                 enum:
                   - "{xname}"
-              #TODO: is this needed for NodeBMCs?
-              #Locked:
-              #  type: bool
-              #  required: False
+              # anything with an xname can be locked, including NodeBMCs
+              Locked:
+                type: bool
+                required: False
               NetType:
                 type: str
                 required: True
@@ -1325,10 +1325,10 @@ stages:
                         required: True
                         enum:
                           - "{xname}"
-                      #TODO: is this needed for NodeBMCs?
-                      #Locked:
-                      #  type: bool
-                      #  required: False
+                      # anything with an xname can be locked, including NodeBMCs
+                      Locked:
+                        type: bool
+                        required: False
                       NetType:
                         type: str
                         required: True
