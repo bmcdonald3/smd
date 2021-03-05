@@ -1078,7 +1078,6 @@ stages:
                                       TotalThreads:
                                         type: int
                                         required: True
-
                       NodeAccelRisers:
                         type: seq
                         required: False
