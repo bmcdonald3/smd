@@ -117,6 +117,7 @@ stages:
                           - "Physical"
                           - "RackMount"
                           - "RackPDU"
+                          - "StandAlone"
                       MACAddr:
                         type: str
                         required: False
@@ -265,7 +266,10 @@ usb[0-9]+"
                                   RedfishId:
                                     type: str
                                     required: True
-                                    pattern: "[0-9]+|\
+                                    # missing interface <num>, MAC computed via workaround
+                                    # expected for some hardware types, leaves RedfishId empty
+                                    pattern: "^$|\
+[0-9]+|\
 HPCNet[0-9]+|\
 ManagementEthernet"
                                   "@odata.id":
