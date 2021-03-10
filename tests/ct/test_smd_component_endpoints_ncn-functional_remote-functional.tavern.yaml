@@ -24,21 +24,24 @@
 # Author: Mitch Schooler, Isa Wazirzada
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 14
+# HMS test metrics test cases: 17
 # 1. GET /ComponentEndpoints API response code
 # 2. GET /ComponentEndpoints API response body
 # 3. GET /ComponentEndpoints?type=Node API response code
 # 4. GET /ComponentEndpoints?type=Node API response body
 # 5. GET /ComponentEndpoints/{node} API response code
-# 6. GET /ComponentEndpoints?type=NodeBMC API response code
-# 7. GET /ComponentEndpoints?type=NodeBMC API response body
-# 8. GET /ComponentEndpoints/{nodeBMC} API response code
-# 9. GET /ComponentEndpoints?type=NodeEnclosure API response code
-# 10. GET /ComponentEndpoints?type=NodeEnclosure API response body
-# 11. GET /ComponentEndpoints/{nodeEnclosure} API response code
-# 12. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
-# 13. GET /ComponentEndpoints/{nodeBMC} invalid API response code
-# 14. GET /ComponentEndpoints/{nid} unsupported id API response code
+# 6. GET /ComponentEndpoints/{node} API response body
+# 7. GET /ComponentEndpoints?type=NodeBMC API response code
+# 8. GET /ComponentEndpoints?type=NodeBMC API response body
+# 9. GET /ComponentEndpoints/{nodeBMC} API response code
+# 10. GET /ComponentEndpoints/{nodeBMC} API response body
+# 11. GET /ComponentEndpoints?type=NodeEnclosure API response code
+# 12. GET /ComponentEndpoints?type=NodeEnclosure API response body
+# 13. GET /ComponentEndpoints/{nodeEnclosure} API response code
+# 14. GET /ComponentEndpoints/{nodeEnclosure} API response body
+# 15. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
+# 16. GET /ComponentEndpoints/{nodeBMC} invalid API response code
+# 17. GET /ComponentEndpoints/{nid} unsupported id API response code
 ---
 test_name: Query the ComponentEndpoints collection
 
@@ -54,11 +57,277 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
-      json:
-        ComponentEndpoints: !anything
-      save:
-        json:
-          ID: ComponentEndpoints[0].ID
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ComponentEndpoints:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+[cm][0-9]+.*"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "CabinetPDUController"
+                          - "CabinetPDUPowerConnector"
+                          - "CabinetPDU"
+                          - "ChassisBMC"
+                          - "Chassis"
+                          - "ComputeModule"
+                          - "HSNBoard"
+                          - "NodeBMC" # has ManagementEthernet MACAddress
+                          - "NodeEnclosure"
+                          - "Node" # has ManagementEthernet MACAddress
+                          - "RouterBMC"
+                          - "RouterModule"
+                      RedfishType:
+                        type: str
+                        required: True
+                        enum:
+                          - "C13"
+                          - "Chassis"
+                          - "ComputerSystem"
+                          - "Manager"
+                          - "Outlet"
+                          - "PowerDistribution"
+                      RedfishSubtype:
+                        type: str
+                        required: True
+                        enum:
+                          #TODO: workaround for CabinetPDUController issue CASMHMS-4548
+                          - ""
+                          - "Blade"
+                          - "BMC"
+                          - "C13"
+                          - "Cx"
+                          - "Enclosure"
+                          - "EnclosureManager"
+                          - "Physical"
+                          - "RackMount"
+                          - "RackPDU"
+                          - "StandAlone"
+                      MACAddr:
+                        type: str
+                        required: False
+                        pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}"
+                      UUID:
+                        type: str
+                        required: False
+                        pattern: "[a-zA-Z0-9]{{8}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{12}}"
+                      OdataID:
+                        type: str
+                        required: True
+                        pattern: "/redfish/v1/.*"
+                      RedfishEndpointID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+[cm][0-9]+.*"
+                      Enabled:
+                        type: bool
+                        required: True
+                      RedfishEndpointID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+[cm][0-9]+.*"
+                      RedfishURL:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+[cm][0-9]+.*/redfish/v1/.*"
+                      ComponentEndpointType:
+                        type: str
+                        required: True
+                        enum:
+                          - "ComponentEndpointChassis"
+                          - "ComponentEndpointComputerSystem"
+                          - "ComponentEndpointManager"
+                          - "ComponentEndpointOutlet"
+                          - "ComponentEndpointPowerDistribution"
+                      RedfishChassisInfo:
+                        type: map
+                        required: False
+                        mapping:
+                          Name:
+                            type: str
+                            required: True
+                          Actions:
+                            type: map
+                            required: False
+                            allowempty: True
+                      RedfishEndpointFQDN:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+[cm][0-9]+.*"
+                      RedfishManagerInfo:
+                        type: map
+                        required: False
+                        mapping:
+                          Name:
+                            type: str
+                            required: True
+                          Actions:
+                            type: map
+                            #TODO: workaround for CabinetPDUController issue CASMHMS-4548
+                            #required: True
+                            required: False
+                            allowempty: True
+                          EthernetNICInfo:
+                            type: seq
+                            matching: all
+                            # this data is not present for RouterBMCs
+                            required: False
+                            sequence:
+                              - type: map
+                                required: True
+                                mapping:
+                                  RedfishId:
+                                    type: str
+                                    required: True
+                                    length:
+                                      min: 1
+                                    pattern: "[0-9]+|\
+bond[0-9]+|\
+usb[0-9]+"
+                                  "@odata.id":
+                                    type: str
+                                    required: True
+                                  Description:
+                                    type: str
+                                    required: True
+                                  FQDN:
+                                    type: str
+                                    required: False
+                                  Hostname:
+                                    type: str
+                                    required: False
+                                  InterfaceEnabled:
+                                    type: bool
+                                    required: True
+                                  MACAddress:
+                                    type: str
+                                    required: True
+                                    pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}"
+                                  PermanentMACAddress:
+                                    type: str
+                                    required: True
+                                    pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}"
+                      RedfishOutletInfo:
+                        type: map
+                        required: False
+                        mapping:
+                          Name:
+                            type: str
+                            required: True
+                          Actions:
+                            type: map
+                            required: False
+                            allowempty: True
+                      RedfishPDUInfo:
+                        type: map
+                        required: False
+                        mapping:
+                          Name:
+                            type: str
+                            required: True
+                          Actions:
+                            type: map
+                            required: False
+                            allowempty: True
+                      RedfishSystemInfo:
+                        type: map
+                        required: False
+                        mapping:
+                          Name:
+                            type: str
+                            required: True
+                          Actions:
+                            type: map
+                            required: True
+                            allowempty: True
+                          EthernetNICInfo:
+                            type: seq
+                            matching: all
+                            required: True
+                            sequence:
+                              - type: map
+                                required: True
+                                mapping:
+                                  RedfishId:
+                                    type: str
+                                    required: True
+                                    # missing interface <num>, MAC computed via workaround
+                                    # expected for some hardware types, leaves RedfishId empty
+                                    pattern: "^$|\
+[0-9]+|\
+HPCNet[0-9]+|\
+ManagementEthernet"
+                                  "@odata.id":
+                                    type: str
+                                    required: True
+                                  Description:
+                                    type: str
+                                    required: False
+                                  MACAddress:
+                                    type: str
+                                    required: True
+                                    # present for ManagementEthernet but not HPCNet IDs
+                                    pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}|\
+Not Available"
+                                  PermanentMACAddress:
+                                    type: str
+                                    required: False
+                                    # present for ManagementEthernet but not HPCNet IDs
+                                    pattern: "[a-z0-9]{{2}}(:[a-z0-9]{{2}}){{5}}|\
+Not Available"
+                          PowerURL:
+                            type: str
+                            required: False
+                          PowerControl:
+                            type: seq
+                            matching: all
+                            required: False
+                            sequence:
+                              - type: map
+                                required: True
+                                # this allows the Oem key to be present as a map or a string
+                                allowempty: True
+                                mapping:
+                                  MemberId:
+                                    type: str
+                                    required: True
+                                    pattern: "[0-9]+|\
+Node"
+                                  "@odata.id":
+                                    type: str
+                                    required: True
+                                  PowerCapacityWatts:
+                                    type: int
+                                    required: False
+                                  Name:
+                                    type: str
+                                    required: False
+                                  RelatedItem:
+                                    type: seq
+                                    matching: all
+                                    required: False
+                                    sequence:
+                                      - type: map
+                                        required: True
+                                        mapping:
+                                          "@odata.id":
+                                            type: str
+                                            required: True
 
 ---
 test_name: Query the ComponentEndpoints collection and get Node Information
@@ -75,11 +344,43 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ComponentEndpoints:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    # only check that the xname IDs and type are correct to verify the query parameter since
+                    # all of the component endpoint data was already checked during previous test cases
+                    allowempty: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+c[0-9]+s[0-9]+b[0-9]+n[0-9]+"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      RedfishEndpointID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+c[0-9]+s[0-9]+b[0-9]+"
       save:
         json:
           id: ComponentEndpoints[0].RedfishEndpointID
 
   # 5. GET /ComponentEndpoints/{node} API response code
+  # 6. GET /ComponentEndpoints/{node} API response body
   - name: Ensure that we can conduct a query on a specific node xname in the ComponentEndpoints collection
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/{id}"
@@ -89,13 +390,33 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            # only check that the xname IDs and type are correct to verify the query parameter since
+            # all of the component endpoint data was already checked during previous test cases
+            allowempty: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "{id}"
+              RedfishEndpointID:
+                type: str
+                required: True
+                enum:
+                  - "{id}"
 
 ---
 test_name: Query the ComponentEndpoints collection and get NodeBMC Information
 
 stages:
-  # 6. GET /ComponentEndpoints?type=NodeBMC API response code
-  # 7. GET /ComponentEndpoints?type=NodeBMC API response body
+  # 7. GET /ComponentEndpoints?type=NodeBMC API response code
+  # 8. GET /ComponentEndpoints?type=NodeBMC API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular BMC
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints?type=NodeBMC"
@@ -105,11 +426,43 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ComponentEndpoints:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    # only check that the xname IDs and type are correct to verify the query parameter since
+                    # all of the component endpoint data was already checked during previous test cases
+                    allowempty: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+c[0-9]+s[0-9]+b[0-9]+"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "NodeBMC"
+                      RedfishEndpointID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+c[0-9]+s[0-9]+b[0-9]+"
       save:
         json:
           id: ComponentEndpoints[0].RedfishEndpointID
 
-  # 8. GET /ComponentEndpoints/{nodeBMC} API response code
+  # 9. GET /ComponentEndpoints/{nodeBMC} API response code
+  # 10. GET /ComponentEndpoints/{nodeBMC} API response body
   - name: Ensure that we can conduct a query on a specific node BMC xname in the ComponentEndpoints collection
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/{id}"
@@ -119,13 +472,33 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            # only check that the xname IDs and type are correct to verify the query parameter since
+            # all of the component endpoint data was already checked during previous test cases
+            allowempty: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "{id}"
+              RedfishEndpointID:
+                type: str
+                required: True
+                enum:
+                  - "{id}"
 
 ---
 test_name: Query the ComponentEndpoints collection and get Node Enclosure Information
 
 stages:
-  # 9. GET /ComponentEndpoints?type=NodeEnclosure API response code
-  # 10. GET /ComponentEndpoints?type=NodeEnclosure API response body
+  # 11. GET /ComponentEndpoints?type=NodeEnclosure API response code
+  # 12. GET /ComponentEndpoints?type=NodeEnclosure API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node enclosure
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints?type=NodeEnclosure"
@@ -135,11 +508,43 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ComponentEndpoints:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    # only check that the xname IDs and type are correct to verify the query parameter since
+                    # all of the component endpoint data was already checked during previous test cases
+                    allowempty: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+c[0-9]+s[0-9]+e[0-9]+"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "NodeEnclosure"
+                      RedfishEndpointID:
+                        type: str
+                        required: True
+                        pattern: "x[0-9]+c[0-9]+s[0-9]+b[0-9]+"
       save:
         json:
           id: ComponentEndpoints[0].RedfishEndpointID
 
-  # 11. GET /ComponentEndpoints/{nodeEnclosure} API response code
+  # 13. GET /ComponentEndpoints/{nodeEnclosure} API response code
+  # 14. GET /ComponentEndpoints/{nodeEnclosure} API response body
   - name: Ensure that we can conduct a query on a specific node enclosure xname in the ComponentEndpoints collection
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/{id}"
@@ -149,12 +554,32 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            # only check that the xname IDs and type are correct to verify the query parameter since
+            # all of the component endpoint data was already checked during previous test cases
+            allowempty: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "{id}"
+              RedfishEndpointID:
+                type: str
+                required: True
+                enum:
+                  - "{id}"
 
 ---
 test_name: Attempt to query the ComponentEndpoints collection with a valid but nonexistent xname
 
 stages:
-  # 12. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
+  # 15. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
   - name: Verify failure when providing a valid but nonexistent BMC xname in the ComponentEndpoints collection
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/x1025c7s4b4"
@@ -169,7 +594,7 @@ stages:
 test_name: Attempt to query the ComponentEndpoints collection with an invalid xname
 
 stages:
-  # 13. GET /ComponentEndpoints/{nodeBMC} invalid API response code
+  # 16. GET /ComponentEndpoints/{nodeBMC} invalid API response code
   - name: Verify failure when providing an invalid BMC xname in the ComponentEndpoints collection
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/x1025000c7s4b4"
@@ -184,7 +609,7 @@ stages:
 test_name: Attempt to query the ComponentEndpoints collection with a nid instead of an xname
 
 stages:
-  # 14. GET /ComponentEndpoints/{nid} unsupported id API response code
+  # 17. GET /ComponentEndpoints/{nid} unsupported id API response code
   - name: Verify failure when providing a nid name instead of a valid BMC xname in the ComponentEndpoints collection
     request:
       url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/1"

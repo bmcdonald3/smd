@@ -147,6 +147,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       NID:
                         type: int
                         required: True
@@ -158,13 +167,14 @@ stages:
                         required: True
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
                           - "Hill"
+                      Locked:
+                        type: bool
+                        required: False
 
 ---
 test_name: Verify the Components collection
@@ -264,13 +274,15 @@ stages:
                         required: True
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
                           - "Hill"
+                      # anything with an xname can be locked, including NodeBMCs
+                      Locked:
+                        type: bool
+                        required: False
 
 ---
 test_name: Ensure that we can conduct a query on the Node BMCs in the Component collection
@@ -315,9 +327,7 @@ stages:
                 required: True
               Class:
                 type: str
-                #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                #required: True
-                required: False
+                required: True
                 enum:
                   - "River"
                   - "Mountain"
@@ -333,6 +343,10 @@ stages:
                 required: True
                 enum:
                   - "{xname}"
+              # anything with an xname can be locked, including NodeBMCs
+              Locked:
+                type: bool
+                required: False
               NetType:
                 type: str
                 required: True
@@ -369,8 +383,7 @@ stages:
       save:
         json:
           Arch: Components[0].Arch
-          #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-          #Class: Components[0].Class
+          Class: Components[0].Class
           Enabled: Components[0].Enabled
           Flag: Components[0].Flag
           xname: Components[0].ID
@@ -393,8 +406,7 @@ stages:
       status_code: 200
       json:
         Arch: !anything
-        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-        #Class: "{Class:s}"
+        Class: "{Class:s}"
         Enabled: !anybool
         Flag: !anything
         ID: "{xname:s}"
@@ -426,9 +438,7 @@ stages:
                 type: str
               Class:
                 type: str
-                #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                #required: True
-                required: False
+                required: True
                 enum:
                   - "River"
                   - "Mountain"
@@ -439,6 +449,9 @@ stages:
                 type: str
               ID:
                 type: str
+              Locked:
+                type: bool
+                required: False
               NID:
                 type: int
               NetType:
@@ -459,6 +472,15 @@ stages:
               SubRole:
                 type: str
                 required: False
+                enum:
+                  - "Gateway"
+                  - "LNETRouter"
+                  - "Master"
+                  - "Storage"
+                  - "UAN"
+                  - "UserDefined"
+                  - "Visualization"
+                  - "Worker"
               Subtype:
                 type: str
                 required: False
@@ -487,9 +509,7 @@ stages:
                 type: str
               Class:
                 type: str
-                #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                #required: True
-                required: False
+                required: True
                 enum:
                   - "River"
                   - "Mountain"
@@ -500,6 +520,9 @@ stages:
                 type: str
               ID:
                 type: str
+              Locked:
+                type: bool
+                required: False
               NID:
                 type: int
               NetType:
@@ -520,6 +543,15 @@ stages:
               SubRole:
                 type: str
                 required: False
+                enum:
+                  - "Gateway"
+                  - "LNETRouter"
+                  - "Master"
+                  - "Storage"
+                  - "UAN"
+                  - "UserDefined"
+                  - "Visualization"
+                  - "Worker"
               Subtype:
                 type: str
                 required: False
@@ -555,9 +587,7 @@ stages:
                         type: str
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -568,6 +598,9 @@ stages:
                         type: str
                       ID:
                         type: str
+                      Locked:
+                        type: bool
+                        required: False
                       NID:
                         type: int
                       NetType:
@@ -588,6 +621,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -625,9 +667,7 @@ stages:
                         type: str
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -640,6 +680,9 @@ stages:
                           - "{Flag}"
                       ID:
                         type: str
+                      Locked:
+                        type: bool
+                        required: False
                       NID:
                         type: int
                       NetType:
@@ -660,6 +703,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -699,9 +751,7 @@ stages:
                           - "X86"
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -712,6 +762,9 @@ stages:
                         type: str
                       ID:
                         type: str
+                      Locked:
+                        type: bool
+                        required: False
                       NID:
                         type: int
                       NetType:
@@ -732,6 +785,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -771,9 +833,7 @@ stages:
                           - "X86"
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -784,6 +844,9 @@ stages:
                         type: str
                       ID:
                         type: str
+                      Locked:
+                        type: bool
+                        required: False
                       NID:
                         type: int
                         enum:
@@ -806,6 +869,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -843,9 +915,7 @@ stages:
                         type: str
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -856,6 +926,9 @@ stages:
                         type: str
                       ID:
                         type: str
+                      Locked:
+                        type: bool
+                        required: False
                       NID:
                         type: int
                       NetType:
@@ -878,6 +951,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -1021,6 +1103,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Type:
                         type: str
                         required: True
@@ -1107,9 +1198,7 @@ stages:
                         required: True
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -1125,6 +1214,9 @@ stages:
                         required: True
                         enum:
                           - "{xname}"
+                      Locked:
+                        type: bool
+                        required: False
                       NID:
                         type: int
                         required: True
@@ -1150,6 +1242,15 @@ stages:
                       SubRole:
                         type: str
                         required: False
+                        enum:
+                          - "Gateway"
+                          - "LNETRouter"
+                          - "Master"
+                          - "Storage"
+                          - "UAN"
+                          - "UserDefined"
+                          - "Visualization"
+                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -1208,9 +1309,7 @@ stages:
                         required: True
                       Class:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
-                        required: False
+                        required: True
                         enum:
                           - "River"
                           - "Mountain"
@@ -1226,6 +1325,10 @@ stages:
                         required: True
                         enum:
                           - "{xname}"
+                      # anything with an xname can be locked, including NodeBMCs
+                      Locked:
+                        type: bool
+                        required: False
                       NetType:
                         type: str
                         required: True
