@@ -1238,6 +1238,9 @@ stages:
                                       PartNumber:
                                         type: str
                                         required: True
+                                      SKU:
+                                        type: str
+                                        required: False
                                       SerialNumber:
                                         type: str
                                         required: True
