@@ -36,7 +36,7 @@
 #
 #     DATE STARTED      : 04/29/2019
 #
-#     LAST MODIFIED     : 01/29/2021
+#     LAST MODIFIED     : 03/30/2021
 #
 #     SYNOPSIS
 #       This is a smoke test for the HMS HSM/SMD API that makes basic HTTP
@@ -80,6 +80,7 @@
 #       schooler   09/15/2020   use latest hms_smoke_test_lib
 #       schooler   11/18/2020   remove deprecated HSNInterfaces test
 #       schooler   01/29/2021   rename to smd_smoke_test
+#       schooler   03/30/2021   add check_job_status test
 #
 #     DEPENDENCIES
 #       - hms_smoke_test_lib_ncn-resources_remote-resources.sh which is
@@ -91,38 +92,39 @@
 #
 ###############################################################
 
-# HMS test metrics test cases: 31
+# HMS test metrics test cases: 32
 # 1. Check cray-smd pod statuses
-# 2. GET /service/ready API response code
-# 3. GET /service/liveness API response code
-# 4. GET /service/values API response code
-# 5. GET /service/values/arch API response code
-# 6. GET /service/values/class API response code
-# 7. GET /service/values/flag API response code
-# 8. GET /service/values/nettype API response code
-# 9. GET /service/values/role API response code
-# 10. GET /service/values/subrole API response code
-# 11. GET /service/values/state API response code
-# 12. GET /service/values/type API response code
-# 13. GET /State/Components API response code
-# 14. GET /Defaults/NodeMaps API response code
-# 15. GET /Inventory/DiscoveryStatus API response code
-# 16. GET /Inventory/Hardware API response code
-# 17. GET /Inventory/HardwareByFRU API response code
-# 18. GET /Inventory/Hardware/History API response code
-# 19. GET /Inventory/HardwareByFRU/History API response code
-# 20. GET /Inventory/RedfishEndpoints API response code
-# 21. GET /Inventory/ComponentEndpoints API response code
-# 22. GET /Inventory/ServiceEndpoints API response code
-# 23. GET /Inventory/EthernetInterfaces API response code
-# 24. GET /groups API response code
-# 25. GET /groups/labels API response code
-# 26. GET /partitions API response code
-# 27. GET /partitions/names API response code
-# 28. GET /memberships API response code
-# 29. GET /Subscriptions/SCN API response code
-# 30. GET /locks API response code
-# 31. GET /sysinfo/powermaps API response code
+# 2. Check cray-smd job statuses
+# 3. GET /service/ready API response code
+# 4. GET /service/liveness API response code
+# 5. GET /service/values API response code
+# 6. GET /service/values/arch API response code
+# 7. GET /service/values/class API response code
+# 8. GET /service/values/flag API response code
+# 9. GET /service/values/nettype API response code
+# 10. GET /service/values/role API response code
+# 11. GET /service/values/subrole API response code
+# 12. GET /service/values/state API response code
+# 13. GET /service/values/type API response code
+# 14. GET /State/Components API response code
+# 15. GET /Defaults/NodeMaps API response code
+# 16. GET /Inventory/DiscoveryStatus API response code
+# 17. GET /Inventory/Hardware API response code
+# 18. GET /Inventory/HardwareByFRU API response code
+# 19. GET /Inventory/Hardware/History API response code
+# 20. GET /Inventory/HardwareByFRU/History API response code
+# 21. GET /Inventory/RedfishEndpoints API response code
+# 22. GET /Inventory/ComponentEndpoints API response code
+# 23. GET /Inventory/ServiceEndpoints API response code
+# 24. GET /Inventory/EthernetInterfaces API response code
+# 25. GET /groups API response code
+# 26. GET /groups/labels API response code
+# 27. GET /partitions API response code
+# 28. GET /partitions/names API response code
+# 29. GET /memberships API response code
+# 30. GET /Subscriptions/SCN API response code
+# 31. GET /locks API response code
+# 32. GET /sysinfo/powermaps API response code
 
 # initialize test variables
 TEST_RUN_TIMESTAMP=$(date +"%Y%m%dT%H%M%S")
@@ -209,6 +211,13 @@ function check_pod_status()
     return $?
 }
 
+# check_job_status
+function check_job_status()
+{
+    run_check_job_status "cray-smd"
+    return $?
+}
+
 trap ">&2 echo \"recieved kill signal, exiting with status of '1'...\" ; \
     cleanup ; \
     exit 1" SIGHUP SIGINT SIGTERM
@@ -233,6 +242,14 @@ echo "Running smd_smoke_test..."
 
 # run initial pod status test
 check_pod_status
+if [[ $? -ne 0 ]] ; then
+    echo "FAIL: smd_smoke_test ran with failures"
+    cleanup
+    exit 1
+fi
+
+# run initial job status test
+check_job_status
 if [[ $? -ne 0 ]] ; then
     echo "FAIL: smd_smoke_test ran with failures"
     cleanup
