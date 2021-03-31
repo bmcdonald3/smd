@@ -7,7 +7,7 @@
 #   tag: "" (default = "latest")
 #   pullPolicy: "" (default = "IfNotPresent")
 
-dockerKubectlTag: 0.2.0-20200421212755_170bb37
+dockerKubectlTag: 0.2.0
 
 schemaStorageClass: ceph-cephfs-external
 schemaAccessMode: ReadWriteMany
