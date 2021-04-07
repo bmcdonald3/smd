@@ -3001,7 +3001,7 @@ func (s *SmD) doCompEthInterfacePatch(w http.ResponseWriter, r *http.Request) {
 			"error decoding JSON "+err.Error())
 		return
 	}
-	if ceip.Desc == nil && ceip.IPAddr == nil {
+	if ceip.Desc == nil && ceip.IPAddr == nil && ceip.CompID == nil {
 		s.lg.Printf("doCompEthInterfacePatch(): Request must have at least one patch field.")
 		sendJsonError(w, http.StatusBadRequest, "Request must have at least one patch field.")
 		return
@@ -3220,7 +3220,7 @@ func (s *SmD) doCompEthInterfacePatchV2(w http.ResponseWriter, r *http.Request) 
 			"error decoding JSON "+err.Error())
 		return
 	}
-	if ceip.Desc == nil && ceip.IPAddrs == nil {
+	if ceip.Desc == nil && ceip.IPAddrs == nil && ceip.CompID == nil {
 		s.lg.Printf("doCompEthInterfacePatchV2(): Request must have at least one patch field.")
 		sendJsonError(w, http.StatusBadRequest, "Request must have at least one patch field.")
 		return
