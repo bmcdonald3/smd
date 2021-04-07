@@ -77,7 +77,7 @@ stages:
 
   - name: Delete existing test partition1 in HSM (if present) to prevent conflict
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1"
+      url: "{base_url}/smd/hsm/v1/partitions/p98"
       method: DELETE
       headers:
         Authorization: "Bearer {access_token}"
@@ -87,7 +87,7 @@ stages:
   - name: Verify /partitions POST method
     request:
       url: "{base_url}/smd/hsm/v1/partitions"
-      json: {"name":"hsmtestpartition1","description":"Test partition 1 for HSM API testing in CT framework.","tags":["hsmtestpartition1_tag1","hsmtestpartition1_tag2"],"members":{"ids":["{xname1}","{xname2}"]}}
+      json: {"name":"p98","description":"Test partition 1 for HSM API testing in CT framework.","tags":["p98_tag1","p98_tag2"],"members":{"ids":["{xname1}","{xname2}"]}}
       method: POST
       headers:
         Authorization: "Bearer {access_token}"
@@ -99,7 +99,7 @@ stages:
   # 3. GET /partitions/{partition1} API response body
   - name: Verify /partitions/{partition} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1"
+      url: "{base_url}/smd/hsm/v1/partitions/p98"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -117,7 +117,7 @@ stages:
                 type: str
                 required: True
                 enum:
-                  - "hsmtestpartition1"
+                  - "p98"
               description:
                 type: str
                 required: True
@@ -131,8 +131,8 @@ stages:
                   - type: str
                     required: True
                     enum:
-                      - "hsmtestpartition1_tag1"
-                      - "hsmtestpartition1_tag2"
+                      - "p98_tag1"
+                      - "p98_tag2"
               members:
                 type: map
                 required: True
@@ -152,7 +152,7 @@ stages:
   # 5. GET /partitions?partition=<partition1> API response body
   - name: Verify /partitions GET method with partition parameter
     request:
-      url: "{base_url}/smd/hsm/v1/partitions?partition=hsmtestpartition1"
+      url: "{base_url}/smd/hsm/v1/partitions?partition=p98"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -172,7 +172,7 @@ stages:
   # 7. GET /partitions?tag=<tag1> API response body
   - name: Verify /partitions GET method with tag parameter (1)
     request:
-      url: "{base_url}/smd/hsm/v1/partitions?tag=hsmtestpartition1_tag1"
+      url: "{base_url}/smd/hsm/v1/partitions?tag=p98_tag1"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -192,7 +192,7 @@ stages:
   # 9. GET /partitions?tag=<tag2> API response body
   - name: Verify /partitions GET method with tag parameter (2)
     request:
-      url: "{base_url}/smd/hsm/v1/partitions?tag=hsmtestpartition1_tag2"
+      url: "{base_url}/smd/hsm/v1/partitions?tag=p98_tag2"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -211,8 +211,8 @@ stages:
   # 10. PATCH /partitions/{partition1} API response code
   - name: Verify /partitions/{partition} PATCH method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1"
-      json: {"description":"Test partition 1 for HSM API testing in CT framework (UPDATED).","tags":["hsmtestpartition1_tag3","hsmtestpartition1_tag4"]}
+      url: "{base_url}/smd/hsm/v1/partitions/p98"
+      json: {"description":"Test partition 1 for HSM API testing in CT framework (UPDATED).","tags":["p98_tag3","p98_tag4"]}
       method: PATCH
       headers:
         Authorization: "Bearer {access_token}"
@@ -224,7 +224,7 @@ stages:
   # 12. GET /partitions/{partition1} updated description tag API response body
   - name: Verify /partitions/{partition} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1"
+      url: "{base_url}/smd/hsm/v1/partitions/p98"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -242,7 +242,7 @@ stages:
                 type: str
                 required: True
                 enum:
-                  - "hsmtestpartition1"
+                  - "p98"
               description:
                 type: str
                 required: True
@@ -256,8 +256,8 @@ stages:
                   - type: str
                     required: True
                     enum:
-                      - "hsmtestpartition1_tag3"
-                      - "hsmtestpartition1_tag4"
+                      - "p98_tag3"
+                      - "p98_tag4"
               members:
                 type: map
                 required: True
@@ -275,7 +275,7 @@ stages:
 
   - name: Delete existing test partition2 in HSM (if present) to prevent conflict
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition2"
+      url: "{base_url}/smd/hsm/v1/partitions/p99"
       method: DELETE
       headers:
         Authorization: "Bearer {access_token}"
@@ -285,7 +285,7 @@ stages:
   - name: Verify /partitions POST method
     request:
       url: "{base_url}/smd/hsm/v1/partitions"
-      json: {"name":"hsmtestpartition2","description":"Test partition 2 for HSM API testing in CT framework.","tags":["hsmtestpartition2_tag1","hsmtestpartition2_tag2"],"members":{"ids":["{xname3}"]}}
+      json: {"name":"p99","description":"Test partition 2 for HSM API testing in CT framework.","tags":["p99_tag1","p99_tag2"],"members":{"ids":["{xname3}"]}}
       method: POST
       headers:
         Authorization: "Bearer {access_token}"
@@ -297,7 +297,7 @@ stages:
   # 15. GET /partitions/{partition2} API response body
   - name: Verify /partitions/{partition} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition2"
+      url: "{base_url}/smd/hsm/v1/partitions/p99"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -315,7 +315,7 @@ stages:
                 type: str
                 required: True
                 enum:
-                  - "hsmtestpartition2"
+                  - "p99"
               description:
                 type: str
                 required: True
@@ -329,8 +329,8 @@ stages:
                   - type: str
                     required: True
                     enum:
-                      - "hsmtestpartition2_tag1"
-                      - "hsmtestpartition2_tag2"
+                      - "p99_tag1"
+                      - "p99_tag2"
               members:
                 type: map
                 required: True
@@ -366,8 +366,8 @@ stages:
             sequence:
               - type: str
                 enum:
-                  - "hsmtestpartition1"
-                  - "hsmtestpartition2"
+                  - "p98"
+                  - "p99"
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -379,7 +379,7 @@ stages:
   # 19. GET /partitions/{partition1}/members API response body
   - name: Verify /partitions/{partition}/members GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1/members"
+      url: "{base_url}/smd/hsm/v1/partitions/p98/members"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -419,7 +419,7 @@ stages:
   # 20. POST /partitions/{partition1}/members API response code
   - name: Verify /partitions/{partition}/members POST method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1/members"
+      url: "{base_url}/smd/hsm/v1/partitions/p98/members"
       json: {"id":"{xname4}"}
       method: POST
       headers:
@@ -432,7 +432,7 @@ stages:
   # 22. GET /partitions/{partition1}/members new member API response body
   - name: Verify /partitions/{partition}/members GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1/members"
+      url: "{base_url}/smd/hsm/v1/partitions/p98/members"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -477,7 +477,7 @@ stages:
   # 24. DELETE /partitions/{partition1}/members/{xname} API response body
   - name: Verify /partitions/{partition}/members/{xname} DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1/members/{xname1}"
+      url: "{base_url}/smd/hsm/v1/partitions/p98/members/{xname1}"
       method: DELETE
       headers:
         Authorization: "Bearer {access_token}"
@@ -506,7 +506,7 @@ stages:
   # 26. GET /partitions/{partition1}/members deleted member API response body
   - name: Verify /partitions/{partition}/members GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1/members"
+      url: "{base_url}/smd/hsm/v1/partitions/p98/members"
       method: GET
       headers:
         Authorization: "Bearer {access_token}"
@@ -550,7 +550,7 @@ stages:
   # 28. DELETE /partitions/{partition1} API response body
   - name: Verify /partitions/{partition} DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition1"
+      url: "{base_url}/smd/hsm/v1/partitions/p98"
       method: DELETE
       headers:
         Authorization: "Bearer {access_token}"
@@ -579,7 +579,7 @@ stages:
   # 30. DELETE /partitions/{partition2} API response body
   - name: Verify /partitions/partition DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/hsmtestpartition2"
+      url: "{base_url}/smd/hsm/v1/partitions/p99"
       method: DELETE
       headers:
         Authorization: "Bearer {access_token}"
