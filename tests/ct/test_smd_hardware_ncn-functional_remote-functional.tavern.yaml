@@ -719,8 +719,6 @@ stages:
                                       ProcessorType:
                                         type: str
                                         required: True
-                                        enum:
-                                          - "CPU"
                                       TotalCores:
                                         type: int
                                         required: True
