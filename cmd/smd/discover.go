@@ -699,6 +699,20 @@ func (s *SmD) DiscoverHWInvByLocArray(rfEP *rf.RedfishEP) ([]*sm.HWInvByLoc, err
 		}
 		hwlocs = append(hwlocs, hwloc)
 		// Now do node subcomponents
+		for _, hpeDeviceEP := range sysEP.HpeDevices.OIDs {
+			hwloc, err := s.DiscoverHWInvByLocHpeDevice(hpeDeviceEP)
+			if err != nil {
+				if err == base.ErrHMSTypeInvalid || err == base.ErrHMSTypeUnsupported {
+					if err != base.ErrHMSTypeInvalid {
+						save_err = err
+					}
+					continue
+				}
+				return nil, err
+			}
+			hwlocs = append(hwlocs, hwloc)
+		}
+		
 		for _, procEP := range sysEP.Processors.OIDs {
 			hwloc, err := s.DiscoverHWInvByLocProcessor(procEP)
 			if err != nil {
@@ -1031,6 +1045,45 @@ func (s *SmD) DiscoverHWInvByLocSystem(sysEP *rf.EpSystem) (*sm.HWInvByLoc, erro
 	}
 	hwloc.HMSNodeLocationInfo = &sysEP.SystemRF.SystemLocationInfoRF
 	hwloc.HWInventoryByLocationType = sm.HWInvByLocNode
+	return hwloc, nil
+}
+
+// HMS GPUs, etc, based on info retrieved by HPE Device Redfish objects
+func (s *SmD) DiscoverHWInvByLocHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWInvByLoc, error) {
+	if hpeDeviceEP.LastStatus == rf.RedfishSubtypeNoSupport {
+		s.LogAlways("DiscoverHWInvByLocHpeDevice: EP: %s RF Subtype %s "+
+			"not supported.", hpeDeviceEP.RfEndpointID, hpeDeviceEP.RedfishSubtype)
+		return nil, base.ErrHMSTypeUnsupported
+	} else if hpeDeviceEP.LastStatus != rf.DiscoverOK {
+		s.LogAlways("DiscoverHWInvByLocHpeDevice: Saw EP with bad status: %s",
+			hpeDeviceEP.LastStatus)
+		return nil, base.ErrHMSTypeInvalid
+	}
+	hwloc := new(sm.HWInvByLoc)
+	hwloc.ID = hpeDeviceEP.ID
+	hwloc.Type = hpeDeviceEP.Type
+	hwloc.Ordinal = hpeDeviceEP.Ordinal
+	hwloc.Status = hpeDeviceEP.Status
+	if hwloc.Status != "Empty" && hpeDeviceEP.FRUID != "" {
+		hwfru, err := s.DiscoverHWInvByFRUHpeDevice(hpeDeviceEP)
+		if err != nil {
+			return nil, err
+		}
+		hwloc.PopulatedFRU = hwfru
+	}
+	if hpeDeviceEP.Type == base.NodeAccel.String() {
+		accelInfo := rf.ProcessorLocationInfoRF{
+			Id:          hpeDeviceEP.DeviceRF.Id,
+			Name:        hpeDeviceEP.DeviceRF.Name,
+			Description: hpeDeviceEP.DeviceRF.Location,
+		}
+		hwloc.HMSNodeAccelLocationInfo = &accelInfo
+		hwloc.HWInventoryByLocationType = sm.HWInvByLocNodeAccel
+	} else {
+		s.LogAlways("DiscoverHWInvByLocHpeDevice: EP: %s RF Subtype %s "+
+			"not supported.", hpeDeviceEP.RfEndpointID, hpeDeviceEP.RedfishSubtype)
+		return nil, base.ErrHMSTypeUnsupported
+	}
 	return hwloc, nil
 }
 
@@ -1424,6 +1477,43 @@ func (s *SmD) DiscoverHWInvByFRUSystem(sysEP *rf.EpSystem) (*sm.HWInvByFRU, erro
 
 	hwfru.HMSNodeFRUInfo = &sysEP.SystemRF.SystemFRUInfoRF
 	hwfru.HWInventoryByFRUType = sm.HWInvByFRUNode
+
+	return hwfru, nil
+}
+
+// HMS GPU, etc FRU info, based on info retrieved by HPE Device Redfish objects.
+func (s *SmD) DiscoverHWInvByFRUHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWInvByFRU, error) {
+	if hpeDeviceEP.LastStatus == rf.RedfishSubtypeNoSupport {
+		s.LogAlways("DiscoverHWInvByFRUHpeDevice: EP: %s RF Subtype %s "+
+			"not supported.", hpeDeviceEP.RfEndpointID, hpeDeviceEP.RedfishSubtype)
+		return nil, base.ErrHMSTypeUnsupported
+	} else if hpeDeviceEP.LastStatus != rf.DiscoverOK {
+		s.LogAlways("DiscoverHWInvByFRUHpeDevice: Saw EP with bad status: %s",
+			hpeDeviceEP.LastStatus)
+		return nil, base.ErrHMSTypeInvalid
+	}
+	hwfru := new(sm.HWInvByFRU)
+	if hpeDeviceEP.FRUID == "" {
+		return nil, sm.ErrHWFRUIDInvalid
+	}
+	hwfru.FRUID = hpeDeviceEP.FRUID
+	hwfru.Type = hpeDeviceEP.Type
+	hwfru.Subtype = hpeDeviceEP.Subtype
+
+	if hpeDeviceEP.Type == base.NodeAccel.String() {
+		accelInfo := rf.ProcessorFRUInfoRF{
+			Manufacturer: hpeDeviceEP.DeviceRF.Manufacturer,
+			SerialNumber: hpeDeviceEP.DeviceRF.SerialNumber,
+			PartNumber: hpeDeviceEP.DeviceRF.PartNumber,
+			ProcessorType: hpeDeviceEP.DeviceRF.DeviceType,
+		}
+		hwfru.HMSNodeAccelFRUInfo = &accelInfo
+		hwfru.HWInventoryByFRUType = sm.HWInvByFRUNodeAccel
+	} else {
+		s.LogAlways("DiscoverHWInvByFRUHpeDevice: EP: %s RF Subtype %s "+
+			"not supported.", hpeDeviceEP.RfEndpointID, hpeDeviceEP.RedfishSubtype)
+		return nil, base.ErrHMSTypeUnsupported
+	}
 
 	return hwfru, nil
 }
