@@ -494,7 +494,7 @@ stages:
                 matching: all
                 sequence:
                   - type: map
-                    # allows inventory schemas for new hardware types to be accepted
+                    # Allows inventory schemas for new hardware types to be accepted
                     allowempty: True
                     mapping:
                       ID:
@@ -670,7 +670,7 @@ stages:
                                   ProcessorFRUInfo:
                                     type: map
                                     required: True
-                                    # this allows the Oem key to be present as a map or a string
+                                    # Allows the Oem key to be present as a map or a string
                                     allowempty: True
                                     mapping:
                                       InstructionSet:
@@ -721,6 +721,7 @@ stages:
                                         required: True
                                         enum:
                                           - "CPU"
+                                          - "GPU"
                                       TotalCores:
                                         type: int
                                         required: True
@@ -887,7 +888,8 @@ stages:
                                     required: True
                               PopulatedFRU:
                                 type: map
-                                required: True
+                                # Some nodes may have empty drive bays which is okay
+                                required: False
                                 mapping:
                                   FRUID:
                                     type: str
@@ -1023,7 +1025,7 @@ stages:
                                   NodeAccelFRUInfo:
                                     type: map
                                     required: True
-                                    # this allows the Oem key to be present as a map or a string
+                                    # Allows the Oem key to be present as a map or a string
                                     allowempty: True
                                     mapping:
                                       InstructionSet:
@@ -1138,7 +1140,7 @@ stages:
                                   NodeAccelRiserFRUInfo:
                                     type: map
                                     required: True
-                                    # this allows the Oem key to be present as a map or a string
+                                    # Allows the Oem key to be present as a map or a string
                                     allowempty: True
                                     mapping:
                                       PhysicalContext:
