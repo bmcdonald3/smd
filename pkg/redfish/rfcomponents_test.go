@@ -1226,6 +1226,38 @@ func NewRTFuncPRLT1() RTFunc {
 				// Header must always be non-nil or it will cause a panic.
 				Header: make(http.Header),
 			}
+		case "https://" + testFQDN + testPathPRLT_chassis_1_devices:
+			return &http.Response{
+				StatusCode: 200,
+				// Send mock response for rpath
+				Body: ioutil.NopCloser(bytes.NewBufferString(testPayloadPRLT_chassis_1_devices)),
+				// Header must always be non-nil or it will cause a panic.
+				Header: make(http.Header),
+			}
+		case "https://" + testFQDN + testPathPRLT_chassis_1_devices_1:
+			return &http.Response{
+				StatusCode: 200,
+				// Send mock response for rpath
+				Body: ioutil.NopCloser(bytes.NewBufferString(testPayloadPRLT_chassis_1_devices_1)),
+				// Header must always be non-nil or it will cause a panic.
+				Header: make(http.Header),
+			}
+		case "https://" + testFQDN + testPathPRLT_chassis_1_devices_2:
+			return &http.Response{
+				StatusCode: 200,
+				// Send mock response for rpath
+				Body: ioutil.NopCloser(bytes.NewBufferString(testPayloadPRLT_chassis_1_devices_2)),
+				// Header must always be non-nil or it will cause a panic.
+				Header: make(http.Header),
+			}
+		case "https://" + testFQDN + testPathPRLT_chassis_1_devices_3:
+			return &http.Response{
+				StatusCode: 200,
+				// Send mock response for rpath
+				Body: ioutil.NopCloser(bytes.NewBufferString(testPayloadPRLT_chassis_1_devices_3)),
+				// Header must always be non-nil or it will cause a panic.
+				Header: make(http.Header),
+			}
 		case "https://" + testFQDN + testPathPRLT_systems:
 			return &http.Response{
 				StatusCode: 200,
@@ -2868,6 +2900,151 @@ const testPayloadPRLT_chassis_1_network_adapters = `{
    "Members@odata.count": 0
  }
 `
+
+const testPathPRLT_chassis_1_devices = "/redfish/v1/Chassis/1/Devices"
+
+const testPayloadPRLT_chassis_1_devices = `{
+  "@odata.context": "/redfish/v1/$metadata#HpeServerDeviceCollection.HpeServerDeviceCollection",
+  "@odata.etag": "W/\"DA402EBA\"",
+  "@odata.id": "/redfish/v1/Chassis/1/Devices",
+  "@odata.type": "#HpeServerDeviceCollection.HpeServerDeviceCollection",
+  "Description": "Devices View",
+  "Name": "Devices",
+  "Members": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/1/Devices/1"
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/1/Devices/2"
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/1/Devices/3"
+    }
+  ],
+  "Members@odata.count": 3
+}
+`
+
+const testPathPRLT_chassis_1_devices_1 = "/redfish/v1/Chassis/1/Devices/1"
+
+const testPayloadPRLT_chassis_1_devices_1 = `{
+  "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+  "@odata.etag": "W/\"923970AD\"",
+  "@odata.id": "/redfish/v1/Chassis/1/Devices/1",
+  "@odata.type": "#HpeServerDevice.v2_0_0.HpeServerDevice",
+  "Id": "1",
+  "DeviceInstances": [
+    {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/5"
+    },
+    {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/6"
+    }
+  ],
+  "DeviceType": "LOM/NIC",
+  "FirmwareVersion": {
+    "Current": {
+      "VersionString": "08.50.78"
+    }
+  },
+  "Links": {
+    "PCISlot": {
+      "@odata.id": "/redfish/v1/Systems/1/PCISlots/5"
+    }
+  },
+  "Location": "OCP 3.0 Slot 10",
+  "MCTPProtocolDisabled": false,
+  "Manufacturer": "Marvell",
+  "Name": "Marvell 2P 25GbE SFP28 QL41232HQCU-HC OCP3 Adapter",
+  "PartNumber": "AH2010414-31  A",
+  "ProductPartNumber": "AH2010414-31  A",
+  "ProductVersion": " ",
+  "SerialNumber": "REE2020K07000",
+  "Status": {
+    "Health": "OK",
+    "State": "Enabled"
+  }
+}
+`
+
+const testPathPRLT_chassis_1_devices_2 = "/redfish/v1/Chassis/1/Devices/2"
+
+const testPayloadPRLT_chassis_1_devices_2 = `{
+  "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+  "@odata.etag": "W/\"D5CDA23A\"",
+  "@odata.id": "/redfish/v1/Chassis/1/Devices/2",
+  "@odata.type": "#HpeServerDevice.v2_0_0.HpeServerDevice",
+  "Id": "2",
+  "DeviceInstances": [
+    {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/7"
+    }
+  ],
+  "DeviceType": "Smart Storage",
+  "FirmwareVersion": {
+    "Current": {
+      "VersionString": "2.65"
+    }
+  },
+  "Links": {
+    "PCISlot": {
+      "@odata.id": "/redfish/v1/Systems/1/PCISlots/6"
+    }
+  },
+  "Location": "Storage Slot 12",
+  "MCTPProtocolDisabled": false,
+  "Manufacturer": "",
+  "Name": "HPE Smart Array E208i-a SR Gen10",
+  "PartNumber": "836259-001",
+  "ProductPartNumber": "804329-001",
+  "ProductVersion": "B",
+  "SerialNumber": "PEYHB0ERHDV3OT ",
+  "Status": {
+    "Health": "OK",
+    "State": "Enabled"
+  }
+}
+`
+
+const testPathPRLT_chassis_1_devices_3 = "/redfish/v1/Chassis/1/Devices/3"
+
+const testPayloadPRLT_chassis_1_devices_3 = `{
+  "@odata.context": "/redfish/v1/$metadata#HpeServerDevice.HpeServerDevice",
+  "@odata.etag": "W/\"DF7754E3\"",
+  "@odata.id": "/redfish/v1/Chassis/1/Devices/3",
+  "@odata.type": "#HpeServerDevice.v2_0_0.HpeServerDevice",
+  "Id": "3",
+  "DeviceInstances": [
+    {
+      "@odata.id": "/redfish/v1/Systems/1/PCIDevices/2"
+    }
+  ],
+  "DeviceType": "GPU",
+  "FirmwareVersion": {
+    "Current": {
+      "VersionString": "88.00.48.00.02"
+    }
+  },
+  "Links": {
+    "PCISlot": {
+      "@odata.id": "/redfish/v1/Systems/1/PCISlots/1"
+    }
+  },
+  "Location": "PCI-E Slot 2",
+  "MCTPProtocolDisabled": false,
+  "Manufacturer": "NVIDIA",
+  "Name": "NVIDIA Tesla V100 32GB PCIE",
+  "PartNumber": "1DB6-897-A1",
+  "ProductPartNumber": "900-2G500-0010-000",
+  "ProductVersion": "A1",
+  "SerialNumber": "0322818009821",
+  "Status": {
+    "Health": "OK",
+    "State": "Enabled"
+  }
+}
+`
+
 const testPathPRLT_systems = "/redfish/v1/Systems/"
 
 const testPayloadPRLT_systems = `{
