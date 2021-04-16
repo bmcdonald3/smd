@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.28.9] - 2021-04-16
+
+### Fixed
+
+- CASMHMS-4719 - Fix HSM postgres slowness during discovery floods on large (2000+ nodes) systems.
+
+### Changed
+
+- CASMHMS-4719 - Changed FRU tracking to be more simple and avoid long running sql queries.
+
 ## [1.28.8] - 2021-04-14
 
 ### Fixed
