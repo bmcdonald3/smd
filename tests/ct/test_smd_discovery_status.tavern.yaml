@@ -24,7 +24,8 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 4
+# All test cases disabled (CASMHMS-4794)
+# HMS test metrics test cases: 0
 # 1. GET /DiscoveryStatus API response code
 # 2. GET /DiscoveryStatus API response body
 # 3. GET /DiscoveryStatus/{xname} API response code
