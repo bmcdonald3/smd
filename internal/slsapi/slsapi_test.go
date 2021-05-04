@@ -133,7 +133,7 @@ func TestGetNodeInfo(t *testing.T) {
 	defaultUrl, _ := url.Parse("http://cray-sls")
 	tests := []struct {
 		SLSUrl       *url.URL
-		Client       *http.Client
+		Client       *retryablehttp.Client
 		id           string
 		expectedInfo ComptypeNode
 		expectErr    bool

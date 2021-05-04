@@ -166,14 +166,14 @@ func (sls *SLS) doRequest(req *http.Request) ([]byte, error) {
 		return nil, fmt.Errorf("SLS struct has no HTTP Client")
 	}
 
+	// Send the request
+	base.SetHTTPUserAgent(req, serviceName)
 	newRequest, err := retryablehttp.FromRequest(req)
 	if err != nil {
 		return nil, err
 	}
 	newRequest.Header.Set("Content-Type", "application/json")
 
-	// Send the request
-	base.SetHTTPUserAgent(req,serviceName)
 	rsp, err := sls.Client.Do(newRequest)
 	if err != nil {
 		return nil, err
