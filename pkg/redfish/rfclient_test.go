@@ -54,6 +54,7 @@ func TestSetHTTPClientInsecureSkipVerify(t *testing.T) {
 */
 
 func TestRfDefaultClient(t *testing.T) {
+	httpRFClient = nil
 	SetHTTPClientTimeout(35)
 	client := RfDefaultClient()
 	if client.InsecureClient.HTTPClient.Timeout != time.Duration(35)*time.Second {

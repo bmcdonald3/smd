@@ -28,6 +28,7 @@ package slsapi
 
 import (
 	"bytes"
+	"github.com/hashicorp/go-retryablehttp"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -36,7 +37,7 @@ import (
 	"stash.us.cray.com/HMS/hms-base"
 )
 
-var client *http.Client
+var client *retryablehttp.Client
 var testSvcName = "SLSTEST"
 
 // RoundTrip method override
@@ -48,10 +49,10 @@ func (f RTFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 }
 
 // NewTestClient returns *http.Client with Transport replaced to avoid making real calls
-func NewTestClient(f RTFunc) *http.Client {
-	return &http.Client{
-		Transport: RTFunc(f),
-	}
+func NewTestClient(f RTFunc) *retryablehttp.Client {
+	testClient := retryablehttp.NewClient()
+	testClient.HTTPClient.Transport = RTFunc(f)
+	return testClient
 }
 
 // Sets up the http client for testing
@@ -91,7 +92,7 @@ func TestIsReady(t *testing.T) {
 	badUrl, _ := url.Parse("http://cray-sls.bad")
 	tests := []struct {
 		SLSUrl      *url.URL
-		Client      *http.Client
+		Client      *retryablehttp.Client
 		expectedRsp bool
 		expectErr   bool
 	}{{
