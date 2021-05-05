@@ -26,6 +26,8 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/go-retryablehttp"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -37,7 +39,7 @@ const DefaultSlsUrl string = "http://cray-sls/"
 
 type SLS struct {
 	Url    *url.URL
-	Client *http.Client
+	Client *retryablehttp.Client
 }
 
 type slsReady struct {
@@ -65,7 +67,7 @@ type ComptypeNode struct {
 var serviceName string
 
 // Allocate and initialize new SLS struct.
-func NewSLS(slsUrl string, httpClient *http.Client, svcName string) *SLS {
+func NewSLS(slsUrl string, httpClient *retryablehttp.Client, svcName string) *SLS {
 	var err error
 	serviceName = svcName
 	sls := new(SLS)
@@ -80,15 +82,14 @@ func NewSLS(slsUrl string, httpClient *http.Client, svcName string) *SLS {
 
 	// Create an httpClient if one was not given
 	if httpClient == nil {
-		transport := &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-			},
-		}
-		sls.Client = &http.Client{
-			Transport: transport,
-			Timeout:   30 * time.Second,
-		}
+		sls.Client = retryablehttp.NewClient()
+		sls.Client.HTTPClient.Transport = &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
+		sls.Client.RetryMax = 5
+		sls.Client.HTTPClient.Timeout = time.Second * 40
+		//turn off the http client loggin!
+		tmpLogger := logrus.New()
+		tmpLogger.SetLevel(logrus.PanicLevel)
+		sls.Client.Logger = tmpLogger
 	} else {
 		sls.Client = httpClient
 	}
@@ -166,8 +167,14 @@ func (sls *SLS) doRequest(req *http.Request) ([]byte, error) {
 	}
 
 	// Send the request
-	base.SetHTTPUserAgent(req,serviceName)
-	rsp, err := sls.Client.Do(req)
+	base.SetHTTPUserAgent(req, serviceName)
+	newRequest, err := retryablehttp.FromRequest(req)
+	if err != nil {
+		return nil, err
+	}
+	newRequest.Header.Set("Content-Type", "application/json")
+
+	rsp, err := sls.Client.Do(newRequest)
 	if err != nil {
 		return nil, err
 	}

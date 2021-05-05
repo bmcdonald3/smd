@@ -24,10 +24,10 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/go-retryablehttp"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -139,15 +139,7 @@ func (j *JobSCN) Run() {
 		return
 	}
 	// j.s.LogAlways("Sending SCN Payload: %v\n", string(payload))
-	transport := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		},
-	}
-	client := http.Client{
-		Transport: transport,
-		Timeout:   30 * time.Second,
-	}
+	client := j.s.GetHTTPClient()
 
 	// Get a the state that triggered this SCN
 	if len(scn.State) != 0 {
@@ -185,16 +177,23 @@ func (j *JobSCN) Run() {
 			defer waitGroup.Done()
 			for retry := 0; retry < 3; retry++ {
 				var strbody []byte
-				req,rerr := http.NewRequest("POST",urlStr,bytes.NewReader(payload))
+				req, rerr := http.NewRequest("POST", urlStr, bytes.NewReader(payload))
 				if (err != nil) {
 					j.s.LogAlways("WARNING: can't create an HTTP request: %v",
 						rerr)
 					time.Sleep(5 * time.Second)
 					continue
 				}
-				base.SetHTTPUserAgent(req,serviceName)
+				base.SetHTTPUserAgent(req, serviceName)
 				req.Header.Add("Content-Type","application/json")
-				rsp, err := client.Do(req)
+				newRequest, rerr := retryablehttp.FromRequest(req)
+				if err != nil {
+					j.s.LogAlways("WARNING: can't create an HTTP request: %v",
+						rerr)
+					time.Sleep(5 * time.Second)
+					continue
+				}
+				rsp, err := client.Do(newRequest)
 				if err != nil {
 					j.s.LogAlways("WARNING: SCN POST failed for %s: %v", urlStr, err)
 				} else {

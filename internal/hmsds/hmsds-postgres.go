@@ -255,7 +255,7 @@ func (d *hmsdbPg) Open() error {
 	// Workaround for HMS-1080, one of these, so long as a minute is less
 	// than wait_timeout.
 	//d.db.SetMaxIdleConns(0)
-	d.db.SetConnMaxLifetime(time.Minute)
+	//d.db.SetConnMaxLifetime(time.Minute)
 
 	// Mark handle as connected, as we've successfully contacted the DB
 	// and are ready to perform queries.
@@ -565,7 +565,7 @@ func (d *hmsdbPg) UpsertComponents(comps []*base.Component, force bool) (map[str
 		ids[i] = comp.ID
 	}
 	// Lock components for update
-	affectedComps, err := t.GetComponentsTx(IDs(ids), WRLock, From("UpsertComponents"))
+	affectedComps, err := t.GetComponentsTx(IDs(ids), From("UpsertComponents"))
 	if err != nil {
 		t.Rollback()
 		return nil, err
@@ -716,7 +716,7 @@ func (d *hmsdbPg) UpdateCompStates(
 		// Lock components for update and select components we need to change.
 		// This should produce normalized affectedIDs.
 		affectedIDs, err = t.GetComponentIDsTx(IDs(ids),
-			NotStateOrFlag(state, nflag), WRLock, States(startStates),
+			NotStateOrFlag(state, nflag), States(startStates),
 			From(fname))
 		if err != nil {
 			t.Rollback()
@@ -771,7 +771,7 @@ func (d *hmsdbPg) BulkUpdateCompFlagOnly(ids []string, flag string) ([]string, e
 	// flag
 	// Lock components for update and select components we need to change.
 	affectedIDs, err := t.GetComponentIDsTx(IDs(ids), Flag("!"+flag),
-		WRLock, From("BulkUpdateCompFlagOnly"))
+		From("BulkUpdateCompFlagOnly"))
 	if err != nil {
 		t.Rollback()
 		return []string{}, err
@@ -842,7 +842,7 @@ func (d *hmsdbPg) BulkUpdateCompEnabled(ids []string, enabled bool) ([]string, e
 	// Lock components for update and select those that still need updates.
 	affectedIDs, err := t.GetComponentIDsTx(IDs(ids),
 		Enabled("!"+strconv.FormatBool(enabled)),
-		WRLock, From("BulkUpdateCompEnabled"))
+		From("BulkUpdateCompEnabled"))
 	if err != nil {
 		t.Rollback()
 		return []string{}, err
@@ -892,7 +892,7 @@ func (d *hmsdbPg) BulkUpdateCompSwStatus(ids []string, swstatus string) ([]strin
 	}
 	// Lock components for update
 	affectedIDs, err := t.GetComponentIDsTx(IDs(ids), SwStatus("!"+swstatus),
-		WRLock, From("BulkUpdateCompSwStatus"))
+		From("BulkUpdateCompSwStatus"))
 	if err != nil {
 		t.Rollback()
 		return []string{}, err
@@ -938,10 +938,10 @@ func (d *hmsdbPg) BulkUpdateCompRole(ids []string, role, subRole string) ([]stri
 	// Lock components for update that still need changes (i.e. !role)
 	if subRole == "" {
 		affectedIDs, err = t.GetComponentIDsTx(IDs(ids), Role("!"+role),
-			WRLock, From("BulkUpdateCompRole"))
+			From("BulkUpdateCompRole"))
 	} else {
 		affectedIDs, err = t.GetComponentIDsTx(IDs(ids), Role("!"+role),
-			SubRole("!"+subRole), WRLock, From("BulkUpdateCompRole"))
+			SubRole("!"+subRole), From("BulkUpdateCompRole"))
 	}
 	if err != nil {
 		t.Rollback()
@@ -993,7 +993,7 @@ func (d *hmsdbPg) BulkUpdateCompClass(ids []string, class string) ([]string, err
 	}
 	// Lock components for update
 	affectedIDs, err := t.GetComponentIDsTx(IDs(ids), Class("!"+class),
-		WRLock, From("BulkUpdateCompClass"))
+		From("BulkUpdateCompClass"))
 	if err != nil {
 		t.Rollback()
 		return []string{}, err
@@ -1029,7 +1029,7 @@ func (d *hmsdbPg) BulkUpdateCompNID(comps *[]base.Component) error {
 		ids[i] = comp.ID
 	}
 	// Lock components for update
-	_, err = t.GetComponentIDsTx(IDs(ids), WRLock, From("BulkUpdateCompNID"))
+	_, err = t.GetComponentIDsTx(IDs(ids), From("BulkUpdateCompNID"))
 	if err != nil {
 		t.Rollback()
 		return err
@@ -2131,8 +2131,7 @@ func (d *hmsdbPg) PatchRFEndpointNoDiscInfo(id string, epp sm.RedfishEndpointPat
 	} else {
 		reps, err = t.GetRFEndpointsTx(
 			RFE_From(label),
-			RFE_ID(id),
-			RFE_WRLock)
+			RFE_ID(id))
 	}
 	if err != nil {
 		t.Rollback()
@@ -2288,8 +2287,7 @@ func (d *hmsdbPg) UpdateRFEndpointForDiscover(ids []string, force bool) (
 	// Get current endpoints to see if they are already being discovered
 	reps, err := t.GetRFEndpointsTx(
 		RFE_From(label),
-		RFE_IDs(ids),
-		RFE_WRLock)
+		RFE_IDs(ids))
 	if err != nil {
 		t.Rollback()
 		return nil, err
@@ -3420,7 +3418,7 @@ func (d *hmsdbPg) UpdateAllForRFEndpoint(
 			// higher state.
 			if compNew.Type == base.Node.String() {
 				// Read lock the current entry, if there is one.
-				compOld, err := t.GetComponentByIDForUpdateTx(compNew.ID)
+				compOld, err := t.GetComponentByIDTx(compNew.ID)
 				if err != nil {
 					t.Rollback()
 					return nil, err
@@ -4189,7 +4187,7 @@ func (d *hmsdbPg) InsertCompLock(cl *sm.CompLock) (string, error) {
 		t.Rollback()
 		return "", err
 	}
-	affectedIDs, err := t.GetComponentIDsTx(IDs(cl.Xnames), WRLock, From("InsertCompLock"))
+	affectedIDs, err := t.GetComponentIDsTx(IDs(cl.Xnames), From("InsertCompLock"))
 	if err != nil {
 		t.Rollback()
 		return "", err

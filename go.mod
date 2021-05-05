@@ -28,10 +28,10 @@ require (
 	google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70 // indirect
 	google.golang.org/grpc v1.29.1 // indirect
 	google.golang.org/protobuf v1.25.0 // indirect
-	stash.us.cray.com/HMS/hms-base v1.12.0
-	stash.us.cray.com/HMS/hms-certs v1.2.0
-	stash.us.cray.com/HMS/hms-compcredentials v1.10.0
-	stash.us.cray.com/HMS/hms-go-http-lib v1.4.0
-	stash.us.cray.com/HMS/hms-msgbus v1.9.0
-	stash.us.cray.com/HMS/hms-securestorage v1.11.0
+	stash.us.cray.com/HMS/hms-base v1.12.2
+	stash.us.cray.com/HMS/hms-certs v1.2.2
+	stash.us.cray.com/HMS/hms-compcredentials v1.10.1
+	stash.us.cray.com/HMS/hms-go-http-lib v1.4.1
+	stash.us.cray.com/HMS/hms-msgbus v1.9.1
+	stash.us.cray.com/HMS/hms-securestorage v1.11.1
 )
