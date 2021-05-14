@@ -303,6 +303,8 @@ var eventActionParserLookup = map[string]EventActionParser{
 	"systempoweroff":                          AlertSystemPowerOffParser,
 	"alert":                                   AlertSystemPowerParser,
 	"powerstatuschange":                       AlertSystemPowerParser,
+	"serverpoweredon":                         AlertSystemPowerOnParser,
+	"serverpoweredoff":                        AlertSystemPowerOffParser,
 }
 
 // Gets the EventActionParser function for the processed event or returns
@@ -570,7 +572,7 @@ func generateRcChildIDs(s *SmD, xname string, op ResourceOp) []string {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Intel BMC firmware
+// Intel BMC firmware & HPE iLo
 /////////////////////////////////////////////////////////////////////////////
 
 // EventActionParser - Alert, presumably from Intel BMC, that indicates

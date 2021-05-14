@@ -586,7 +586,32 @@ func TestDoHandleRFEvent(t *testing.T) {
 		"OK",
 		false,
 		nil,
-	}}
+	}, {
+		//
+		//  HPE - iLO Registry
+		//
+		st.GenEventHPEiLO(
+			st.EventHPEiLOServerPoweredOn,
+			st.EpID("x3000c0s1b0"),
+			st.RfId("1")),
+		nil,
+		[]string{"x3000c0s1b0n0"},
+		"On",
+		"OK",
+		false,
+		nil,
+	}, {
+		st.GenEventHPEiLO(
+			st.EventHPEiLOServerPoweredOff,
+			st.EpID("x3000c0s2b0"),
+			st.RfId("1")),
+		nil,
+		[]string{"x3000c0s2b0n0"},
+		"Off",
+		"OK",
+		false,
+		nil,
+	}, }
 
 	// Start a local HTTP server
 	server := httptest.NewTLSServer(http.HandlerFunc(GigabyteHandler))
@@ -623,7 +648,13 @@ func TestDoHandleRFEvent(t *testing.T) {
 		cep.RfEndpointFQDN = test2FQDN
 		cep.URL = test2FQDN + cep.URL
 	}
+	for _, cep := range HPEiLOCompEPs {
+		cep.RfEndpointFQDN = test2FQDN
+		cep.URL = test2FQDN + cep.URL
+	}
+
 	results.GetCompEndpointsAll.Return.entries = append(results.GetCompEndpointsAll.Return.entries, GigabyteCompEPs...)
+	results.GetCompEndpointsAll.Return.entries = append(results.GetCompEndpointsAll.Return.entries, HPEiLOCompEPs...)
 
 	// We mock up the behavior of this function.  It always finds things
 	// that are in the sample endpoints, and never finds things that are not.
