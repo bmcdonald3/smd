@@ -443,3 +443,90 @@ var EventGigabyteSystemOK = `{
 		}]
 }
 `
+
+////////////////////////////////////////////////////////////////////////////
+// Event templates - HPE iLo firmware
+////////////////////////////////////////////////////////////////////////////
+
+// Defaults if left blank in below.
+const (
+	HPEiLORegistryId = "iLOEvents.2.1."
+	HPEiLOSeverity   = "OK"
+)
+
+// Same as GenEvent above, but with defaults if there are template fields
+// that the event template specified but were not filled in by the opts.
+func GenEventHPEiLO(e string, opts ...EventTemplateArg) string {
+	enew := GenEvent(e, opts...)
+	// Default if there are still template values that were not set.
+	enew = strings.Replace(enew, "%REGISTRY_ID%", HPEiLORegistryId, -1)
+	return enew
+}
+
+// This is a specific event type for a System power up event
+var EventHPEiLOServerPoweredOn = `{
+	"@odata.context": "/redfish/v1/$metadata#Event.Event",
+	"@odata.type": "#Event.v1_0_0.Event",
+	"Events":[{
+			"Context": "%XNAME%:whatever",
+			"EventId": "558851bc-c386-d8d0-70a9-900e4a067d84",
+			"EventTimestamp": "2021-04-13T03:29:51Z",
+			"EventType": "Alert",
+			"MemberId": "0",
+			"MessageId": "%REGISTRY_ID%ServerPoweredOn",
+			"Oem": {
+				"Hpe": {
+					"@odata.context": "/redfish/v1/$metadata#HpeEvent.HpeEvent",
+					"@odata.type": "#HpeEvent.v2_1_0.HpeEvent",
+					"CorrelatedEventNumber": 133896,
+					"CorrelatedEventTimeStamp": "2021-04-13T03:31:28Z",
+					"CorrelatedEventType": "Hpe-iLOEventLog",
+					"CorrelatedIndications": [
+						"HP:SNMP:1.3.6.1.4.1.232:6:9017:2914671648"
+					],
+					"Resource": "/redfish/v1/Systems/%REDFISH_ID%"
+				}
+			},
+			"OriginOfCondition": {
+				"@odata.id": "/redfish/v1/Systems/%REDFISH_ID%"
+			},
+			"Severity": "OK"
+		}
+	],
+	"Name": "Events"
+}
+`
+
+// This is a specific event type for a System power down event
+var EventHPEiLOServerPoweredOff = `{
+	"@odata.context": "/redfish/v1/$metadata#Event.Event",
+	"@odata.type": "#Event.v1_0_0.Event",
+	"Events":[{
+			"Context": "%XNAME%:whatever",
+			"EventId": "558851bc-c386-d8d0-70a9-900e4a067d84",
+			"EventTimestamp": "2021-04-13T03:29:51Z",
+			"EventType": "Alert",
+			"MemberId": "0",
+			"MessageId": "%REGISTRY_ID%ServerPoweredOff",
+			"Oem": {
+				"Hpe": {
+					"@odata.context": "/redfish/v1/$metadata#HpeEvent.HpeEvent",
+					"@odata.type": "#HpeEvent.v2_1_0.HpeEvent",
+					"CorrelatedEventNumber": 133896,
+					"CorrelatedEventTimeStamp": "2021-04-13T03:31:28Z",
+					"CorrelatedEventType": "Hpe-iLOEventLog",
+					"CorrelatedIndications": [
+						"HP:SNMP:1.3.6.1.4.1.232:6:9017:2914671648"
+					],
+					"Resource": "/redfish/v1/Systems/%REDFISH_ID%"
+				}
+			},
+			"OriginOfCondition": {
+				"@odata.id": "/redfish/v1/Systems/%REDFISH_ID%"
+			},
+			"Severity": "OK"
+		}
+	],
+	"Name": "Events"
+}
+`

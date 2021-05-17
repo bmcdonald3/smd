@@ -586,6 +586,31 @@ func TestDoHandleRFEvent(t *testing.T) {
 		"OK",
 		false,
 		nil,
+	}, {
+		//
+		//  HPE - iLO Registry
+		//
+		st.GenEventHPEiLO(
+			st.EventHPEiLOServerPoweredOn,
+			st.EpID("x3000c0s1b0"),
+			st.RfId("1")),
+		nil,
+		[]string{"x3000c0s1b0n0"},
+		"On",
+		"OK",
+		false,
+		nil,
+	}, {
+		st.GenEventHPEiLO(
+			st.EventHPEiLOServerPoweredOff,
+			st.EpID("x3000c0s2b0"),
+			st.RfId("1")),
+		nil,
+		[]string{"x3000c0s2b0n0"},
+		"Off",
+		"OK",
+		false,
+		nil,
 	}}
 
 	// Start a local HTTP server
@@ -623,7 +648,13 @@ func TestDoHandleRFEvent(t *testing.T) {
 		cep.RfEndpointFQDN = test2FQDN
 		cep.URL = test2FQDN + cep.URL
 	}
+	for _, cep := range HPEiLOCompEPs {
+		cep.RfEndpointFQDN = test2FQDN
+		cep.URL = test2FQDN + cep.URL
+	}
+
 	results.GetCompEndpointsAll.Return.entries = append(results.GetCompEndpointsAll.Return.entries, GigabyteCompEPs...)
+	results.GetCompEndpointsAll.Return.entries = append(results.GetCompEndpointsAll.Return.entries, HPEiLOCompEPs...)
 
 	// We mock up the behavior of this function.  It always finds things
 	// that are in the sample endpoints, and never finds things that are not.
@@ -1168,3 +1199,88 @@ const testPayloadGigabyteSystems_SelfOff = `
     "UUID": "cd210000-3b17-11ea-8000-e0d55e659162"
 }
 `
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                         HPE iLO - Payloads
+//////////////////////////////////////////////////////////////////////////////
+
+var HPEiLOCompEPs = []*sm.ComponentEndpoint{
+	{
+		ComponentDescription: rf.ComponentDescription{
+			ID:             "x3000c0s1b0n0",
+			Type:           "Node",
+			RedfishType:    "ComputerSystem",
+			RedfishSubtype: "Physical",
+			UUID:           "34364C58-6435-4732-3037-505030303235",
+			OdataID:        "/redfish/v1/Systems/1",
+			RfEndpointID:   "x3000c0s1b0",
+		},
+		RfEndpointFQDN:        "",
+		URL:                   "/redfish/v1/Systems/1",
+		ComponentEndpointType: "ComponentEndpointComputerSystem",
+		RedfishSystemInfo: &rf.ComponentSystemInfo{
+			Name: "Computer System",
+			Actions: &rf.ComputerSystemActions{ComputerSystemReset: rf.ActionReset{
+				AllowableValues: []string{
+					"On",
+					"ForceOff",
+					"GracefulShutdown",
+					"ForceRestart",
+					"Nmi",
+					"PushPowerButton",
+					"GracefulRestart",
+				},
+				Target: "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset"},
+			},
+			EthNICInfo: []*rf.EthernetNICInfo{
+				&rf.EthernetNICInfo{RedfishId: "1",
+					Oid:         "/redfish/v1/Systems/1/EthernetInterfaces/1",
+					MACAddress:  "68:05:ca:bb:c1:82",
+				},
+				&rf.EthernetNICInfo{RedfishId: "2",
+					Oid:         "/redfish/v1/Systems/1/EthernetInterfaces/2",
+					MACAddress:  "68:05:ca:bb:c1:83",
+				},
+			},
+		},
+	}, {
+		ComponentDescription: rf.ComponentDescription{
+			ID:             "x3000c0s2b0n0",
+			Type:           "Node",
+			RedfishType:    "ComputerSystem",
+			RedfishSubtype: "Physical",
+			UUID:           "34364C58-6435-4732-3037-505030303235",
+			OdataID:        "/redfish/v1/Systems/1",
+			RfEndpointID:   "x3000c0s2b0",
+		},
+		RfEndpointFQDN:        "",
+		URL:                   "/redfish/v1/Systems/1",
+		ComponentEndpointType: "ComponentEndpointComputerSystem",
+		RedfishSystemInfo: &rf.ComponentSystemInfo{
+			Name: "Computer System",
+			Actions: &rf.ComputerSystemActions{ComputerSystemReset: rf.ActionReset{
+				AllowableValues: []string{
+					"On",
+					"ForceOff",
+					"GracefulShutdown",
+					"ForceRestart",
+					"Nmi",
+					"PushPowerButton",
+					"GracefulRestart",
+				},
+				Target: "/redfish/v1/Systems/1/Actions/ComputerSystem.Reset"},
+			},
+			EthNICInfo: []*rf.EthernetNICInfo{
+				&rf.EthernetNICInfo{RedfishId: "1",
+					Oid:         "/redfish/v1/Systems/1/EthernetInterfaces/1",
+					MACAddress:  "68:05:ca:bb:c1:82",
+				},
+				&rf.EthernetNICInfo{RedfishId: "2",
+					Oid:         "/redfish/v1/Systems/1/EthernetInterfaces/2",
+					MACAddress:  "68:05:ca:bb:c1:83",
+				},
+			},
+		},
+	},
+}

@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.28.17] - 2021-05-13
+## [1.28.18] - 2021-05-13
 
 ### Changed
 
 - CASMHMS-4834 - Modifies Insert, Delete, and Update postgres operations on the v2 locking interface use bulk operations.
+
+## [1.28.17] - 2021-05-14
+
+### Added
+
+- CASMHMS-4836 - Support for parsing redfish events from HPE iLo nodes
 
 ## [1.28.16] - 2021-05-10
 
