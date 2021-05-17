@@ -5921,7 +5921,8 @@ func TestPgInsertCompLock(t *testing.T) {
 			sq.Expr("?", resInsert.expiration_timestamp),
 			sq.Expr("?", resInsert.deputy_key),
 			sq.Expr("?", resInsert.reservation_key),
-			resInsert.v1_lock_id).ToSql()
+			resInsert.v1_lock_id).
+		Suffix("ON CONFLICT DO NOTHING RETURNING " + compResCompIdCol + ", " + compResDKCol + ", " + compResRKCol).ToSql()
 
 	tests := []struct {
 		cl                        *sm.CompLock
@@ -5948,6 +5949,8 @@ func TestPgInsertCompLock(t *testing.T) {
 		dbInsertResError          error
 		expectedInsertResPrepare  string
 		expectedInsertResArgs     []driver.Value
+		dbInsertResReturnCols     []string
+		dbInsertResReturnRows     [][]driver.Value
 		expectErr                 bool
 	}{{
 		cl:                        dLock1,
@@ -5961,7 +5964,7 @@ func TestPgInsertCompLock(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(dLock1GetCompIDs),
 		expectedGetCompIDsArgs:    []driver.Value{dLock1.Xnames[0]},
 		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{dLock1.Xnames[0]},
 		},
 		dbUpdateFlagError:         nil,
@@ -5971,12 +5974,16 @@ func TestPgInsertCompLock(t *testing.T) {
 		expectedGetCompsPrepare:   regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompsArgs:      []driver.Value{dLock1.Xnames[0]},
 		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows: [][]driver.Value{
+		dbGetCompsReturnRows:      [][]driver.Value{
 			[]driver.Value{dLock1.Xnames[0], "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, false},
 		},
 		dbInsertResError:         nil,
 		expectedInsertResPrepare: regexp.QuoteMeta(resInsertReservation),
 		expectedInsertResArgs:    []driver.Value{dLock1.Xnames[0], AnyTime{}, AnyTime{}, AnyUUID{}, AnyUUID{}, AnyString{}},
+		dbInsertResReturnCols:    []string{"component_id", "deputy_key", "reservation_key"},
+		dbInsertResReturnRows:    [][]driver.Value{
+			[]driver.Value{dLock1.Xnames[0], resInsert.deputy_key, resInsert.reservation_key},
+		},
 		expectErr:                false,
 	}, {
 		cl:                        dLock1,
@@ -5990,7 +5997,7 @@ func TestPgInsertCompLock(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(dLock1GetCompIDs),
 		expectedGetCompIDsArgs:    []driver.Value{dLock1.Xnames[0]},
 		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{dLock1.Xnames[0]},
 		},
 		dbUpdateFlagError:         ErrHMSDSArgBadID,
@@ -6004,6 +6011,8 @@ func TestPgInsertCompLock(t *testing.T) {
 		dbInsertResError:          nil,
 		expectedInsertResPrepare:  "",
 		expectedInsertResArgs:     []driver.Value{},
+		dbInsertResReturnCols:     []string{},
+		dbInsertResReturnRows:     [][]driver.Value{},
 		expectErr:                 true,
 	}, {
 		cl:                        dLock1,
@@ -6029,6 +6038,8 @@ func TestPgInsertCompLock(t *testing.T) {
 		dbInsertResError:          nil,
 		expectedInsertResPrepare:  "",
 		expectedInsertResArgs:     []driver.Value{},
+		dbInsertResReturnCols:     []string{},
+		dbInsertResReturnRows:     [][]driver.Value{},
 		expectErr:                 true,
 	}, {
 		cl:                        dLock1,
@@ -6054,6 +6065,8 @@ func TestPgInsertCompLock(t *testing.T) {
 		dbInsertResError:          nil,
 		expectedInsertResPrepare:  "",
 		expectedInsertResArgs:     []driver.Value{},
+		dbInsertResReturnCols:     []string{},
+		dbInsertResReturnRows:     [][]driver.Value{},
 		expectErr:                 true,
 	}, {
 		cl:                        dLock1,
@@ -6079,6 +6092,8 @@ func TestPgInsertCompLock(t *testing.T) {
 		dbInsertResError:          nil,
 		expectedInsertResPrepare:  "",
 		expectedInsertResArgs:     []driver.Value{},
+		dbInsertResReturnCols:     []string{},
+		dbInsertResReturnRows:     [][]driver.Value{},
 		expectErr:                 true,
 	}, {
 		cl:                        dLock2,
@@ -6104,6 +6119,8 @@ func TestPgInsertCompLock(t *testing.T) {
 		dbInsertResError:          nil,
 		expectedInsertResPrepare:  "",
 		expectedInsertResArgs:     []driver.Value{},
+		dbInsertResReturnCols:     []string{},
+		dbInsertResReturnRows:     [][]driver.Value{},
 		expectErr:                 true,
 	}}
 
@@ -6116,6 +6133,10 @@ func TestPgInsertCompLock(t *testing.T) {
 		v2rows := sqlmock.NewRows(test.dbGetCompsReturnCols)
 		for _, row := range test.dbGetCompsReturnRows {
 			v2rows.AddRow(row...)
+		}
+		resRows := sqlmock.NewRows(test.dbInsertResReturnCols)
+		for _, row := range test.dbInsertResReturnRows {
+			resRows.AddRow(row...)
 		}
 
 		mockPG.ExpectBegin()
@@ -6145,7 +6166,7 @@ func TestPgInsertCompLock(t *testing.T) {
 			mockPG.ExpectPrepare(test.expectedGetCompIDsPrepare).ExpectQuery().WithArgs(test.expectedGetCompIDsArgs...).WillReturnRows(rows)
 			mockPG.ExpectPrepare(test.expectedUpdateFlagPrepare).ExpectExec().WithArgs(test.expectedUpdateFlagArgs...).WillReturnResult(sqlmock.NewResult(0, test.expectedMembers))
 			mockPG.ExpectPrepare(test.expectedGetCompsPrepare).ExpectQuery().WithArgs(test.expectedGetCompsArgs...).WillReturnRows(v2rows)
-			mockPG.ExpectPrepare(test.expectedInsertResPrepare).ExpectExec().WithArgs(test.expectedInsertResArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
+			mockPG.ExpectPrepare(test.expectedInsertResPrepare).ExpectQuery().WithArgs(test.expectedInsertResArgs...).WillReturnRows(resRows)
 			mockPG.ExpectCommit()
 		}
 
@@ -6850,7 +6871,8 @@ func TestPgInsertCompReservations(t *testing.T) {
 			sq.Expr("?", resInsert.expiration_timestamp),
 			sq.Expr("?", resInsert.deputy_key),
 			sq.Expr("?", resInsert.reservation_key),
-			resInsert.v1_lock_id).ToSql()
+			resInsert.v1_lock_id).
+		Suffix("ON CONFLICT DO NOTHING RETURNING " + compResCompIdCol + ", " + compResDKCol + ", " + compResRKCol).ToSql()
 
 	tests := []struct {
 		f                         sm.CompLockV2Filter
@@ -6862,6 +6884,8 @@ func TestPgInsertCompReservations(t *testing.T) {
 		dbInsertError             error
 		expectedInsertPrepare     string
 		expectedInsertArgs        []driver.Value
+		dbInsertV2ResReturnCols   []string
+		dbInsertV2ResReturnRows   [][]driver.Value
 		expectedSuccess           int
 		expectedFailure           int
 		expectErr                 bool
@@ -6875,12 +6899,16 @@ func TestPgInsertCompReservations(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompIDsArgs:    []driver.Value{"x3000c0s9b0n0"},
 		dbGetCompIDsReturnCols:    []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, false},
 		},
-		dbInsertError:         nil,
-		expectedInsertPrepare: regexp.QuoteMeta(resInsertReservation),
-		expectedInsertArgs:    []driver.Value{"x3000c0s9b0n0", AnyTime{}, AnyTime{}, AnyUUID{}, AnyUUID{}, AnyString{}},
+		dbInsertError:           nil,
+		expectedInsertPrepare:   regexp.QuoteMeta(resInsertReservation),
+		expectedInsertArgs:      []driver.Value{"x3000c0s9b0n0", AnyTime{}, AnyTime{}, AnyUUID{}, AnyUUID{}, AnyString{}},
+		dbInsertV2ResReturnCols: []string{"component_id", "deputy_key", "reservation_key"},
+		dbInsertV2ResReturnRows: [][]driver.Value{
+			[]driver.Value{"x3000c0s9b0n0", "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17", "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d"},
+		},
 		expectedSuccess:       1,
 		expectedFailure:       0,
 		expectErr:             false,
@@ -6894,15 +6922,17 @@ func TestPgInsertCompReservations(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompIDsArgs:    []driver.Value{"x3000c0s9b0n0"},
 		dbGetCompIDsReturnCols:    []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, true},
 		},
-		dbInsertError:         nil,
-		expectedInsertPrepare: "",
-		expectedInsertArgs:    []driver.Value{},
-		expectedSuccess:       0,
-		expectedFailure:       0,
-		expectErr:             true,
+		dbInsertError:           nil,
+		expectedInsertPrepare:   "",
+		expectedInsertArgs:      []driver.Value{},
+		dbInsertV2ResReturnCols: []string{},
+		dbInsertV2ResReturnRows: [][]driver.Value{},
+		expectedSuccess:         0,
+		expectedFailure:         0,
+		expectErr:               true,
 	}, {
 		f: sm.CompLockV2Filter{
 			ID:              []string{"x3000c0s9b0n0"},
@@ -6912,15 +6942,17 @@ func TestPgInsertCompReservations(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompIDsArgs:    []driver.Value{"x3000c0s9b0n0"},
 		dbGetCompIDsReturnCols:    []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, false},
 		},
-		dbInsertError:         nil,
-		expectedInsertPrepare: "",
-		expectedInsertArgs:    []driver.Value{},
-		expectedSuccess:       0,
-		expectedFailure:       0,
-		expectErr:             true,
+		dbInsertError:           nil,
+		expectedInsertPrepare:   "",
+		expectedInsertArgs:      []driver.Value{},
+		dbInsertV2ResReturnCols: []string{},
+		dbInsertV2ResReturnRows: [][]driver.Value{},
+		expectedSuccess:         0,
+		expectedFailure:         0,
+		expectErr:               true,
 	}, {
 		f: sm.CompLockV2Filter{
 			ID:              []string{"x3000c0s9b0n0"},
@@ -6930,15 +6962,17 @@ func TestPgInsertCompReservations(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompIDsArgs:    []driver.Value{"x3000c0s9b0n0"},
 		dbGetCompIDsReturnCols:    []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", true, false},
 		},
-		dbInsertError:         nil,
-		expectedInsertPrepare: "",
-		expectedInsertArgs:    []driver.Value{},
-		expectedSuccess:       0,
-		expectedFailure:       0,
-		expectErr:             true,
+		dbInsertError:           nil,
+		expectedInsertPrepare:   "",
+		expectedInsertArgs:      []driver.Value{},
+		dbInsertV2ResReturnCols: []string{},
+		dbInsertV2ResReturnRows: [][]driver.Value{},
+		expectedSuccess:         0,
+		expectedFailure:         0,
+		expectErr:               true,
 	}}
 
 	for i, test := range tests {
@@ -6946,6 +6980,10 @@ func TestPgInsertCompReservations(t *testing.T) {
 		rows := sqlmock.NewRows(test.dbGetCompIDsReturnCols)
 		for _, row := range test.dbGetCompIDsReturnRows {
 			rows.AddRow(row...)
+		}
+		v2rows := sqlmock.NewRows(test.dbInsertV2ResReturnCols)
+		for _, row := range test.dbInsertV2ResReturnRows {
+			v2rows.AddRow(row...)
 		}
 
 		mockPG.ExpectBegin()
@@ -6959,11 +6997,11 @@ func TestPgInsertCompReservations(t *testing.T) {
 			mockPG.ExpectRollback()
 		} else if test.dbInsertError != nil {
 			mockPG.ExpectPrepare(test.expectedGetCompIDsPrepare).ExpectQuery().WithArgs(test.expectedGetCompIDsArgs...).WillReturnRows(rows)
-			mockPG.ExpectPrepare(test.expectedInsertPrepare).ExpectExec().WillReturnError(test.dbInsertError)
+			mockPG.ExpectPrepare(test.expectedInsertPrepare).ExpectQuery().WillReturnError(test.dbInsertError)
 			mockPG.ExpectRollback()
 		} else {
 			mockPG.ExpectPrepare(test.expectedGetCompIDsPrepare).ExpectQuery().WithArgs(test.expectedGetCompIDsArgs...).WillReturnRows(rows)
-			mockPG.ExpectPrepare(test.expectedInsertPrepare).ExpectExec().WithArgs(test.expectedInsertArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
+			mockPG.ExpectPrepare(test.expectedInsertPrepare).ExpectQuery().WithArgs(test.expectedInsertArgs...).WillReturnRows(v2rows)
 			mockPG.ExpectCommit()
 		}
 
@@ -7011,8 +7049,8 @@ func TestPgDeleteCompReservationsForce(t *testing.T) {
 
 	// Note we only use the query here so the args values don't really matter.
 	resDeleteReservation, _, _ := sqq.Delete(compResTable).
-		Where(sq.Eq{compResCompIdCol: res.component_id}).
-		Suffix("RETURNING " + compResV1LockIDCol).ToSql()
+		Where(sq.Eq{compResCompIdCol: []string{res.component_id}}).
+		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol).ToSql()
 
 	tests := []struct {
 		f                         sm.CompLockV2Filter
@@ -7038,15 +7076,15 @@ func TestPgDeleteCompReservationsForce(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompIDsArgs:    []driver.Value{"x3000c0s9b0n0"},
 		dbGetCompIDsReturnCols:    []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, false},
 		},
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
 		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0"},
-		dbDeleteReturnCols:    []string{"v1_lock_id"},
-		dbDeleteReturnRows: [][]driver.Value{
-			[]driver.Value{nil},
+		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
+		dbDeleteReturnRows:    [][]driver.Value{
+			[]driver.Value{"x3000c0s9b0n0", nil},
 		},
 		expectedSuccess: 1,
 		expectedFailure: 0,
@@ -7060,7 +7098,7 @@ func TestPgDeleteCompReservationsForce(t *testing.T) {
 		expectedGetCompIDsPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedGetCompIDsArgs:    []driver.Value{"x3000c0s9b0n0"},
 		dbGetCompIDsReturnCols:    []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompIDsReturnRows: [][]driver.Value{
+		dbGetCompIDsReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, false},
 		},
 		dbDeleteError:         nil,
@@ -7148,9 +7186,8 @@ func TestPgDeleteCompReservations(t *testing.T) {
 
 	// Note we only use the query here so the args values don't really matter.
 	resDeleteReservation, _, _ := sqq.Delete(compResTable).
-		Where(sq.Eq{compResCompIdCol: res.component_id}).
-		Where(sq.Eq{compResRKCol: res.reservation_key}).
-		Suffix("RETURNING " + compResV1LockIDCol).ToSql()
+		Where(sq.Eq{compResRKCol: []string{res.reservation_key}}).
+		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol).ToSql()
 
 	tests := []struct {
 		f                     sm.CompLockV2ReservationFilter
@@ -7175,10 +7212,10 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		},
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
-		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0", AnyUUID{}},
-		dbDeleteReturnCols:    []string{"v1_lock_id"},
-		dbDeleteReturnRows: [][]driver.Value{
-			[]driver.Value{nil},
+		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d"},
+		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
+		dbDeleteReturnRows:    [][]driver.Value{
+			[]driver.Value{"x3000c0s9b0n0", nil},
 		},
 		dbDeleteReturnv1ID: false,
 		expectedSuccess:    1,
@@ -7196,10 +7233,10 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		},
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
-		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0", AnyUUID{}},
-		dbDeleteReturnCols:    []string{"v1_lock_id"},
-		dbDeleteReturnRows: [][]driver.Value{
-			[]driver.Value{res.v1_lock_id.String},
+		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d"},
+		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
+		dbDeleteReturnRows:    [][]driver.Value{
+			[]driver.Value{"x3000c0s9b0n0", res.v1_lock_id.String},
 		},
 		dbDeleteReturnv1ID: true,
 		expectedSuccess:    1,
@@ -7324,7 +7361,7 @@ func TestPgDeleteCompReservationsExpired(t *testing.T) {
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
 		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
-		dbDeleteReturnRows: [][]driver.Value{
+		dbDeleteReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", nil},
 		},
 		dbDeleteReturnv1ID: false,
@@ -7334,7 +7371,7 @@ func TestPgDeleteCompReservationsExpired(t *testing.T) {
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
 		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
-		dbDeleteReturnRows: [][]driver.Value{
+		dbDeleteReturnRows:    [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", res.v1_lock_id.String},
 		},
 		dbDeleteReturnv1ID: true,

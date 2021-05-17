@@ -4657,6 +4657,76 @@ func (t *hmsdbPgTx) InsertCompReservationTx(id string, duration int, v1LockId st
 	return result, sm.CLResultSuccess, nil
 }
 
+// Insert component reservations into the database.
+// To Insert reservations without a duration, the component must be locked.
+// To Insert reservations with a duration, the component must be unlocked.
+// v1LockId is populated if this reservation is being created due to a v1 lock creation.
+func (t *hmsdbPgTx) InsertCompReservationsTx(ids []string, duration int, v1LockId string) ([]sm.CompLockV2Success, string, error) {
+	var err error
+	var expiration_timestamp sql.NullTime
+	var lockId sql.NullString
+	var results []sm.CompLockV2Success
+
+	if !t.IsConnected() {
+		return results, sm.CLResultServerError, ErrHMSDSPtrClosed
+	}
+
+	create_timestamp := time.Now()
+
+	// Expiration timestamp is only added if it is an expiring reservation
+	if duration > 0 {
+		expiration_timestamp.Time = create_timestamp.Add(time.Duration(duration) * time.Minute)
+		expiration_timestamp.Valid = true
+	} else {
+		expiration_timestamp.Valid = false
+	}
+
+	if v1LockId != "" {
+		lockId.String = v1LockId
+		lockId.Valid = true
+	} else {
+		lockId.Valid = false
+	}
+
+	// Generate query
+	query := sq.Insert(compResTable).
+		Columns(compResCols...)
+
+	for _, id := range ids {
+		// Set fields for update
+		deputy_key := id + ":dk:" + uuid.New().String()      // The new unique public key
+		reservation_key := id + ":rk:" + uuid.New().String() // The new unique private key
+		query = query.Values(id, create_timestamp, expiration_timestamp, deputy_key, reservation_key, lockId)
+	}
+
+	query = query.Suffix("ON CONFLICT DO NOTHING RETURNING " + compResCompIdCol + ", " + compResDKCol + ", " + compResRKCol)
+
+	// Exec with statement cache for caching prepared statements (local to tx)
+	query = query.PlaceholderFormat(sq.Dollar)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		if IsPgDuplicateKeyErr(err) {
+			return results, sm.CLResultReserved, nil
+		}
+		return results, sm.CLResultServerError, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var result sm.CompLockV2Success
+		err = rows.Scan(
+			&result.ID,
+			&result.DeputyKey,
+			&result.ReservationKey,
+		)
+		if expiration_timestamp.Valid {
+			result.ExpirationTime = expiration_timestamp.Time.Format(time.RFC3339)
+		}
+		results = append(results, result)
+	}
+
+	return results, sm.CLResultSuccess, nil
+}
+
 // Remove/release component reservations.
 // Both a component ID and reservation key are required for these operations unless force = true.
 // Returns a v1LockId if there was one associated with the reservation
@@ -4699,6 +4769,70 @@ func (t *hmsdbPgTx) DeleteCompReservationTx(rKey sm.CompLockV2Key, force bool) (
 		return v1LockId, true, err
 	}
 	return "", false, nil
+}
+
+// Remove/release component reservations.
+// Both a component ID and reservation key are required for these operations unless force = true.
+// Returns a v1LockId if there was one associated with the reservation
+func (t *hmsdbPgTx) DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force bool) ([]sm.CompLock, error) {
+	var results []sm.CompLock
+	var ids []string
+	var keys []string
+
+	if !t.IsConnected() {
+		return results, ErrHMSDSPtrClosed
+	}
+
+	for _, rKey := range rKeys {
+		ids = append(ids, rKey.ID)
+		if rKey.Key == "" && !force {
+			return results, sm.ErrCompLockV2DKey
+		}
+		keys = append(keys, rKey.Key)
+	}
+
+	// Build query - works like AND
+	query := sq.Delete(compResTable)
+	if force {
+		if len(ids) > 0 {
+			query = query.Where(sq.Eq{compResCompIdCol: ids})
+		}
+	} else {
+		if len(keys) > 0 {
+			// Only need the keys because the id is part of the key.
+			query = query.Where(sq.Eq{compResRKCol: keys})
+		} else {
+			return results, sm.ErrCompLockV2RKey
+		}
+	}
+	query = query.Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol)
+
+	// Execute - Should delete one row.
+	query = query.PlaceholderFormat(sq.Dollar)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		return results, err
+	}
+	defer rows.Close()
+
+	// See if there was a v1LockId associated with
+	// the reservation we just deleted.
+	for rows.Next() {
+		var lockId sql.NullString
+		var xname string
+		err = rows.Scan(&xname, &lockId)
+		if err != nil {
+			return results, err
+		}
+		v1Lock := sm.CompLock{
+			Xnames: []string{xname},
+		}
+		if lockId.Valid {
+			v1Lock.ID = lockId.String
+		}
+		results = append(results, v1Lock)
+	}
+	return results, nil
 }
 
 // Release all expired component reservations
@@ -4802,6 +4936,78 @@ func (t *hmsdbPgTx) GetCompReservationTx(dKey sm.CompLockV2Key, force bool) (sm.
 	return result, sm.CLResultNotFound, nil
 }
 
+// Retrieve the status of reservations. The public key and xname is
+// required to address the reservation unless force = true.
+func (t *hmsdbPgTx) GetCompReservationsTx(dKeys []sm.CompLockV2Key, force bool) ([]sm.CompLockV2Success, string, error) {
+	var results []sm.CompLockV2Success
+	var ids []string
+	var keys []string
+	var err error
+	if !t.IsConnected() {
+		err = ErrHMSDSPtrClosed
+		return results, sm.CLResultServerError, err
+	}
+
+	for _, dKey := range dKeys {
+		ids = append(ids, dKey.ID)
+		if dKey.Key == "" && !force {
+			return results, sm.CLResultServerError, sm.ErrCompLockV2DKey
+		}
+		keys = append(keys, dKey.Key)
+	}
+
+	// Generate query
+	query := sq.Select(addAliasToCols(compResAlias, compResPubCols, compResPubCols)...).
+		From(compResTable + " " + compResAlias)
+	if force {
+		if len(ids) > 0 {
+			query = query.Where(sq.Eq{compResCompIdColAlias: ids})
+		}
+	} else {
+		if len(keys) > 0 {
+			// Only need the keys because the id is part of the key.
+			query = query.Where(sq.Eq{compResDKColAlias: keys})
+		} else {
+			return results, sm.CLResultServerError, sm.ErrCompLockV2DKey
+		}
+	}
+
+	// Exec with statement cache for caching prepared statements (local to tx)
+	query = query.PlaceholderFormat(sq.Dollar)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: GetCompReservationsTx(): query failed: %s", err)
+		return results, sm.CLResultServerError, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var cr compReservation
+		err = rows.Scan(
+			&cr.component_id,
+			&cr.create_timestamp,
+			&cr.expiration_timestamp,
+			&cr.deputy_key,
+		)
+		if err != nil {
+			t.LogAlways("Error: GetCompReservationsTx(): Scan failed: %s", err)
+			return results, sm.CLResultServerError, err
+		}
+		result := sm.CompLockV2Success{
+			ID:        cr.component_id,
+			DeputyKey: cr.deputy_key,
+		}
+		if cr.create_timestamp.Valid {
+			result.CreationTime = cr.create_timestamp.Time.Format(time.RFC3339)
+		}
+		if cr.expiration_timestamp.Valid {
+			result.ExpirationTime = cr.expiration_timestamp.Time.Format(time.RFC3339)
+		}
+		results = append(results, result)
+	}
+	return results, sm.CLResultSuccess, nil
+}
+
 // Update/renew the expiration time of component reservations with the given
 // ID/Key combinations.
 func (t *hmsdbPgTx) UpdateCompReservationTx(rKey sm.CompLockV2Key, duration int, force bool) (string, bool, error) {
@@ -4853,6 +5059,75 @@ func (t *hmsdbPgTx) UpdateCompReservationTx(rKey sm.CompLockV2Key, duration int,
 }
 
 // Update/renew the expiration time of component reservations with the given
+// ID/Key combinations.
+func (t *hmsdbPgTx) UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration int, force bool) ([]sm.CompLock, error) {
+	var results []sm.CompLock
+	var ids []string
+	var keys []string
+	var err error
+
+	if !t.IsConnected() {
+		return results, ErrHMSDSPtrClosed
+	}
+
+	for _, rKey := range rKeys {
+		ids = append(ids, rKey.ID)
+		if rKey.Key == "" && !force {
+			return results, sm.ErrCompLockV2RKey
+		}
+		keys = append(keys, rKey.Key)
+	}
+
+	// Start update query string
+	update := sq.Update("").
+		Table(compResTable).
+		Where(compResExpireCol + " IS NOT NULL")
+	if force {
+		if len(ids) > 0 {
+			update = update.Where(sq.Eq{compResCompIdCol: ids})
+		}
+	} else {
+		if len(keys) > 0 {
+			// Only need the keys because the id is part of the key.
+			update = update.Where(sq.Eq{compResRKCol: keys})
+		} else {
+			return results, sm.ErrCompLockV2RKey
+		}
+	}
+
+	expiration_timestamp := time.Now().Add(time.Duration(duration) * time.Minute)
+	update = update.Set(compResExpireCol, expiration_timestamp).
+		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol)
+
+	// Exec with statement cache for caching prepared statements
+	update = update.PlaceholderFormat(sq.Dollar)
+	rows, err := update.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		return results, err
+	}
+	defer rows.Close()
+
+	// See if there was a v1LockId associated with
+	// the reservation we just updated.
+	for rows.Next() {
+		var lockId sql.NullString
+		var xname string
+		err = rows.Scan(&xname, &lockId)
+		if err != nil {
+			return results, err
+		}
+		v1Lock := sm.CompLock{
+			Xnames: []string{xname},
+		}
+		if lockId.Valid {
+			v1Lock.ID = lockId.String
+		}
+		results = append(results, v1Lock)
+	}
+	return results, nil
+}
+
+// Update/renew the expiration time of component reservations with the given
 // v1LockID. For v1 Locking compatability.
 func (t *hmsdbPgTx) UpdateCompReservationsByV1LockIDTx(lockId string, duration int) error {
 	var err error
@@ -4876,6 +5151,51 @@ func (t *hmsdbPgTx) UpdateCompReservationsByV1LockIDTx(lockId string, duration i
 	return err
 }
 
+// Update/renew the expiration time of component reservations with the given
+// v1LockID. For v1 Locking compatability.
+func (t *hmsdbPgTx) UpdateCompReservationsByV1LockIDsTx(lockIds []string, duration int) ([]string, error) {
+	var err error
+	var results []string
+
+	if !t.IsConnected() {
+		return results, ErrHMSDSPtrClosed
+	}
+
+	// Start update query string
+	update := sq.Update("").
+		Table(compResTable)
+	if len(lockIds) > 0 {
+		update = update.Where(sq.Eq{compResV1LockIDCol: lockIds})
+	} else {
+		return results, nil
+	}
+
+	expiration_timestamp := time.Now().Add(time.Duration(duration) * time.Minute)
+	update = update.Set(compResExpireCol, expiration_timestamp).
+		Suffix("RETURNING " + compResCompIdCol)
+
+	// Exec with statement cache for caching prepared statements
+	update = update.PlaceholderFormat(sq.Dollar)
+	rows, err := update.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: UpdateCompReservationsByV1LockIDsTx(): query failed: %s", err)
+		return results, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		err = rows.Scan(&id)
+		if err != nil {
+			t.LogAlways("Error: UpdateCompReservationsByV1LockIDsTx(): Scan failed: %s", err)
+			return results, err
+		}
+		results = append(results, id)
+	}
+
+	return results, err
+}
+
 // Update component 'ReservationDisabled' field.
 func (t *hmsdbPgTx) UpdateCompResDisabledTx(id string, disabled bool) (int64, error) {
 	if !t.IsConnected() {
@@ -4896,6 +5216,44 @@ func (t *hmsdbPgTx) UpdateCompResDisabledTx(id string, disabled bool) (int64, er
 	return res.RowsAffected()
 }
 
+// Update component 'ReservationDisabled' field.
+func (t *hmsdbPgTx) BulkUpdateCompResDisabledTx(ids []string, disabled bool) ([]string, error) {
+	var results []string
+
+	if !t.IsConnected() {
+		return results, ErrHMSDSPtrClosed
+	}
+
+	update := sq.Update("").
+		Table(compTable)
+	if len(ids) > 0 {
+		update = update.Where(sq.Eq{compIdCol: ids})
+	}
+	update = update.Set(compResDisabledCol, disabled).
+		Suffix("RETURNING " + compIdCol)
+
+	// Exec with statement cache for caching prepared statements
+	update = update.PlaceholderFormat(sq.Dollar)
+	rows, err := update.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: BulkUpdateCompResDisabledTx(): query failed: %s", err)
+		return results, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		err = rows.Scan(&id)
+		if err != nil {
+			t.LogAlways("Error: BulkUpdateCompResDisabledTx(): Scan failed: %s", err)
+			return results, err
+		}
+		results = append(results, id)
+	}
+
+	return results, nil
+}
+
 // Update component 'locked' field.
 func (t *hmsdbPgTx) UpdateCompResLockedTx(id string, locked bool) (int64, error) {
 	if !t.IsConnected() {
@@ -4914,6 +5272,43 @@ func (t *hmsdbPgTx) UpdateCompResLockedTx(id string, locked bool) (int64, error)
 		return 0, err
 	}
 	return res.RowsAffected()
+}
+
+// Update component 'locked' field.
+func (t *hmsdbPgTx) BulkUpdateCompResLockedTx(ids []string, locked bool) ([]string, error) {
+	var results []string
+
+	if !t.IsConnected() {
+		return results, ErrHMSDSPtrClosed
+	}
+
+	update := sq.Update("").
+		Table(compTable)
+	if len(ids) > 0 {
+		update = update.Where(sq.Eq{compIdCol: ids})
+	}
+	update = update.Set(compLockedCol, locked).
+		Suffix("RETURNING " + compIdCol)
+
+	// Exec with statement cache for caching prepared statements
+	update = update.PlaceholderFormat(sq.Dollar)
+	rows, err := update.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: BulkUpdateCompResLockedTx(): query failed: %s", err)
+		return results, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var id string
+		err = rows.Scan(&id)
+		if err != nil {
+			t.LogAlways("Error: BulkUpdateCompResLockedTx(): Scan failed: %s", err)
+			return results, err
+		}
+		results = append(results, id)
+	}
+	return results, nil
 }
 
 ////////////////////////////////////////////////////////////////////////////
