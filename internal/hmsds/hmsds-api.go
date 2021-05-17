@@ -1557,9 +1557,18 @@ type HMSDBTx interface {
 	// To Insert a reservation with a duration, the component must be unlocked.
 	InsertCompReservationTx(id string, duration int, v1LockId string) (sm.CompLockV2Success, string, error)
 
+	// Insert component reservations into the database.
+	// To Insert reservations without a duration, the component must be locked.
+	// To Insert reservations with a duration, the component must be unlocked.
+	InsertCompReservationsTx(ids []string, duration int, v1LockId string) ([]sm.CompLockV2Success, string, error)
+
 	// Remove/release component reservations.
 	// Both a component ID and reservation key are required for these operations unless force = true.
 	DeleteCompReservationTx(rKey sm.CompLockV2Key, force bool) (string, bool, error)
+
+	// Remove/release component reservations.
+	// Both a component ID and reservation key are required for these operations unless force = true.
+	DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force bool) ([]sm.CompLock, error)
 
 	// Release all expired component reservations
 	DeleteCompReservationExpiredTx() ([]string, []string, error)
@@ -1568,19 +1577,37 @@ type HMSDBTx interface {
 	// required to address the reservation unless force = true.
 	GetCompReservationTx(dKey sm.CompLockV2Key, force bool) (sm.CompLockV2Success, string, error)
 
+	// Retrieve the status of reservations. The public key and xname is
+	// required to address the reservation unless force = true.
+	GetCompReservationsTx(dKeys []sm.CompLockV2Key, force bool) ([]sm.CompLockV2Success, string, error)
+
 	// Update/renew the expiration time of component reservations with the given
 	// ID/Key combinations.
 	UpdateCompReservationTx(rKey sm.CompLockV2Key, duration int, force bool) (string, bool, error)
 
 	// Update/renew the expiration time of component reservations with the given
+	// ID/Key combinations.
+	UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration int, force bool) ([]sm.CompLock, error)
+
+	// Update/renew the expiration time of component reservations with the given
 	// v1LockID. For v1 Locking compatability.
 	UpdateCompReservationsByV1LockIDTx(lockId string, duration int) error
+
+	// Update/renew the expiration time of component reservations with the given
+	// v1LockID. For v1 Locking compatability.
+	UpdateCompReservationsByV1LockIDsTx(lockIds []string, duration int) ([]string, error)
 
 	// Update component 'ReservationsDisabled' field.
 	UpdateCompResDisabledTx(id string, disabled bool) (int64, error)
 
+	// Update component 'ReservationsDisabled' field.
+	BulkUpdateCompResDisabledTx(ids []string, disabled bool) ([]string, error)
+
 	// Update component 'locked' field.
 	UpdateCompResLockedTx(id string, locked bool) (int64, error)
+
+	// Update component 'locked' field.
+	BulkUpdateCompResLockedTx(ids []string, locked bool) ([]string, error)
 
 	//                                                                    //
 	//                        Job Sync Management                         //
