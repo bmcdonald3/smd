@@ -136,7 +136,7 @@ cray-service:
       hmsdsuser: []
     databases:
       hmsds: hmsdsuser
-    volumeSize: 30Gi
+    volumeSize: 100Gi
     resources:
       limits:
         cpu: "32"
