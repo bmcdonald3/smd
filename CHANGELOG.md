@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.28.19] - 2021-05-28
+## [1.28.20] - 2021-05-28
 
 ### Added
 
 - CASMHMS-4706 - Added support for power capping HPE Apollo 6500.
+
+## [1.28.19] - 2021-05-28
+
+### Changed
+
+- CASMPET-4148 - Change smd-postgres pvc size to 100GB
 
 ## [1.28.18] - 2021-05-13
 
