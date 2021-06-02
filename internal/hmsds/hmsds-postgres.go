@@ -4977,12 +4977,15 @@ func (d *hmsdbPg) UpdateCompLocksV2(f sm.CompLockV2Filter, action string) (sm.Co
 				result.Failure = append(result.Failure, fail)
 				delete(affectedMap, reservation.ID)
 			}
-			// No reservation found for this lock. Time to (un)lock the component.
-			for id, _ := range affectedMap {
-				affectedIds = append(affectedIds, id)
-			}
 		}
-		// No reservation found for this lock. Time to (un)lock the component.
+		for id, _ := range affectedMap {
+			affectedIds = append(affectedIds, id)
+		}
+		if len(affectedIds) == 0 {
+			t.Rollback()
+			return result, sm.ErrCompLockV2CompReserved
+		}
+		// No reservation found for these locks. Time to (un)lock the component.
 		updatedIds, err := t.BulkUpdateCompResLockedTx(affectedIds, newVal)
 		if err != nil {
 			t.Rollback()
