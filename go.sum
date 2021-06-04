@@ -662,6 +662,8 @@ stash.us.cray.com/HMS/hms-msgbus v1.9.0 h1:HmBoikETRBc32wwMtE2rC/zeXmx8fuAXPGX88
 stash.us.cray.com/HMS/hms-msgbus v1.9.0/go.mod h1:1e76godR4v0zXFnn+jYlFUujDGbeXN3ciploERU2Puk=
 stash.us.cray.com/HMS/hms-msgbus v1.9.1 h1:I2Iy/eVEwNk+zgd4E9DfLlhPDVkBygMBHPyxwR1Nz74=
 stash.us.cray.com/HMS/hms-msgbus v1.9.1/go.mod h1:1e76godR4v0zXFnn+jYlFUujDGbeXN3ciploERU2Puk=
+stash.us.cray.com/HMS/hms-msgbus v1.9.2 h1:So4bpXmIUDrSHVSI2pYKZQ6WP6IhDd7/XUWmt7uQzt8=
+stash.us.cray.com/HMS/hms-msgbus v1.9.2/go.mod h1:1e76godR4v0zXFnn+jYlFUujDGbeXN3ciploERU2Puk=
 stash.us.cray.com/HMS/hms-securestorage v1.11.0 h1:VEW860tXgGqD0jSB8cAsEdvd5tb1m34kq84Ur83VqPs=
 stash.us.cray.com/HMS/hms-securestorage v1.11.0/go.mod h1:/tRNXYwCBvVdbhu6a+i5R3Jftag4x8921qWwA+jo4JA=
 stash.us.cray.com/HMS/hms-securestorage v1.11.1 h1:WrURWku8aAlIV/W8SazFQC4CSsPao9bzJd2luoDgmTs=
