@@ -37,6 +37,7 @@ var MsgBusMissingHostSpec = base.NewHMSError("sm_msg",
 	"missing telemetry host specification")
 
 const RF_EVENT_MSGBUS_TOPIC = "telemetry"
+const RF_EVENT_MSGBUS_GROUPID = "cray-hms-smd"
 
 var msgbusConfigDefaults = msgbus.MsgBusConfig{
 	BusTech:        msgbus.BusTechKafka,
@@ -44,6 +45,7 @@ var msgbusConfigDefaults = msgbus.MsgBusConfig{
 	Direction:      msgbus.BusReader,
 	ConnectRetries: 10,
 	Topic:          RF_EVENT_MSGBUS_TOPIC,
+	GroupId:        RF_EVENT_MSGBUS_GROUPID,
 }
 
 // Convenience function to parse a host:port specification.
