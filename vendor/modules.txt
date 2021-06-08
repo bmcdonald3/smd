@@ -120,7 +120,7 @@ stash.us.cray.com/HMS/hms-certs/pkg/hms_certs
 stash.us.cray.com/HMS/hms-compcredentials
 # stash.us.cray.com/HMS/hms-go-http-lib v1.4.1
 stash.us.cray.com/HMS/hms-go-http-lib
-# stash.us.cray.com/HMS/hms-msgbus v1.9.1
+# stash.us.cray.com/HMS/hms-msgbus v1.9.2
 stash.us.cray.com/HMS/hms-msgbus
 # stash.us.cray.com/HMS/hms-securestorage v1.11.1
 stash.us.cray.com/HMS/hms-securestorage
