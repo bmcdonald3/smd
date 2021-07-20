@@ -43,7 +43,7 @@ import (
 )
 
 // MUST be kept in sync with schema installed via smd-init job
-const HMSDS_PG_SCHEMA = 15
+const HMSDS_PG_SCHEMA = 18
 const HMSDS_PG_SYSTEM_ID = 0
 
 type hmsdbPg struct {
@@ -1782,6 +1782,21 @@ func (d *hmsdbPg) GetHWInvHistFilter(f_opts ...HWInvHistFiltFunc) ([]*sm.HWInvHi
 	return hhs, err
 }
 
+// Get only the most recent hardware history event for some or all hardware locations.
+func (d *hmsdbPg) GetHWInvHistLastEvents(ids []string) ([]*sm.HWInvHist, error) {
+	t, err := d.Begin()
+	if err != nil {
+		return nil, err
+	}
+	hhs, err := t.GetHWInvHistLastEventsTx(ids)
+	if err != nil {
+		t.Rollback()
+		return hhs, err
+	}
+	err = t.Commit()
+	return hhs, err
+}
+
 // Insert a HWInventoryHistory entry.
 // If a duplicate is present return an error.
 func (d *hmsdbPg) InsertHWInvHist(hh *sm.HWInvHist) error {
@@ -1803,17 +1818,19 @@ func (d *hmsdbPg) InsertHWInvHist(hh *sm.HWInvHist) error {
 // Insert an array of HWInventoryHistory entries.
 // If a duplicate is present return an error.
 func (d *hmsdbPg) InsertHWInvHists(hhs []*sm.HWInvHist) error {
+	if len(hhs) == 0 {
+		// Nothing to do
+		return nil
+	}
 	t, err := d.Begin()
 	if err != nil {
 		return err
 	}
-	// Insert HWInvHist entry.
-	for _, hh := range hhs {
-		err = t.InsertHWInvHistTx(hh)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+	// Insert HWInvHist entries.
+	err = t.InsertHWInvHistsTx(hhs)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
 	err = t.Commit()
 	return err

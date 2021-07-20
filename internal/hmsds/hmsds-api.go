@@ -420,6 +420,10 @@ type HMSDB interface {
 	// do not match ALL of the non-empty strings in the filter struct
 	GetHWInvHistFilter(f_opts ...HWInvHistFiltFunc) ([]*sm.HWInvHist, error)
 
+	// Get only the most recent hardware history event for some or all hardware
+	// locations.
+	GetHWInvHistLastEvents(ids []string) ([]*sm.HWInvHist, error)
+
 	// Insert a HWInventoryHistory entry.
 	// If a duplicate is present return an error.
 	InsertHWInvHist(hh *sm.HWInvHist) error
@@ -1215,8 +1219,16 @@ type HMSDBTx interface {
 	// (in transaction)
 	GetHWInvHistFilterTx(f_opts ...HWInvHistFiltFunc) ([]*sm.HWInvHist, error)
 
+	// Get only the most recent hardware history event for some or all hardware
+	// locations. (in transaction)
+	GetHWInvHistLastEventsTx(ids []string) ([]*sm.HWInvHist, error)
+
 	// Insert a HWInventoryHistory struct (in transaction)
 	InsertHWInvHistTx(hh *sm.HWInvHist) error
+
+	// Insert an array of HWInventoryHistory entries. (in transaction)
+	// If a duplicate is present return an error.
+	InsertHWInvHistsTx(hhs []*sm.HWInvHist) error
 
 	// Get some or all Hardware Inventory entries with filtering
 	// options to possibly narrow the returned values.

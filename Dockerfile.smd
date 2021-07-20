@@ -40,14 +40,6 @@ COPY internal $GOPATH/src/stash.us.cray.com/HMS/hms-smd/internal
 COPY pkg $GOPATH/src/stash.us.cray.com/HMS/hms-smd/pkg
 COPY vendor $GOPATH/src/stash.us.cray.com/HMS/hms-smd/vendor
 
-FROM base
-
-# Run unit tests...
-RUN set -ex && \
-    go test -v stash.us.cray.com/HMS/hms-smd/cmd/smd && \
-    go test -v stash.us.cray.com/HMS/hms-smd/internal/./... && \
-    go test -v stash.us.cray.com/HMS/hms-smd/pkg/./...
-
 ### Build Stage ###
 FROM base AS builder
 
