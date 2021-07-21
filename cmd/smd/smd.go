@@ -374,39 +374,6 @@ func (s *SmD) CompReservationCleanup() {
 	}()
 }
 
-// Spin off a goRoutine to periodically clean up expired HWInv history entries.
-func (s *SmD) HWInvHistCleanup() {
-	go func() {
-		// Once a day
-		ticker := time.NewTicker(time.Duration(24) * time.Hour)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ticker.C:
-				for {
-					failed := false
-					endTime := time.Now()
-					endTime = endTime.AddDate(0, 0, (s.hwInvHistAgeMax * -1))
-					// Clean up expired HWInv history entries
-					numDeleted, err := s.db.DeleteHWInvHistFilter(hmsds.HWInvHist_EndTime(endTime.Format(time.RFC3339)))
-					if err != nil {
-						s.LogAlways("HWInvHistCleanup(): Expired history lookup failure: %s", err)
-						failed = true
-					}
-					if numDeleted > 0 {
-						s.LogAlways("HWInvHistCleanup(): Deleted %d expired HWInv history events", numDeleted)
-					}
-					if failed {
-						time.Sleep(10 * time.Second)
-					} else {
-						break
-					}
-				}
-			}
-		}
-	}()
-}
-
 // Jobs running locally in an intance of HSM can become orphaned if that
 // instance of HSM dies. This spins off a goroutine to periodically check for
 // orphaned jobs and picks them up.
@@ -974,9 +941,6 @@ func main() {
 
 	// Start the component lock cleanup thread
 	s.CompReservationCleanup()
-
-	// Start the HWInv history cleanup thread
-	s.HWInvHistCleanup()
 
 	// Start the Job Sync thread to pick up orphaned
 	// jobs from other HSM instances.

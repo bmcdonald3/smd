@@ -851,7 +851,7 @@ func (s *SmD) doUpdateCompHWInv(cep *sm.ComponentEndpoint, ep *rf.RedfishEP) err
 				cep.ID, err)
 		}
 		// Generate hardware history
-		err = s.GenerateHWInvHist(nodehls, sm.HWInvHistEventTypeDetected)
+		err = s.GenerateHWInvHist(nodehls)
 		if err != nil {
 			s.Log(LOG_INFO, "doUpdateCompHWInv(%s): Failed to update hwinv history: %s",
 				cep.ID, err)

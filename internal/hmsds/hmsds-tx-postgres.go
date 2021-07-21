@@ -2113,6 +2113,44 @@ func (t *hmsdbPgTx) GetHWInvHistFilterTx(f_opts ...HWInvHistFiltFunc) ([]*sm.HWI
 	return hwhists, err
 }
 
+func (t *hmsdbPgTx) GetHWInvHistLastEventsTx(ids []string) ([]*sm.HWInvHist, error) {
+
+	query := sq.Select(addAliasToCols(hwInvHistAlias, hwInvHistCols, hwInvHistCols)...).
+		From(hwInvHistTable + " " + hwInvHistAlias)
+	query = query.Options("DISTINCT ON (", hwInvHistIdColAlias, ")")
+	if len(ids) > 0 {
+		query = query.Where(sq.Eq{hwInvHistIdColAlias: ids})
+	}
+	
+	query = query.OrderBy("" + hwInvHistIdColAlias + ", " + hwInvHistTimestampColAlias + " DESC")
+
+	// Execute
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: GetHWInvHistLastEventsTx(): Query: %s - With args: %v", qStr, qArgs)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	hwhists := make([]*sm.HWInvHist, 0, 1)
+	i := 0
+	for rows.Next() {
+		hwhist, err := t.hdb.scanHwInvHist(rows)
+		if err != nil {
+			t.LogAlways("Error: GetHWInvHistLastEventsTx(): Scan failed: %s", err)
+			return hwhists, err
+		}
+		t.Log(LOG_DEBUG, "Debug: GetHWInvHistLastEventsTx() scanned[%d]: %v", i, hwhist)
+		hwhists = append(hwhists, hwhist)
+		i += 1
+	}
+	err = rows.Err()
+	t.Log(LOG_INFO, "Info: GetHWInvHistLastEventsTx() returned %d hwinvhist items.", len(hwhists))
+	return hwhists, err
+}
+
 // Insert a HWInventoryHistory struct (in transaction)
 func (t *hmsdbPgTx) InsertHWInvHistTx(hh *sm.HWInvHist) error {
 	var err error
@@ -2144,6 +2182,44 @@ func (t *hmsdbPgTx) InsertHWInvHistTx(hh *sm.HWInvHist) error {
 
 	// Exec with statement cache for caching prepared statements (local to tx)
 	query = query.PlaceholderFormat(sq.Dollar)
+	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
+	return ParsePgDBError(err)
+}
+
+// Insert an array of HWInventoryHistory entries. (in transaction)
+// If a duplicate is present return an error.
+func (t *hmsdbPgTx) InsertHWInvHistsTx(hhs []*sm.HWInvHist) error {
+	var err error
+	if len(hhs) == 0 {
+		// Nothing to do
+		return nil
+	}
+
+	// Generate query
+	query := sq.Insert(hwInvHistTable).
+		Columns(hwInvHistColsNoTS...)
+
+	for _, hh := range hhs {
+		// Normalize and verify fields (note these functions track if this
+		// has been done and only does each once.)
+		eventType := sm.VerifyNormalizeHWInvHistEventType(hh.EventType)
+		if eventType == "" {
+			return ErrHMSDSArgBadHWInvHistEventType
+		}
+		loc := base.VerifyNormalizeCompID(hh.ID)
+		if loc == "" {
+			return ErrHMSDSArgBadID
+		}
+		if hh.FruId == "" {
+			return ErrHMSDSArgMissing
+		}
+		query = query.Values(loc, hh.FruId, eventType)
+	}
+
+	// Exec with statement cache for caching prepared statements (local to tx)
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: GetHWInvHistLastEventsTx(): Query: %s - With args: %v", qStr, qArgs)
 	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
 	return ParsePgDBError(err)
 }

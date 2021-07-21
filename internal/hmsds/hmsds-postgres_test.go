@@ -2248,32 +2248,33 @@ func TestInsertHWInvHists(t *testing.T) {
 
 	insert1, _, _ := sqq.Insert(hwInvHistTable).
 		Columns(hwInvHistColsNoTS...).
+		Values("x0c0s0b0n0", "MFR-PARTNUMBER-SERIALNUMBER_1", "Scanned").
 		Values("x0c0s0b0n0", "MFR-PARTNUMBER-SERIALNUMBER_1", "Scanned").ToSql()
 
 	tests := []struct {
 		hhs             []*sm.HWInvHist
 		expectedPrepare string
-		expectedArgs    [][]driver.Value
+		expectedArgs    []driver.Value
 		dbError         error
 	}{{
 		hhs:             []*sm.HWInvHist{&testHWInvHist1, &testHWInvHist2},
 		expectedPrepare: regexp.QuoteMeta(insert1),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{testHWInvHist1.ID, testHWInvHist1.FruId, testHWInvHist1.EventType},
-			[]driver.Value{testHWInvHist2.ID, testHWInvHist2.FruId, testHWInvHist2.EventType},
+		expectedArgs:    []driver.Value{
+			testHWInvHist1.ID, testHWInvHist1.FruId, testHWInvHist1.EventType,
+			testHWInvHist2.ID, testHWInvHist2.FruId, testHWInvHist2.EventType,
 		},
 		dbError: nil,
 	}, {
 		hhs:             []*sm.HWInvHist{&testHWInvHistBad},
 		expectedPrepare: "",
-		expectedArgs:    [][]driver.Value{},
+		expectedArgs:    []driver.Value{},
 		dbError:         ErrHMSDSArgBadHWInvHistEventType,
 	}, {
 		hhs:             []*sm.HWInvHist{&testHWInvHist1, &testHWInvHist2},
 		expectedPrepare: regexp.QuoteMeta(insert1),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{testHWInvHist1.ID, testHWInvHist1.FruId, testHWInvHist1.EventType},
-			[]driver.Value{testHWInvHist2.ID, testHWInvHist2.FruId, testHWInvHist2.EventType},
+		expectedArgs:    []driver.Value{
+			testHWInvHist1.ID, testHWInvHist1.FruId, testHWInvHist1.EventType,
+			testHWInvHist2.ID, testHWInvHist2.FruId, testHWInvHist2.EventType,
 		},
 		dbError: sql.ErrNoRows,
 	}}
@@ -2287,13 +2288,7 @@ func TestInsertHWInvHists(t *testing.T) {
 			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
 			mockPG.ExpectRollback()
 		} else {
-			for j, args := range test.expectedArgs {
-				if j > 0 {
-					mockPG.ExpectExec(test.expectedPrepare).WithArgs(args...).WillReturnResult(sqlmock.NewResult(0, 1))
-				} else {
-					mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(args...).WillReturnResult(sqlmock.NewResult(0, 1))
-				}
-			}
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(test.expectedArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
 			mockPG.ExpectCommit()
 		}
 

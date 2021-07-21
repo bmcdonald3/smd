@@ -497,6 +497,15 @@ type TestResults struct {
 			err     error
 		}
 	}
+	GetHWInvHistLastEvents struct {
+		Input struct {
+			ids []string
+		}
+		Return struct {
+			hwhists []*sm.HWInvHist
+			err     error
+		}
+	}
 	InsertHWInvHist struct {
 		Input struct {
 			hh *sm.HWInvHist
@@ -1846,6 +1855,12 @@ func (d *hmsdbtest) GetHWInvHistFilter(f_opts ...hmsds.HWInvHistFiltFunc) ([]*sm
 	}
 	d.t.GetHWInvHistFilter.Input.f = f
 	return d.t.GetHWInvHistFilter.Return.hwhists, d.t.GetHWInvHistFilter.Return.err
+}
+
+// Get only the most recent hardware history event for some or all hardware locations.
+func (d *hmsdbtest) GetHWInvHistLastEvents(ids []string) ([]*sm.HWInvHist, error) {
+	d.t.GetHWInvHistLastEvents.Input.ids = ids
+	return d.t.GetHWInvHistLastEvents.Return.hwhists, d.t.GetHWInvHistLastEvents.Return.err
 }
 
 // Insert a HWInventoryHistory entry.
