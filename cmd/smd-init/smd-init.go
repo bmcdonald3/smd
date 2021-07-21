@@ -38,8 +38,8 @@ import (
 )
 
 const APP_VERSION = "1"
-const SCHEMA_VERSION = 17
-const SCHEMA_STEPS = 19
+const SCHEMA_VERSION = 18
+const SCHEMA_STEPS = 20
 
 var dbName string
 var dbUser string

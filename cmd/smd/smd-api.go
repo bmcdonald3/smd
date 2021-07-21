@@ -1419,7 +1419,7 @@ func (s *SmD) doHWInvByLocationPost(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
 		return
 	}
-	s.GenerateHWInvHist(hwlocs, sm.HWInvHistEventTypeDetected)
+	s.GenerateHWInvHist(hwlocs)
 
 	numStr := strconv.Itoa(len(hwlocs))
 	sendJsonError(w, http.StatusOK, "Created "+numStr+" entries")
