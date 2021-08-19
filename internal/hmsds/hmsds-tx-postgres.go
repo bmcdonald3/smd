@@ -700,6 +700,117 @@ func (t *hmsdbPgTx) InsertComponentTx(c *base.Component) (int64, error) {
 	return rowsAffected, nil
 }
 
+// Insert HMS Components into the database, updating it if it exists.
+// Returns the IDs of the affected components.
+//
+// Example Query:
+// INSERT INTO components (
+//   id,
+//   type,
+//   state,
+//   flag,
+//   enabled,
+//   admin,
+//   role,
+//   subrole,
+//   nid,
+//   subtype,
+//   nettype,
+//   arch,
+//   class,
+//   reservation_disabled,
+//   locked)
+// VALUES
+//   ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15),
+//   ...
+//   ($#, $#, $#, $#, $#, $#, $#, $#, $#, $#, $#, $#, $#, $#, $#)
+// ON CONFLICT(id) DO UPDATE SET
+//   state = EXCLUDED.state,
+//   flag = EXCLUDED.flag,
+//   subtype = EXCLUDED.subtype,
+//   nettype = EXCLUDED.nettype,
+//   arch = EXCLUDED.arch,
+//   class = EXCLUDED.class
+// RETURNING *;
+func (t *hmsdbPgTx) InsertComponentsTx(comps []*base.Component) ([]string, error) {
+	results := []string{}
+	if len(comps) == 0 {
+		return []string{}, nil
+	}
+	if !t.IsConnected() {
+		return []string{}, ErrHMSDSPtrClosed
+	}
+	// Generate query
+	query := sq.Insert(compTable).
+		Columns(compColsDefault...)
+
+	for _, c := range comps {
+		// If NID is not a valid number (e.g. empty string), set to -1.
+		var rawNID int64
+		if num, err := c.NID.Int64(); err != nil {
+			rawNID = -1
+		} else {
+			rawNID = num
+		}
+
+		// Default to enabled.
+		var enabledFlg bool
+		if c.Enabled == nil {
+			enabledFlg = true
+		} else {
+			enabledFlg = *c.Enabled
+		}
+
+		// Normalize key
+		normID := base.NormalizeHMSCompID(c.ID)
+
+		// Set fields for the INSERT
+		query = query.Values(
+			normID,
+			c.Type,
+			c.State,
+			c.Flag,
+			enabledFlg,
+			c.SwStatus,
+			c.Role,
+			c.SubRole,
+			rawNID,
+			c.Subtype,
+			c.NetType,
+			c.Arch,
+			c.Class,
+			c.ReservationDisabled,
+			c.Locked)
+	}
+	query = query.Suffix("ON CONFLICT(" + compIdCol + ") DO UPDATE SET " +
+		compStateCol + " = EXCLUDED." + compStateCol + ", " +
+		compFlagCol + " = EXCLUDED." + compFlagCol + ", " +
+		compSubTypeCol + " = EXCLUDED." + compSubTypeCol + ", " +
+		compNetTypeCol + " = EXCLUDED." + compNetTypeCol + ", " +
+		compArchCol + " = EXCLUDED." + compArchCol + ", " +
+		compClassCol + " = EXCLUDED." + compClassCol + 
+		" RETURNING " + compIdCol)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: InsertComponentsTx(): Query: %s - With args: %v", qStr, qArgs)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: InsertComponentsTx(): QueryContext: %s", err)
+		return []string{}, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id string
+		err := rows.Scan(&id)
+		if err != nil {
+			return []string{}, err
+		}
+		results = append(results, id)
+	}
+	return results, nil
+}
+
 // Update state and flag fields only in DB for xname IDs 'ids'
 // If force = true ignores any starting state restrictions and will always
 // set ids to state, unless it is already set.
@@ -1261,6 +1372,71 @@ func (t *hmsdbPgTx) UpdateCompNIDTx(c *base.Component) error {
 	}
 	t.Log(LOG_DEBUG, "DEBUG: UpdateCompNIDTx(%s): - %d",
 		normID, rawNID)
+	return nil
+}
+
+// Update the NIDs for a list of components.  If NID is not set or negative, it is set to -1 which
+// effectively unsets it and suppresses its output.
+func (t *hmsdbPgTx) BulkUpdateCompNIDTx(comps []base.Component) error {
+	if len(comps) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+
+	idColAlias := compTableJoinAlias + "." + compIdCol
+	idFromCol := compTableSubAlias + "." + compIdCol
+	nidFromCol := compTableSubAlias + "." + compNIDCol
+	// Generate query
+	// Make the column name a sq.Sqlizer so sq will set it as a column name and not a value.
+	query := sq.Update(compTable + " " + compTableJoinAlias).
+		Set(compNIDCol, sq.Expr(nidFromCol))
+
+	// sq doesn't have a way to add a FROM statement to an UPDATE.
+	// We'll just construct the 2nd half of the query manually and
+	// add it as a suffix.
+	args := make([]interface{}, 0, 1)
+	valStr := ""
+	for i, c := range comps {
+		// NID must be given. DB uses value for -1 for no NID, client should
+		// send negative value to unset NID.
+		var rawNID int64
+		if num, err := c.NID.Int64(); err != nil {
+			return ErrHMSDSArgMissingNID
+		} else if num < -1 {
+			rawNID = -1
+		} else {
+			rawNID = num
+		}
+		// Normalize key
+		normID := base.NormalizeHMSCompID(c.ID)
+		// Add the values to our values table
+		if i == 0 {
+			valStr += "(?,?::BIGINT)"
+		} else {
+			valStr += ",(?,?::BIGINT)"
+		}
+		args = append(args,
+			normID,
+			rawNID)
+	}
+	// This FROM statement builds us a values table to pull update values
+	// from so an update with different values for each row can be done.
+	qstr := "FROM (VALUES " + valStr + ") AS " + compTableSubAlias +
+		"(" + compIdCol + ", " + compNIDCol + ") " +
+		"WHERE " + idColAlias + " = " + idFromCol
+	query = query.Suffix(qstr, args...)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: BulkUpdateCompNIDTx(): Query: %s - With args: %v", qStr, qArgs)
+	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: BulkUpdateCompNIDTx(): ExecContext: %s", err)
+		return err
+	}
+	t.Log(LOG_INFO, "Info: BulkUpdateCompNIDTx() - %s", res)
 	return nil
 }
 
@@ -1875,6 +2051,88 @@ func (t *hmsdbPgTx) InsertHWInvByLocTx(hl *sm.HWInvByLoc) error {
 	return nil
 }
 
+// Insert or update HWInventoryByLocation struct (in transaction)
+// If PopulatedFRU is present, only the FRUID is added to the database.  If
+// it is not, this effectively "depopulates" the given location.
+// The actual HWInventoryByFRU struct must be stored FIRST using the
+// corresponding function (presumably within the same transaction).
+func (t *hmsdbPgTx) BulkInsertHWInvByLocTx(hls []*sm.HWInvByLoc) error {
+	var fruId sql.NullString
+	if len(hls) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+	// Generate query
+	query := sq.Insert(hwInvLocTable).
+		Columns(hwInvLocCols...)
+	
+	for _, hl := range hls {
+		// If a location is empty, the fru_id field will be NULL.
+		if hl.PopulatedFRU != nil {
+			if hl.PopulatedFRU.FRUID == "" {
+				t.LogAlways("WARNING: BulkInsertHWInvByLocTx(): FRUID is empty")
+				fruId.Valid = false
+			} else {
+				fruId.String = hl.PopulatedFRU.FRUID
+				fruId.Valid = true
+			}
+		}
+		infoJSON, err := hl.EncodeLocationInfo()
+		if err != nil {
+			t.LogAlways("Error: BulkInsertHWInvByLocTx(): EncodeLocationInfo: %s", err)
+			return err
+		}
+		// Normalize key
+		normID := base.NormalizeHMSCompID(hl.ID)
+
+		// Get the parent node xname for use with partition queries. Components under nodes
+		// (processors, memory, etc.) get the parent_node set to the node above them. For
+		// all others parent_node == id
+		pnID := normID
+		// Don't bother checking if the component isn't under a node
+		if strings.Contains(pnID, "n") {
+			for base.GetHMSType(pnID) != base.Node {
+				pnID = base.GetHMSCompParent(pnID)
+				// This is to catch components that are not under nodes
+				// but have 'n' in the xname.
+				if pnID == "" {
+					pnID = normID
+					break
+				}
+			}
+		}
+
+		// Set fields for the INSERT
+		query = query.Values(
+			normID,
+			hl.Type,
+			hl.Ordinal,
+			hl.Status,
+			pnID,
+			infoJSON,
+			fruId)
+	}
+	query = query.Suffix("ON CONFLICT(" + hwInvLocIdCol + ") DO UPDATE SET " +
+		hwInvLocOrdCol + " = EXCLUDED." + hwInvLocOrdCol + ", " +
+		hwInvLocStatusCol + " = EXCLUDED." + hwInvLocStatusCol + ", " +
+		hwInvLocNodeCol + " = EXCLUDED." + hwInvLocNodeCol + ", " +
+		hwInvLocLocInfoCol + " = EXCLUDED." + hwInvLocLocInfoCol + ", " +
+		hwInvLocFruIdCol + " = EXCLUDED." + hwInvLocFruIdCol)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: BulkInsertHWInvByLocTx(): Query: %s - With args: %v", qStr, qArgs)
+	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: BulkInsertHWInvByLocTx(): ExecContext: %s", err)
+		return err
+	}
+	t.Log(LOG_INFO, "Info: BulkInsertHWInvByLocTx() - %s", res)
+	return nil
+}
+
 // Insert or update HWInventoryByFRU struct (in transaction)
 func (t *hmsdbPgTx) InsertHWInvByFRUTx(hf *sm.HWInvByFRU) error {
 	if hf == nil {
@@ -1905,6 +2163,48 @@ func (t *hmsdbPgTx) InsertHWInvByFRUTx(hf *sm.HWInvByFRU) error {
 		return err
 	}
 	t.Log(LOG_INFO, "Info: InsertHWInvByFRUTx(): - %v", res)
+	return nil
+}
+
+// Insert or update HWInventoryByFRU structs (in transaction)
+func (t *hmsdbPgTx) BulkInsertHWInvByFRUTx(hfs []*sm.HWInvByFRU) error {
+	if len(hfs) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+	// Generate query
+	query := sq.Insert(hwInvFruTable).
+		Columns(hwInvFruTblCols...)
+	
+	for _, hf := range hfs {
+		infoJSON, err := hf.EncodeFRUInfo()
+		if err != nil {
+			t.LogAlways("Error: BulkInsertHWInvByFRUTx(): EncodeLocationInfo: %s", err)
+			return err
+		}
+
+		// Set fields for the INSERT
+		query = query.Values(
+			hf.FRUID,
+			hf.Type,
+			hf.Subtype,
+			infoJSON)
+	}
+	query = query.Suffix("ON CONFLICT(" + hwInvFruTblIdCol + ") DO UPDATE SET " +
+		hwInvFruTblSubTypeCol + " = EXCLUDED." + hwInvFruTblSubTypeCol + ", " +
+		hwInvFruTblInfoCol + " = EXCLUDED." + hwInvFruTblInfoCol)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: BulkInsertHWInvByFRUTx(): Query: %s - With args: %v", qStr, qArgs)
+	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: BulkInsertHWInvByFRUTx(): ExecContext: %s", err)
+		return err
+	}
+	t.Log(LOG_INFO, "Info: BulkInsertHWInvByFRUTx() - %s", res)
 	return nil
 }
 
@@ -2025,6 +2325,47 @@ func (t *hmsdbPgTx) DeleteHWInvByFRUsAllTx() (int64, error) {
 	// Return rows affected (if no error) and nil error, or else
 	// undefined number + error from RowsAffected.
 	return res.RowsAffected()
+}
+
+// Get some or all Hardware Inventory entries with filtering
+// options to possibly narrow the returned values.
+// If no filter provided, just get everything.  Otherwise use it
+// to create a custom WHERE... string that filters out entries that
+// do not match ALL of the non-empty strings in the filter struct.
+func (t *hmsdbPgTx) GetHWInvByLocQueryFilterTx(f_opts ...HWInvLocFiltFunc) ([]*sm.HWInvByLoc, error) {
+	if !t.IsConnected() {
+		return nil, ErrHMSDSPtrClosed
+	}
+	query, err := getHWInvByLocQuery(f_opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	// Execute
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: GetHWInvByLoc(): Query: %s - With args: %v", qStr, qArgs)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	hwlocs := make([]*sm.HWInvByLoc, 0, 1)
+	i := 0
+	for rows.Next() {
+		hwloc, err := t.hdb.scanHwInvByLocWithFRU(rows)
+		if err != nil {
+			t.LogAlways("Error: GetHWInvByLoc(): Scan failed: %s", err)
+			return hwlocs, err
+		}
+		t.Log(LOG_DEBUG, "Debug: GetHWInvByLoc() scanned[%d]: %v", i, hwloc)
+		hwlocs = append(hwlocs, hwloc)
+		i += 1
+	}
+	err = rows.Err()
+	t.Log(LOG_INFO, "Info: GetHWInvByLoc() returned %d hwinv items.", len(hwlocs))
+	return hwlocs, err
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2224,47 +2565,6 @@ func (t *hmsdbPgTx) InsertHWInvHistsTx(hhs []*sm.HWInvHist) error {
 	return ParsePgDBError(err)
 }
 
-// Get some or all Hardware Inventory entries with filtering
-// options to possibly narrow the returned values.
-// If no filter provided, just get everything.  Otherwise use it
-// to create a custom WHERE... string that filters out entries that
-// do not match ALL of the non-empty strings in the filter struct.
-func (t *hmsdbPgTx) GetHWInvByLocQueryFilterTx(f_opts ...HWInvLocFiltFunc) ([]*sm.HWInvByLoc, error) {
-	if !t.IsConnected() {
-		return nil, ErrHMSDSPtrClosed
-	}
-	query, err := getHWInvByLocQuery(f_opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	// Execute
-	query = query.PlaceholderFormat(sq.Dollar)
-	qStr, qArgs, _ := query.ToSql()
-	t.Log(LOG_DEBUG, "Debug: GetHWInvByLoc(): Query: %s - With args: %v", qStr, qArgs)
-	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	hwlocs := make([]*sm.HWInvByLoc, 0, 1)
-	i := 0
-	for rows.Next() {
-		hwloc, err := t.hdb.scanHwInvByLocWithFRU(rows)
-		if err != nil {
-			t.LogAlways("Error: GetHWInvByLoc(): Scan failed: %s", err)
-			return hwlocs, err
-		}
-		t.Log(LOG_DEBUG, "Debug: GetHWInvByLoc() scanned[%d]: %v", i, hwloc)
-		hwlocs = append(hwlocs, hwloc)
-		i += 1
-	}
-	err = rows.Err()
-	t.Log(LOG_INFO, "Info: GetHWInvByLoc() returned %d hwinv items.", len(hwlocs))
-	return hwlocs, err
-}
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // HMSDBTx Interface - RedfishEndpoint queries
@@ -2443,6 +2743,68 @@ func (t *hmsdbPgTx) InsertRFEndpointTx(ep *sm.RedfishEndpoint) error {
 	return nil
 }
 
+// Insert new RedfishEndpoints into database. Does not insert any
+// ComponentEndpoint children.(In transaction.)
+// If ID or FQDN already exists, return ErrHMSDSDuplicateKey
+// No insertion done on err != nil
+func (t *hmsdbPgTx) InsertRFEndpointsTx(eps []*sm.RedfishEndpoint) error {
+	if len(eps) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+
+	// Generate query
+	query := sq.Insert(rfEPsTable).
+		Columns(rfEPsAllCols...)
+	
+	for _, ep := range eps {
+		discInfoJSON, err := json.Marshal(ep.DiscInfo)
+		if err != nil {
+			// This should never fail
+			t.LogAlways(" InsertRFEndpointsTx: decode DiscoveryInfo: %s", err)
+		}
+		// Ensure endpoint name is normalized and valid
+		normID := base.VerifyNormalizeCompID(ep.ID)
+		if normID == "" {
+			t.LogAlways("InsertRFEndpointsTx(%s): %s", ep.ID, ErrHMSDSArgBadID)
+			return ErrHMSDSArgBadID
+		}
+
+		// Set fields for the INSERT
+		query = query.Values(
+			normID,
+			ep.Type,
+			ep.Name,
+			ep.Hostname,
+			ep.Domain,
+			ep.FQDN,
+			ep.Enabled,
+			ep.UUID,
+			ep.User,
+			ep.Password,
+			ep.UseSSDP,
+			ep.MACRequired,
+			ep.MACAddr,
+			ep.IPAddr,
+			ep.RediscOnUpdate,
+			ep.TemplateID,
+			discInfoJSON)
+	}
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: InsertRFEndpointsTx(): Query: %s - With args: %v", qStr, qArgs)
+	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: InsertRFEndpointsTx(): ExecContext: %s", err)
+		return err
+	}
+	t.Log(LOG_INFO, "Info: InsertRFEndpointsTx() - %s", res)
+	return nil
+}
+
 // Update RedfishEndpoint already in DB. Does not update any
 // ComponentEndpoint children. (In transaction.)
 // If ID or FQDN already exists, return ErrHMSDSDuplicateKey
@@ -2503,6 +2865,104 @@ func (t *hmsdbPgTx) UpdateRFEndpointTx(ep *sm.RedfishEndpoint) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+// Update RedfishEndpoint already in DB. Does not update any
+// ComponentEndpoint children. (In transaction.)
+// If ID or FQDN already exists, return ErrHMSDSDuplicateKey
+func (t *hmsdbPgTx) UpdateRFEndpointsTx(eps []*sm.RedfishEndpoint) ([]*sm.RedfishEndpoint, error) {
+	newEPs := make([]*sm.RedfishEndpoint, 0, 1)
+	if len(eps) == 0 {
+		return newEPs, nil
+	}
+	if !t.IsConnected() {
+		return newEPs, ErrHMSDSPtrClosed
+	}
+
+	// Generate query
+	// Make the column name a sq.Sqlizer so sq will set it as a column name and not a value.
+	query := sq.Update(rfEPsTable + " r").
+		Set(rfEPsTypeCol, sq.Expr(rfEPsTypeColAlias)).
+		Set(rfEPsNameCol, sq.Expr(rfEPsNameColAlias)).
+		Set(rfEPsHostnameCol, sq.Expr(rfEPsHostnameColAlias)).
+		Set(rfEPsDomainCol, sq.Expr(rfEPsDomainColAlias)).
+		Set(rfEPsFQDNCol, sq.Expr(rfEPsFQDNColAlias)).
+		Set(rfEPsEnabledCol, sq.Expr(rfEPsEnabledColAlias)).
+		Set(rfEPsUUIDCol, sq.Expr(rfEPsUUIDColAlias)).
+		Set(rfEPsUserCol, sq.Expr(rfEPsUserColAlias)).
+		Set(rfEPsPasswordCol, sq.Expr(rfEPsPasswordColAlias)).
+		Set(rfEPsUseSSDPCol, sq.Expr(rfEPsUseSSDPColAlias)).
+		Set(rfEPsMacRequiredCol, sq.Expr(rfEPsMacRequiredColAlias)).
+		Set(rfEPsMacAddrCol, sq.Expr(rfEPsMacAddrColAlias)).
+		Set(rfEPsIPAddrCol, sq.Expr(rfEPsIPAddrColAlias)).
+		Set(rfEPsRediscOnUpdateCol, sq.Expr(rfEPsRediscOnUpdateColAlias)).
+		Set(rfEPsTemplateIDCol, sq.Expr(rfEPsTemplateIDColAlias)).
+		Set(rfEPsDiscInfoCol, sq.Expr(rfEPsDiscInfoColAlias))
+
+	// sq doesn't have a way to add a FROM statement to an UPDATE.
+	// We'll just construct the 2nd half of the query manually and
+	// add it as a suffix.
+	args := make([]interface{}, 0, 1)
+	valStr := ""
+	for i, ep := range eps {
+		discInfoJSON, err := json.Marshal(ep.DiscInfo)
+		if err != nil {
+			// This should never fail
+			t.LogAlways("UpdateRFEndpointsTx: decode DiscoveryInfo: %s", err)
+		}
+		// Normalized key
+		normID := base.NormalizeHMSCompID(ep.ID)
+		// Add the values to our values table
+		if i == 0 {
+			valStr += "(?,?,?,?,?,?,?::BOOL,?,?,?,?::BOOL,?::BOOL,?,?,?::BOOL,?,?::JSON)"
+		} else {
+			valStr += ",(?,?,?,?,?,?,?::BOOL,?,?,?,?::BOOL,?::BOOL,?,?,?::BOOL,?,?::JSON)"
+		}
+		args = append(args,
+			normID,
+			ep.Type,
+			ep.Name,
+			ep.Hostname,
+			ep.Domain,
+			ep.FQDN,
+			ep.Enabled,
+			ep.UUID,
+			ep.User,
+			ep.Password,
+			ep.UseSSDP,
+			ep.MACRequired,
+			ep.MACAddr,
+			ep.IPAddr,
+			ep.RediscOnUpdate,
+			ep.TemplateID,
+			discInfoJSON)
+	}
+	// This FROM statement builds us a values table to pull update values
+	// from so an update with different values for each row can be done.
+	colStr := strings.Join(rfEPsAllCols, ",")
+	qstr := "FROM (VALUES " + valStr + ") AS " + rfEPsAlias +
+		"(" + colStr +
+		") WHERE r." + rfEPsIdCol + " = " + rfEPsIdColAlias +
+		" RETURNING " + colStr
+	query = query.Suffix(qstr, args...)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: UpdateRFEndpointsTx(): Query: %s - With args: %v", qStr, qArgs)
+	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: UpdateRFEndpointsTx(): QueryContext: %s", err)
+		return newEPs, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		ep, err := t.hdb.scanRedfishEndpoint(rows)
+		if err != nil {
+			return newEPs, err
+		}
+		newEPs = append(newEPs, ep)
+	}
+	return newEPs, nil
 }
 
 // Update RedfishEndpoint already in DB, leaving DiscoveryInfo
@@ -2858,6 +3318,72 @@ func (t *hmsdbPgTx) UpsertCompEndpointTx(cep *sm.ComponentEndpoint) error {
 	return nil
 }
 
+// Upsert ComponentEndpoints into database, updating them if they exist
+// (in transaction)
+func (t *hmsdbPgTx) UpsertCompEndpointsTx(ceps *sm.ComponentEndpointArray) error {
+	if ceps == nil {
+		t.LogAlways("Error: UpsertCompEndpointsTx(): Component array was nil.")
+		return ErrHMSDSArgNil
+	}
+	if len(ceps.ComponentEndpoints) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+	// Generate query
+	query := sq.Insert(compEPsTable).
+		Columns(compEPsAllCols...)
+	
+	for _, cep := range ceps.ComponentEndpoints {
+		compInfoJSON, err := cep.EncodeComponentInfo()
+		if err != nil {
+			// This should never fail
+			t.LogAlways("UpsertCompEndpointTx: decode CompInfo: %s", err)
+		}
+		// Ensure endpoint name is normalized and valid
+		normID := base.VerifyNormalizeCompID(cep.ID)
+		if normID == "" {
+			t.LogAlways("UpsertCompEndpointTx(%s): %s", normID, ErrHMSDSArgBadID)
+			return ErrHMSDSArgBadID
+		}
+
+		// Set fields for the INSERT
+		query = query.Values(
+			normID,
+			cep.Type,
+			cep.Domain,
+			cep.RedfishType,
+			cep.RedfishSubtype,
+			cep.RfEndpointID,
+			cep.MACAddr,
+			cep.UUID,
+			cep.OdataID,
+			compInfoJSON)
+	}
+	query = query.Suffix("ON CONFLICT(" + compEPsIdCol + ") DO UPDATE SET " +
+		compEPsDomainCol + " = EXCLUDED." + compEPsDomainCol + ", " +
+		compEPsRedfishTypeCol + " = EXCLUDED." + compEPsRedfishTypeCol + ", " +
+		compEPsRedfishSubtypeCol + " = EXCLUDED." + compEPsRedfishSubtypeCol + ", " +
+		compEPsRFEndpointIDCol + " = EXCLUDED." + compEPsRFEndpointIDCol + ", " +
+		compEPsMACCol + " = EXCLUDED." + compEPsMACCol + ", " +
+		compEPsUUIDCol + " = EXCLUDED." + compEPsUUIDCol + ", " +
+		compEPsODataIDCol + " = EXCLUDED." + compEPsODataIDCol + ", " +
+		compEPsComponentInfoCol + " = EXCLUDED." + compEPsComponentInfoCol)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: UpsertCompEndpointsTx(): Query: %s - With args: %v", qStr, qArgs)
+	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: UpsertCompEndpointsTx(): ExecContext: %s", err)
+		return err
+	}
+	t.Log(LOG_INFO, "Info: UpsertCompEndpointsTx() - %s", res)
+	return nil
+}
+
+
 // Delete ComponentEndpoint with matching xname id from database, if it
 // exists (in transaction)
 // Return true if there was a row affected, false if there were zero.
@@ -3114,6 +3640,59 @@ func (t *hmsdbPgTx) UpsertServiceEndpointTx(sep *sm.ServiceEndpoint) error {
 	return nil
 }
 
+// Insert ServiceEndpoints into database, updating them if they exist
+// (in transaction)
+func (t *hmsdbPgTx) UpsertServiceEndpointsTx(seps *sm.ServiceEndpointArray) error {
+	if seps == nil {
+		t.LogAlways("Error: UpsertServiceEndpointsTx(): Service array was nil.")
+		return ErrHMSDSArgNil
+	}
+	if len(seps.ServiceEndpoints) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+
+	// Generate query
+	query := sq.Insert(serviceEPsTable).
+		Columns(serviceEPsCols...)
+	
+	for _, sep := range seps.ServiceEndpoints {
+		if sep == nil {
+			t.LogAlways("Error: UpsertServiceEndpointsTx(): Service Endpoint was nil.")
+			return ErrHMSDSArgNil
+		}
+		// Normalize key
+		normRFID := base.NormalizeHMSCompID(sep.RfEndpointID)
+
+		// Set fields for the INSERT
+		query = query.Values(
+			normRFID,
+			sep.RedfishType,
+			sep.RedfishSubtype,
+			sep.UUID,
+			sep.OdataID,
+			sep.ServiceInfo)
+	}
+	query = query.Suffix("ON CONFLICT(" + serviceEPsRFEndpointIDCol + ", "+ serviceEPsRedfishTypeCol + ") DO UPDATE SET " +
+		serviceEPsRedfishSubtypeCol + " = EXCLUDED." + serviceEPsRedfishSubtypeCol + ", " +
+		serviceEPsUUIDCol + " = EXCLUDED." + serviceEPsUUIDCol + ", " +
+		serviceEPsODataIDCol + " = EXCLUDED." + serviceEPsODataIDCol + ", " +
+		serviceEPsServiceInfoCol + " = EXCLUDED." + serviceEPsServiceInfoCol)
+
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: UpsertServiceEndpointsTx(): Query: %s - With args: %v", qStr, qArgs)
+	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
+	if err != nil {
+		t.LogAlways("Error: UpsertServiceEndpointsTx(): ExecContext: %s", err)
+		return err
+	}
+	t.Log(LOG_INFO, "Info: UpsertServiceEndpointsTx() - %s", res)
+	return nil
+}
+
 // Delete ServiceEndpoint with matching service type and xname id from
 // database, if it exists (in transaction)
 // Return true if there was a row affected, false if there were zero.
@@ -3270,6 +3849,65 @@ func (t *hmsdbPgTx) InsertCompEthInterfaceTx(cei *sm.CompEthInterfaceV2) error {
 	return ParsePgDBError(err)
 }
 
+// Insert new CompEthInterfaces into database (in transaction)
+// If ID or MAC already exists, return ErrHMSDSDuplicateKey
+// No insertion done on err != nil
+func (t *hmsdbPgTx) InsertCompEthInterfacesTx(ceis []*sm.CompEthInterfaceV2) error {
+	var err error
+	if len(ceis) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+
+	// Generate query
+	query := sq.Insert(compEthTable).
+		Columns(compEthCols...)
+	
+	for _, cei := range ceis {
+		cei.MACAddr = strings.ToLower(cei.MACAddr)
+		cei.ID = strings.ReplaceAll(cei.MACAddr, ":", "")
+		if cei.ID == "" {
+			return ErrHMSDSArgBadArg
+		}
+		if cei.CompID != "" {
+			cei.CompID = base.VerifyNormalizeCompID(cei.CompID)
+			if cei.CompID == "" {
+				return ErrHMSDSArgBadID
+			}
+		}
+		if cei.Type != "" {
+			cei.Type = base.VerifyNormalizeType(cei.Type)
+			if cei.Type == "" {
+				return ErrHMSDSArgBadType
+			}
+		}
+
+		ipAddrs, err := json.Marshal(cei.IPAddrs)
+		if err != nil {
+			// This should never fail
+			t.LogAlways("InsertCompEthInterfacesTx: decode Details: %s", err)
+			return err
+		}
+		query = query.Values(
+			cei.ID,
+			cei.Desc,
+			cei.MACAddr,
+			"NOW()",
+			cei.CompID,
+			cei.Type,
+			ipAddrs)
+	}
+
+	// Exec with statement cache for caching prepared statements (local to tx)
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: InsertCompEthInterfacesTx(): Query: %s - With args: %v", qStr, qArgs)
+	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
+	return ParsePgDBError(err)
+}
+
 // Insert/update a new CompEthInterface into the database (in transaction)
 // If ID or FQDN already exists, only overwrite ComponentID
 // and Type fields.
@@ -3317,6 +3955,68 @@ func (t *hmsdbPgTx) InsertCompEthInterfaceCompInfoTx(cei *sm.CompEthInterfaceV2)
 
 	// Exec with statement cache for caching prepared statements (local to tx)
 	query = query.PlaceholderFormat(sq.Dollar)
+	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
+	return ParsePgDBError(err)
+}
+
+// Insert/update new CompEthInterfaces into the database (in transaction)
+// If ID or FQDN already exists, only overwrite ComponentID
+// and Type fields.
+// No insertion done on err != nil
+func (t *hmsdbPgTx) InsertCompEthInterfacesCompInfoTx(ceis []*sm.CompEthInterfaceV2) error {
+	var err error
+	if len(ceis) == 0 {
+		return nil
+	}
+	if !t.IsConnected() {
+		return ErrHMSDSPtrClosed
+	}
+
+	// Generate query
+	query := sq.Insert(compEthTable).
+		Columns(compEthCols...)
+	
+	for _, cei := range ceis {
+		cei.MACAddr = strings.ToLower(cei.MACAddr)
+		cei.ID = strings.ReplaceAll(cei.MACAddr, ":", "")
+		if cei.ID == "" {
+			return ErrHMSDSArgBadArg
+		}
+		if cei.CompID != "" {
+			cei.CompID = base.VerifyNormalizeCompID(cei.CompID)
+			if cei.CompID == "" {
+				return ErrHMSDSArgBadID
+			}
+		}
+		if cei.Type != "" {
+			cei.Type = base.VerifyNormalizeType(cei.Type)
+			if cei.Type == "" {
+				return ErrHMSDSArgBadType
+			}
+		}
+
+		ipAddrs, err := json.Marshal(cei.IPAddrs)
+		if err != nil {
+			// This should never fail
+			t.LogAlways("InsertCompEthInterfacesCompInfoTx: decode Details: %s", err)
+		}
+		query = query.Values(
+			cei.ID,
+			cei.Desc,
+			cei.MACAddr,
+			"NOW()",
+			cei.CompID,
+			cei.Type,
+			ipAddrs)
+	}
+	query = query.Suffix("ON CONFLICT(" + compEthIdCol + ") DO UPDATE SET " +
+		compEthCompIDCol + " = EXCLUDED." + compEthCompIDCol + ", " +
+		compEthTypeCol + " = EXCLUDED." + compEthTypeCol)
+
+	// Exec with statement cache for caching prepared statements (local to tx)
+	query = query.PlaceholderFormat(sq.Dollar)
+	qStr, qArgs, _ := query.ToSql()
+	t.Log(LOG_DEBUG, "Debug: InsertCompEthInterfacesCompInfoTx(): Query: %s - With args: %v", qStr, qArgs)
 	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
 	return ParsePgDBError(err)
 }

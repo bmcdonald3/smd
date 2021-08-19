@@ -534,6 +534,26 @@ func TestPgGetComponentsQuery(t *testing.T) {
 }
 
 func TestPgUpsertComponents(t *testing.T) {
+	insertComponentsSuffix := "ON CONFLICT(" + compIdCol + ") DO UPDATE SET " +
+		compStateCol + " = EXCLUDED." + compStateCol + ", " +
+		compFlagCol + " = EXCLUDED." + compFlagCol + ", " +
+		compSubTypeCol + " = EXCLUDED." + compSubTypeCol + ", " +
+		compNetTypeCol + " = EXCLUDED." + compNetTypeCol + ", " +
+		compArchCol + " = EXCLUDED." + compArchCol + ", " +
+		compClassCol + " = EXCLUDED." + compClassCol + 
+		" RETURNING " + compIdCol
+
+	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	insert1, _, _ := sqq.Insert(compTable).
+		Columns(compColsDefault...).
+		Values("x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false).
+		Suffix(insertComponentsSuffix).ToSql()
+	insert2, _, _ := sqq.Insert(compTable).
+		Columns(compColsDefault...).
+		Values("x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false).
+		Values("x0c0s0b0n1", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false).
+		Suffix(insertComponentsSuffix).ToSql()
+
 	tests := []struct {
 		comps           []*base.Component
 		force           bool
@@ -543,8 +563,9 @@ func TestPgUpsertComponents(t *testing.T) {
 		dbInsertErr     error
 		expectedPrepare string
 		expectedArgs    []driver.Value
-		expectedInsert  []string
-		expectedInArgs  [][]driver.Value
+		expectedInsert  string
+		expectedRows    [][]driver.Value
+		expectedInArgs  []driver.Value
 		expectedMap     map[string]map[string]bool
 	}{{
 		comps: []*base.Component{&base.Component{
@@ -553,22 +574,19 @@ func TestPgUpsertComponents(t *testing.T) {
 			State: base.StateEmpty.String(),
 			Flag:  base.FlagOK.String(),
 		}},
-		force:     false,
-		dbColumns: []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbRows:    [][]driver.Value{},
-		// dbRows:          [][]driver.Value{
-		// []driver.Value{"x0c0s26b0n0", "Node", "On", "OK", true, "AdminStatus", "Compute", "", 832, "", "Sling", "X86", "", false, false},
-		// []driver.Value{"x0c0s27b0n0", "Node", "On", "OK", true, "AdminStatus", "Compute", "", 864, "", "Sling", "X86", "", false, false},
-		// },
+		force:           false,
+		dbColumns:       []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
+		dbRows:          [][]driver.Value{},
 		dbError:         nil,
 		dbInsertErr:     nil,
 		expectedPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedArgs:    []driver.Value{"x0c0s0b0n0"},
-		expectedInsert: []string{
-			regexp.QuoteMeta(ToPGQueryArgs(insertPgCompQuery)),
+		expectedInsert:  regexp.QuoteMeta(insert1),
+		expectedRows:    [][]driver.Value{
+			[]driver.Value{"x0c0s0b0n0"},
 		},
-		expectedInArgs: [][]driver.Value{
-			[]driver.Value{"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false},
+		expectedInArgs: []driver.Value{
+			"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false,
 		},
 		expectedMap: map[string]map[string]bool{
 			"x0c0s0b0n0": map[string]bool{
@@ -589,15 +607,16 @@ func TestPgUpsertComponents(t *testing.T) {
 		}},
 		force:     false,
 		dbColumns: []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbRows: [][]driver.Value{
+		dbRows:    [][]driver.Value{
 			[]driver.Value{"x0c0s0b0n0", "Node", "On", "OK", true, "AdminStatus", "Compute", "", 832, "", "Sling", "X86", "", false, false},
 		},
 		dbError:         nil,
 		dbInsertErr:     nil,
 		expectedPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedArgs:    []driver.Value{"x0c0s0b0n0"},
-		expectedInsert:  []string{},
-		expectedInArgs:  [][]driver.Value{},
+		expectedInsert:  "",
+		expectedRows:    [][]driver.Value{},
+		expectedInArgs:  []driver.Value{},
 		expectedMap:     map[string]map[string]bool{},
 	}, {
 		comps: []*base.Component{&base.Component{
@@ -608,18 +627,19 @@ func TestPgUpsertComponents(t *testing.T) {
 		}},
 		force:     true,
 		dbColumns: []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbRows: [][]driver.Value{
+		dbRows:    [][]driver.Value{
 			[]driver.Value{"x0c0s0b0n0", "Node", "On", "OK", true, "AdminStatus", "Compute", "", 832, "", "Sling", "X86", "", false, false},
 		},
 		dbError:         nil,
 		dbInsertErr:     nil,
 		expectedPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedArgs:    []driver.Value{"x0c0s0b0n0"},
-		expectedInsert: []string{
-			regexp.QuoteMeta(ToPGQueryArgs(insertPgCompQuery)),
+		expectedInsert:  regexp.QuoteMeta(insert1),
+		expectedRows:    [][]driver.Value{
+			[]driver.Value{"x0c0s0b0n0"},
 		},
-		expectedInArgs: [][]driver.Value{
-			[]driver.Value{"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false},
+		expectedInArgs: []driver.Value{
+			"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false,
 		},
 		expectedMap: map[string]map[string]bool{
 			"x0c0s0b0n0": map[string]bool{
@@ -648,13 +668,14 @@ func TestPgUpsertComponents(t *testing.T) {
 		dbInsertErr:     nil,
 		expectedPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1,$2)"),
 		expectedArgs:    []driver.Value{"x0c0s0b0n0", "x0c0s0b0n1"},
-		expectedInsert: []string{
-			regexp.QuoteMeta(ToPGQueryArgs(insertPgCompQuery)),
-			regexp.QuoteMeta(ToPGQueryArgs(insertPgCompQuery)),
+		expectedInsert:  regexp.QuoteMeta(insert2),
+		expectedRows:    [][]driver.Value{
+			[]driver.Value{"x0c0s0b0n0"},
+			[]driver.Value{"x0c0s0b0n1"},
 		},
-		expectedInArgs: [][]driver.Value{
-			[]driver.Value{"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false},
-			[]driver.Value{"x0c0s0b0n1", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false},
+		expectedInArgs: []driver.Value{
+			"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false,
+			"x0c0s0b0n1", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false,
 		},
 		expectedMap: map[string]map[string]bool{
 			"x0c0s0b0n0": map[string]bool{
@@ -690,8 +711,9 @@ func TestPgUpsertComponents(t *testing.T) {
 		dbInsertErr:     nil,
 		expectedPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedArgs:    []driver.Value{"x0c0s0b0n0"},
-		expectedInsert:  []string{},
-		expectedInArgs:  [][]driver.Value{},
+		expectedInsert:  "",
+		expectedRows:    [][]driver.Value{},
+		expectedInArgs:  []driver.Value{},
 		expectedMap:     nil,
 	}, {
 		comps: []*base.Component{
@@ -709,11 +731,12 @@ func TestPgUpsertComponents(t *testing.T) {
 		dbInsertErr:     sql.ErrNoRows,
 		expectedPrepare: regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
 		expectedArgs:    []driver.Value{"x0c0s0b0n0"},
-		expectedInsert: []string{
-			regexp.QuoteMeta(ToPGQueryArgs(insertPgCompQuery)),
+		expectedInsert:  regexp.QuoteMeta(insert1),
+		expectedRows:    [][]driver.Value{
+			[]driver.Value{"x0c0s0b0n0"},
 		},
-		expectedInArgs: [][]driver.Value{
-			[]driver.Value{"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false},
+		expectedInArgs: []driver.Value{
+			"x0c0s0b0n0", "Node", "Empty", "OK", true, "", "", "", -1, "", "", "", "", false, false,
 		},
 		expectedMap: nil,
 	}}
@@ -725,6 +748,10 @@ func TestPgUpsertComponents(t *testing.T) {
 		for _, row := range test.dbRows {
 			rows.AddRow(row...)
 		}
+		insertRows := sqlmock.NewRows([]string{"id"})
+		for _, row := range test.expectedRows {
+			insertRows.AddRow(row...)
+		}
 
 		mockPG.ExpectBegin()
 		if test.dbError != nil {
@@ -732,15 +759,12 @@ func TestPgUpsertComponents(t *testing.T) {
 			mockPG.ExpectRollback()
 		} else {
 			mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WithArgs(test.expectedArgs...).WillReturnRows(rows)
-			for j, _ := range test.expectedInsert {
+			if test.expectedInsert != "" {
 				if test.dbInsertErr != nil {
-					mockPG.ExpectPrepare(test.expectedInsert[j]).ExpectExec().WillReturnError(test.dbInsertErr)
+					mockPG.ExpectPrepare(test.expectedInsert).ExpectQuery().WillReturnError(test.dbInsertErr)
 					mockPG.ExpectRollback()
-					break
-				} else if j == 0 {
-					mockPG.ExpectPrepare(test.expectedInsert[j]).ExpectExec().WithArgs(test.expectedInArgs[j]...).WillReturnResult(sqlmock.NewResult(0, 1))
 				} else {
-					mockPG.ExpectExec(test.expectedInsert[j]).WithArgs(test.expectedInArgs[j]...).WillReturnResult(sqlmock.NewResult(0, 1))
+					mockPG.ExpectPrepare(test.expectedInsert).ExpectQuery().WithArgs(test.expectedInArgs...).WillReturnRows(insertRows)
 				}
 			}
 			if test.dbInsertErr == nil {
@@ -1526,179 +1550,57 @@ func TestPgBulkUpdateCompClass(t *testing.T) {
 }
 
 func TestPgBulkUpdateCompNID(t *testing.T) {
-	type UpdateItem struct {
+
+	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	update, _, _ := sqq.Update(compTable + " " + compTableJoinAlias).
+		Set(compNIDCol, sq.Expr(compTableSubAlias + "." + compNIDCol)).
+		Suffix("FROM (VALUES (?,?::BIGINT),(?,?::BIGINT)) AS " + compTableSubAlias +
+		"(" + compIdCol + ", " + compNIDCol +
+		") WHERE " + compTableJoinAlias + "." + compIdCol + " = " + compTableSubAlias + "." + compIdCol,
+		"x0c0s25b0n0", 800, "x0c0s27b0n0", 864).ToSql()
+	tests := []struct {
+		comps                *[]base.Component
 		dbUpdateError         error
 		expectedUpdatePrepare string
 		expectedUpdateArgs    []driver.Value
-	}
-	tests := []struct {
-		comps                *[]base.Component
-		dbColumns            []string
-		dbRows               [][]driver.Value
-		dbQueryError         error
-		expectedQueryPrepare string
-		expectedQueryArgs    []driver.Value
-		updateComponents     []UpdateItem
 	}{{
-		&[]base.Component{
+		comps: &[]base.Component{
 			base.Component{"x0c0s25b0n0", "", "", "", nil, "", "", "", "800", "", "", "", "", false, false},
 			base.Component{"x0c0s27b0n0", "", "", "", nil, "", "", "", "864", "", "", "", "", false, false},
 		},
-		[]string{"id"},
-		[][]driver.Value{
-			[]driver.Value{"x0c0s25b0n0"},
-			[]driver.Value{"x0c0s27b0n0"},
-		},
-		nil,
-		regexp.QuoteMeta(getCompIDPrefix +
-			" WHERE (id = $1 OR id = $2);"),
-		[]driver.Value{"x0c0s25b0n0", "x0c0s27b0n0"},
-		[]UpdateItem{
-			UpdateItem{
-				nil,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{800, "x0c0s25b0n0"},
-			}, UpdateItem{
-				nil,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{864, "x0c0s27b0n0"},
-			}},
+		dbUpdateError:         nil,
+		expectedUpdatePrepare: regexp.QuoteMeta(update),
+		expectedUpdateArgs:    []driver.Value{"x0c0s25b0n0", 800, "x0c0s27b0n0", 864},
 	}, {
-		&[]base.Component{
+		comps: &[]base.Component{
 			base.Component{"x0c0s25b0n0", "", "", "", nil, "", "", "", "-1", "", "", "", "", false, false},
 			base.Component{"x0c0s27b0n0", "", "", "", nil, "", "", "", "864", "", "", "", "", false, false},
 		},
-		[]string{"id"},
-		[][]driver.Value{
-			[]driver.Value{"x0c0s25b0n0"},
-			[]driver.Value{"x0c0s27b0n0"},
-		},
-		nil,
-		regexp.QuoteMeta(getCompIDPrefix + " WHERE (id = $1 OR id = $2);"),
-		[]driver.Value{"x0c0s25b0n0", "x0c0s27b0n0"},
-		[]UpdateItem{
-			UpdateItem{
-				nil,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{-1, "x0c0s25b0n0"},
-			}, UpdateItem{
-				nil,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{864, "x0c0s27b0n0"},
-			}},
+		dbUpdateError:         nil,
+		expectedUpdatePrepare: regexp.QuoteMeta(update),
+		expectedUpdateArgs:    []driver.Value{"x0c0s25b0n0", -1, "x0c0s27b0n0", 864},
 	}, {
-		&[]base.Component{
-			base.Component{"x0c0s25b0n0", "", "", "", nil, "", "", "", "-1", "", "", "", "", false, false},
-			base.Component{"x0c0s27b0n0", "", "", "", nil, "", "", "", "864", "", "", "", "", false, false},
-		},
-		[]string{"id"},
-		[][]driver.Value{
-			[]driver.Value{"x0c0s25b0n0"},
-			[]driver.Value{"x0c0s27b0n0"},
-		},
-		sql.ErrNoRows,
-		regexp.QuoteMeta(getCompIDPrefix +
-			" WHERE (id = $1 OR id = $2);"),
-		[]driver.Value{"x0c0s25b0n0", "x0c0s27b0n0"},
-		[]UpdateItem{},
-	}, {
-		&[]base.Component{
+		comps: &[]base.Component{
 			base.Component{"x0c0s25b0n0", "", "", "", nil, "", "", "", "800", "", "", "", "", false, false},
 			base.Component{"x0c0s27b0n0", "", "", "", nil, "", "", "", "864", "", "", "", "", false, false},
 		},
-		[]string{"id"},
-		[][]driver.Value{
-			[]driver.Value{"x0c0s25b0n0"},
-			[]driver.Value{"x0c0s27b0n0"},
-		},
-		nil,
-		regexp.QuoteMeta(getCompIDPrefix + " WHERE (id = $1 OR id = $2);"),
-		[]driver.Value{"x0c0s25b0n0", "x0c0s27b0n0"},
-		[]UpdateItem{
-			UpdateItem{
-				sql.ErrNoRows,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{800, "x0c0s25b0n0"},
-			}},
-	}, {
-		&[]base.Component{
-			base.Component{"x0c0s25b0n0", "", "", "", nil, "", "", "", "800", "", "", "", "", false, false},
-			base.Component{"x0c0s27b0n0", "", "", "", nil, "", "", "", "864", "", "", "", "", false, false},
-		},
-		[]string{"id"},
-		[][]driver.Value{
-			[]driver.Value{"x0c0s25b0n0"},
-			[]driver.Value{"x0c0s27b0n0"},
-		},
-		nil,
-		regexp.QuoteMeta(getCompIDPrefix +
-			" WHERE (id = $1 OR id = $2);"),
-		[]driver.Value{"x0c0s25b0n0", "x0c0s27b0n0"},
-		[]UpdateItem{
-			UpdateItem{
-				nil,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{800, "x0c0s25b0n0"},
-			}, UpdateItem{
-				sql.ErrNoRows,
-				regexp.QuoteMeta(ToPGQueryArgs(updateCompNIDPrefix) +
-					"WHERE id = $2;"),
-				[]driver.Value{864, "x0c0s27b0n0"},
-			}},
+		dbUpdateError:         sql.ErrNoRows,
+		expectedUpdatePrepare: regexp.QuoteMeta(update),
+		expectedUpdateArgs:    []driver.Value{"x0c0s25b0n0", 800, "x0c0s27b0n0", 864},
 	}}
 
 	for i, test := range tests {
 		ResetMockDB()
-		var wasError bool
 		// before we actually execute our api function, we need to
 		// expect required DB actions
-		rows := sqlmock.NewRows(test.dbColumns)
-		for _, row := range test.dbRows {
-			rows.AddRow(row...)
-		}
 
 		mockPG.ExpectBegin()
-		if test.dbQueryError != nil {
-			mockPG.ExpectPrepare(
-				test.expectedQueryPrepare).ExpectQuery().WillReturnError(test.dbQueryError)
+		if test.dbUpdateError != nil {
+			mockPG.ExpectPrepare(test.expectedUpdatePrepare).ExpectExec().WillReturnError(test.dbUpdateError)
 			mockPG.ExpectRollback()
 		} else {
-			mockPG.ExpectPrepare(
-				test.expectedQueryPrepare).ExpectQuery().WithArgs(
-				test.expectedQueryArgs...).WillReturnRows(rows)
-			for i, update := range test.updateComponents {
-				if update.dbUpdateError != nil {
-					if i == 0 {
-						mockPG.ExpectPrepare(
-							update.expectedUpdatePrepare).ExpectExec().WillReturnError(update.dbUpdateError)
-					} else {
-						mockPG.ExpectExec(
-							update.expectedUpdatePrepare).WillReturnError(
-							update.dbUpdateError)
-					}
-					mockPG.ExpectRollback()
-					wasError = true
-				} else {
-					if i == 0 {
-						mockPG.ExpectPrepare(
-							update.expectedUpdatePrepare).ExpectExec().WithArgs(
-							update.expectedUpdateArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-					} else {
-						mockPG.ExpectExec(
-							update.expectedUpdatePrepare).WithArgs(
-							update.expectedUpdateArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-					}
-				}
-			}
-			if !wasError {
-				mockPG.ExpectCommit()
-			}
+			mockPG.ExpectPrepare(test.expectedUpdatePrepare).ExpectExec().WithArgs(test.expectedUpdateArgs...).WillReturnResult(sqlmock.NewResult(0, int64(len(*test.comps))))
+			mockPG.ExpectCommit()
 		}
 
 		err := dPG.BulkUpdateCompNID(test.comps)
@@ -1706,7 +1608,7 @@ func TestPgBulkUpdateCompNID(t *testing.T) {
 		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
 			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
 		}
-		if test.dbQueryError == nil && !wasError {
+		if test.dbUpdateError == nil {
 			if err != nil {
 				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
 			}
@@ -3128,62 +3030,73 @@ func TestPgUpsertServiceEndpoint(t *testing.T) {
 }
 
 func TestPgUpsertServiceEndpoints(t *testing.T) {
+	upsertSuffix := "ON CONFLICT(" + serviceEPsRFEndpointIDCol + ", "+ serviceEPsRedfishTypeCol + ") DO UPDATE SET " +
+		serviceEPsRedfishSubtypeCol + " = EXCLUDED." + serviceEPsRedfishSubtypeCol + ", " +
+		serviceEPsUUIDCol + " = EXCLUDED." + serviceEPsUUIDCol + ", " +
+		serviceEPsODataIDCol + " = EXCLUDED." + serviceEPsODataIDCol + ", " +
+		serviceEPsServiceInfoCol + " = EXCLUDED." + serviceEPsServiceInfoCol
+
+	var servEP sm.ServiceEndpoint
+
+	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+	insert1, _, _ := sqq.Insert(serviceEPsTable).
+		Columns(serviceEPsCols...).
+		Values(servEP.RfEndpointID, servEP.RedfishType, servEP.RedfishSubtype, servEP.UUID, servEP.OdataID, servEP.ServiceInfo).
+		Suffix(upsertSuffix).ToSql()
+	insert2, _, _ := sqq.Insert(serviceEPsTable).
+		Columns(serviceEPsCols...).
+		Values(servEP.RfEndpointID, servEP.RedfishType, servEP.RedfishSubtype, servEP.UUID, servEP.OdataID, servEP.ServiceInfo).
+		Values(servEP.RfEndpointID, servEP.RedfishType, servEP.RedfishSubtype, servEP.UUID, servEP.OdataID, servEP.ServiceInfo).
+		Suffix(upsertSuffix).ToSql()
 	tests := []struct {
 		seps            *sm.ServiceEndpointArray
 		dbError         error
 		expectedPrepare string
-		expectedArgs    [][]driver.Value
+		expectedArgs    []driver.Value
 		expectedErr     error
 	}{{
 		seps:            &stest.TestServiceEndpointArrayUpdates,
 		dbError:         nil,
-		expectedPrepare: regexp.QuoteMeta(upsertPgServiceEndpointQuery),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].RfEndpointID,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].RedfishType,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].RedfishSubtype,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].UUID,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].OdataID,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].ServiceInfo,
-			}, []driver.Value{
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].RfEndpointID,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].RedfishType,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].RedfishSubtype,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].UUID,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].OdataID,
-				stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].ServiceInfo,
-			},
+		expectedPrepare: regexp.QuoteMeta(insert2),
+		expectedArgs:    []driver.Value{
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].RfEndpointID,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].RedfishType,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].RedfishSubtype,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].UUID,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].OdataID,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[0].ServiceInfo,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].RfEndpointID,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].RedfishType,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].RedfishSubtype,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].UUID,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].OdataID,
+			stest.TestServiceEndpointArrayUpdates.ServiceEndpoints[1].ServiceInfo,
 		},
 		expectedErr: nil,
 	}, {
 		seps:            &stest.TestServiceEndpointArrayUpdate1,
 		dbError:         nil,
-		expectedPrepare: regexp.QuoteMeta(upsertPgServiceEndpointQuery),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RfEndpointID,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishType,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishSubtype,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].UUID,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].OdataID,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].ServiceInfo,
-			},
+		expectedPrepare: regexp.QuoteMeta(insert1),
+		expectedArgs:    []driver.Value{
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RfEndpointID,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishType,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishSubtype,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].UUID,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].OdataID,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].ServiceInfo,
 		},
 		expectedErr: nil,
 	}, {
 		seps:            &stest.TestServiceEndpointArrayUpdate1,
 		dbError:         sql.ErrNoRows,
-		expectedPrepare: regexp.QuoteMeta(upsertPgServiceEndpointQuery),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RfEndpointID,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishType,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishSubtype,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].UUID,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].OdataID,
-				stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].ServiceInfo,
-			},
+		expectedPrepare: regexp.QuoteMeta(insert1),
+		expectedArgs:    []driver.Value{
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RfEndpointID,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishType,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].RedfishSubtype,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].UUID,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].OdataID,
+			stest.TestServiceEndpointArrayUpdate1.ServiceEndpoints[0].ServiceInfo,
 		},
 		expectedErr: nil,
 	}, {
@@ -3199,18 +3112,12 @@ func TestPgUpsertServiceEndpoints(t *testing.T) {
 		// before we actually execute our api function, we need to expect required DB actions
 		mockPG.ExpectBegin()
 		if test.dbError != nil {
-			mockPG.ExpectPrepare(ToPGQueryArgs(test.expectedPrepare)).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
 			mockPG.ExpectRollback()
 		} else if test.expectedErr != nil {
 			mockPG.ExpectRollback()
 		} else {
-			for j, args := range test.expectedArgs {
-				if j == 0 {
-					mockPG.ExpectPrepare(ToPGQueryArgs(test.expectedPrepare)).ExpectExec().WithArgs(args...).WillReturnResult(sqlmock.NewResult(0, 1))
-				} else {
-					mockPG.ExpectExec(ToPGQueryArgs(test.expectedPrepare)).WithArgs(args...).WillReturnResult(sqlmock.NewResult(0, 1))
-				}
-			}
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(test.expectedArgs...).WillReturnResult(sqlmock.NewResult(0, int64(len(test.seps.ServiceEndpoints))))
 			mockPG.ExpectCommit()
 		}
 
@@ -3520,27 +3427,28 @@ func TestInsertCompEthInterfaces(t *testing.T) {
 
 	insert1, _, _ := sqq.Insert(compEthTable).
 		Columns(compEthCols...).
+		Values("a4bf0138ee65", "My description", "a4:bf:01:38:ee:65", "NOW()", "x3000c0s26b0", "NodeBMC", `[{"IPAddress":"10.254.2.14","Network":""}]`).
 		Values("a4bf0138ee65", "My description", "a4:bf:01:38:ee:65", "NOW()", "x3000c0s26b0", "NodeBMC", `[{"IPAddress":"10.254.2.14","Network":""}]`).ToSql()
 
 	tests := []struct {
 		in              []*sm.CompEthInterfaceV2
 		expectedPrepare string
-		expectedArgs    [][]driver.Value
+		expectedArgs    []driver.Value
 		dbError         error
 	}{{ // Test 0 - Insert 2 new rows
 		in:              []*sm.CompEthInterfaceV2{&testCompEth1, &testCompEth2},
 		expectedPrepare: regexp.QuoteMeta(insert1),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{testCompEth1.ID, testCompEth1.Desc, testCompEth1.MACAddr, "NOW()", testCompEth1.CompID, testCompEth1.Type, testCompEth1IPAddrsRaw},
-			[]driver.Value{"a4bf0138ee67", testCompEth2.Desc, testCompEth2.MACAddr, "NOW()", testCompEth2.CompID, testCompEth2.Type, testCompEth2IPAddrsRaw},
+		expectedArgs:    []driver.Value{
+			testCompEth1.ID, testCompEth1.Desc, testCompEth1.MACAddr, "NOW()", testCompEth1.CompID, testCompEth1.Type, testCompEth1IPAddrsRaw,
+			"a4bf0138ee67", testCompEth2.Desc, testCompEth2.MACAddr, "NOW()", testCompEth2.CompID, testCompEth2.Type, testCompEth2IPAddrsRaw,
 		},
 		dbError: nil,
 	}, { // Test 1 - Test that database error is passed back
 		in:              []*sm.CompEthInterfaceV2{&testCompEth1, &testCompEth2},
 		expectedPrepare: regexp.QuoteMeta(insert1),
-		expectedArgs: [][]driver.Value{
-			[]driver.Value{testCompEth1.ID, testCompEth1.Desc, testCompEth1.MACAddr, "NOW()", testCompEth1.CompID, testCompEth1.Type, testCompEth1IPAddrsRaw},
-			[]driver.Value{"a4bf0138ee67", testCompEth2.Desc, testCompEth2.MACAddr, "NOW()", testCompEth2.CompID, testCompEth2.Type, testCompEth2IPAddrsRaw},
+		expectedArgs:    []driver.Value{
+			testCompEth1.ID, testCompEth1.Desc, testCompEth1.MACAddr, "NOW()", testCompEth1.CompID, testCompEth1.Type, testCompEth1IPAddrsRaw,
+			"a4bf0138ee67", testCompEth2.Desc, testCompEth2.MACAddr, "NOW()", testCompEth2.CompID, testCompEth2.Type, testCompEth2IPAddrsRaw,
 		},
 		dbError: sql.ErrNoRows,
 	}}
@@ -3554,13 +3462,7 @@ func TestInsertCompEthInterfaces(t *testing.T) {
 			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
 			mockPG.ExpectRollback()
 		} else {
-			for j, args := range test.expectedArgs {
-				if j > 0 {
-					mockPG.ExpectExec(test.expectedPrepare).WithArgs(args...).WillReturnResult(sqlmock.NewResult(0, 1))
-				} else {
-					mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(args...).WillReturnResult(sqlmock.NewResult(0, 1))
-				}
-			}
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(test.expectedArgs...).WillReturnResult(sqlmock.NewResult(0, int64(len(test.in))))
 			mockPG.ExpectCommit()
 		}
 

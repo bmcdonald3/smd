@@ -398,51 +398,151 @@ type compReservation struct {
 //                        RedfishEndpoint structs                           //
 //                                                                          //
 
-const rfEPsTableBase = `rf_endpoints`
+const rfEPsTable = `rf_endpoints`
 const rfEPsAlias = `rf`
 
-const rfEPsTable = rfEPsAlias + "." + rfEPsTableBase
+const rfEPsTableAlias = rfEPsAlias + "." + rfEPsTable
 
 const (
-	rfEPsTableColId             = rfEPsAlias + "." + "id"
-	rfEPsTableColType           = rfEPsAlias + "." + "type"
-	rfEPsTableColName           = rfEPsAlias + "." + "name"
-	rfEPsTableColHostname       = rfEPsAlias + "." + "hostname"
-	rfEPsTableColDomain         = rfEPsAlias + "." + "domain"
-	rfEPsTableColFQDN           = rfEPsAlias + "." + "fqdn"
-	rfEPsTableColEnabled        = rfEPsAlias + "." + "enabled"
-	rfEPsTableColUUID           = rfEPsAlias + "." + "uuid"
-	rfEPsTableColUser           = rfEPsAlias + "." + "user"
-	rfEPsTableColPassword       = rfEPsAlias + "." + "password"
-	rfEPsTableColUseSSDP        = rfEPsAlias + "." + "useSSDP"
-	rfEPsTableColMacRequired    = rfEPsAlias + "." + "macRequired"
-	rfEPsTableColMacAddr        = rfEPsAlias + "." + "macAddr"
-	rfEPsTableColIPAddr         = rfEPsAlias + "." + "ipAddr"
-	rfEPsTableColRediscOnUpdate = rfEPsAlias + "." + "rediscoverOnUpdate"
-	rfEPsTableColTemplateID     = rfEPsAlias + "." + "templateID"
-	rfEPsTableColDiscInfo       = rfEPsAlias + "." + "discovery_info"
+	rfEPsIdCol             = `id`
+	rfEPsTypeCol           = `type`
+	rfEPsNameCol           = `name`
+	rfEPsHostnameCol       = `hostname`
+	rfEPsDomainCol         = `domain`
+	rfEPsFQDNCol           = `fqdn`
+	rfEPsEnabledCol        = `enabled`
+	rfEPsUUIDCol           = `uuid`
+	rfEPsUserCol           = `"user"`
+	rfEPsPasswordCol       = `password`
+	rfEPsUseSSDPCol        = `usessdp`
+	rfEPsMacRequiredCol    = `macrequired`
+	rfEPsMacAddrCol        = `macaddr`
+	rfEPsIPAddrCol         = `ipaddr`
+	rfEPsRediscOnUpdateCol = `rediscoveronupdate`
+	rfEPsTemplateIDCol     = `templateid`
+	rfEPsDiscInfoCol       = `discovery_info`
+)
+
+const (
+	rfEPsIdColAlias             = rfEPsAlias + "." + rfEPsIdCol
+	rfEPsTypeColAlias           = rfEPsAlias + "." + rfEPsTypeCol
+	rfEPsNameColAlias           = rfEPsAlias + "." + rfEPsNameCol
+	rfEPsHostnameColAlias       = rfEPsAlias + "." + rfEPsHostnameCol
+	rfEPsDomainColAlias         = rfEPsAlias + "." + rfEPsDomainCol
+	rfEPsFQDNColAlias           = rfEPsAlias + "." + rfEPsFQDNCol
+	rfEPsEnabledColAlias        = rfEPsAlias + "." + rfEPsEnabledCol
+	rfEPsUUIDColAlias           = rfEPsAlias + "." + rfEPsUUIDCol
+	rfEPsUserColAlias           = rfEPsAlias + "." + rfEPsUserCol
+	rfEPsPasswordColAlias       = rfEPsAlias + "." + rfEPsPasswordCol
+	rfEPsUseSSDPColAlias        = rfEPsAlias + "." + rfEPsUseSSDPCol
+	rfEPsMacRequiredColAlias    = rfEPsAlias + "." + rfEPsMacRequiredCol
+	rfEPsMacAddrColAlias        = rfEPsAlias + "." + rfEPsMacAddrCol
+	rfEPsIPAddrColAlias         = rfEPsAlias + "." + rfEPsIPAddrCol
+	rfEPsRediscOnUpdateColAlias = rfEPsAlias + "." + rfEPsRediscOnUpdateCol
+	rfEPsTemplateIDColAlias     = rfEPsAlias + "." + rfEPsTemplateIDCol
+	rfEPsDiscInfoColAlias       = rfEPsAlias + "." + rfEPsDiscInfoCol
 )
 
 var rfEPsAllColsNoStatus = []string{
-	rfEPsTableColId,
-	rfEPsTableColType,
-	rfEPsTableColName,
-	rfEPsTableColHostname,
-	rfEPsTableColDomain,
-	rfEPsTableColFQDN,
-	rfEPsTableColEnabled,
-	rfEPsTableColUUID,
-	rfEPsTableColUser,
-	rfEPsTableColPassword,
-	rfEPsTableColUseSSDP,
-	rfEPsTableColMacRequired,
-	rfEPsTableColMacAddr,
-	rfEPsTableColIPAddr,
-	rfEPsTableColRediscOnUpdate,
-	rfEPsTableColTemplateID,
+	rfEPsIdCol,
+	rfEPsTypeCol,
+	rfEPsNameCol,
+	rfEPsHostnameCol,
+	rfEPsDomainCol,
+	rfEPsFQDNCol,
+	rfEPsEnabledCol,
+	rfEPsUUIDCol,
+	rfEPsUserCol,
+	rfEPsPasswordCol,
+	rfEPsUseSSDPCol,
+	rfEPsMacRequiredCol,
+	rfEPsMacAddrCol,
+	rfEPsIPAddrCol,
+	rfEPsRediscOnUpdateCol,
+	rfEPsTemplateIDCol,
 }
 
-var rfEPsAllCols = append(rfEPsAllColsNoStatus, rfEPsTableColDiscInfo)
+var rfEPsAllCols = append(rfEPsAllColsNoStatus, rfEPsDiscInfoCol)
+
+//                                                                          //
+//                        ComponentEndpoint structs                         //
+//                                                                          //
+
+const compEPsTable = `comp_endpoints`
+const compEPsAlias = `ce`
+
+const (
+	compEPsIdCol             = `id`
+	compEPsTypeCol           = `type`
+	compEPsDomainCol         = `domain`
+	compEPsRedfishTypeCol    = `redfish_type`
+	compEPsRedfishSubtypeCol = `redfish_subtype`
+	compEPsRFEndpointIDCol   = `rf_endpoint_id`
+	compEPsMACCol            = `mac`
+	compEPsUUIDCol           = `uuid`
+	compEPsODataIDCol        = `odata_id`
+	compEPsComponentInfoCol  = `component_info`
+)
+
+const (
+	compEPsIdColAlias             = compEPsAlias + "." + compEPsIdCol
+	compEPsTypeColAlias           = compEPsAlias + "." + compEPsTypeCol
+	compEPsDomainColAlias         = compEPsAlias + "." + compEPsDomainCol
+	compEPsRedfishTypeColAlias    = compEPsAlias + "." + compEPsRedfishTypeCol
+	compEPsRedfishSubtypeColAlias = compEPsAlias + "." + compEPsRedfishSubtypeCol
+	compEPsRFEndpointIDColAlias   = compEPsAlias + "." + compEPsRFEndpointIDCol
+	compEPsMACColAlias            = compEPsAlias + "." + compEPsMACCol
+	compEPsUUIDColAlias           = compEPsAlias + "." + compEPsUUIDCol
+	compEPsODataIDColAlias        = compEPsAlias + "." + compEPsODataIDCol
+	compEPsComponentInfoColAlias  = compEPsAlias + "." + compEPsComponentInfoCol
+)
+
+var compEPsAllCols = []string{
+	compEPsIdCol,
+	compEPsTypeCol,
+	compEPsDomainCol,
+	compEPsRedfishTypeCol,
+	compEPsRedfishSubtypeCol,
+	compEPsRFEndpointIDCol,
+	compEPsMACCol,
+	compEPsUUIDCol,
+	compEPsODataIDCol,
+	compEPsComponentInfoCol,
+}
+
+//                                                                          //
+//                         ServiceEndpoint structs                          //
+//                                                                          //
+
+const serviceEPsTable = `service_endpoints`
+const serviceEPsAlias = `se`
+
+const (
+	serviceEPsRFEndpointIDCol   = `rf_endpoint_id`
+	serviceEPsRedfishTypeCol    = `redfish_type`
+	serviceEPsRedfishSubtypeCol = `redfish_subtype`
+	serviceEPsUUIDCol           = `uuid`
+	serviceEPsODataIDCol        = `odata_id`
+	serviceEPsServiceInfoCol    = `service_info`
+)
+
+const (
+	serviceEPsRFEndpointIDColAlias   = serviceEPsAlias + "." + serviceEPsRFEndpointIDCol
+	serviceEPsRedfishTypeColAlias    = serviceEPsAlias + "." + serviceEPsRedfishTypeCol
+	serviceEPsRedfishSubtypeColAlias = serviceEPsAlias + "." + serviceEPsRedfishSubtypeCol
+	serviceEPsUUIDColAlias           = serviceEPsAlias + "." + serviceEPsUUIDCol
+	serviceEPsODataIDColAlias        = serviceEPsAlias + "." + serviceEPsODataIDCol
+	serviceEPsServiceInfoColAlias    = serviceEPsAlias + "." + serviceEPsServiceInfoCol
+)
+
+var serviceEPsCols = []string{
+	serviceEPsRFEndpointIDCol,
+	serviceEPsRedfishTypeCol,
+	serviceEPsRedfishSubtypeCol,
+	serviceEPsUUIDCol,
+	serviceEPsODataIDCol,
+	serviceEPsServiceInfoCol,
+}
 
 //                                                                          //
 //                      Component Ethernet Interfaces                       //
@@ -595,8 +695,8 @@ const (
 
 // hwInv by loc only table columns.
 var hwInvLocCols = []string{hwInvLocIdCol, hwInvLocTypeCol,
-	hwInvLocOrdCol, hwInvLocStatusCol, hwInvLocParentCol,
-	hwInvLocLocInfoCol, hwInvLocFruIdCol, hwInvLocNodeCol}
+	hwInvLocOrdCol, hwInvLocStatusCol, hwInvLocNodeCol,
+	hwInvLocLocInfoCol, hwInvLocFruIdCol}
 
 //
 // HwInv by FRU only
