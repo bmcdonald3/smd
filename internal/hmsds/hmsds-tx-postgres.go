@@ -2940,10 +2940,11 @@ func (t *hmsdbPgTx) UpdateRFEndpointsTx(eps []*sm.RedfishEndpoint) ([]*sm.Redfis
 	// This FROM statement builds us a values table to pull update values
 	// from so an update with different values for each row can be done.
 	colStr := strings.Join(rfEPsAllCols, ",")
+	aliasColStr := strings.Join(rfEPsAllCols, ",r.")
 	qstr := "FROM (VALUES " + valStr + ") AS " + rfEPsAlias +
 		"(" + colStr +
 		") WHERE r." + rfEPsIdCol + " = " + rfEPsIdColAlias +
-		" RETURNING " + colStr
+		" RETURNING r." + aliasColStr
 	query = query.Suffix(qstr, args...)
 
 	query = query.PlaceholderFormat(sq.Dollar)
