@@ -5,11 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.30.10] - 2021-08-19
+## [1.30.14] - 2021-08-19
 
 ### Changed
 
 - CASMHMS-4835 - Changed HSM postgres operations to use bulk Inserts and Updates when working with multiple entries.
+
+## [1.30.13] - 2021-08-10
+
+### Changed
+
+- Added GitHub configuration files.
+
+## [1.30.12] - 2021-08-03
+
+### Changed
+
+- CASMTRIAGE-1808 - Updated the ComponentEndpoints CT test for multiple accelerator components.
+
+## [1.30.11] - 2021-08-02
+
+### Changed
+
+- CASMHMS-4885 - Set pod priority for HSM.
+
+## [1.30.10] - 2021-07-30
+
+### Changed
+
+- CASMHMS-4990 - Add "HPE" to the match list for Cray manufacturer.
 
 ## [1.30.9] - 2021-07-26
 
