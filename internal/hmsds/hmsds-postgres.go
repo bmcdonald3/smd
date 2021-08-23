@@ -528,20 +528,18 @@ func (d *hmsdbPg) InsertComponent(c *base.Component) (int64, error) {
 // Inserts or updates ComponentArray entries in database within a
 // single all-or-none transaction.
 func (d *hmsdbPg) InsertComponents(comps *base.ComponentArray) ([]string, error) {
-	var affectedIDs []string
+	if comps == nil {
+		d.LogAlways("Error: InsertComponents(): Component array was nil.")
+		return []string{}, ErrHMSDSArgNil
+	}
 	t, err := d.Begin()
 	if err != nil {
 		return []string{}, err
 	}
-	for _, comp := range comps.Components {
-		rowsAffected, err := t.InsertComponentTx(comp)
-		if err != nil {
-			t.Rollback()
-			return []string{}, err
-		}
-		if rowsAffected == 0 {
-			affectedIDs = append(affectedIDs, comp.ID)
-		}
+	affectedIDs, err := t.InsertComponentsTx(comps.Components)
+	if err != nil {
+		t.Rollback()
+		return []string{}, err
 	}
 	if err := t.Commit(); err != nil {
 		return []string{}, err
@@ -556,6 +554,7 @@ func (d *hmsdbPg) InsertComponents(comps *base.ComponentArray) ([]string, error)
 func (d *hmsdbPg) UpsertComponents(comps []*base.Component, force bool) (map[string]map[string]bool, error) {
 	affectedRowMap := make(map[string]map[string]bool, 0)
 	cmap := make(map[string]*base.Component, 0)
+	compList := make([]*base.Component, 0, 1)
 	t, err := d.Begin()
 	if err != nil {
 		return nil, err
@@ -619,17 +618,28 @@ func (d *hmsdbPg) UpsertComponents(comps []*base.Component, force bool) (map[str
 			changeMap["subRole"] = true
 			changeMap["nid"] = true
 		}
-		rowsAffected, err := t.InsertComponentTx(comp)
-		if err != nil {
-			t.Rollback()
-			return nil, err
-		}
-		if rowsAffected != 0 {
-			affectedRowMap[comp.ID] = changeMap
-		}
+		compList = append(compList, comp)
+		affectedRowMap[comp.ID] = changeMap
+	}
+	compsAffected, err := t.InsertComponentsTx(compList)
+	if err != nil {
+		t.Rollback()
+		return nil, err
 	}
 	if err := t.Commit(); err != nil {
 		return nil, err
+	}
+	// Remove changes that didn't happen
+	if len(compsAffected) != len(compList) {
+		compsAffectedMap := make(map[string]string)
+		for _, comp := range compsAffected {
+			compsAffectedMap[comp] = comp
+		}
+		for _, comp := range compList {
+			if id, ok := compsAffectedMap[comp.ID]; !ok {
+				delete(affectedRowMap, id)
+			}
+		}
 	}
 	return affectedRowMap, nil
 }
@@ -1024,22 +1034,12 @@ func (d *hmsdbPg) BulkUpdateCompNID(comps *[]base.Component) error {
 	if err != nil {
 		return err
 	}
-	ids := make([]string, len(*comps))
-	for i, comp := range *comps {
-		ids[i] = comp.ID
-	}
-	// Lock components for update
-	_, err = t.GetComponentIDsTx(IDs(ids), From("BulkUpdateCompNID"))
-	if err != nil {
+
+	if err := t.BulkUpdateCompNIDTx(*comps); err != nil {
 		t.Rollback()
 		return err
 	}
-	for _, comp := range *comps {
-		if err := t.UpdateCompNIDTx(&comp); err != nil {
-			t.Rollback()
-			return err
-		}
-	}
+
 	if err := t.Commit(); err != nil {
 		return err
 	}
@@ -1664,22 +1664,22 @@ func (d *hmsdbPg) InsertHWInvByLocs(hls []*sm.HWInvByLoc) error {
 	if err != nil {
 		return err
 	}
+	hfs := make([]*sm.HWInvByFRU, 0, len(hls))
 	// Insert FRUs first because the location info links to them.
 	for _, hl := range hls {
 		if hl.PopulatedFRU != nil {
-			err = t.InsertHWInvByFRUTx(hl.PopulatedFRU)
-			if err != nil {
-				t.Rollback()
-				return err
-			}
+			hfs = append(hfs, hl.PopulatedFRU)
 		}
 	}
-	for _, hl := range hls {
-		err = t.InsertHWInvByLocTx(hl)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+	err = t.BulkInsertHWInvByFRUTx(hfs)
+	if err != nil {
+		t.Rollback()
+		return err
+	}
+	err = t.BulkInsertHWInvByLocTx(hls)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
 	err = t.Commit()
 	return err
@@ -2026,13 +2026,13 @@ func (d *hmsdbPg) InsertRFEndpoints(eps *sm.RedfishEndpointArray) error {
 	if err != nil {
 		return err
 	}
-	for _, ep := range eps.RedfishEndpoints {
-		err := t.InsertRFEndpointTx(ep)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+
+	err = t.InsertRFEndpointsTx(eps.RedfishEndpoints)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
+
 	if err := t.Commit(); err != nil {
 		return err
 	}
@@ -2317,12 +2317,14 @@ func (d *hmsdbPg) UpdateRFEndpointForDiscover(ids []string, force bool) (
 			modEP := sm.NewRedfishEndpoint(&rep.RedfishEPDescription)
 			modEP.DiscInfo = rep.DiscInfo
 			modEP.DiscInfo.UpdateLastStatusWithTS(rf.DiscoveryStarted)
-			_, err := t.UpdateRFEndpointTx(modEP)
-			if err != nil {
-				t.Rollback()
-				return nil, err
-			}
 			modEPs = append(modEPs, modEP)
+		}
+	}
+	if len(modEPs) > 0 {
+		_, err := t.UpdateRFEndpointsTx(modEPs)
+		if err != nil {
+			t.Rollback()
+			return nil, err
 		}
 	}
 	if err := t.Commit(); err != nil {
@@ -2341,21 +2343,17 @@ func (d *hmsdbPg) UpdateRFEndpoints(eps *sm.RedfishEndpointArray) (bool, error) 
 	if err != nil {
 		return false, err
 	}
-	for _, ep := range eps.RedfishEndpoints {
-		didUpdate, err := t.UpdateRFEndpointTx(ep)
-		if err != nil {
-			t.Rollback()
-			return false, err
-		} else if didUpdate != true {
-			// If no update, see if entry didn't exist or if something
-			// else went wrong.
-			getEP, err := t.GetRFEndpointByIDTx(ep.ID)
-			if err != nil || getEP == nil {
-				t.Rollback()
-				return false, nil
-			}
-		}
+
+	getEPs, err := t.UpdateRFEndpointsTx(eps.RedfishEndpoints)
+	if err != nil {
+		t.Rollback()
+		return false, err
+	} else if len(getEPs) != len(eps.RedfishEndpoints) {
+		// An entry didn't exist.
+		t.Rollback()
+		return false, nil
 	}
+
 	if err := t.Commit(); err != nil {
 		return false, err
 	}
@@ -2550,12 +2548,10 @@ func (d *hmsdbPg) UpsertCompEndpoints(ceps *sm.ComponentEndpointArray) error {
 	if err != nil {
 		return err
 	}
-	for _, cep := range ceps.ComponentEndpoints {
-		err = t.UpsertCompEndpointTx(cep)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+	err = t.UpsertCompEndpointsTx(ceps)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
 	err = t.Commit()
 	return err
@@ -2752,12 +2748,10 @@ func (d *hmsdbPg) UpsertServiceEndpoints(seps *sm.ServiceEndpointArray) error {
 	if err != nil {
 		return err
 	}
-	for _, sep := range seps.ServiceEndpoints {
-		err = t.UpsertServiceEndpointTx(sep)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+	err = t.UpsertServiceEndpointsTx(seps)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
 	err = t.Commit()
 	return err
@@ -2934,12 +2928,10 @@ func (d *hmsdbPg) InsertCompEthInterfaces(ceis []*sm.CompEthInterfaceV2) error {
 	if err != nil {
 		return err
 	}
-	for _, cei := range ceis {
-		err := t.InsertCompEthInterfaceTx(cei)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+	err = t.InsertCompEthInterfacesTx(ceis)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
 	if err := t.Commit(); err != nil {
 		return err
@@ -2977,12 +2969,10 @@ func (d *hmsdbPg) InsertCompEthInterfacesCompInfo(ceis []*sm.CompEthInterfaceV2)
 	if err != nil {
 		return err
 	}
-	for _, cei := range ceis {
-		err := t.InsertCompEthInterfaceCompInfoTx(cei)
-		if err != nil {
-			t.Rollback()
-			return err
-		}
+	err = t.InsertCompEthInterfacesCompInfoTx(ceis)
+	if err != nil {
+		t.Rollback()
+		return err
 	}
 	if err := t.Commit(); err != nil {
 		return err
@@ -3398,109 +3388,110 @@ func (d *hmsdbPg) UpdateAllForRFEndpoint(
 	}
 	// Upsert ComponentEndpointArray into database
 	if ceps != nil {
-		for _, cep := range ceps.ComponentEndpoints {
-			err = t.UpsertCompEndpointTx(cep)
-			if err != nil {
-				t.Rollback()
-				return nil, err
-			}
+		err = t.UpsertCompEndpointsTx(ceps)
+		if err != nil {
+			t.Rollback()
+			return nil, err
 		}
 	}
 	// Insert FRUs first because the location info links to them.
 	if hls != nil {
+		hfs := make([]*sm.HWInvByFRU, 0, len(hls))
 		for _, hl := range hls {
 			if hl.PopulatedFRU != nil {
-				err = t.InsertHWInvByFRUTx(hl.PopulatedFRU)
-				if err != nil {
-					t.Rollback()
-					return nil, err
-				}
+				hfs = append(hfs, hl.PopulatedFRU)
 			}
 		}
+		err = t.BulkInsertHWInvByFRUTx(hfs)
+		if err != nil {
+			t.Rollback()
+			return nil, err
+		}
 		// Now insert HWInvByLocation so that the FRU link will exist.
-		for _, hl := range hls {
-			err = t.InsertHWInvByLocTx(hl)
-			if err != nil {
-				t.Rollback()
-				return nil, err
-			}
+		err = t.BulkInsertHWInvByLocTx(hls)
+		if err != nil {
+			t.Rollback()
+			return nil, err
 		}
 	}
 	// Inserts or updates HMS Components entries
 	if comps != nil {
+		compMap := make(map[string]*base.Component)
+		nodeList := make([]string, 0, 1)
 		for _, comp := range comps.Components {
-			compNew := *comp
-			// If component is a node, we don't want to unconditionally
-			// change its state if its on, because it might be in a
-			// higher state.
-			if compNew.Type == base.Node.String() {
-				// Read lock the current entry, if there is one.
-				compOld, err := t.GetComponentByIDTx(compNew.ID)
-				if err != nil {
-					t.Rollback()
-					return nil, err
-				} else if compOld != nil {
-					// Existing component.
-					if base.VerifyNormalizeState(compNew.State) ==
-						base.StateOn.String() &&
-						base.IsPostBootState(compOld.State) &&
-						compNew.Flag == base.FlagOK.String() {
-						//
-						// Keep higher states if ON is Redfish state.
-						// since that is the highest one Redfish will report.
-						//
-						d.Log(LOG_INFO,
-							"Keeping old state for %s, old: %s/%s, new: %s/%s",
-							compNew.ID,
-							compOld.State, compOld.Flag,
-							compNew.State, compNew.Flag,
-						)
-						compNew.State = compOld.State
-						compNew.Flag = compOld.Flag
-					} else {
-						d.Log(LOG_INFO,
-							"Updating state for %s, old: %s/%s, new: %s/%s",
-							compNew.ID,
-							compOld.State, compOld.Flag,
-							compNew.State, compNew.Flag,
-						)
-					}
-				}
+			compMap[comp.ID] = comp
+			if comp.Type == base.Node.String() {
+				nodeList = append(nodeList, comp.ID)
 			} else {
 				d.Log(LOG_INFO,
 					"Not node: %s, type %s, new state is %s/%s",
-					compNew.ID, compNew.Type,
-					compNew.State, compNew.Flag,
+					comp.ID, comp.Type,
+					comp.State, comp.Flag,
 				)
 			}
-			rowsAffected, err := t.InsertComponentTx(&compNew)
+		}
+		if len(nodeList) > 0 {
+			nodes, err := t.GetComponentsTx(IDs(nodeList), From("UpdateAllForRFEndpoint"))
 			if err != nil {
 				t.Rollback()
 				return nil, err
 			}
-			if rowsAffected != 0 {
-				discoveredIDs = append(discoveredIDs, compNew)
+			for _, compOld := range nodes {
+				compNew, ok := compMap[compOld.ID]
+				if !ok {
+					continue
+				}
+				if base.VerifyNormalizeState(compNew.State) ==
+					base.StateOn.String() &&
+					base.IsPostBootState(compOld.State) &&
+					compNew.Flag == base.FlagOK.String() {
+					//
+					// Keep higher states if ON is Redfish state.
+					// since that is the highest one Redfish will report.
+					//
+					d.Log(LOG_INFO,
+						"Keeping old state for %s, old: %s/%s, new: %s/%s",
+						compNew.ID,
+						compOld.State, compOld.Flag,
+						compNew.State, compNew.Flag,
+					)
+					compNew.State = compOld.State
+					compNew.Flag = compOld.Flag
+				} else {
+					d.Log(LOG_INFO,
+						"Updating state for %s, old: %s/%s, new: %s/%s",
+						compNew.ID,
+						compOld.State, compOld.Flag,
+						compNew.State, compNew.Flag,
+					)
+				}
+			}
+		}
+		rowsAffected, err := t.InsertComponentsTx(comps.Components)
+		if err != nil {
+			t.Rollback()
+			return nil, err
+		}
+		for _, id := range rowsAffected {
+			if comp, ok := compMap[id]; ok {
+				discoveredIDs = append(discoveredIDs, *comp)
 			}
 		}
 	}
 	// Upsert ServiceEndpointArray into database
 	if seps != nil {
-		for _, sep := range seps.ServiceEndpoints {
-			err = t.UpsertServiceEndpointTx(sep)
-			if err != nil {
-				t.Rollback()
-				return nil, err
-			}
+		err = t.UpsertServiceEndpointsTx(seps)
+		if err != nil {
+			t.Rollback()
+			return nil, err
 		}
 	}
 	// Insert CompEthInterfaces into the database
 	if ceis != nil {
-		for _, cei := range ceis {
-			err = t.InsertCompEthInterfaceCompInfoTx(cei)
-			if err != nil {
-				t.Rollback()
-				return nil, err
-			}
+		err = t.InsertCompEthInterfacesCompInfoTx(ceis)
+		if err != nil {
+			t.Rollback()
+			return nil, err
 		}
 	}
 	if err := t.Commit(); err != nil {

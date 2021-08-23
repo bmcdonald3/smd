@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.14] - 2021-08-19
+
+### Changed
+
+- CASMHMS-4835 - Changed HSM postgres operations to use bulk Inserts and Updates when working with multiple entries.
+
 ## [1.30.13] - 2021-08-10
 
 ### Changed

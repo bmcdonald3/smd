@@ -1044,6 +1044,10 @@ type HMSDBTx interface {
 	// Returns the number of affected rows. < 0 means RowsAffected() is not supported.
 	InsertComponentTx(c *base.Component) (int64, error)
 
+	// Insert HMS Components into the database, updating it if it exists.
+	// Returns the IDs of the affected components.
+	InsertComponentsTx(comps []*base.Component) ([]string, error)
+
 	// Update state and flag fields only in DB for xname IDs 'ids'
 	// If force = true ignores any starting state restrictions and will always
 	// set ids to state, unless that state is already set.
@@ -1104,6 +1108,10 @@ type HMSDBTx interface {
 	// Update NID.  If NID is not set or negative, it is set to -1 which
 	// effectively unsets it and suppresses its output.
 	UpdateCompNIDTx(c *base.Component) error
+	
+	// Update NID.  If NID is not set or negative, it is set to -1 which
+	// effectively unsets it and suppresses its output.
+	BulkUpdateCompNIDTx(comps []base.Component) error
 
 	// Delete HMS Component with matching xname id from database, if it
 	// exists (in transaction)
@@ -1185,8 +1193,19 @@ type HMSDBTx interface {
 	// the location info will need to link to it.
 	InsertHWInvByLocTx(hl *sm.HWInvByLoc) error
 
+	// Insert or update HWInventoryByLocation structs (in transaction)
+	// If PopulatedFRU is present, only the FRUID is added to the database. If
+	// it is not, this effectively "depopulates" the given location.
+	// The actual HWInventoryByFRU struct must be stored FIRST using the
+	// corresponding function (presumably within the same transaction), as
+	// the location info will need to link to it.
+	BulkInsertHWInvByLocTx(hl []*sm.HWInvByLoc) error
+
 	// Insert or update HWInventoryByFRU struct (in transaction)
 	InsertHWInvByFRUTx(hf *sm.HWInvByFRU) error
+
+	// Insert or update HWInventoryByFRU struct (in transaction)
+	BulkInsertHWInvByFRUTx(hf []*sm.HWInvByFRU) error
 
 	// Delete HWInvByLoc entry with matching ID from database, if it
 	// exists (in transaction)
@@ -1205,6 +1224,13 @@ type HMSDBTx interface {
 	// Delete all HWInvByFRU entries from database (in transaction).
 	// Also returns number of deleted rows, if error is nil.
 	DeleteHWInvByFRUsAllTx() (int64, error)
+
+	// Get some or all Hardware Inventory entries with filtering
+	// options to possibly narrow the returned values.
+	// If no filter provided, just get everything.  Otherwise use it
+	// to create a custom WHERE... string that filters out entries that
+	// do not match ALL of the non-empty strings in the filter struct.
+	GetHWInvByLocQueryFilterTx(f_opts ...HWInvLocFiltFunc) ([]*sm.HWInvByLoc, error)
 
 	//                                                                    //
 	//   Hardware Inventory History - Detailed history of hardware FRU    //
@@ -1229,13 +1255,6 @@ type HMSDBTx interface {
 	// Insert an array of HWInventoryHistory entries. (in transaction)
 	// If a duplicate is present return an error.
 	InsertHWInvHistsTx(hhs []*sm.HWInvHist) error
-
-	// Get some or all Hardware Inventory entries with filtering
-	// options to possibly narrow the returned values.
-	// If no filter provided, just get everything.  Otherwise use it
-	// to create a custom WHERE... string that filters out entries that
-	// do not match ALL of the non-empty strings in the filter struct.
-	GetHWInvByLocQueryFilterTx(f_opts ...HWInvLocFiltFunc) ([]*sm.HWInvByLoc, error)
 
 	//                                                                    //
 	//    Redfish Endpoints - Redfish service roots used for discovery    //
@@ -1267,10 +1286,20 @@ type HMSDBTx interface {
 	// No insertion done on err != nil
 	InsertRFEndpointTx(ep *sm.RedfishEndpoint) error
 
+	// Insert new RedfishEndpoints into database (in transaction)
+	// If ID or FQDN already exists, return ErrHMSDSDuplicateKey
+	// No insertion done on err != nil
+	InsertRFEndpointsTx(eps []*sm.RedfishEndpoint) error
+
 	// Update RedfishEndpoint already in DB. Does not update any
 	// ComponentEndpoint children. (In transaction.)
 	// If err == nil, but FALSE is returned, then no changes were made.
 	UpdateRFEndpointTx(ep *sm.RedfishEndpoint) (bool, error)
+
+	// Update RedfishEndpoint already in DB. Does not update any
+	// ComponentEndpoint children. (In transaction.)
+	// If err == nil, but FALSE is returned, then no changes were made.
+	UpdateRFEndpointsTx(ep []*sm.RedfishEndpoint) ([]*sm.RedfishEndpoint, error)
 
 	// Update RedfishEndpoint already in DB, leaving DiscoveryInfo
 	// unmodifed.  Does not update any ComponentEndpoint children.
@@ -1328,6 +1357,10 @@ type HMSDBTx interface {
 	// (in transaction)
 	UpsertCompEndpointTx(cep *sm.ComponentEndpoint) error
 
+	// Upsert ComponentEndpoints into database, updating them if they exist
+	// (in transaction)
+	UpsertCompEndpointsTx(ceps *sm.ComponentEndpointArray) error
+
 	// Delete ComponentEndpoint with matching xname id from database, if it
 	// exists (in transaction)
 	// Return true if there was a row affected, false if there were zero.
@@ -1371,6 +1404,10 @@ type HMSDBTx interface {
 	// (in transaction)
 	UpsertServiceEndpointTx(sep *sm.ServiceEndpoint) error
 
+	// Upsert ServiceEndpoints into database, updating them if they exist
+	// (in transaction)
+	UpsertServiceEndpointsTx(seps *sm.ServiceEndpointArray) error
+
 	// Delete ServiceEndpoint with matching xname id from database, if it
 	// exists (in transaction)
 	// Return true if there was a row affected, false if there were zero.
@@ -1393,11 +1430,22 @@ type HMSDBTx interface {
 	// No insertion done on err != nil
 	InsertCompEthInterfaceTx(cei *sm.CompEthInterfaceV2) error
 
+	// Insert a new CompEthInterface into database (in transaction)
+	// If ID or MAC already exists, return ErrHMSDSDuplicateKey
+	// No insertion done on err != nil
+	InsertCompEthInterfacesTx(ceis []*sm.CompEthInterfaceV2) error
+
 	// Insert/update a new CompEthInterface into the database (in transaction)
 	// If ID or FQDN already exists, only overwrite ComponentID
 	// and Type fields.
 	// No insertion done on err != nil
 	InsertCompEthInterfaceCompInfoTx(cei *sm.CompEthInterfaceV2) error
+
+	// Insert/update new CompEthInterfaces into the database (in transaction)
+	// If ID or FQDN already exists, only overwrite ComponentID
+	// and Type fields.
+	// No insertion done on err != nil
+	InsertCompEthInterfacesCompInfoTx(ceis []*sm.CompEthInterfaceV2) error
 
 	// Update CompEthInterface already in the DB. (In transaction.)
 	// If err == nil, but FALSE is returned, then no changes were made.
