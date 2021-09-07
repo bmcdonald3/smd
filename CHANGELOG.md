@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.16] - 2021-09-07
+
+### Added
+
+- CASMHMS-5039 - Added support for power capping for Bard Peak nodes.
+
 ## [1.30.15] - 2021-08-24
 
 ### Changed
