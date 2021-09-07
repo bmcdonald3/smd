@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- CASMHMS-4935 - Set the 'Name' field in the power control struct for Apollo 6500.
+- CASMHMS-5041 - Set the 'Name' field in the power control struct for Apollo 6500.
 
 ## [1.30.15] - 2021-08-24
 
