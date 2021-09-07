@@ -740,11 +740,21 @@ func (t *hmsdbPgTx) InsertComponentsTx(comps []*base.Component) ([]string, error
 	if !t.IsConnected() {
 		return []string{}, ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
+
 	// Generate query
 	query := sq.Insert(compTable).
 		Columns(compColsDefault...)
 
 	for _, c := range comps {
+		// Normalize key
+		normID := base.NormalizeHMSCompID(c.ID)
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[normID]; ok {
+			continue
+		} else {
+			valueMap[normID] = true
+		}
 		// If NID is not a valid number (e.g. empty string), set to -1.
 		var rawNID int64
 		if num, err := c.NID.Int64(); err != nil {
@@ -760,9 +770,6 @@ func (t *hmsdbPgTx) InsertComponentsTx(comps []*base.Component) ([]string, error
 		} else {
 			enabledFlg = *c.Enabled
 		}
-
-		// Normalize key
-		normID := base.NormalizeHMSCompID(c.ID)
 
 		// Set fields for the INSERT
 		query = query.Values(
@@ -1384,6 +1391,7 @@ func (t *hmsdbPgTx) BulkUpdateCompNIDTx(comps []base.Component) error {
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
 
 	idColAlias := compTableJoinAlias + "." + compIdCol
 	idFromCol := compTableSubAlias + "." + compIdCol
@@ -1399,6 +1407,14 @@ func (t *hmsdbPgTx) BulkUpdateCompNIDTx(comps []base.Component) error {
 	args := make([]interface{}, 0, 1)
 	valStr := ""
 	for i, c := range comps {
+		// Normalize key
+		normID := base.NormalizeHMSCompID(c.ID)
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[normID]; ok {
+			continue
+		} else {
+			valueMap[normID] = true
+		}
 		// NID must be given. DB uses value for -1 for no NID, client should
 		// send negative value to unset NID.
 		var rawNID int64
@@ -1409,8 +1425,6 @@ func (t *hmsdbPgTx) BulkUpdateCompNIDTx(comps []base.Component) error {
 		} else {
 			rawNID = num
 		}
-		// Normalize key
-		normID := base.NormalizeHMSCompID(c.ID)
 		// Add the values to our values table
 		if i == 0 {
 			valStr += "(?,?::BIGINT)"
@@ -2064,11 +2078,23 @@ func (t *hmsdbPgTx) BulkInsertHWInvByLocTx(hls []*sm.HWInvByLoc) error {
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
+
 	// Generate query
 	query := sq.Insert(hwInvLocTable).
 		Columns(hwInvLocCols...)
 	
 	for _, hl := range hls {
+		// Normalize key
+		normID := base.NormalizeHMSCompID(hl.ID)
+
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[normID]; ok {
+			continue
+		} else {
+			valueMap[normID] = true
+		}
+
 		// If a location is empty, the fru_id field will be NULL.
 		if hl.PopulatedFRU != nil {
 			if hl.PopulatedFRU.FRUID == "" {
@@ -2084,8 +2110,6 @@ func (t *hmsdbPgTx) BulkInsertHWInvByLocTx(hls []*sm.HWInvByLoc) error {
 			t.LogAlways("Error: BulkInsertHWInvByLocTx(): EncodeLocationInfo: %s", err)
 			return err
 		}
-		// Normalize key
-		normID := base.NormalizeHMSCompID(hl.ID)
 
 		// Get the parent node xname for use with partition queries. Components under nodes
 		// (processors, memory, etc.) get the parent_node set to the node above them. For
@@ -2174,11 +2198,20 @@ func (t *hmsdbPgTx) BulkInsertHWInvByFRUTx(hfs []*sm.HWInvByFRU) error {
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
+
 	// Generate query
 	query := sq.Insert(hwInvFruTable).
 		Columns(hwInvFruTblCols...)
 	
 	for _, hf := range hfs {
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[hf.FRUID]; ok {
+			continue
+		} else {
+			valueMap[hf.FRUID] = true
+		}
+
 		infoJSON, err := hf.EncodeFRUInfo()
 		if err != nil {
 			t.LogAlways("Error: BulkInsertHWInvByFRUTx(): EncodeLocationInfo: %s", err)
@@ -2754,19 +2787,26 @@ func (t *hmsdbPgTx) InsertRFEndpointsTx(eps []*sm.RedfishEndpoint) error {
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
 
 	// Generate query
 	query := sq.Insert(rfEPsTable).
 		Columns(rfEPsAllCols...)
 	
 	for _, ep := range eps {
+		// Ensure endpoint name is normalized and valid
+		normID := base.VerifyNormalizeCompID(ep.ID)
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[normID]; ok {
+			continue
+		} else {
+			valueMap[normID] = true
+		}
 		discInfoJSON, err := json.Marshal(ep.DiscInfo)
 		if err != nil {
 			// This should never fail
 			t.LogAlways(" InsertRFEndpointsTx: decode DiscoveryInfo: %s", err)
 		}
-		// Ensure endpoint name is normalized and valid
-		normID := base.VerifyNormalizeCompID(ep.ID)
 		if normID == "" {
 			t.LogAlways("InsertRFEndpointsTx(%s): %s", ep.ID, ErrHMSDSArgBadID)
 			return ErrHMSDSArgBadID
@@ -2878,6 +2918,7 @@ func (t *hmsdbPgTx) UpdateRFEndpointsTx(eps []*sm.RedfishEndpoint) ([]*sm.Redfis
 	if !t.IsConnected() {
 		return newEPs, ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
 
 	// Generate query
 	// Make the column name a sq.Sqlizer so sq will set it as a column name and not a value.
@@ -2905,13 +2946,20 @@ func (t *hmsdbPgTx) UpdateRFEndpointsTx(eps []*sm.RedfishEndpoint) ([]*sm.Redfis
 	args := make([]interface{}, 0, 1)
 	valStr := ""
 	for i, ep := range eps {
+		// Normalized key
+		normID := base.NormalizeHMSCompID(ep.ID)
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[normID]; ok {
+			continue
+		} else {
+			valueMap[normID] = true
+		}
+
 		discInfoJSON, err := json.Marshal(ep.DiscInfo)
 		if err != nil {
 			// This should never fail
 			t.LogAlways("UpdateRFEndpointsTx: decode DiscoveryInfo: %s", err)
 		}
-		// Normalized key
-		normID := base.NormalizeHMSCompID(ep.ID)
 		// Add the values to our values table
 		if i == 0 {
 			valStr += "(?,?,?,?,?,?,?::BOOL,?,?,?,?::BOOL,?::BOOL,?,?,?::BOOL,?,?::JSON)"
@@ -3332,21 +3380,31 @@ func (t *hmsdbPgTx) UpsertCompEndpointsTx(ceps *sm.ComponentEndpointArray) error
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
+
 	// Generate query
 	query := sq.Insert(compEPsTable).
 		Columns(compEPsAllCols...)
 	
 	for _, cep := range ceps.ComponentEndpoints {
-		compInfoJSON, err := cep.EncodeComponentInfo()
-		if err != nil {
-			// This should never fail
-			t.LogAlways("UpsertCompEndpointTx: decode CompInfo: %s", err)
-		}
 		// Ensure endpoint name is normalized and valid
 		normID := base.VerifyNormalizeCompID(cep.ID)
 		if normID == "" {
 			t.LogAlways("UpsertCompEndpointTx(%s): %s", normID, ErrHMSDSArgBadID)
 			return ErrHMSDSArgBadID
+		}
+
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[normID]; ok {
+			continue
+		} else {
+			valueMap[normID] = true
+		}
+
+		compInfoJSON, err := cep.EncodeComponentInfo()
+		if err != nil {
+			// This should never fail
+			t.LogAlways("UpsertCompEndpointTx: decode CompInfo: %s", err)
 		}
 
 		// Set fields for the INSERT
@@ -3654,6 +3712,7 @@ func (t *hmsdbPgTx) UpsertServiceEndpointsTx(seps *sm.ServiceEndpointArray) erro
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
 
 	// Generate query
 	query := sq.Insert(serviceEPsTable).
@@ -3666,7 +3725,13 @@ func (t *hmsdbPgTx) UpsertServiceEndpointsTx(seps *sm.ServiceEndpointArray) erro
 		}
 		// Normalize key
 		normRFID := base.NormalizeHMSCompID(sep.RfEndpointID)
-
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		key := normRFID + sep.RedfishType
+		if _, ok := valueMap[key]; ok {
+			continue
+		} else {
+			valueMap[key] = true
+		}
 		// Set fields for the INSERT
 		query = query.Values(
 			normRFID,
@@ -3861,6 +3926,7 @@ func (t *hmsdbPgTx) InsertCompEthInterfacesTx(ceis []*sm.CompEthInterfaceV2) err
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
 
 	// Generate query
 	query := sq.Insert(compEthTable).
@@ -3871,6 +3937,12 @@ func (t *hmsdbPgTx) InsertCompEthInterfacesTx(ceis []*sm.CompEthInterfaceV2) err
 		cei.ID = strings.ReplaceAll(cei.MACAddr, ":", "")
 		if cei.ID == "" {
 			return ErrHMSDSArgBadArg
+		}
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[cei.ID]; ok {
+			continue
+		} else {
+			valueMap[cei.ID] = true
 		}
 		if cei.CompID != "" {
 			cei.CompID = base.VerifyNormalizeCompID(cei.CompID)
@@ -3972,6 +4044,7 @@ func (t *hmsdbPgTx) InsertCompEthInterfacesCompInfoTx(ceis []*sm.CompEthInterfac
 	if !t.IsConnected() {
 		return ErrHMSDSPtrClosed
 	}
+	valueMap := make(map[string]bool)
 
 	// Generate query
 	query := sq.Insert(compEthTable).
@@ -3982,6 +4055,12 @@ func (t *hmsdbPgTx) InsertCompEthInterfacesCompInfoTx(ceis []*sm.CompEthInterfac
 		cei.ID = strings.ReplaceAll(cei.MACAddr, ":", "")
 		if cei.ID == "" {
 			return ErrHMSDSArgBadArg
+		}
+		// Take out duplicates so that we don't get errors for modifying a row multiple times.
+		if _, ok := valueMap[cei.ID]; ok {
+			continue
+		} else {
+			valueMap[cei.ID] = true
 		}
 		if cei.CompID != "" {
 			cei.CompID = base.VerifyNormalizeCompID(cei.CompID)

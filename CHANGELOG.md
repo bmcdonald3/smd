@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CASMHMS-5039 - Added support for power capping for Bard Peak nodes.
 - Workaround for discovery for Bard Peak to correctly discover node BMCs.
 
+### Fixed
+
+- Bulk postgres operations trying to operate on the same row multiple times.
+
 ## [1.30.15] - 2021-08-24
 
 ### Changed
