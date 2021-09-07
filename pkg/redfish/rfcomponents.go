@@ -1256,6 +1256,7 @@ func (s *EpSystem) discoverRemotePhase1() {
 					oemPwr.HPE.Status = "OK"
 					oemPwr.HPE.PowerRegulationEnabled = hpeAccPowerService.PowerRegulationEnabled
 					s.PowerURL = hpeAccPowerService.Links.PowerLimit.Oid
+					s.PowerInfo.PowerControl[0].Name = hpePowerLimit.Name
 					break
 				}
 				s.PowerInfo.PowerControl[0].OEM = &oemPwr

@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bulk postgres operations trying to operate on the same row multiple times.
 
+### Changed
+
+- CASMHMS-4935 - Set the 'Name' field in the power control struct for Apollo 6500.
+
 ## [1.30.15] - 2021-08-24
 
 ### Changed

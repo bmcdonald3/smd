@@ -357,6 +357,7 @@ type HPEPowerLimit struct {
 		MaximumPowerLimit int `json:"MaximumPowerLimit"`
 		MinimumPowerLimit int `json:"MinimumPowerLimit"`
 	} `json:"PowerLimitRanges"`
+	Name string `json:"Name"`
 }
 
 type RFControl struct {
