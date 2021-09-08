@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.16] - 2021-09-07
+
+### Added
+
+- CASMHMS-5039 - Added support for power capping for Bard Peak nodes.
+- Workaround for discovery for Bard Peak to correctly discover node BMCs.
+
+### Fixed
+
+- Bulk postgres operations trying to operate on the same row multiple times.
+
+### Changed
+
+- CASMHMS-5041 - Set the 'Name' field in the power control struct for Apollo 6500.
+
 ## [1.30.15] - 2021-08-24
 
 ### Changed
