@@ -81,6 +81,7 @@ type ComponentSystemInfo struct {
 	Actions    *ComputerSystemActions `json:"Actions,omitempty"`
 	EthNICInfo []*EthernetNICInfo     `json:"EthernetNICInfo,omitempty"`
 	PowerCtlInfo
+	Controls   []*Control             `json:"Controls,omitempty"`
 }
 
 type ComponentManagerInfo struct {
@@ -149,6 +150,11 @@ type PwrCtlOEMHPE struct {
 
 type PwrCtlRelatedItem struct {
 	Oid string `json:"@odata.id"`
+}
+
+type Control struct {
+	URL     string    `json:"URL"`
+	Control RFControl `json:"Control"`
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1131,6 +1137,51 @@ func (s *EpSystem) discoverRemotePhase1() {
 		//
 		// Get PowerControl Info if it exists
 		//
+		if nodeChassis.ChassisRF.Controls.Oid != "" {
+			path = nodeChassis.ChassisRF.Controls.Oid
+			ctlURLJSON, err := s.epRF.GETRelative(path)
+			if err != nil || ctlURLJSON == nil {
+				s.LastStatus = HTTPsGetFailed
+				return
+			}
+			s.LastStatus = HTTPsGetOk
+
+			// Decode JSON into PowerControl structure
+			var controlCollection ControlCollection
+			if err := json.Unmarshal(ctlURLJSON, &controlCollection); err != nil {
+				if IsUnmarshalTypeError(err) {
+					errlog.Printf("bad field(s) skipped: %s: %s\n", url, err)
+				} else {
+					errlog.Printf("ERROR: json decode failed: %s: %s\n", url, err)
+					s.LastStatus = EPResponseFailedDecode
+					return
+				}
+			}
+			for _, url := range controlCollection.Members {
+				if url.Oid == "" {
+					continue
+				}
+				controlJSON, err := s.epRF.GETRelative(url.Oid)
+				if err != nil || controlJSON == nil {
+					break
+				}
+				// Decode JSON into PowerControl structure
+				var rfControl RFControl
+				if err := json.Unmarshal(controlJSON, &rfControl); err != nil {
+					if IsUnmarshalTypeError(err) {
+						errlog.Printf("bad field(s) skipped: %s: %s\n", url.Oid, err)
+					} else {
+						errlog.Printf("ERROR: json decode failed: %s: %s\n", url.Oid, err)
+						break
+					}
+				}
+				control := Control{
+					URL: url.Oid,
+					Control: rfControl,
+				}
+				s.Controls = append(s.Controls, &control)
+			}
+		}
 		if nodeChassis.ChassisRF.Power.Oid != "" {
 			path = nodeChassis.ChassisRF.Power.Oid
 			pwrCtlURLJSON, err := s.epRF.GETRelative(path)
@@ -1205,6 +1256,7 @@ func (s *EpSystem) discoverRemotePhase1() {
 					oemPwr.HPE.Status = "OK"
 					oemPwr.HPE.PowerRegulationEnabled = hpeAccPowerService.PowerRegulationEnabled
 					s.PowerURL = hpeAccPowerService.Links.PowerLimit.Oid
+					s.PowerInfo.PowerControl[0].Name = hpePowerLimit.Name
 					break
 				}
 				s.PowerInfo.PowerControl[0].OEM = &oemPwr

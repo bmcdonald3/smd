@@ -52,7 +52,7 @@ type StateRF string
 type StatusRF struct {
 	Health       HealthRF `json:"Health"`
 	HealthRollUp HealthRF `json:"HealthRollUp,omitempty"`
-	State        StateRF  `json:"State"`
+	State        StateRF  `json:"State,omitempty"`
 }
 
 // JSON decoded struct returned from Redfish for a particular set of
@@ -130,6 +130,10 @@ type SerialInterfaceCollection GenericCollection
 // JSON decoded collection struct returned from Redfish "NetworkAdapter"
 // Example: /redfish/v1/Chassis/<chassis_id>/NetworkAdapters
 type NetworkAdapterCollection GenericCollection
+
+// JSON decoded collection struct returned from Redfish "Controls"
+// Example: /redfish/v1/Chassis/<chassis_id>/Controls
+type ControlCollection GenericCollection
 
 type ServiceRoot struct {
 	OContext       string `json:"@odata.context"`
@@ -283,6 +287,7 @@ type Chassis struct {
 	Power           ResourceID `json:"Power"`
 	Assembly        ResourceID `json:"Assembly"`
 	Thermal         ResourceID `json:"Thermal"`
+	Controls        ResourceID `json:"Controls"`
 
 	Links ChassisLinks `json:"Links"`
 	
@@ -352,6 +357,21 @@ type HPEPowerLimit struct {
 		MaximumPowerLimit int `json:"MaximumPowerLimit"`
 		MinimumPowerLimit int `json:"MinimumPowerLimit"`
 	} `json:"PowerLimitRanges"`
+	Name string `json:"Name"`
+}
+
+type RFControl struct {
+	ControlDelaySeconds int      `json:"ControlDelaySeconds"`
+	ControlMode         string   `json:"ControlMode"`
+	ControlType         string   `json:"ControlType"`
+	Id                  string   `json:"Id"`
+	Name                string   `json:"Name"`
+	PhysicalContext     string   `json:"PhysicalContext"`
+	SetPoint            int      `json:"SetPoint"`
+	SetPointUnits       string   `json:"SetPointUnits"`
+	SettingRangeMax     int      `json:"SettingRangeMax"`
+	SettingRangeMin     int      `json:"SettingRangeMin"`
+	Status              StatusRF `json:"Status"`
 }
 
 // Location-specific Redfish properties to be stored in hardware inventory
