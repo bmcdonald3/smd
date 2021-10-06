@@ -309,6 +309,12 @@ func (c *EpChassis) discoverRemotePhase1() {
 		c.Actions = c.ChassisRF.Actions
 	}
 
+	// Workaround CASMHMS-4954 Apollo 6500 Enclosures missing Model.
+	// Use Name in place of Model.
+	if c.ChassisRF.Model == "" {
+		c.ChassisRF.Model = c.ChassisRF.Name
+	}
+
 	//
 	// Get link to Chassis' Power object
 	//

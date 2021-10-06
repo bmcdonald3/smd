@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.30.19] - 2021-10-06
+
+### Changed
+
+- CASMHMS-4951 - Changed HSM to use NAME and ProductPartNumber fields in place of empty Model and PartNumber fields for GPUs discovered on HPE hardware.
+
+- CASMHMS-4954 - Changed HSM to use the NAME field in place of an empty Model field for Enclosures.
+
 ## [1.30.18] - 2021-09-28
 
 ### Changed
