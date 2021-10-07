@@ -1438,6 +1438,7 @@ func (s *SmD) DiscoverHWInvByFRUHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWIn
 	if hpeDeviceEP.Type == base.NodeAccel.String() {
 		accelInfo := rf.ProcessorFRUInfoRF{
 			Manufacturer: hpeDeviceEP.DeviceRF.Manufacturer,
+			Model: hpeDeviceEP.DeviceRF.Model,
 			SerialNumber: hpeDeviceEP.DeviceRF.SerialNumber,
 			PartNumber: hpeDeviceEP.DeviceRF.PartNumber,
 			ProcessorType: hpeDeviceEP.DeviceRF.DeviceType,
