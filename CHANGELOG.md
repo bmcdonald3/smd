@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CASMHMS-5239 - HSM now kicks off re-discovery for nodeBMCs when a power on redfish event is received for its slot.
 
+### Fixed
+
+- CASMHMS-5233 - HSM correctly ignores duplicate xnames given as arguments to `POST /Inventory/Discover`
+
 ## [1.32.0] - 2021-10-27
 
 ### Added
