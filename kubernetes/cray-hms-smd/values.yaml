@@ -7,7 +7,18 @@
 #   tag: "" (default = "latest")
 #   pullPolicy: "" (default = "IfNotPresent")
 
-dockerKubectlTag: 0.2.0
+global:
+  appVersion: 1.35.0
+
+image:
+  repository: artifactory.algol60.net/csm-docker/stable/cray-smd
+  pullPolicy: IfNotPresent
+
+kubectl:
+  image:
+    repository: artifactory.algol60.net/csm-docker/stable/docker-kubectl
+    tag: 1.19.15
+    pullPolicy: IfNotPresent
 
 schemaStorageClass: ceph-cephfs-external
 schemaAccessMode: ReadWriteMany
@@ -39,7 +50,7 @@ cray-service:
     cray-smd:
       name: "cray-smd"
       image:
-        repository: "cray/cray-smd"
+        repository: artifactory.algol60.net/csm-docker/stable/cray-smd
       resources:
         limits:
           cpu: "16"
@@ -137,7 +148,7 @@ cray-service:
       enabled: true
     backup:
       enabled: true
-      schedule: "10 0 * * *" # Once per day at 12:10AM
+      schedule: "10 0 * * *"  # Once per day at 12:10AM
     users:
       hmsdsuser: []
     databases:

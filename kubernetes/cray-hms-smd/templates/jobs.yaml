@@ -17,7 +17,8 @@ spec:
       serviceAccountName: "cray-smd-job-deleter"
       containers:
         - name: job-deleter
-          image: "{{ include "cray-hms-smd.image-prefix" .Values }}loftsman/docker-kubectl:{{ .Values.dockerKubectlTag }}"
+          image: "{{ .Values.kubectl.image.repository }}:{{ .Values.kubectl.image.tag }}"
+          imagePullPolicy: "{{ .Values.kubectl.image.pullPolicy }}"
           command:
           - /bin/sh
           - -c
@@ -48,7 +49,7 @@ spec:
       serviceAccountName: "jobs-watcher"
       containers:
         - name: cray-smd-init
-          image: {{ include "cray-hms-smd.image-prefix" .Values }}cray/cray-smd:{{ include "cray-hms-smd.imageTag" . }}
+          image: {{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}
           env:
             # NOTE: overridden in container if POSTGRES_HOST is set
             - name: SMD_DBHOST
