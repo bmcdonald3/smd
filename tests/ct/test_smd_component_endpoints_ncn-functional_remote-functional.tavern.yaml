@@ -106,7 +106,7 @@ stages:
                         type: str
                         required: True
                         enum:
-                          #TODO: workaround for CabinetPDUController issue CASMHMS-4548
+                          # empty RedfishSubtype string expected for HPE CabinetPDUController Managers
                           - ""
                           - "AuxiliaryController"
                           - "Blade"
@@ -115,6 +115,8 @@ stages:
                           - "Cx"
                           - "Enclosure"
                           - "EnclosureManager"
+                          - "IEC_60320_C13"
+                          - "IEC_60320_C19"
                           - "Physical"
                           - "RackMount"
                           - "RackPDU"
@@ -126,7 +128,8 @@ stages:
                       UUID:
                         type: str
                         required: False
-                        pattern: "[a-zA-Z0-9]{{8}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{12}}"
+                        # UUID of NULL expected for HPE PDUs
+                        pattern: "[a-zA-Z0-9]{{8}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{4}}-[a-zA-Z0-9]{{12}}|NULL"
                       OdataID:
                         type: str
                         required: True
@@ -179,8 +182,7 @@ stages:
                             required: True
                           Actions:
                             type: map
-                            #TODO: workaround for CabinetPDUController issue CASMHMS-4548
-                            #required: True
+                            # no RedfishManagerInfo Actions expected for HPE CabinetPDUController Managers
                             required: False
                             allowempty: True
                           EthernetNICInfo:
@@ -240,7 +242,8 @@ usb[0-9]+"
                         mapping:
                           Name:
                             type: str
-                            required: True
+                            # no RedfishPDUInfo expected for HPE PDUs
+                            required: False
                           Actions:
                             type: map
                             required: False
@@ -297,6 +300,60 @@ Not Available"
                           PowerURL:
                             type: str
                             required: False
+                          Controls:
+                            type: seq
+                            matching: all
+                            required: False
+                            sequence:
+                              - type: map
+                                required: True
+                                mapping:
+                                  URL:
+                                    type: str
+                                    required: True
+                                  Control:
+                                    type: map
+                                    required: True
+                                    mapping:
+                                      ControlDelaySeconds:
+                                        type: int
+                                        required: True
+                                      ControlMode:
+                                        type: str
+                                        required: True
+                                      ControlType:
+                                        type: str
+                                        required: True
+                                      Id:
+                                        type: str
+                                        required: True
+                                      Name:
+                                        type: str
+                                        required: True
+                                      PhysicalContext:
+                                        type: str
+                                        required: True
+                                      SetPoint:
+                                        type: int
+                                        required: True
+                                      SetPointUnits:
+                                        type: str
+                                        required: True
+                                      SettingRangeMax:
+                                        type: int
+                                        required: True
+                                      SettingRangeMin:
+                                        type: int
+                                        required: True
+                                      Status:
+                                        type: map
+                                        required: True
+                                        mapping:
+                                          Health:
+                                            type: str
+                                            required: True
+                                            enum:
+                                              - "OK"
                           PowerControl:
                             type: seq
                             matching: all
