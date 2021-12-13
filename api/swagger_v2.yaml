@@ -146,7 +146,7 @@ info:
 
 
     Check discovery status for all components or you can track the status for a specific job
-    id. You can also check per-endpoint discover status for each RedFish endpoint. Contains
+    id. You can also check per-endpoint discover status for each RedfishEndpoint. Contains
     status information about the discovery operation for clients to query. The discover
     operation returns a link or links to status objects so that a client can determine when
     the discovery operation is complete.
@@ -239,6 +239,39 @@ info:
 
     Delete the group specified by {group_label}.
 
+    ## Valid State Transistions
+
+    ```
+
+    Prior State -> New State     - Reason
+
+    Ready       -> Standby       - HBTD if node has many missed heartbeats
+
+    Ready       -> Ready/Warning - HBTD if node has a few missed heartbeats
+
+    Standby     -> Ready         - HBTD Node re-starts heartbeating
+
+    On          -> Ready         - HBTD Node started heartbeating
+
+    Off         -> Ready         - HBTD sees heartbeats before Redfish Event (On)
+
+    Standby     -> On            - Redfish Event (On) or if re-discovered while in the standby state
+
+    Off         -> On            - Redfish Event (On)
+
+    Standby     -> Off           - Redfish Event (Off)
+
+    Ready       -> Off           - Redfish Event (Off)
+
+    On          -> Off           - Redfish Event (Off)
+
+    Any State   -> Empty         - Redfish Endpoint is disabled meaning component removal
+
+    ```
+
+    Generally, nodes transition 'Off' -> 'On' -> 'Ready' when going from 'Off' to booted and 'Ready' -> 'Ready/Warning' -> 'Standby' -> 'Off' when shutdown.
+
+
   version: 1.0.0
   title: Hardware State Manager API
 host: 'sms'
@@ -327,17 +360,17 @@ tags:
     description: >-
       A membership is a mapping of a component xname to its set of group
       labels and partition names.
-  - name: SystemInformationBlock
-    description: >-
-      The SystemInformationBlock (SIB) object nests Component, HWInventory,
-      HSNType, and HSNInfo subschemas that match a particular query,
-      associating information that may be needed by a
-      large number of endpoints into a single,
-      self-contained object.  While most of the individual subschemas,
-      (HSNInfo is the exception, which is obtained from the fabric manager)
-      can be queried using several of the more general APIs, the
-      SIB supports the use of a single API that clients may use to
-      bootstrap their initial system state, for example.
+  # - name: SystemInformationBlock
+    # description: >-
+      # The SystemInformationBlock (SIB) object nests Component, HWInventory,
+      # HSNType, and HSNInfo subschemas that match a particular query,
+      # associating information that may be needed by a
+      # large number of endpoints into a single,
+      # self-contained object.  While most of the individual subschemas,
+      # (HSNInfo is the exception, which is obtained from the fabric manager)
+      # can be queried using several of the more general APIs, the
+      # SIB supports the use of a single API that clients may use to
+      # bootstrap their initial system state, for example.
   - name: DiscoveryStatus
     description: >-
       Contains status information about the discovery operation for clients
@@ -593,103 +626,29 @@ paths:
       description: >-
         Retrieve the full collection of state/components in the form of a
         ComponentArray. Full results can also be filtered by query
-        parameters. Only the first filter parameter of each type is
-        used and the parameters are applied in an AND fashion.
+        parameters. When multiple parameters are specified, they are applied
+        in an AND fashion (e.g. type AND state). When a parameter is specified
+        multiple times, they are applied in an OR fashion (e.g. type AND state1 OR state2).
         If the collection is empty or the filters have no match, an
         empty array is returned.
       operationId: doComponentsGet
       parameters:
-        - name: id
-          in: query
-          type: string
-          description: >-
-            Retrieve the components with the given HMS xname ID. Can be chained
-            for selecting groups of components.
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS type like Node, NodeEnclosure, NodeBMC etc.
-        - name: state
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS state like Ready, On etc.
-        - name: flag
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS flag value like OK, Alert etc.
-        - name: role
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS role. Role can be Compute,
-            Application, Storage, Management etc.
-        - name: subrole
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS subrole. SubRole can be
-            Master, Worker, Storage, etc.
-        - name: enabled
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given enabled status (true or false).
-        - name: softwarestatus
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given software status.
-            Software status is a free form string. Matching is case-insensitive.
-        - name: subtype
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS subtype.
-        - name: arch
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given architecture like X86.
-        - name: class
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS hardware class. Class can be
-            River, Mountain, etc.
-        - name: nid
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. one node) with the given integer NID
-        - name: nid_start
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with NIDs equal to or greater
-            than the provided integer.
-        - name: nid_end
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with NIDs less than or equal
-            to the provided integer.
-        - name: partition
-          in: query
-          type: string
-          description: >-
-            Restrict search to the given partition (p#.#). One partition can be
-            combined with at most one group argument which will be treated
-            as a logical AND. NULL will return components in NO partition.
-        - name: group
-          in: query
-          type: string
-          description: >-
-            Restrict search to the given group label. One group can be
-            combined with at most one partition argument which will be treated
-            as a logical AND. NULL will return components in NO groups.
+        - $ref: '#/parameters/compIDParam'
+        - $ref: '#/parameters/compTypeParam'
+        - $ref: '#/parameters/compStateParam'
+        - $ref: '#/parameters/compFlagParam'
+        - $ref: '#/parameters/compRoleParam'
+        - $ref: '#/parameters/compSubroleParam'
+        - $ref: '#/parameters/compEnabledParam'
+        - $ref: '#/parameters/compSoftwareStatusParam'
+        - $ref: '#/parameters/compSubtypeParam'
+        - $ref: '#/parameters/compArchParam'
+        - $ref: '#/parameters/compClassParam'
+        - $ref: '#/parameters/compNIDParam'
+        - $ref: '#/parameters/compNIDStartParam'
+        - $ref: '#/parameters/compNIDEndParam'
+        - $ref: '#/parameters/compPartitionParam'
+        - $ref: '#/parameters/compGroupParam'
         - name: stateonly
           in: query
           type: boolean
@@ -1449,85 +1408,54 @@ paths:
           description: >-
             Retrieve xname's children of type={type} instead of {xname} for example NodeBMC,
             NodeEnclosure etc.
-        - name: state
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS state like 'On', 'Ready' etc.
-        - name: flag
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS flag value like 'OK', 'Alert', 'Warning'.
-        - name: role
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS role like Compute, Application etc.
-        - name: subrole
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS subrole. SubRole can be
-            Master, Worker, Storage, etc.
-        - name: subtype
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given HMS subtype.
-        - name: arch
-          in: query
-          type: string
-          description: >-
-            Retrieve all components with the given architecture like X86.
-        - name: class
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS hardware class. Class can be
-            River, Mountain, etc.
-        - name: nid
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. one node) with the given integer NID like 4.
-        - name: nid_start
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with NIDs equal to or greater
-            than the provided integer.
-        - name: nid_end
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with NIDs less than or equal
-            to the provided integer.
-        # Still in progress
-        # - name: children
-        #   in: query
-        #   type: boolean
-        #   description: >-
-        #     Also return children of the selected components.
-        # - name: parents
-        #   in: query
-        #   type: boolean
-        #   description: >-
-        #     Also return parents of the selected components.
-        - name: partition
-          in: query
-          type: string
-          description: >-
-            Restrict search to the given partition (p#.#). One partition can be
-            combined with at most one group argument which will be treated
-            as a logical AND.  NULL will return components in NO partition.
-        - name: group
-          in: query
-          type: string
-          description: >-
-            Restrict search to the given group label. One group can be
-            combined with at most one partition argument which will be treated
-            as a logical AND. NULL will return components in NO groups.
+          enum:
+            - CDU
+            - CabinetCDU
+            - CabinetPDU
+            - CabinetPDUOutlet
+            - CabinetPDUPowerConnector
+            - CabinetPDUController
+            - Cabinet
+            - Chassis
+            - ChassisBMC
+            - CMMRectifier
+            - CMMFpga
+            - CEC
+            - ComputeModule
+            - RouterModule
+            - NodeBMC
+            - NodeEnclosure
+            - NodeEnclosurePowerSupply
+            - HSNBoard
+            - Node
+            - Processor
+            - Drive
+            - StorageGroup
+            - NodeNIC
+            - Memory
+            - NodeAccel
+            - NodeAccelRiser
+            - NodeFpga
+            - HSNAsic
+            - RouterFpga
+            - RouterBMC
+            - HSNLink
+            - HSNConnector
+            - INVALID
+        - $ref: '#/parameters/compStateParam'
+        - $ref: '#/parameters/compFlagParam'
+        - $ref: '#/parameters/compRoleParam'
+        - $ref: '#/parameters/compSubroleParam'
+        - $ref: '#/parameters/compEnabledParam'
+        - $ref: '#/parameters/compSoftwareStatusParam'
+        - $ref: '#/parameters/compSubtypeParam'
+        - $ref: '#/parameters/compArchParam'
+        - $ref: '#/parameters/compClassParam'
+        - $ref: '#/parameters/compNIDParam'
+        - $ref: '#/parameters/compNIDStartParam'
+        - $ref: '#/parameters/compNIDEndParam'
+        - $ref: '#/parameters/compPartitionParam'
+        - $ref: '#/parameters/compGroupParam'
         - name: stateonly
           in: query
           type: boolean
@@ -1675,7 +1603,7 @@ paths:
             $ref: '#/definitions/AdminReservationCreate_Response.1.0.0'
         '400':
           description: >-
-            Bad request; something is wrong with the structure recieved. Will not be used to represent
+            Bad request; something is wrong with the structure received. Will not be used to represent
             failure to accomplish the operation, that will be returned in the standard payload.
           schema:
             $ref: '#/definitions/Problem7807'
@@ -1710,7 +1638,7 @@ paths:
             $ref: '#/definitions/XnameResponse_1.0.0'
         '400':
           description: >-
-            Bad request; something is wrong with the structure recieved. Will not be used to represent
+            Bad request; something is wrong with the structure received. Will not be used to represent
             failure to accomplish the operation, that will be returned in the standard payload.
           schema:
             $ref: '#/definitions/Problem7807'
@@ -1746,7 +1674,7 @@ paths:
             $ref: '#/definitions/ServiceReservationCreate_Response.1.0.0'
         '400':
           description: >-
-            Bad request; something is wrong with the structure recieved. Will not be used to represent
+            Bad request; something is wrong with the structure received. Will not be used to represent
             failure to accomplish the operation, that will be returned in the standard payload.
           schema:
             $ref: '#/definitions/Problem7807'
@@ -1781,7 +1709,7 @@ paths:
             $ref: '#/definitions/XnameResponse_1.0.0'
         '400':
           description: >-
-            Bad request; something is wrong with the structure recieved. Will not be used to represent
+            Bad request; something is wrong with the structure received. Will not be used to represent
             failure to accomplish the operation, that will be returned in the standard payload.
           schema:
             $ref: '#/definitions/Problem7807'
@@ -2234,17 +2162,8 @@ paths:
         For most purposes, you will want to use /Inventory/Hardware/Query.
       operationId: doHWInvByLocationGetAll
       parameters:
-        - name: id
-          in: query
-          type: string
-          description: >-
-            Retrieve the HWInventoryByLocation entries with the given HMS xname ID. Can be chained
-            for selecting groups of components.
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve all HWInventoryByLocation entries with the given HMS type like Node, NodeEnclosure, Processor, etc.
+        - $ref: '#/parameters/compIDParam'
+        - $ref: '#/parameters/compTypeParam'
         - name: manufacturer
           in: query
           type: string
@@ -2382,11 +2301,7 @@ paths:
           type: string
           description: >-
             Retrieve HWInventoryByFRU entries with the given FRU id.
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve all HWInventoryByFRU entries with the given HMS type like Node, NodeEnclosure, Processor, etc.
+        - $ref: '#/parameters/compTypeParam'
         - name: manufacturer
           in: query
           type: string
@@ -2791,11 +2706,7 @@ paths:
             Locational xname of parent component, system (e.g. s0, all) or
             partition (p#.#) to target for hardware inventory
           required: true
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve xname's children of type={type} instead of {xname}.
+        - $ref: '#/parameters/compTypeParam'
         - name: children
           in: query
           type: boolean
@@ -2853,13 +2764,7 @@ paths:
         Retrieve the history entries for all HWInventoryByLocation entries.
       operationId: doHWInvHistByLocationsGet
       parameters:
-        - name: id
-          in: query
-          type: string
-          description: >-
-            Retrieve the history entries for HWInventoryByLocation entries with
-            the given HMS xname ID. Can be chained for selecting multiple
-            components.
+        - $ref: '#/parameters/compIDParam'
         - name: eventtype
           in: query
           type: string
@@ -3166,22 +3071,13 @@ paths:
         filtering it.
       operationId: doRedfishEndpointsGet
       parameters:
-        - name: id
-          in: query
-          type: string
-          description: >-
-            Retrieve RedfishEndpoint with the given XName ID.  Can be
-            repeated to select groups of endpoints.
+        - $ref: '#/parameters/compIDParam'
         - name: fqdn
           in: query
           type: string
           description: >-
             Retrieve RedfishEndpoint with the given FQDN
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve all RedfishEndpoints with the given HMS type.
+        - $ref: '#/parameters/compTypeParam'
         - name: uuid
           in: query
           type: string
@@ -3541,28 +3437,19 @@ paths:
         empty array is returned.
       operationId: doComponentEndpointsGet
       parameters:
-        - name: id
-          in: query
-          type: string
-          description: >-
-            Retrieve ComponentEndpoint with the given XName ID.  Can be
-            repeated to select groups of endpoints.
+        - $ref: '#/parameters/compIDParam'
         - name: redfish_ep
           in: query
           type: string
           description: >-
             Retrieve all ComponentEndpoints managed by the parent Redfish EP.
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve all ComponentEndpoints with the given HMS type.
+        - $ref: '#/parameters/compTypeParam'
         - name: redfish_type
           in: query
           type: string
           description: >-
             Retrieve all ComponentEndpoints with the given Redfish type.
-        # Not implmented.
+        # Not implemented.
       #  - name: partition
       #    in: query
       #    type: string
@@ -3879,7 +3766,7 @@ paths:
           type: string
           description: >-
             Retrieve all ServiceEndpoints of the given Redfish service.
-        # Not implmented.
+        # Not implemented.
       #  - name: partition
       #    in: query
       #    type: string
@@ -4381,7 +4268,7 @@ paths:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface to retreive the IP Addresses of.
+          description: The ID of the component ethernet interface to retrieve the IP Addresses of.
           required: true
       responses:
         "200":
@@ -4447,7 +4334,7 @@ paths:
       description: >-
         "To update the network of an IP Address in a component ethernet interface,
         a PATCH operation can be used. Omitted fields are not updated.
-        The 'LastUpdate' field of the component etheret interface will be updated"
+        The 'LastUpdate' field of the component ethernet interface will be updated"
       operationId: doCompEthInterfaceIPAddressPatchV2
       parameters:
         - name: ethInterfaceID
@@ -4473,7 +4360,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "404":
-          description: Does Not Exist - No IP address with ipAddress exists on the specfied component ethernet interface.
+          description: Does Not Exist - No IP address with ipAddress exists on the specified component ethernet interface.
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4486,7 +4373,7 @@ paths:
       summary: DELETE existing IP Address mapping with {ipAddress} from a component ethernet interface with {ethInterfaceID}
       description: >-
         Delete the given IP Address mapping with {ipAddress} from a component ethernet interface with {ethInterfaceID}.
-        The 'LastUpdate' field of the component etheret interface will be updated"
+        The 'LastUpdate' field of the component ethernet interface will be updated"
       operationId: doCompEthInterfaceIPAddressDeleteV2
       parameters:
         - name: ethInterfaceID
@@ -4509,7 +4396,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "404":
-          description: Does Not Exist - No IP address with ipAddress exists on the specfied component ethernet interface
+          description: Does Not Exist - No IP address with ipAddress exists on the specified component ethernet interface
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4661,7 +4548,7 @@ paths:
             A new subscription was created. The subscription id is
             included in the response.
           schema:
-            $ref: '#/definitions/Subscriptions_SCNSubscritionArrayItem.1.0.0'
+            $ref: '#/definitions/Subscriptions_SCNSubscriptionArrayItem.1.0.0'
         "400":
           description:
             Bad Request. Malformed JSON. Verify all JSON formatting in payload.
@@ -5604,95 +5491,22 @@ paths:
         (where applicable).
       operationId: doMembershipsGet
       parameters:
-        - name: id
-          in: query
-          type: string
-          description: >-
-            Retrieve the membership info for the given HMS XName ID.  Can be
-            chained for selecting multiple components.
-        - name: type
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given HMS type.
-        - name: state
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given HMS state.
-        - name: flag
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given HMS flag value.
-        - name: role
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships (i.e. nodes) with the given HMS role
-        - name: subrole
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships (i.e. nodes) with the given HMS subrole.
-        - name: enabled
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given enabled status (true or false).
-        - name: softwarestatus
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given software status.
-            Software status is a free form string. Matching is case-insensitive.
-        - name: subtype
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given HMS subtype.
-        - name: arch
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships with the given architecture.
-        - name: class
-          in: query
-          type: string
-          description: >-
-            Retrieve all components (i.e. nodes) with the given HMS hardware class. Class can be
-            River, Mountain, etc.
-        - name: nid
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships (i.e. one node) with the given integer NID
-        - name: nid_start
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships (i.e. nodes) with NIDs equal to or greater
-            than the provided integer.
-        - name: nid_end
-          in: query
-          type: string
-          description: >-
-            Retrieve all memberships (i.e. nodes) with NIDs less than or equal
-            to the provided integer.
-        - name: partition
-          in: query
-          type: string
-          description: >-
-            Restrict search to the given partition.  One partition can be
-            combined with at most one group argument which will be treated
-            as a logical AND.  NULL will return components in NO partition.
-        - name: group
-          in: query
-          type: string
-          description: >-
-            Restrict search to the given group label. One group can be
-            combined with at most one partition argument which will be treated
-            as a logical AND.  NULL will return components in NO groups.
+        - $ref: '#/parameters/compIDParam'
+        - $ref: '#/parameters/compTypeParam'
+        - $ref: '#/parameters/compStateParam'
+        - $ref: '#/parameters/compFlagParam'
+        - $ref: '#/parameters/compRoleParam'
+        - $ref: '#/parameters/compSubroleParam'
+        - $ref: '#/parameters/compEnabledParam'
+        - $ref: '#/parameters/compSoftwareStatusParam'
+        - $ref: '#/parameters/compSubtypeParam'
+        - $ref: '#/parameters/compArchParam'
+        - $ref: '#/parameters/compClassParam'
+        - $ref: '#/parameters/compNIDParam'
+        - $ref: '#/parameters/compNIDStartParam'
+        - $ref: '#/parameters/compNIDEndParam'
+        - $ref: '#/parameters/compPartitionParam'
+        - $ref: '#/parameters/compGroupParam'
       responses:
         "200":
           description: >-
@@ -6176,7 +5990,7 @@ definitions:
   #
   Component.1.0.0_PatchArrayItem.NID:
     description: >-
-      This is one entry in a a NID patch operation on an entire
+      This is one entry in a NID patch operation on an entire
       ComponentArray.  ID and NID are required or the operation will fail.
       Only the NID field is updated, and then only if it is appropriate
       for the corresponding HMS type of the entry (e.g. node).
@@ -6560,8 +6374,6 @@ definitions:
         items:
           type: string
         type: array
-    required:
-      - ComponentIDs
     type: object
   ComponentArray_PostByNIDQuery:
     description: >-
@@ -6723,7 +6535,7 @@ definitions:
       This describes a child component of a Redfish endpoint and is populated
       when Redfish endpoint discovery occurs.  It is used by services that
       need to interact directly with the component via Redfish.
-      It represents a physical component of some time and has a corresponding
+      It represents a physical component of something and has a corresponding
       representation as an HMS Component, hence the name.
       There are also ServiceEndpoints which represent Redfish services that
       are discovered when the RedfishEndpoint is discovered.
@@ -7328,7 +7140,6 @@ definitions:
           - HWInvByLocPDU
           - HWInvByLocOutlet
           - HWInvByLocCMMRectifier
-          - HWInvByLocNodeAccelRiser
           - HWInvByLocNodeEnclosurePowerSupply
           - HWInvByLocNodeBMC
           - HWInvByLocRouterBMC
@@ -7341,6 +7152,7 @@ definitions:
     discriminator: HWInventoryByLocationType
     required:
       - HWInventoryByLocationType
+      - ID
     # See example for appropriate subclass per HWInventoryByLocationType
     # field.
     example:
@@ -9404,7 +9216,7 @@ definitions:
             readOnly: true
             type: number
           TotalOutlets:
-            description: Total number of outlet
+            description: Total number of outlets
             readOnly: true
             type: number
           MonitoredBranches:
@@ -9694,184 +9506,6 @@ definitions:
         type: string
         example: Added
     type: object
-
-  ###########################################################################
-  #
-  # Publish/subscribe messaging service data structures
-  #
-  ###########################################################################
-  #  PubSubMessageService.1.0.0_PubSubMessageService:
-  #    description: >-
-  #      Publish/subscribe messaging service.  This is the root entry for the
-  #      service
-  #      NOTE: NOT IMPLEMENTED AND OUT OF DATE.  For simple node state
-  #      changes see SCN.
-  #    properties:
-  #      Service:
-  #        type: string
-  #        example: PubSubService
-  #        readOnly: true
-  #      Name:
-  #        type: string
-  #        example: Pub/Sub Message Service
-  #        readOnly: true
-  #      Description:
-  #        type: string
-  #        example: Represents the properties for the Pub/Sub Message Service
-  #      DeliveryRetryAttempts:
-  #        type: number
-  #        format: int32
-  #        example: 3
-  #      DeliveryRetryIntervalInSeconds:
-  #        type: number
-  #        format: int32
-  #        example: 30
-  #      MessageTypesForSubscription:
-  #        items:
-  #          $ref: '#/definitions/PubSubMessageService.1.0.0_EventTypes'
-  #        type: array
-  #        example:
-  #          - StateChange
-  #          - NodeStateChange
-  #          - RedfishEndpointChange
-  #          - HWInventoryChange
-  #      MessageTypesForPublishing:
-  #        items:
-  #          $ref: '#/definitions/PubSubMessageService.1.0.0_EventTypes'
-  #        type: array
-  #        example:
-  #          - NodeStateChange
-  #          - HWErrorLog
-  #      ServiceEnabled:
-  #        description: Whether the service is active and can service requests.
-  #        type: boolean
-  #        example: true
-  #    type: object
-  #  PubSubMessageService.1.0.0_EventTypes:
-  #    description: >-
-  #      Message types available for subscription and/or publishing.
-  #      Subscriptions for each will be some requested subset (or all) of the
-  #      following.
-  #    enum:
-  #      - StateChange
-  #      - NodeStateChange
-  #      - RedfishEndpointChange
-  #      - HWErrorLog
-  #    type: string
-  #  PubSubMessageService.1.0.0_EventSubtypes:
-  #    description: >-
-  #      Subtype of EventType.  Subscribers of EventType X get all its subtypes
-  #      which explain why and/or how the updated values changed in the
-  #      associated objects.
-  #    enum:
-  #      - StateTransitionOK       # StateChange - Successful state change
-  #      - StateTransitionAbnormal # StateChange - Due to problem, warn/alert
-  #      - StateTransitionDisable  # StateChange
-  #      - StateTransitionEnable   # StateChange
-  #      - NodeAvailable           # NodeStateChange
-  #      - NodeUnavailable         # NodeStateChange
-  #      - NodeFailed              # NodeStateChange
-  #      - NodeStandby             # NodeStateChange
-  #      - NodeRoleChanged         # NodeStateChange
-  #      - NodeSubRoleChanged      # NodeStateChange
-  #      - NodeNIDChanged          # NodeStateChange
-  #      - RedfishEndpointAdded    # RedfishEndpointChange
-  #      - RedfishEndpointModified # RedfishEndpointChange
-  #      - RedfishEndpointEnabled  # RedfishEndpointChange
-  #      - RedfishEndpointDisabled # RedfishEndpointChange
-  #      - RedfishEndpointRemoved  # RedfishEndpointChange
-  #      - HardwareAdded           # HWInventoryChange
-  #      - HardwareModified        # HWInventoryChange
-  #      - HardwareRemoved         # HWInventoryChange
-  #    type: string
-  #  PubSubEvent.1.0.0_PubSubEvent:
-  #    description: >-
-  #      This is an individual event with a particular subtype that, depending
-  #      on the EventType will notify of changes to one or more object types;
-  #      Components (for state/role/nid changes), RedfishEndpoints (for
-  #      discovery changes or config changes to the endpoint properties) and
-  #      HWInventory changes (via inventory discovery only).  The latter cases
-  #      will typically involve individual pieces of hardware that are swapped
-  #      into/out-of the system once the main discovery operation is complete.
-  #    properties:
-  #      EventType:
-  #        $ref: '#/definitions/PubSubMessageService.1.0.0_EventTypes'
-  #      EventSubtype:
-  #        $ref: '#/definitions/PubSubMessageService.1.0.0_EventSubtypes'
-  #      ComponentArray:
-  #        $ref: '#/definitions/ComponentArray_ComponentArray'
-  #      HWInventory:
-  #        $ref: '#/definitions/HWInventory.1.0.0_HWInventory'
-  #      RedfishEndpointArray:
-  #        $ref: '#/definitions/RedfishEndpointArray_RedfishEndpointArray'
-  #    example:
-  #      EventType:
-  #        NodeStateChange
-  #      EventSubtype:
-  #        NodeUnavailable
-  #      ExtendedInfo:
-  #        # This is the message that should explain what triggered the change.
-  #        # it is optional and may be omitted.
-  #        $ref: '#/definitions/Message_1.0.0_ExtendedInfo'
-  #      ComponentTargets:
-  #        ComponentArray:
-  #          - ID: x0c0s0b0n0
-  #            Type: Node
-  #            State: On
-  #            Flag: OK
-  #            Enabled: true
-  #            SoftwareStatus: SetBySoftware
-  #            Subtype: Rome
-  #            Role: Compute
-  #            NID: 1
-  #            HSNType: Sling
-  #            Arch: x86_64
-  #          - ID: x0c0s0b0n1
-  #            Type: Node
-  #            State: On
-  #            Flag: OK
-  #            Enabled: true
-  #            SoftwareStatus: SetBySoftware
-  #            Subtype: Rome
-  #            Role: Compute
-  #            NID: 2
-  #            HSNType: Sling
-  #            Arch: x86_64
-  #        HWInventory:
-  #        RedfishEndpointArray:
-  #    type: object
-  #  PubSubEventArray.1.0.0_PubSubEventArray:
-  #    description: >-
-  #      Events will be delivered as EventArrays regardless of whether there
-  #      is a single event type or not.  This is to cover cases where the same
-  #      single change to the system results in multiple types (or subtypes) of
-  #      events.
-  #    properties:
-  #      Name:
-  #        description: >-
-  #          A short description of the EventArray.  May be purely descriptive.
-  #          If more than one service generates such events, it should indicate
-  #          which one.
-  #        type: string
-  #        example: "State Event Array"
-  #      Version:
-  #        description: >-
-  #          Version of the PubSub interface, should more than one need to be
-  #          supported at the same time.
-  #        type: string
-  #        example: 1.0.0
-  #      Timestamp:
-  #        description:
-  #          The time the event was generated.  There is only one because a
-  #          single system change will have triggered the enclosed event(s).
-  #          Multiple such changes will result in multiple EventArrays.
-  #        type: string
-  #        format: date-time
-  #      Events:
-  #        items:
-  #          $ref: '#/definitions/PubSubEvent.1.0.0_PubSubEvent'
-  #        type: array
-  #    type: object
   #########################################################################
   #
   # RedfishEndpoint data structures - Represents component running
@@ -10009,6 +9643,8 @@ definitions:
     #   type: array
     #   readOnly: true
     type: object
+    required:
+      - ID
   RedfishEndpoint.1.0.0_ResourceURICollection:
     properties:
       Name:
@@ -10195,7 +9831,7 @@ definitions:
         description: >-
           The xname of the component with this ethernet interface. Maybe blank if
           the component has not been discovered yet.
-        $ref: '#/definitions/XName.1.0.0'
+        $ref: '#/definitions/XNameRW.1.0.0'
       Type:
         description: >-
           HMS component type of the component with this ethernet interface. Maybe blank if
@@ -10227,11 +9863,11 @@ definitions:
     type: object
   CompEthInterface.1.0.0_IPAddressMapping:
     description: >-
-      A IP Address Mapping maps a IP Address to a network. In a Component Ethernet Interface it is used to describe what IP Addresses and thier networks that are assoiceted with it.
+      A IP Address Mapping maps a IP Address to a network. In a Component Ethernet Interface it is used to describe what IP Addresses and their networks that are associated with it.
     properties:
       IPAddress:
         description: >-
-          The IP address associated with the MAC address for this component ethernet interface on for this particualr network.
+          The IP address associated with the MAC address for this component ethernet interface on for this particular network.
         type: string
         example: 10.252.0.1
       Network:
@@ -10319,83 +9955,83 @@ definitions:
   # System Information Block (SIB) object definitions
   #
   ###########################################################################
-  SystemInformationBlock.1.0.0_SystemInformationBlock:
-    description: >-
-      The SystemInformationBlock (SIB) nests Component, HWInventory, HSNType,
-      and HSNInfo subschemas.
-      This provides information
-      that may be needed by a large number of endpoints in a single,
-      self-contained object.  While the all of the individual sections,
-      (except for the HSNInfo, which is obtained from the fabric manager)
-      can be queried using several of the more general APIs for these
-      structures, the SIB supports the use of a single API that clients may
-      use to bootstrap their initial system state, for example.
-    properties:
-      XName:
-        description: The component xname used to query the SIB
-        type: string
-        example: s0
-      ItemsQueried:
-        description: >-
-          The subsections of the SIB requested in the query that
-          produced this SIB.  This is given by the 'items' query
-          parameter or POST body property.
-        properties:
-          NodeList:
-            type: boolean
-          HWInventory:
-            type: boolean
-          HSNType:
-            type: boolean
-          HSNInfo:
-            type: boolean
-        type: object
-      SIBItems:
-        properties:
-          NodeList:
-            $ref: '#/definitions/ComponentArray_ComponentArray'
-          HSNType:
-            $ref: '#/definitions/NetType.1.0.0'
-          HWInventory:
-            $ref: '#/definitions/HWInventory.1.0.0_HWInventory'
-          HSNInfo:
-            $ref: '#/definitions/HSNInfo.1.0.0'
-        type: object
-        readOnly: true
-    type: object
-    readOnly: true
-  #
-  # Queries via POST for SIB data
-  #
-  SystemInformationBlock.1.0.0_PostQuery:
-    description: >-
-      A POST query that can be used to select the SIB block instead of
-      a get.
-    properties:
-      XName:
-        description: The component xname used to query the SIB
-        type: string
-        example: s0
-      UseMsgBus:
-        description: Deliver over message bus.  Default false.
-        type: boolean
-      Items:
-        description: >-
-          The subsections of the SIB to be requested in the query that
-          produced this SIB.  These will be reflected in the ItemsQueried
-          field in the response.  This, plus the xname can be used to match up
-          a response with the query parameters.
-        properties:
-          NodeList:
-            type: boolean
-          HWInventory:
-            type: boolean
-          HSNType:
-            type: boolean
-          HSNInfo:
-            type: boolean
-        type: object
-    type: object
+  # SystemInformationBlock.1.0.0_SystemInformationBlock:
+    # description: >-
+      # The SystemInformationBlock (SIB) nests Component, HWInventory, HSNType,
+      # and HSNInfo subschemas.
+      # This provides information
+      # that may be needed by a large number of endpoints in a single,
+      # self-contained object.  While the all of the individual sections,
+      # (except for the HSNInfo, which is obtained from the fabric manager)
+      # can be queried using several of the more general APIs for these
+      # structures, the SIB supports the use of a single API that clients may
+      # use to bootstrap their initial system state, for example.
+    # properties:
+      # XName:
+        # description: The component xname used to query the SIB
+        # type: string
+        # example: s0
+      # ItemsQueried:
+        # description: >-
+          # The subsections of the SIB requested in the query that
+          # produced this SIB.  This is given by the 'items' query
+          # parameter or POST body property.
+        # properties:
+          # NodeList:
+            # type: boolean
+          # HWInventory:
+            # type: boolean
+          # HSNType:
+            # type: boolean
+          # HSNInfo:
+            # type: boolean
+        # type: object
+      # SIBItems:
+        # properties:
+          # NodeList:
+            # $ref: '#/definitions/ComponentArray_ComponentArray'
+          # HSNType:
+            # $ref: '#/definitions/NetType.1.0.0'
+          # HWInventory:
+            # $ref: '#/definitions/HWInventory.1.0.0_HWInventory'
+          # HSNInfo:
+            # $ref: '#/definitions/HSNInfo.1.0.0'
+        # type: object
+        # readOnly: true
+    # type: object
+    # readOnly: true
+  # #
+  # # Queries via POST for SIB data
+  # #
+  # SystemInformationBlock.1.0.0_PostQuery:
+    # description: >-
+      # A POST query that can be used to select the SIB block instead of
+      # a get.
+    # properties:
+      # XName:
+        # description: The component xname used to query the SIB
+        # type: string
+        # example: s0
+      # UseMsgBus:
+        # description: Deliver over message bus.  Default false.
+        # type: boolean
+      # Items:
+        # description: >-
+          # The subsections of the SIB to be requested in the query that
+          # produced this SIB.  These will be reflected in the ItemsQueried
+          # field in the response.  This, plus the xname can be used to match up
+          # a response with the query parameters.
+        # properties:
+          # NodeList:
+            # type: boolean
+          # HWInventory:
+            # type: boolean
+          # HSNType:
+            # type: boolean
+          # HSNInfo:
+            # type: boolean
+        # type: object
+    # type: object
   #
   # SCN Subscriptions
   #
@@ -10504,7 +10140,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/HMSState.1.0.0'
-  Subscriptions_SCNSubscritionArrayItem.1.0.0:
+  Subscriptions_SCNSubscriptionArrayItem.1.0.0:
     description: 'State change notification subscription JSON payload.'
     properties:
       ID:
@@ -10560,7 +10196,7 @@ definitions:
       SubscriptionList:
         type: array
         items:
-          $ref: '#/definitions/Subscriptions_SCNSubscritionArrayItem.1.0.0'
+          $ref: '#/definitions/Subscriptions_SCNSubscriptionArrayItem.1.0.0'
   Subscriptions_Url:
     description: 'URL to send notifications to'
     type: string
@@ -10960,7 +10596,7 @@ definitions:
         enum:
           - rigid
           - flexible
-        description: Rigid is all or nothing, felxible is best attempt.
+        description: Rigid is all or nothing, flexible is best attempt.
     type: object
   AdminReservationRemove.1.0.0:
     properties:
@@ -11177,7 +10813,7 @@ definitions:
         enum:
           - rigid
           - flexible
-        description: Rigid is all or nothing, felxible is best attempt.
+        description: Rigid is all or nothing, flexible is best attempt.
     type: object
   # Service
   ServiceReservationCreate.1.0.0:
@@ -11275,7 +10911,7 @@ definitions:
         enum:
           - rigid
           - flexible
-        description: Rigid is all or nothing, felxible is best attempt.
+        description: Rigid is all or nothing, flexible is best attempt.
       ReservationDuration:
         type: integer
         minimum: 1
@@ -11382,7 +11018,7 @@ definitions:
         enum:
           - rigid
           - flexible
-        description: Rigid is all or nothing, felxible is best attempt.
+        description: Rigid is all or nothing, flexible is best attempt.
   ReservedKeysWithRenewal.1.0.0:
     type: object
     properties:
@@ -11395,7 +11031,7 @@ definitions:
         enum:
           - rigid
           - flexible
-        description: Rigid is all or nothing, felxible is best attempt.
+        description: Rigid is all or nothing, flexible is best attempt.
       ReservationDuration:
         type: integer
         minimum: 1
@@ -11449,7 +11085,7 @@ definitions:
         example: false
   XnameResponse_1.0.0:
     description: >-
-      This is a simple CAPMC-like response,intended mainly for
+      This is a simple CAPMC-like response, intended mainly for
       non-error messages.  For client errors, we now use RFC7807 responses.
     type: object
     required:
@@ -11968,7 +11604,7 @@ definitions:
       - Storage
 
       Additional valid values may be added via configuration file.
-      See the results of 'GET /service/values/role' for the complete list.
+      See the results of 'GET /service/values/subrole' for the complete list.
     type: string
     example: Worker
   HMSState.1.0.0:
@@ -12190,7 +11826,7 @@ definitions:
     type: object
   Response_1.0.0:
     description: >-
-      This is a simple CAPMC-like response,intended mainly for
+      This is a simple CAPMC-like response, intended mainly for
       non-error messages.  For client errors, we now use RFC7807 responses.
     type: object
     required:
@@ -12248,7 +11884,7 @@ definitions:
       This is an ordinary xname, but one where only a partition (hard:soft)
       or the system alias (s0) will be expected as valid input.
     type: string
-    example: p1:2
+    example: p1.2
   XNameCompOrPartition.1.0.0:
     description: >-
       This is an ordinary xname, but one where only a partition (hard:soft)
@@ -12256,3 +11892,207 @@ definitions:
       a parent component.
     type: string
     example: s0
+parameters:
+  compIDParam:
+    name: id
+    in: query
+    type: string
+    #TODO: Define these kind of parameters as arrays with
+    #      collectionFormat=multi once craycli can handle it correctly.
+    # type: array
+    # items:
+      # type: string
+    # collectionFormat: multi
+    description: >-
+      Filter the results based on xname ID(s). Can be specified multiple times
+      for selecting entries with multiple specific xnames.
+  compTypeParam:
+    name: type
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS type like Node, NodeEnclosure, NodeBMC etc.
+      Can be specified multiple times for selecting entries of multiple types.
+    enum:
+      - CDU
+      - CabinetCDU
+      - CabinetPDU
+      - CabinetPDUOutlet
+      - CabinetPDUPowerConnector
+      - CabinetPDUController
+      - Cabinet
+      - Chassis
+      - ChassisBMC
+      - CMMRectifier
+      - CMMFpga
+      - CEC
+      - ComputeModule
+      - RouterModule
+      - NodeBMC
+      - NodeEnclosure
+      - NodeEnclosurePowerSupply
+      - HSNBoard
+      - Node
+      - Processor
+      - Drive
+      - StorageGroup
+      - NodeNIC
+      - Memory
+      - NodeAccel
+      - NodeAccelRiser
+      - NodeFpga
+      - HSNAsic
+      - RouterFpga
+      - RouterBMC
+      - HSNLink
+      - HSNConnector
+      - INVALID
+  compStateParam:
+    name: state
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS state like Ready, On etc.
+      Can be specified multiple times for selecting entries in different states.
+    enum:
+      - Unknown
+      - Empty
+      - Populated
+      - "Off"
+      - "On"
+      - Standby
+      - Halt
+      - Ready
+  compFlagParam:
+    name: flag
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS flag value like OK, Alert etc.
+      Can be specified multiple times for selecting entries with different flags.
+    enum:
+      - OK
+      - Warning
+      - Alert
+      - Locked
+  compRoleParam:
+    name: role
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS role. Can be specified multiple
+      times for selecting entries with different roles.
+      Valid values are:
+
+      - Compute
+
+      - Service
+
+      - System
+
+      - Application
+
+      - Storage
+
+      - Management
+
+      Additional valid values may be added via configuration file.
+      See the results of 'GET /service/values/role' for the complete list.
+  compSubroleParam:
+    name: subrole
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS subrole. Can be specified multiple
+      times for selecting entries with different subroles.
+      Valid values are:
+
+      - Master
+
+      - Worker
+
+      - Storage
+
+      Additional valid values may be added via configuration file.
+      See the results of 'GET /service/values/subrole' for the complete list.
+  compEnabledParam:
+    name: enabled
+    in: query
+    type: string
+    description: >-
+      Filter the results based on enabled status (true or false).
+  compSoftwareStatusParam:
+    name: softwarestatus
+    in: query
+    type: string
+    description: >-
+      Filter the results based on software status. Software status is a free form string.
+      Matching is case-insensitive. Can be specified multiple times for selecting entries
+      with different software statuses.
+  compSubtypeParam:
+    name: subtype
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS subtype. Can be specified multiple times for selecting
+      entries with different subtypes.
+  compArchParam:
+    name: arch
+    in: query
+    type: string
+    description: >-
+      Filter the results based on architecture. Can be specified multiple times for
+      selecting components with different architectures.
+    enum:
+      - X86
+      - ARM
+      - Other
+  compClassParam:
+    name: class
+    in: query
+    type: string
+    description: >-
+      Filter the results based on HMS hardware class. Can be specified multiple times for
+      selecting entries with different classes.
+    enum:
+      - River
+      - Mountain
+      - Hill
+  compNIDParam:
+    name: nid
+    in: query
+    type: string
+    description: >-
+      Filter the results based on NID. Can be specified multiple times for
+      selecting entries with multiple specific NIDs.
+  compNIDStartParam:
+    name: nid_start
+    in: query
+    type: string
+    description: >-
+      Filter the results based on NIDs equal to or greater than the provided integer.
+  compNIDEndParam:
+    name: nid_end
+    in: query
+    type: string
+    description: >-
+      Filter the results based on NIDs less than or equal to the provided integer.
+  compPartitionParam:
+    name: partition
+    in: query
+    type: string
+    description: >-
+      Restrict search to the given partition (p#.#). One partition can be
+      combined with at most one group argument which will be treated
+      as a logical AND. NULL will return components in NO partition.
+  compGroupParam:
+    name: group
+    in: query
+    type: string
+    description: >-
+      Restrict search to the given group label. One group can be
+      combined with at most one partition argument which will be treated
+      as a logical AND. NULL will return components in NO groups.
+
+
+

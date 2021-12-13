@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CASMTRIAGE-2801 - Added support for HPE PDUs to ComponentEndpoints CT test.
 
+- Added vaild state transitions section to the HSM swagger doc.
+
+### Changed
+
+- Corrections to the HSM swagger doc including correcting typos, updating parameter descriptions to include valid values, updating parameter descriptions to include if they can be specified multiple times, and properly marking fields as required.
+
 ## [1.37.0] - 2021-11-05
 
 ### Added
