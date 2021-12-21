@@ -10,7 +10,7 @@ github.com/Cray-HPE/hms-compcredentials
 # github.com/Cray-HPE/hms-go-http-lib v1.5.3
 ## explicit
 github.com/Cray-HPE/hms-go-http-lib
-# github.com/Cray-HPE/hms-msgbus v1.10.2
+# github.com/Cray-HPE/hms-msgbus v1.11.0
 ## explicit
 github.com/Cray-HPE/hms-msgbus
 # github.com/Cray-HPE/hms-securestorage v1.12.2
@@ -19,23 +19,12 @@ github.com/Cray-HPE/hms-securestorage
 # github.com/DATA-DOG/go-sqlmock v1.3.3
 ## explicit
 github.com/DATA-DOG/go-sqlmock
-# github.com/DataDog/zstd v1.3.6-0.20190409195224-796139022798
-github.com/DataDog/zstd
 # github.com/Masterminds/squirrel v1.4.0
 ## explicit
 github.com/Masterminds/squirrel
-# github.com/Shopify/sarama v1.22.1
-github.com/Shopify/sarama
-# github.com/bsm/sarama-cluster v2.1.15+incompatible
-github.com/bsm/sarama-cluster
-# github.com/davecgh/go-spew v1.1.1
-github.com/davecgh/go-spew/spew
-# github.com/eapache/go-resiliency v1.1.0
-github.com/eapache/go-resiliency/breaker
-# github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21
-github.com/eapache/go-xerial-snappy
-# github.com/eapache/queue v1.1.0
-github.com/eapache/queue
+# github.com/confluentinc/confluent-kafka-go v1.7.0
+github.com/confluentinc/confluent-kafka-go/kafka
+github.com/confluentinc/confluent-kafka-go/kafka/librdkafka_vendor
 # github.com/frankban/quicktest v1.7.3
 ## explicit
 # github.com/fsnotify/fsnotify v1.4.9
@@ -108,16 +97,10 @@ github.com/lib/pq/scram
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/mapstructure v1.3.0
 github.com/mitchellh/mapstructure
-# github.com/onsi/ginkgo v1.12.0
-## explicit
-# github.com/onsi/gomega v1.9.0
-## explicit
 # github.com/pierrec/lz4 v2.4.1+incompatible
 ## explicit
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
-# github.com/rcrowley/go-metrics v0.0.0-20181016184325-3113b8401b8a
-github.com/rcrowley/go-metrics
 # github.com/ryanuber/go-glob v1.0.0
 github.com/ryanuber/go-glob
 # github.com/sirupsen/logrus v1.8.1
@@ -136,8 +119,6 @@ golang.org/x/net/http/httpguts
 golang.org/x/net/http2
 golang.org/x/net/http2/hpack
 golang.org/x/net/idna
-golang.org/x/net/internal/socks
-golang.org/x/net/proxy
 # golang.org/x/sys v0.0.0-20200817155316-9781c653f443
 ## explicit
 golang.org/x/sys/internal/unsafeheader

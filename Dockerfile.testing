@@ -46,6 +46,6 @@ COPY vendor $GOPATH/src/github.com/Cray-HPE/hms-smd/vendor
 FROM base
 # Run unit tests...
 RUN set -ex && \
-    go test -cover -v github.com/Cray-HPE/hms-smd/cmd/smd && \
-    go test -cover -v github.com/Cray-HPE/hms-smd/internal/./... && \
-    go test -cover -v github.com/Cray-HPE/hms-smd/pkg/./...
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/cmd/smd && \
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/internal/./... && \
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/pkg/./...

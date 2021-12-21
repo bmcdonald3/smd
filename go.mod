@@ -7,7 +7,7 @@ require (
 	github.com/Cray-HPE/hms-certs v1.3.2
 	github.com/Cray-HPE/hms-compcredentials v1.11.2
 	github.com/Cray-HPE/hms-go-http-lib v1.5.3
-	github.com/Cray-HPE/hms-msgbus v1.10.2
+	github.com/Cray-HPE/hms-msgbus v1.11.0
 	github.com/Cray-HPE/hms-securestorage v1.12.2
 	github.com/DATA-DOG/go-sqlmock v1.3.3
 	github.com/Masterminds/squirrel v1.4.0
@@ -20,8 +20,6 @@ require (
 	github.com/hashicorp/go-hclog v0.14.1 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.0
 	github.com/lib/pq v1.3.0
-	github.com/onsi/ginkgo v1.12.0 // indirect
-	github.com/onsi/gomega v1.9.0 // indirect
 	github.com/pierrec/lz4 v2.4.1+incompatible // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.5.1 // indirect
