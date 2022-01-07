@@ -2029,6 +2029,7 @@ func (d *hmsdbtest) DeleteRFEndpointsAll() (int64, error) {
 // are children of the RedfishEndpoint.
 // Return true if there was a row affected, false if there were zero.
 func (d *hmsdbtest) DeleteRFEndpointByIDSetEmpty(id string) (bool, []string, error) {
+	d.t.DeleteRFEndpointByIDSetEmpty.Input.id = id
 	return d.t.DeleteRFEndpointByIDSetEmpty.Return.changed,
 		d.t.DeleteRFEndpointByIDSetEmpty.Return.affectedIds,
 		d.t.DeleteRFEndpointByIDSetEmpty.Return.err
@@ -2039,7 +2040,7 @@ func (d *hmsdbtest) DeleteRFEndpointByIDSetEmpty(id string) (bool, []string, err
 // sets the State/Components entries for those ComponentEndpoints to Empty/OK
 // Also returns number of deleted rows, if error is nil.
 func (d *hmsdbtest) DeleteRFEndpointsAllSetEmpty() (int64, []string, error) {
-	return d.t.DeleteRFEndpointsAll.Return.numRows,
+	return d.t.DeleteRFEndpointsAllSetEmpty.Return.numRows,
 		d.t.DeleteRFEndpointsAllSetEmpty.Return.affectedIds,
 		d.t.DeleteRFEndpointsAllSetEmpty.Return.err
 }

@@ -41,6 +41,7 @@ import (
 	"github.com/Cray-HPE/hms-smd/internal/hmsds"
 	stest "github.com/Cray-HPE/hms-smd/pkg/sharedtest"
 	"github.com/Cray-HPE/hms-smd/pkg/sm"
+        rf "github.com/Cray-HPE/hms-smd/pkg/redfish"
 
 	"github.com/gorilla/mux"
 )
@@ -993,6 +994,7 @@ func TestDoComponentGet(t *testing.T) {
 		}
 	}
 }
+
 func TestDoComponentByNIDGet(t *testing.T) {
 	enabledFlg := true
 	testComp := base.Component{
@@ -1137,6 +1139,7 @@ func TestDoComponentDelete(t *testing.T) {
 		}
 	}
 }
+
 func TestDoComponentDeleteAll(t *testing.T) {
 	const numEntries int64 = 42
 	type testParams struct {
@@ -1839,6 +1842,7 @@ func TestDoNodeMapGet(t *testing.T) {
 		}
 	}
 }
+
 func TestDoNodeMapsGet(t *testing.T) {
 	var nodeMaps = []*sm.NodeMap{
 		{ID: "x0c0s21b0n0", NID: 151, Role: "Compute"},
@@ -1908,6 +1912,7 @@ func TestDoNodeMapsGet(t *testing.T) {
 		}
 	}
 }
+
 func TestDoNodeMapDelete(t *testing.T) {
 	type testParams struct {
 		reqType        string
@@ -1972,6 +1977,7 @@ func TestDoNodeMapDelete(t *testing.T) {
 		}
 	}
 }
+
 func TestDoNodeMapDeleteAll(t *testing.T) {
 	type testParams struct {
 		reqType       string
@@ -2587,6 +2593,7 @@ func TestDoCompBulkSwStatusPatch(t *testing.T) {
 		}
 	}
 }
+
 func TestDoCompRolePatch(t *testing.T) {
 	tests := []struct {
 		reqType      string
@@ -2760,6 +2767,7 @@ func TestDoCompBulkRolePatch(t *testing.T) {
 		}
 	}
 }
+
 func TestDoCompNIDPatch(t *testing.T) {
 	testComp1 := base.Component{
 		ID:  "x0c0s25b0n0",
@@ -5400,6 +5408,73 @@ func TestDoHWInvHistDeleteAll(t *testing.T) {
 // RedfishEndpoints
 //////////////////////////////////////////////////////////////////////////////
 
+func TestDoRedfishEndpointGet(t *testing.T) {
+	xname := stest.TestRedfishEndpointNodeBMC1.ID
+	payload, _ := json.Marshal(&stest.TestRedfishEndpointNodeBMC1)
+
+	tests := []struct {
+		reqType		string
+		reqURI		string
+		hmsdsRespEP	*sm.RedfishEndpoint
+		hmsdsRespErr	error
+		expectedID	string
+		expectedResp	[]byte
+	}{{
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/" + xname,
+		hmsdsRespEP:	&stest.TestRedfishEndpointNodeBMC1,
+		hmsdsRespErr:	nil,
+		expectedID:	xname,
+		expectedResp:	payload,
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/" + xname,
+		hmsdsRespEP:	nil,
+		hmsdsRespErr:	nil,
+		expectedID:	xname,
+		expectedResp:	json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no such xname.","status":404}` + "\n"),
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/" + xname,
+		hmsdsRespEP:	nil,
+		hmsdsRespErr:	hmsds.ErrHMSDSArgMissing,
+		expectedID:	xname,
+		expectedResp:	jsonErrHMSDSArgMissing,
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/" + xname,
+		hmsdsRespEP:	nil,
+		hmsdsRespErr:	errors.New("unexpected DB error"),
+		expectedID:	xname,
+		expectedResp:	json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.GetRFEndpointByID.Return.entry = test.hmsdsRespEP
+		results.GetRFEndpointByID.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an unexpected error '%s' occurred while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.hmsdsRespEP != nil && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if (test.hmsdsRespErr != nil || test.hmsdsRespEP == nil) && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if test.expectedID != results.GetRFEndpointByID.Input.id {
+			t.Errorf("Test %v Failed: Expected endpoint ID is '%v'; Received endpoint ID '%v'", i, test.expectedID, results.GetRFEndpointByID.Input.id)
+		}
+
+		if strings.TrimSpace(string(test.expectedResp)) != strings.TrimSpace(string(w.Body.Bytes())) {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
 func TestDoRedfishEndpointsGet(t *testing.T) {
 	payload1, _ := json.Marshal(stest.TestRedfishEndpointArray)
 	payload2, _ := json.Marshal(stest.TestRedfishEndpointArrayNodeBMCs)
@@ -5621,6 +5696,379 @@ func TestDoRedfishEndpointsGet(t *testing.T) {
 
 			t.Errorf("Test %v Failed: Expected filter '%v'; Received filter '%v'",
 				i, test.expectedFilter, results.GetRFEndpointsFilter.Input.f)
+		}
+	}
+}
+
+func TestDoRedfishEndpointQueryGet(t *testing.T) {
+	redfishEndpointArr := sm.RedfishEndpointArray{RedfishEndpoints: []*sm.RedfishEndpoint{&stest.TestRedfishEndpointNodeBMC1}}
+	payload, _ := json.Marshal(redfishEndpointArr)
+
+	tests := []struct {
+		reqType		string
+		reqURI		string
+		hmsdsRespEPs	[]*sm.RedfishEndpoint
+		hmsdsRespErr	error
+		expectedResp	[]byte
+        }{{
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/Query/s0",
+		hmsdsRespEPs:	[]*sm.RedfishEndpoint{&stest.TestRedfishEndpointNodeBMC1,},
+		hmsdsRespErr:	nil,
+		expectedResp:	payload,
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/Query/all",
+		hmsdsRespEPs:	[]*sm.RedfishEndpoint{&stest.TestRedfishEndpointNodeBMC1,},
+		hmsdsRespErr:	nil,
+		expectedResp:	payload,
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/Query/s0",
+		hmsdsRespEPs:	nil,
+		hmsdsRespErr:	nil,
+		expectedResp:	json.RawMessage(`{"RedfishEndpoints":null}` + "\n"),
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/Query/s0",
+		hmsdsRespEPs:	nil,
+		hmsdsRespErr:	hmsds.ErrHMSDSArgMissing,
+		expectedResp:	json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/RedfishEndpoints/Query/s0",
+		hmsdsRespEPs:	nil,
+		hmsdsRespErr:	errors.New("Argument was not a valid xname"),
+		expectedResp:	json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.GetRFEndpointsAll.Return.entries = test.hmsdsRespEPs
+		results.GetRFEndpointsAll.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		if test.hmsdsRespErr == nil && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if test.hmsdsRespErr != nil && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if strings.TrimSpace(string(test.expectedResp)) !=
+			strings.TrimSpace(string(w.Body.Bytes())) {
+
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'",
+				i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoRedfishEndpointDelete(t *testing.T) {
+
+	tests := []struct {
+		reqType			string
+		reqURI			string
+		hmsdsDidDelete		bool
+		hmsdsExpectedId		[]string
+		hmsdsRespErr		error
+		expectedResp		[]byte
+	}{{
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		hmsdsDidDelete:		true,
+		hmsdsExpectedId:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"deleted 1 entry"}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no such xname.","status":404}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/ ",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{" "},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Argument was not a valid xname ID","status":400}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Argument was not a valid xname ID","status":400}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		errors.New("Unknown error"),
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.DeleteRFEndpointByIDSetEmpty.Return.changed = test.hmsdsDidDelete
+		results.DeleteRFEndpointByIDSetEmpty.Return.affectedIds = test.hmsdsExpectedId
+		results.DeleteRFEndpointByIDSetEmpty.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.hmsdsDidDelete && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if (test.hmsdsRespErr != nil) && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if strings.Join(test.hmsdsExpectedId,"") != results.DeleteRFEndpointByIDSetEmpty.Input.id {
+			t.Errorf("Test %v Failed: Expected endpoint ID is '%v'; Received endpoint ID '%v'", i, test.hmsdsExpectedId, results.DeleteRFEndpointByIDSetEmpty.Input.id)
+		}
+
+		if bytes.Compare(test.expectedResp, w.Body.Bytes()) != 0 {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoRedfishEndpointsDeleteAll(t *testing.T) {
+	tests := []struct {
+		reqType			string
+		reqURI			string
+		hmsdsRespCount		int64
+		hmsdsExpectedIds	[]string
+		hmsdsRespErr		error
+		expectedResp		[]byte
+	}{{
+		reqType:		"DELETE",
+		reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+		hmsdsRespCount:		1,
+		hmsdsExpectedIds:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"deleted 1 entries"}`),
+	}, {
+		reqType:		"DELETE",
+		reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+		hmsdsRespCount:		4,
+		hmsdsExpectedIds:	[]string{"x0c0s14b0","x0c0s15b0","x0c0s16b0","x0c0s17b0"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"deleted 4 entries"}`),
+	}, {
+		reqType:		"DELETE",
+		reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+		hmsdsRespCount:		0,
+		hmsdsExpectedIds:	[]string{""},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no entries to delete","status":404}`),
+	}, {
+		reqType:		"DELETE",
+		reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+		hmsdsRespCount:		0,
+		hmsdsExpectedIds:	[]string{""},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"DB query failed.","status":500}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+		hmsdsRespCount:		0,
+		hmsdsExpectedIds:	[]string{""},
+		hmsdsRespErr:		errors.New("DB Error"),
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"DB query failed.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.DeleteRFEndpointsAllSetEmpty.Return.numRows = test.hmsdsRespCount
+		results.DeleteRFEndpointsAllSetEmpty.Return.affectedIds = test.hmsdsExpectedIds
+		results.DeleteRFEndpointsAllSetEmpty.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		if test.hmsdsRespErr == nil && test.hmsdsRespCount > 0 && w.Code != http.StatusOK {
+			t.Errorf("Test %v Failed: Response code was %v; want 200", i, w.Code)
+		} else if (test.hmsdsRespErr != nil || test.hmsdsRespCount == 0) && w.Code == http.StatusOK {
+			t.Errorf("Test %v Failed: Response code was %v; expected an error", i, w.Code)
+		}
+
+		if strings.TrimSpace(string(test.expectedResp)) !=
+			strings.TrimSpace(string(w.Body.Bytes())) {
+
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'",
+				i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoRedfishEndpointPut(t *testing.T) {
+	var writeVaultInitial = s.writeVault
+	defer func() {
+		s.writeVault = writeVaultInitial
+	}()
+	s.writeVault = false
+
+	var rawRFEEnabled = true
+	var rawRFEUseSSDP = false
+	var rawRFEMACRequired = false
+	var rawRFERediscOnUpdate = true
+	rawRedfishEndpoint := rf.RawRedfishEP{"x0c0s14b0", "NodeBMC", "", "10.10.255.11", "local", "10.10.255.11", &rawRFEEnabled, "d4c6d22f-6983-42d8-8e6e-e1fd6d675c17", "root", "********", &rawRFEUseSSDP, &rawRFEMACRequired, "", "", &rawRFERediscOnUpdate, ""}
+	redfishEndpointDescPtr, _ := rf.NewRedfishEPDescription(&rawRedfishEndpoint)
+	redfishEndpointPtr := sm.NewRedfishEndpoint(redfishEndpointDescPtr)
+
+	tests := []struct {
+		reqType			string
+		reqURI			string
+		reqBody			[]byte
+		expectedRedfishEP	*sm.RedfishEndpoint
+		hmsdsRespEntry		*sm.RedfishEndpoint
+		hmsdsRespAffectedIds	[]string
+		hmsdsRespErr		error
+		expectedResp		[]byte
+	}{{
+		reqType:		"PUT",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		reqBody:		json.RawMessage(`{"Type":"NodeBMC","Hostname":"10.10.255.11","Domain":"local","FQDN":"10.10.255.11","Enabled":true,"UUID":"d4c6d22f-6983-42d8-8e6e-e1fd6d675c17","User":"root","Password":"********","IPAddress":"10.10.255.11","RediscoverOnUpdate":true,"DiscoveryInfo":{"LastDiscoveryStatus":"NotYetQueried"}}`),
+		expectedRedfishEP:	redfishEndpointPtr,
+		hmsdsRespEntry:		redfishEndpointPtr,
+		hmsdsRespAffectedIds:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"ID":"x0c0s14b0","Type":"NodeBMC","Hostname":"10.10.255.11","Domain":"local","FQDN":"10.10.255.11","Enabled":true,"UUID":"d4c6d22f-6983-42d8-8e6e-e1fd6d675c17","User":"root","Password":"********","IPAddress":"10.10.255.11","RediscoverOnUpdate":true,"DiscoveryInfo":{"LastDiscoveryStatus":"NotYetQueried"}}` + "\n"),
+	}, {
+		reqType:		"PUT",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		reqBody:		json.RawMessage(`{"Type":"NodeBMC","Hostname":"10.10.255.11","Domain":"local","FQDN":"10.10.255.11","Enabled":true,"UUID":"d4c6d22f-6983-42d8-8e6e-e1fd6d675c17","User":"root","Password":"********","IPAddress":"10.10.255.11","RediscoverOnUpdate":true,"DiscoveryInfo":{"LastDiscoveryStatus":"NotYetQueried"}}`),
+		expectedRedfishEP:	&sm.RedfishEndpoint{},
+		hmsdsRespEntry:		redfishEndpointPtr,
+		hmsdsRespAffectedIds:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgNoMatch,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"operation 'PUT' failed during store","status":500}` + "\n"),
+	}, {
+		reqType:		"PUT",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		reqBody:		json.RawMessage(`{"Type":"NodeBMC","Hostname":"10.10.255.11","Domain":"local","FQDN":"10.10.255.11","Enabled":true,"UUID":"d4c6d22f-6983-42d8-8e6e-e1fd6d675c17","User":"root","Password":"********","IPAddress":"10.10.255.11","RediscoverOnUpdate":true,"DiscoveryInfo":{"LastDiscoveryStatus":"NotYetQueried"}}`),
+		expectedRedfishEP:	&sm.RedfishEndpoint{},
+		hmsdsRespEntry:		redfishEndpointPtr,
+		hmsdsRespAffectedIds:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"operation 'PUT' failed during store","status":500}` + "\n"),
+	}, {
+		reqType:		"PUT",
+		reqURI:			"https://localhost/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0",
+		reqBody:		json.RawMessage(`{"ID":"x0c0s16b1","Type":"NodeBMC","Hostname":"10.10.255.11","Domain":"local","FQDN":"10.10.255.11","Enabled":true,"UUID":"d4c6d22f-6983-42d8-8e6e-e1fd6d675c17","User":"root","Password":"********","IPAddress":"10.10.255.11","RediscoverOnUpdate":true,"DiscoveryInfo":{"LastDiscoveryStatus":"NotYetQueried"}}`),
+		expectedRedfishEP:	&sm.RedfishEndpoint{},
+		hmsdsRespEntry:		redfishEndpointPtr,
+		hmsdsRespAffectedIds:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"xname in URL and PUT body do not match","status":400}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.UpdateRFEndpointNoDiscInfo.Input.ep = redfishEndpointPtr
+		results.UpdateRFEndpointNoDiscInfo.Return.entry = test.hmsdsRespEntry
+		results.UpdateRFEndpointNoDiscInfo.Return.affectedIds = test.hmsdsRespAffectedIds
+		results.UpdateRFEndpointNoDiscInfo.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, bytes.NewBuffer(test.reqBody))
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.expectedRedfishEP != nil && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if (test.hmsdsRespErr != nil || test.expectedRedfishEP == nil) && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if bytes.Compare(test.expectedResp, w.Body.Bytes()) != 0 {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoRedfishEndpointsPost(t *testing.T) {
+	var writeVaultInitial = s.writeVault
+	defer func() {
+		s.writeVault = writeVaultInitial
+	}()
+	s.writeVault = false
+
+        redfishEndpointArr1 := &stest.TestRedfishEndpointArrayNodeBMC1
+        payload1, _ := json.Marshal(redfishEndpointArr1)
+
+        redfishEndpointArr2 := &stest.TestRedfishEndpointArray
+        payload2, _ := json.Marshal(redfishEndpointArr2)
+
+        tests := []struct {
+                reqType                 string
+                reqURI                  string
+                reqBody                 []byte
+                expectedRedfishEPs      *sm.RedfishEndpointArray
+                hmsdsRespErr            error
+                expectedResp            []byte
+        }{{
+                reqType:                "POST",
+                reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+                reqBody:                payload1,
+                expectedRedfishEPs:     redfishEndpointArr1,
+                hmsdsRespErr:           nil,
+                expectedResp:           json.RawMessage(`[{"URI":"/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0"}]` + "\n"),
+        }, {
+                reqType:                "POST",
+                reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+                reqBody:                payload2,
+                expectedRedfishEPs:     redfishEndpointArr2,
+                hmsdsRespErr:           nil,
+                expectedResp:           json.RawMessage(`[{"URI":"/hsm/v1/Inventory/RedfishEndpoints/x0c0s14b0"},{"URI":"/hsm/v1/Inventory/RedfishEndpoints/x11c0s1b0"},{"URI":"/hsm/v1/Inventory/RedfishEndpoints/x11c0r1b0"},{"URI":"/hsm/v1/Inventory/RedfishEndpoints/x6c1b0"}]` + "\n"),
+        }, {
+                reqType:                "POST",
+                reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+                reqBody:                payload2,
+                expectedRedfishEPs:     redfishEndpointArr2,
+                hmsdsRespErr:           errors.New("Unknown Error"),
+                expectedResp:           json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"operation 'POST' failed during store. ","status":500}` + "\n"),
+        }, {
+                reqType:                "POST",
+                reqURI:                 "https://localhost/hsm/v1/Inventory/RedfishEndpoints",
+                reqBody:                payload2,
+                expectedRedfishEPs:     redfishEndpointArr2,
+                hmsdsRespErr:           hmsds.ErrHMSDSArgBadID,
+                expectedResp:           json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"operation 'POST' failed during store. ","status":500}` + "\n"),
+        }}
+
+	for i, test := range tests {
+		if i == 0 {
+			results.InsertRFEndpoints.Input.eps = redfishEndpointArr1
+		} else {
+			results.InsertRFEndpoints.Input.eps = redfishEndpointArr2
+		}
+		results.InsertRFEndpoints.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, bytes.NewBuffer(test.reqBody))
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.expectedRedfishEPs != nil && w.Code != http.StatusCreated {
+			t.Errorf("Response code was %v; want 201", w.Code)
+		} else if (test.hmsdsRespErr != nil || test.expectedRedfishEPs == nil) && w.Code == http.StatusCreated {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if bytes.Compare(test.expectedResp, w.Body.Bytes()) != 0 {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
 		}
 	}
 }
