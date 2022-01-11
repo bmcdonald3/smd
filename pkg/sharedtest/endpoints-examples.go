@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -232,6 +232,46 @@ var TestServiceEndpointArrayRFEP = sm.ServiceEndpointArray{
 
 var trueVal = true
 var falseVal = false
+
+var TestCompEndpointNodeBMC = sm.ComponentEndpoint{
+	ComponentDescription: rf.ComponentDescription{
+		ID:             "x666c0s46b0",
+		Type:           "NodeBMC",
+		RedfishType:    "Manager",
+		RedfishSubtype: "BMC",
+		MACAddr:        "a4:bf:01:3f:8d:ae",
+		UUID:           "ce705079-e8d9-e111-8534-cb6990e467cc",
+		OdataID:        "/redfish/v1/Managers/BMC",
+		RfEndpointID:   "x666c0s46b0",
+	},
+	RfEndpointFQDN:        "10.100.164.164",
+	URL:                   "10.100.164.164/redfish/v1/Managers/BMC",
+	ComponentEndpointType: "ComponentEndpointManager",
+	RedfishManagerInfo: &rf.ComponentManagerInfo{
+		Name: "Manager",
+		Actions: &rf.ManagerActions{ManagerReset: rf.ActionReset{
+			AllowableValues: []string{"ForceRestart"},
+			Target:          "/redfish/v1/Managers/BMC/Actions/Manager.Reset"}},
+		EthNICInfo: []*rf.EthernetNICInfo{
+			&rf.EthernetNICInfo{RedfishId: "1",
+				Oid:              "/redfish/v1/Managers/BMC/EthernetInterfaces/1",
+				Description:      "Network Interface on the Baseboard Management Controller",
+				Hostname:         "BMCA4BF013F8DAC",
+				InterfaceEnabled: &falseVal,
+				MACAddress:       "a4:bf:01:3f:8d:ac"},
+			&rf.EthernetNICInfo{RedfishId: "2",
+				Oid:              "/redfish/v1/Managers/BMC/EthernetInterfaces/2",
+				Description:      "Network Interface on the Baseboard Management Controller",
+				Hostname:         "BMCA4BF013F8DAC",
+				InterfaceEnabled: &falseVal,
+				MACAddress:       "a4:bf:01:3f:8d:ad"},
+			&rf.EthernetNICInfo{RedfishId: "3",
+				Oid:              "/redfish/v1/Managers/BMC/EthernetInterfaces/3",
+				Description:      "Network Interface on the Baseboard Management Controller",
+				Hostname:         "BMCA4BF013F8DAC",
+				InterfaceEnabled: &trueVal,
+				MACAddress:       "a4:bf:01:3f:8d:ae"}}},
+}
 
 var SampleCompEndpoints = []*sm.ComponentEndpoint{
 	{

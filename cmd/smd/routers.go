@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -343,12 +343,12 @@ func (s *SmD) generateRoutes() Routes {
 			s.compEPBase,
 			s.doComponentEndpointsDeleteAll,
 		},
-		Route{
-			"doComponentEndpointQueryGet",
-			strings.ToUpper("Get"),
-			s.compEPBase + "/{xname}",
-			s.doComponentEndpointQueryGet,
-		},
+		//Route{
+		//	"doComponentEndpointQueryGet",
+		//	strings.ToUpper("Get"),
+		//	s.compEPBase + "/Query/{xname}",
+		//	s.doComponentEndpointQueryGet,
+		//},
 		//
 		//		Route{
 		//			"DoComponentEndpointQueryPost",
@@ -1143,12 +1143,12 @@ func (s *SmD) generateRoutes() Routes {
 			s.compEPBaseV2,
 			s.doComponentEndpointsDeleteAll,
 		},
-		Route{
-			"doComponentEndpointQueryGetV2",
-			strings.ToUpper("Get"),
-			s.compEPBaseV2 + "/{xname}",
-			s.doComponentEndpointQueryGet,
-		},
+		//Route{
+		//	"doComponentEndpointQueryGetV2",
+		//	strings.ToUpper("Get"),
+		//	s.compEPBaseV2 + "/Query/{xname}",
+		//	s.doComponentEndpointQueryGet,
+		//},
 
 		// ServiceEndpoints
 		Route{
