@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -5768,7 +5768,6 @@ func TestDoRedfishEndpointQueryGet(t *testing.T) {
 }
 
 func TestDoRedfishEndpointDelete(t *testing.T) {
-
 	tests := []struct {
 		reqType			string
 		reqURI			string
@@ -6069,6 +6068,341 @@ func TestDoRedfishEndpointsPost(t *testing.T) {
 
 		if bytes.Compare(test.expectedResp, w.Body.Bytes()) != 0 {
 			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// ComponentEndpoints
+//////////////////////////////////////////////////////////////////////////////
+
+func TestDoComponentEndpointGet(t *testing.T) {
+	xname := stest.TestCompEndpointNodeBMC.ID
+	payload, _ := json.Marshal(&stest.TestCompEndpointNodeBMC)
+
+	tests := []struct {
+		reqType		string
+		reqURI		string
+		hmsdsRespEP	*sm.ComponentEndpoint
+		hmsdsRespErr	error
+		expectedID	string
+		expectedResp	[]byte
+	}{{
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/ComponentEndpoints/" + xname,
+		hmsdsRespEP:	&stest.TestCompEndpointNodeBMC,
+		hmsdsRespErr:	nil,
+		expectedID:	xname,
+		expectedResp:	payload,
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/ComponentEndpoints/" + xname,
+		hmsdsRespEP:	nil,
+		hmsdsRespErr:	nil,
+		expectedID:	xname,
+		expectedResp:	json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no such xname.","status":404}` + "\n"),
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/ComponentEndpoints/" + xname,
+		hmsdsRespEP:	nil,
+		hmsdsRespErr:	hmsds.ErrHMSDSArgMissing,
+		expectedID:	xname,
+		expectedResp:	jsonErrHMSDSArgMissing,
+	}, {
+		reqType:	"GET",
+		reqURI:		"https://localhost/hsm/v1/Inventory/ComponentEndpoints/" + xname,
+		hmsdsRespEP:	nil,
+		hmsdsRespErr:	errors.New("unexpected DB error"),
+		expectedID:	xname,
+		expectedResp:	json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.GetCompEndpointByID.Return.entry = test.hmsdsRespEP
+		results.GetCompEndpointByID.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an unexpected error '%s' occurred while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.hmsdsRespEP != nil && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if (test.hmsdsRespErr != nil || test.hmsdsRespEP == nil) && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if test.expectedID != results.GetCompEndpointByID.Input.id {
+			t.Errorf("Test %v Failed: Expected endpoint ID is '%v'; Received endpoint ID '%v'", i, test.expectedID, results.GetCompEndpointByID.Input.id)
+		}
+
+		if strings.TrimSpace(string(test.expectedResp)) != strings.TrimSpace(string(w.Body.Bytes())) {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoComponentEndpointsGet(t *testing.T) {
+	componentEndpointArray := sm.ComponentEndpointArray{ComponentEndpoints: stest.SampleCompEndpoints}
+	payload, _ := json.Marshal(componentEndpointArray)
+
+	tests := []struct {
+		reqType		string
+		reqURI		string
+		hmsdsRespEPs	[]*sm.ComponentEndpoint
+		hmsdsRespErr	error
+		expectedFilter	*hmsds.CompEPFilter
+		expectedResp	[]byte
+		expectError	bool
+	}{{
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:   nil,
+		expectedFilter:	&hmsds.CompEPFilter{},
+		expectedResp:   payload,
+		expectError:	false,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints?id=x1c4",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:   nil,
+		expectedFilter:	&hmsds.CompEPFilter{
+			ID: []string{"x1c4"},
+		},
+		expectedResp:   payload,
+		expectError:	false,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints?redfish_ep=x1c4b0",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:   nil,
+		expectedFilter:	&hmsds.CompEPFilter{
+			RfEndpointID: []string{"x1c4b0"},
+		},
+		expectedResp:   payload,
+		expectError:	false,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints?type=NodeBMC",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:   nil,
+		expectedFilter:	&hmsds.CompEPFilter{
+			Type: []string{"NodeBMC"},
+		},
+		expectedResp:   payload,
+		expectError:	false,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints?redfish_type=Chassis",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:   nil,
+		expectedFilter:	&hmsds.CompEPFilter{
+			RedfishType: []string{"Chassis"},
+		},
+		expectedResp:   payload,
+		expectError:	false,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints?id=x1c4&redfish_ep=x1c4b0&type=Chassis&redfish_type=Chassis",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:   nil,
+		expectedFilter:	&hmsds.CompEPFilter{
+			ID: []string{"x1c4"},
+			RfEndpointID: []string{"x1c4b0"},
+			Type: []string{"Chassis"},
+			RedfishType: []string{"Chassis"},
+		},
+		expectedResp:   payload,
+		expectError:	false,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints?type=fake",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:	hmsds.ErrHMSDSArgBadType,
+		expectedFilter:	&hmsds.CompEPFilter{
+			Type: []string{"fake"},
+		},
+		expectedResp:   json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"bad query param: Argument was not a valid HMS Type","status":400}` + "\n"),
+		expectError:	true,
+	}, {
+		reqType:        "GET",
+		reqURI:         "https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespEPs:   stest.SampleCompEndpoints,
+		hmsdsRespErr:	errors.New("Unknown error"),
+		expectedFilter:	&hmsds.CompEPFilter{},
+		expectedResp:   json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+		expectError:	true,
+	}}
+
+	for i, test := range tests {
+		results.GetCompEndpointsFilter.Return.entries = test.hmsdsRespEPs
+		results.GetCompEndpointsFilter.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		if test.hmsdsRespErr == nil && w.Code != http.StatusOK {
+			t.Errorf("Test %v Failed: Response code was %v; want 200", i, w.Code)
+		} else if test.hmsdsRespErr != nil && w.Code == http.StatusOK {
+			t.Errorf("Test %v Failed: Response code was %v; expected an error", i, w.Code)
+		}
+
+		if !test.expectError || test.hmsdsRespErr != nil {
+			if !reflect.DeepEqual(test.expectedFilter, results.GetCompEndpointsFilter.Input.f) {
+				t.Errorf("Test %v Failed: Expected component endpoint filter is '%v'; Received '%v'", i, test.expectedFilter, results.GetCompEndpointsFilter.Input.f)
+			}
+		}
+
+		if strings.TrimSpace(string(test.expectedResp)) != strings.TrimSpace(string(w.Body.Bytes())) {
+			t.Errorf("Test %v Failed: Expected body is '%v';\n Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoComponentEndpointDelete(t *testing.T) {
+	tests := []struct {
+		reqType			string
+		reqURI			string
+		hmsdsDidDelete		bool
+		hmsdsExpectedId		[]string
+		hmsdsRespErr		error
+		expectedResp		[]byte
+	}{{
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints/x1c4",
+		hmsdsDidDelete:		true,
+		hmsdsExpectedId:	[]string{"x1c4"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"deleted 1 entry"}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints/x1c4",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{"x1c4"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no such xname.","status":404}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints/ ",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{" "},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Argument was not a valid xname ID","status":400}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints/x1c4",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{"x1c4"},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Argument was not a valid xname ID","status":400}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints/x1c4",
+		hmsdsDidDelete:		false,
+		hmsdsExpectedId:	[]string{"x1c4"},
+		hmsdsRespErr:		errors.New("Unknown error"),
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"failed to query DB.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.DeleteCompEndpointByIDSetEmpty.Return.changed = test.hmsdsDidDelete
+		results.DeleteCompEndpointByIDSetEmpty.Return.affectedIds = test.hmsdsExpectedId
+		results.DeleteCompEndpointByIDSetEmpty.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.hmsdsDidDelete && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if (test.hmsdsRespErr != nil) && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if strings.Join(test.hmsdsExpectedId,"") != results.DeleteCompEndpointByIDSetEmpty.Input.id {
+			t.Errorf("Test %v Failed: Expected endpoint ID is '%v'; Received endpoint ID '%v'", i, test.hmsdsExpectedId, results.DeleteCompEndpointByIDSetEmpty.Input.id)
+		}
+
+		if bytes.Compare(test.expectedResp, w.Body.Bytes()) != 0 {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
+func TestDoComponentEndpointsDeleteAll(t *testing.T) {
+	tests := []struct {
+		reqType			string
+		reqURI			string
+		hmsdsRespCount		int64
+		hmsdsExpectedIds	[]string
+		hmsdsRespErr		error
+		expectedResp		[]byte
+	}{{
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespCount:		1,
+		hmsdsExpectedIds:	[]string{"x0c0s14b0"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"deleted 1 entries"}`),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespCount:		4,
+		hmsdsExpectedIds:	[]string{"x1c4","x1c5","x1c6","x1c7"},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"deleted 4 entries"}`),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespCount:		0,
+		hmsdsExpectedIds:	[]string{""},
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no entries to delete","status":404}`),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespCount:		0,
+		hmsdsExpectedIds:	[]string{""},
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"DB query failed.","status":500}` + "\n"),
+	}, {
+		reqType:		"DELETE",
+		reqURI:			"https://localhost/hsm/v1/Inventory/ComponentEndpoints",
+		hmsdsRespCount:		0,
+		hmsdsExpectedIds:	[]string{""},
+		hmsdsRespErr:		errors.New("DB Error"),
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"DB query failed.","status":500}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		results.DeleteCompEndpointsAllSetEmpty.Return.numRows = test.hmsdsRespCount
+		results.DeleteCompEndpointsAllSetEmpty.Return.affectedIds = test.hmsdsExpectedIds
+		results.DeleteCompEndpointsAllSetEmpty.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, nil)
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		if test.hmsdsRespErr == nil && test.hmsdsRespCount > 0 && w.Code != http.StatusOK {
+			t.Errorf("Test %v Failed: Response code was %v; want 200", i, w.Code)
+		} else if (test.hmsdsRespErr != nil || test.hmsdsRespCount == 0) && w.Code == http.StatusOK {
+			t.Errorf("Test %v Failed: Response code was %v; expected an error", i, w.Code)
+		}
+
+		if strings.TrimSpace(string(test.expectedResp)) !=
+			strings.TrimSpace(string(w.Body.Bytes())) {
+
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'",
+				i, string(test.expectedResp), w.Body)
 		}
 	}
 }

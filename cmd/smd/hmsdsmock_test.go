@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -2106,6 +2106,7 @@ func (d *hmsdbtest) DeleteCompEndpointsAll() (int64, error) {
 // Return true if there was a row affected, false if there were zero.  The
 // string array returns the single xname ID that changed state or is empty.
 func (d *hmsdbtest) DeleteCompEndpointByIDSetEmpty(id string) (bool, []string, error) {
+	d.t.DeleteCompEndpointByIDSetEmpty.Input.id = id
 	return d.t.DeleteCompEndpointByIDSetEmpty.Return.changed,
 		d.t.DeleteCompEndpointByIDSetEmpty.Return.affectedIds,
 		d.t.DeleteCompEndpointByIDSetEmpty.Return.err
@@ -2117,7 +2118,7 @@ func (d *hmsdbtest) DeleteCompEndpointByIDSetEmpty(id string) (bool, []string, e
 // of those xname IDs that were set to Empty/OK (i.e. not already Empty/OK)
 // as part of the deletion.
 func (d *hmsdbtest) DeleteCompEndpointsAllSetEmpty() (int64, []string, error) {
-	return d.t.DeleteCompEndpointsAll.Return.numRows,
+	return d.t.DeleteCompEndpointsAllSetEmpty.Return.numRows,
 		d.t.DeleteCompEndpointsAllSetEmpty.Return.affectedIds,
 		d.t.DeleteCompEndpointsAllSetEmpty.Return.err
 }
