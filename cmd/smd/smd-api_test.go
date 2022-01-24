@@ -4423,6 +4423,104 @@ func TestDoHWInvByFRUGetAll(t *testing.T) {
 	}
 }
 
+func TestDoHWInvByLocationPost(t *testing.T) {
+	var HWInvByLocArray1 = []sm.HWInvByLoc{
+		stest.NodeHWInvByLoc1,
+	}
+	var hwIn1 HwInvIn
+	hwIn1.Hardware = HWInvByLocArray1
+	hwLocs1, _ := sm.NewHWInvByLocs(HWInvByLocArray1)
+	payload1, _ := json.Marshal(hwIn1)
+
+	var HWInvByLocArray2 = []sm.HWInvByLoc{
+		stest.NodeHWInvByLoc1,
+		stest.ProcHWInvByLoc1,
+		stest.ProcHWInvByLoc2,
+		stest.MemHWInvByLoc1,
+		stest.MemHWInvByLoc2,
+	}
+	var hwIn2 HwInvIn
+	hwIn2.Hardware = HWInvByLocArray2
+	hwLocs2, _ := sm.NewHWInvByLocs(HWInvByLocArray2)
+	payload2, _ := json.Marshal(hwIn2)
+
+	tests := []struct {
+		reqType			string
+		reqURI			string
+		reqBody			[]byte
+		expectedHWInvByLocs	[]*sm.HWInvByLoc
+		hmsdsRespErr		error
+		expectedResp		[]byte
+	}{{
+		reqType:		"POST",
+		reqURI:			"https://localhost/hsm/v1/Inventory/Hardware",
+		reqBody:		payload1,
+		expectedHWInvByLocs:	hwLocs1,
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"Created 1 entries"}` + "\n"),
+	}, {
+		reqType:		"POST",
+		reqURI:			"https://localhost/hsm/v1/Inventory/Hardware",
+		reqBody:		payload2,
+		expectedHWInvByLocs:	hwLocs2,
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"Created 5 entries"}` + "\n"),
+	}, {
+		reqType:		"POST",
+		reqURI:			"https://localhost/hsm/v1/Inventory/Hardware",
+		reqBody:		json.RawMessage(`{}`),
+		expectedHWInvByLocs:	hwLocs2,
+		hmsdsRespErr:		nil,
+		expectedResp:		json.RawMessage(`{"code":0,"message":"Created 0 entries"}` + "\n"),
+	}, {
+		reqType:		"POST",
+		reqURI:			"https://localhost/hsm/v1/Inventory/Hardware",
+		reqBody:		payload2,
+		expectedHWInvByLocs:	hwLocs2,
+		hmsdsRespErr:		errors.New("Unknown Error"),
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Internal Server Error","detail":"operation 'POST' failed during store.","status":500}` + "\n"),
+        }, {
+		reqType:		"POST",
+		reqURI:			"https://localhost/hsm/v1/Inventory/Hardware",
+		reqBody:		payload2,
+		expectedHWInvByLocs:	hwLocs2,
+		hmsdsRespErr:		hmsds.ErrHMSDSArgBadID,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Argument was not a valid xname ID","status":400}` + "\n"),
+	}, {
+		reqType:		"POST",
+		reqURI:			"https://localhost/hsm/v1/Inventory/Hardware",
+		reqBody:		payload2,
+		expectedHWInvByLocs:	hwLocs2,
+		hmsdsRespErr:		hmsds.ErrHMSDSDuplicateKey,
+		expectedResp:		json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Would create a duplicate key or non-unique field","status":400}` + "\n"),
+	}}
+
+	for i, test := range tests {
+		if i == 0 {
+			results.InsertHWInvByLocs.Input.hls = hwLocs1
+		} else {
+			results.InsertHWInvByLocs.Input.hls = hwLocs2
+		}
+		results.InsertHWInvByLocs.Return.err = test.hmsdsRespErr
+		req, err := http.NewRequest(test.reqType, test.reqURI, bytes.NewBuffer(test.reqBody))
+		if err != nil {
+			t.Fatalf("an error '%s' was not expected while creating request", err)
+		}
+		w := httptest.NewRecorder()
+
+		router.ServeHTTP(w, req)
+		if test.hmsdsRespErr == nil && test.expectedHWInvByLocs != nil && w.Code != http.StatusOK {
+			t.Errorf("Response code was %v; want 200", w.Code)
+		} else if (test.hmsdsRespErr != nil || test.expectedHWInvByLocs == nil) && w.Code == http.StatusOK {
+			t.Errorf("Response code was %v; expected an error", w.Code)
+		}
+
+		if bytes.Compare(test.expectedResp, w.Body.Bytes()) != 0 {
+			t.Errorf("Test %v Failed: Expected body is '%v'; Received '%v'", i, string(test.expectedResp), w.Body)
+		}
+	}
+}
+
 func TestDoHWInvByLocationDelete(t *testing.T) {
 	data := Response{0, "deleted 1 entry"}
 	payload1, _ := json.Marshal(data)
