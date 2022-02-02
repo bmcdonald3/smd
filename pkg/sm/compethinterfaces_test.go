@@ -117,6 +117,7 @@ func TestNewCompEthInterfaceV2(t *testing.T) {
 		expectedOut: &CompEthInterfaceV2{
 			ID:      "a4bf0138ee65",
 			MACAddr: "a4:bf:01:38:ee:65",
+			IPAddrs: []IPAddressMapping{},
 		},
 		expectedErr: nil,
 	}, { // Test 2 - Bad MAC address
