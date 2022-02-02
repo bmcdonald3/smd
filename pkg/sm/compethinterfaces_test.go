@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2020-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2020-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -117,6 +117,7 @@ func TestNewCompEthInterfaceV2(t *testing.T) {
 		expectedOut: &CompEthInterfaceV2{
 			ID:      "a4bf0138ee65",
 			MACAddr: "a4:bf:01:38:ee:65",
+			IPAddrs: []IPAddressMapping{},
 		},
 		expectedErr: nil,
 	}, { // Test 2 - Bad MAC address
