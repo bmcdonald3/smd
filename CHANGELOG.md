@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - CASMHMS-5353 - Added CheckDeputyKeys() method to service_reservations package.
 
+## [1.43.0 - 2022-01-31
+
+### Added
+
+- CASMHMS-5348 - Fixed NULL value issue with POST /Inventory/EthernetInterfaces
+
 ## [1.42.0] - 2022-01-24
 
 ### Added
