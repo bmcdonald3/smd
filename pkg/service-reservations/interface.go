@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2020-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2020-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -28,6 +28,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -37,6 +38,7 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 	"github.com/Cray-HPE/hms-base"
+	"github.com/Cray-HPE/hms-smd/pkg/sm"
 )
 
 const HSM_DEFAULT_RESERVATION_PATH = "/hsm/v2/locks/service/reservations"
@@ -89,6 +91,9 @@ type ServiceReservation interface {
 
 	//Validate that I still own the lock for the xnames listed.
 	Check(xnames []string) bool
+
+	//Validate deputy keys given by another actor
+	ValidateDeputyKeys(keys []Key) (ReservationCheckResponse,error)
 
 	//Release the locks on the xnames
 	Release(xnames []string) error
@@ -610,3 +615,85 @@ func (i *Production) Status() (res map[string]Reservation) {
 	i.logger.Trace("Status() - END")
 	return res
 }
+
+func (i *Production) ValidateDeputyKeys(keys []Key) (ReservationCheckResponse,error) {
+	var lockArray sm.CompLockV2DeputyKeyArray
+	var jdata sm.CompLockV2ReservationResult
+	var retData ReservationCheckResponse
+
+	rmap := make(map[string]bool)
+
+	for _,comp := range(keys) {
+		rmap[comp.ID] = true
+		if (comp.Key != "") {
+			lockArray.DeputyKeys = append(lockArray.DeputyKeys,
+				sm.CompLockV2Key{ID: comp.ID, Key: comp.Key})
+		}
+	}
+
+	ba,baerr := json.Marshal(&lockArray)
+	if (baerr != nil) {
+		return retData,fmt.Errorf("Error marshalling deputy key array: %v",baerr)
+	}
+
+	baseURL := i.stateManagerServer + i.reservationPath + "/check"
+	newRequest,err := http.NewRequest(http.MethodPost,baseURL,bytes.NewBuffer(ba))
+	if (err != nil) {
+		return retData,fmt.Errorf("Error constructing HTTP request for deputy key check: %v",
+			err)
+	}
+	req, err := retryablehttp.FromRequest(newRequest)
+	reqContext,_ := context.WithTimeout(context.Background(), 40*time.Second)
+	req = req.WithContext(reqContext)
+
+	rsp,rsperr := i.httpClient.Do(req)
+	if (rsperr != nil) {
+		return retData,fmt.Errorf("Error sending http request for deputy key check: %v",
+			rsperr)
+	}
+
+	switch statusCode := rsp.StatusCode; statusCode {
+	case http.StatusOK:
+		body,bderr := ioutil.ReadAll(rsp.Body)
+		if (bderr != nil) {
+			return retData,fmt.Errorf("Error reading http response for deputy key check: %v",
+				bderr)
+		}
+
+		err = json.Unmarshal(body,&jdata)
+		if (err != nil) {
+			return retData,fmt.Errorf("Error unmarshalling response for deputy key check: %v",
+				err)
+		}
+
+		//Populate success/failure
+
+		for _,comp := range(jdata.Success) {
+			delete(rmap,comp.ID)
+			retData.Success = append(retData.Success,
+				ReservationCheckSuccessResponse{ID: comp.ID,
+					DeputyKey: comp.DeputyKey,
+					ExpirationTime: comp.ExpirationTime})
+		}
+
+		for _,comp := range(jdata.Failure) {
+			delete(rmap,comp.ID)
+			retData.Failure = append(retData.Failure,
+				FailureResponse{ID: comp.ID, Reason: comp.Reason})
+		}
+
+		//Any remaining map entries mean the key was not found or was invalid.
+
+		for k,_ := range(rmap) {
+			retData.Failure = append(retData.Failure,
+				FailureResponse{ID: k, Reason: "Key not found, invalid, or expired"})
+		}
+
+
+	default:
+		return retData,fmt.Errorf("Error response from deputy key check: %d",
+			statusCode)
+	}
+	return retData,nil
+}
+
