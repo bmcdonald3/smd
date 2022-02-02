@@ -139,6 +139,10 @@ func NewCompEthInterfaceV2(desc, macAddr, compID string, ipAddrs []IPAddressMapp
 	if cei.ID == "" {
 		return nil, ErrCompEthInterfaceBadMAC
 	}
+	// Initialize empty slices
+	if ipAddrs == nil {
+		ipAddrs = []IPAddressMapping{}
+	}
 	cei.IPAddrs = ipAddrs
 	for _, ipm := range cei.IPAddrs {
 		if err := ipm.Verify(); err != nil {
