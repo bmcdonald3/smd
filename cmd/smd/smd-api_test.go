@@ -7660,6 +7660,7 @@ func TestDoCompEthInterfacePostV2(t *testing.T) {
 		expectedCEI: &sm.CompEthInterfaceV2{
 			ID:      "a4bf0138ee65",
 			MACAddr: "a4:bf:01:38:ee:65",
+			IPAddrs: []sm.IPAddressMapping{},
 		},
 		expectedResp: json.RawMessage(`{"type":"about:blank","title":"Conflict","detail":"operation would conflict with an existing component ethernet interface that has the same MAC address.","status":409}` + "\n"),
 		expectError:  true,
