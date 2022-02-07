@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -92,7 +92,24 @@ const tGetCompJoinGroupsQuery = " LEFT JOIN component_group_members cgm " +
 	"LEFT JOIN component_groups cg ON cg.id = cgm.group_id"
 
 const tGetCompJoinGroupsSuffix = " GROUP BY c.id"
+
 const tGetCompJoinGroupsSuffixAnd = " GROUP BY c.id HAVING COUNT(*) = 2"
+
+const tGetSCNSubscriptionQueryId = "SELECT id, subscription FROM scn_subscriptions WHERE id = $1"
+
+const tGetSCNSubscriptionQueryAll = "SELECT id, subscription FROM scn_subscriptions"
+
+const tGetSCNSubscriptionUpdate = "SELECT id, subscription FROM scn_subscriptions WHERE id = $1 FOR UPDATE"
+
+const tInsertSCNSubscription = "INSERT INTO scn_subscriptions ( sub_url, subscription) VALUES ($1, $2)"
+
+const tInsertSCNSubscriptionQueryLastVal = "SELECT LASTVAL()"
+
+const tUpdateSCNSubscription = "UPDATE scn_subscriptions SET sub_url = $1, subscription = $2 WHERE id = $3"
+
+const tDeleteSCNSubscription = "DELETE FROM scn_subscriptions WHERE id = $1"
+
+const tDeleteSCNSubscriptionAll = "DELETE FROM scn_subscriptions"
 
 func TestPgGetComponentsFilter(t *testing.T) {
 	enabledFlg := true
@@ -3562,6 +3579,605 @@ func TestDeleteCompEthInterfacesAll(t *testing.T) {
 			t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
 		} else if test.expectedError != nil && err == nil {
 			t.Errorf("Test %v Failed: Expected an error (%s).", i, test.expectedError)
+		}
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
+//
+// State Change Notification (SCN) Subscriptions
+//
+////////////////////////////////////////////////////////////////////////////
+
+//TODO: Done
+// GetSCNSubscriptionsAll() (*sm.SCNSubscriptionArray, error)
+func TestGetSCNSubscriptionsAll(t *testing.T) {
+	tests := []struct {
+		dbColumns		[]string
+		dbRows			[][]driver.Value
+		dbError			error
+		expectedPrepare		string
+		expectedSCNSubs		*sm.SCNSubscriptionArray
+	}{{
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{2, `{"Subscriber":"hmfd@sms01","States":["On","Off"],"Url":"https://foo/bar"}`},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryAll),
+		expectedSCNSubs:	&sm.SCNSubscriptionArray{[]sm.SCNSubscription{
+			sm.SCNSubscription{
+				ID:		2,
+				Subscriber:	"hmfd@sms01",
+				States:		[]string{"On", "Off"},
+				Url:		"https://foo/bar",
+			},
+		}},
+	}, {
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{2, `{"Subscriber":"hmfd@sms01","States":["On","Off"],"Url":"https://foo/bar"}`},
+						[]driver.Value{3, `{"Subscriber":"hmfd@sms02","States":["Off","Ready"],"Url":"https://foo2/bar"}`},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryAll),
+		expectedSCNSubs:	&sm.SCNSubscriptionArray{[]sm.SCNSubscription{
+			sm.SCNSubscription{
+				ID:		2,
+				Subscriber:	"hmfd@sms01",
+				States:		[]string{"On", "Off"},
+				Url:		"https://foo/bar",
+			},
+			sm.SCNSubscription{
+				ID:		3,
+				Subscriber:	"hmfd@sms02",
+				States:		[]string{"Off", "Ready"},
+				Url:		"https://foo2/bar",
+			},
+		}},
+	}, {
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{1, `{"Subscriber":"cray-hmnfd-798784bd66-s69mg_4","Roles":["compute","service"],"States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+						[]driver.Value{2, `{"Subscriber":"cray-hmnfd-798784bd66-rkvzn_4","Roles":["service"],"States":["Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+						[]driver.Value{3, `{"Subscriber":"cray-hmnfd-798784bd66-bp8rc_23","Roles":["compute"],"States":["Empty","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryAll),
+		expectedSCNSubs:	&sm.SCNSubscriptionArray{[]sm.SCNSubscription{
+			sm.SCNSubscription{
+				ID:		1,
+				Subscriber:	"cray-hmnfd-798784bd66-s69mg_4",
+				Roles:		[]string{"compute", "service"},
+				States:		[]string{"Empty", "Populated", "Off", "On", "Standby", "Halt", "Ready"},
+				Url:		"http://cray-hmnfd/hmi/v1/scn",
+			},
+			sm.SCNSubscription{
+				ID:		2,
+				Subscriber:	"cray-hmnfd-798784bd66-rkvzn_4",
+				Roles:		[]string{"service"},
+				States:		[]string{"Populated", "Off", "On", "Standby", "Halt", "Ready"},
+				Url:		"http://cray-hmnfd/hmi/v1/scn",
+			},
+			sm.SCNSubscription{
+				ID:		3,
+				Subscriber:	"cray-hmnfd-798784bd66-bp8rc_23",
+				Roles:		[]string{"compute"},
+				States:		[]string{"Empty", "Off", "On", "Standby", "Halt", "Ready"},
+				Url:		"http://cray-hmnfd/hmi/v1/scn",
+			},
+		}},
+	}, {
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{"", `{}`},
+		},
+		dbError:		sql.ErrNoRows,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryAll),
+		expectedSCNSubs:	&sm.SCNSubscriptionArray{[]sm.SCNSubscription{
+			sm.SCNSubscription{},
+		}},
+	}}
+
+	for i, test := range tests {
+		ResetMockDB()
+		// before we actually execute our api function, we need to expect required DB actions
+		rows := sqlmock.NewRows(test.dbColumns)
+		for _, row := range test.dbRows {
+			rows.AddRow(row...)
+		}
+
+		mockPG.ExpectBegin()
+		if test.dbError != nil {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WillReturnRows(rows)
+			mockPG.ExpectCommit()
+		}
+
+		subs, err := dPG.GetSCNSubscriptionsAll()
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else if !reflect.DeepEqual(test.expectedSCNSubs, subs) {
+				t.Errorf("Test %v Failed: Expected subArray '%v'; Recieved subArray '%v'", i, test.expectedSCNSubs, subs)
+			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
+		}
+	}
+}
+
+//TODO: Done
+//GetSCNSubscription(id int64) (*sm.SCNSubscription, error)
+func TestGetSCNSubscription(t *testing.T) {
+	tests := []struct {
+		id			int64
+		dbColumns		[]string
+		dbRows			[][]driver.Value
+		dbError			error
+		expectedPrepare		string
+		expectedArgs		[]driver.Value
+		expectedSCNSub		*sm.SCNSubscription
+	}{{
+		id:			2,
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{2, `{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryId),
+		expectedArgs:		[]driver.Value{2},
+		expectedSCNSub:		&sm.SCNSubscription{
+			ID:		2,
+			Subscriber:	"cray-hmnfd-69d99579c5-shpmk_3",
+			States:		[]string{"Empty","Populated","Off","On","Standby","Halt","Ready"},
+			Url:		"http://cray-hmnfd/hmi/v1/scn",
+		},
+	}, {
+		id:			3,
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{3, `{"Subscriber":"cray-hmnfd-798784bd66-s69mg_4","Roles":["compute","service"],"States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryId),
+		expectedArgs:		[]driver.Value{3},
+		expectedSCNSub:		&sm.SCNSubscription{
+			ID:		3,
+			Subscriber:	"cray-hmnfd-798784bd66-s69mg_4",
+			Roles:		[]string{"compute","service"},
+			States:		[]string{"Empty","Populated","Off","On","Standby","Halt","Ready"},
+			Url:		"http://cray-hmnfd/hmi/v1/scn",
+		},
+	}, {
+		id:			0,
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{"", `{}`},
+		},
+		dbError:		sql.ErrNoRows,
+		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryId),
+		expectedArgs:		[]driver.Value{0},
+		expectedSCNSub:		&sm.SCNSubscription{},
+	}}
+
+	for i, test := range tests {
+		ResetMockDB()
+		// before we actually execute our api function, we need to expect required DB actions
+		rows := sqlmock.NewRows(test.dbColumns)
+		for _, row := range test.dbRows {
+			rows.AddRow(row...)
+		}
+
+		mockPG.ExpectBegin()
+		if test.dbError != nil {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			if test.expectedArgs != nil {
+				mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WithArgs(test.expectedArgs...).WillReturnRows(rows)
+			} else {
+				mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WillReturnRows(rows)
+			}
+			mockPG.ExpectCommit()
+		}
+
+		sub, err := dPG.GetSCNSubscription(test.id)
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else if !reflect.DeepEqual(test.expectedSCNSub, sub) {
+				t.Errorf("Test %v Failed: Expected subArray '%v'; Recieved subArray '%v'", i, test.expectedSCNSub, sub)
+			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
+		}
+	}
+}
+
+//TODO: Done
+// InsertSCNSubscription(sub sm.SCNPostSubscription) (int64, error)
+func TestInsertSCNSubscription(t *testing.T) {
+	tests := []struct {
+		sub			sm.SCNPostSubscription
+		dbColumns		[]string
+		dbRows			[][]driver.Value
+		dbError			error
+		expectedPrepare		string
+		expectedArgs		[]driver.Value
+		expectedID		int64
+	}{{
+		sub:			sm.SCNPostSubscription{
+						Subscriber:	"hmfd@sms01",
+						States:		[]string{"On", "Off"},
+						Url:		"https://foo/bar",
+		},
+		dbColumns:		[]string{"id"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{4},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tInsertSCNSubscription),
+		expectedArgs:		[]driver.Value{"hmfd@sms01https://foo/bar",json.RawMessage(`{"Subscriber":"hmfd@sms01","States":["On","Off"],"Url":"https://foo/bar"}`)},
+		expectedID:		4,
+	}, {
+		sub:			sm.SCNPostSubscription{
+						Subscriber:	"cray-hmnfd-798784bd66-s69mg_4",
+						Roles:		[]string{"compute","service"},
+						States:		[]string{"Empty","Populated","Off","On","Standby","Halt","Ready"},
+						Url:		"http://cray-hmnfd/hmi/v1/scn",
+		},
+		dbColumns:		[]string{"id"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{5},
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tInsertSCNSubscription),
+		expectedArgs:		[]driver.Value{"cray-hmnfd-798784bd66-s69mg_4http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-798784bd66-s69mg_4","Roles":["compute","service"],"States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`)},
+		expectedID:		5,
+	}, {
+		sub:			sm.SCNPostSubscription{},
+		dbColumns:		[]string{"id"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{0},
+		},
+		dbError:		sql.ErrNoRows,
+		expectedPrepare:	regexp.QuoteMeta(tInsertSCNSubscription),
+		expectedArgs:		[]driver.Value{"",json.RawMessage(`{}`)},
+		expectedID:		0,
+	}}
+
+	for i, test := range tests {
+
+		// before we actually execute our api function, we need to expect required DB actions
+		rows := sqlmock.NewRows(test.dbColumns)
+		for _, row := range test.dbRows {
+			rows.AddRow(row...)
+		}
+
+		ResetMockDB()
+		mockPG.ExpectBegin()
+		if test.expectedPrepare == "" && test.dbError != nil {
+			mockPG.ExpectRollback()
+		} else if test.dbError != nil {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(test.expectedArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
+			mockPG.ExpectPrepare(regexp.QuoteMeta(tInsertSCNSubscriptionQueryLastVal)).ExpectQuery().WillReturnRows(rows)
+			mockPG.ExpectCommit()
+		}
+
+		id, err := dPG.InsertSCNSubscription(test.sub)
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else if test.expectedID != id {
+				t.Errorf("Test %v Failed: Expected id '%v'; Recieved id '%v'", i, test.expectedID, id)
+			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
+		}
+	}
+}
+
+//TODO: Done
+// UpdateSCNSubscription(id int64, sub sm.SCNPostSubscription) (bool, error)
+func TestUpdateSCNSubscription(t *testing.T) {
+	tests := []struct {
+		id			int64
+		sub			sm.SCNPostSubscription
+		dbError			error
+		expectedPrepare		string
+		expectedArgs		[]driver.Value
+		expectedDidUpdate	bool
+	}{{
+		id:			4,
+		sub:			sm.SCNPostSubscription{
+						Subscriber:	"hmfd@sms01",
+						States:		[]string{"On", "Off"},
+						Url:		"https://foo/bar",
+		},
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tUpdateSCNSubscription),
+		expectedArgs:		[]driver.Value{"hmfd@sms01https://foo/bar",json.RawMessage(`{"Subscriber":"hmfd@sms01","States":["On","Off"],"Url":"https://foo/bar"}`),4},
+		expectedDidUpdate:	true,
+	}, {
+		id:			0,
+		sub:			sm.SCNPostSubscription{},
+		dbError:		sql.ErrNoRows,
+		expectedPrepare:	regexp.QuoteMeta(tUpdateSCNSubscription),
+		expectedArgs:		[]driver.Value{"",json.RawMessage(`{}`),0},
+		expectedDidUpdate:	false,
+	}}
+
+	for i, test := range tests {
+		ResetMockDB()
+		mockPG.ExpectBegin()
+		if test.dbError != nil {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(test.expectedArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
+			mockPG.ExpectCommit()
+		}
+
+		didUpdate, err := dPG.UpdateSCNSubscription(test.id, test.sub)
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else {
+				if test.expectedDidUpdate && !didUpdate {
+					t.Errorf("Test %v Failed: Expected update; no update occurred", i)
+				} else if !test.expectedDidUpdate && didUpdate {
+					t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
+				}
+			}
+		} else {
+			if err == nil {
+				t.Errorf("Test %v Failed: Expected an error.", i)
+			} else {
+				if test.expectedDidUpdate && !didUpdate {
+					t.Errorf("Test %v Failed: Expected update; no update occurred", i)
+				} else if !test.expectedDidUpdate && didUpdate {
+					t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
+				}
+			}
+		}
+	}
+}
+
+//TODO: In progress
+// PatchSCNSubscription(id int64, op string, patch sm.SCNPatchSubscription) (bool, error)
+func TestPatchSCNSubscription(t *testing.T) {
+	tests := []struct {
+		id			int64
+		op			string
+		sub			sm.SCNPatchSubscription
+		dbColumns		[]string
+		dbRows			[][]driver.Value
+		dbError			error
+		expectedQueryPrepare	string
+		expectedUpdatePrepare	string
+		expectedQueryArgs	[]driver.Value
+		expectedUpdateArgs	[]driver.Value
+		expectedDidPatch	bool
+	}{{
+		id:			4,
+					//TODO: add, remove, replace map to PatchOpAdd, PatchOpRemove, PatchOpReplace
+		op:			"add",
+		sub:			sm.SCNPatchSubscription{
+						Op:		"add",
+						States:		[]string{"On", "Off"},
+		},
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{4, `{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+		},
+		dbError:		nil,
+		expectedQueryPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionUpdate),
+		expectedUpdatePrepare:	regexp.QuoteMeta(tUpdateSCNSubscription),
+		expectedQueryArgs:	[]driver.Value{4},
+		expectedUpdateArgs:	[]driver.Value{"cray-hmnfd-69d99579c5-shpmk_3http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`),4},
+		expectedDidPatch:	true,
+	/*
+	}, {
+		id:			0,
+		op:			"remove",
+		sub:			sm.SCNPatchSubscription{
+						Op:		"add",
+						States:		[]string{"On", "Off"},
+		},
+		dbColumns:		[]string{"id", "subscription"},
+		dbRows:			[][]driver.Value{
+						[]driver.Value{0, `{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+		},
+		dbError:		sql.ErrNoRows,
+		expectedQueryPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionUpdate),
+		expectedUpdatePrepare:	regexp.QuoteMeta(tUpdateSCNSubscription),
+		//expectedQueryArgs:	[]driver.Value{4},
+		expectedQueryArgs:	[]driver.Value{0},
+		//expectedUpdateArgs:	[]driver.Value{"cray-hmnfd-69d99579c5-shpmk_3http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`),4},
+		//TODO: continue
+		expectedUpdateArgs:	[]driver.Value{"cray-hmnfd-69d99579c5-shpmk_3http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`),4},
+		expectedDidPatch:	false,
+	*/
+	}}
+
+	for i, test := range tests {
+		ResetMockDB()
+		// before we actually execute our api function, we need to expect required DB actions
+		rows := sqlmock.NewRows(test.dbColumns)
+		for _, row := range test.dbRows {
+			rows.AddRow(row...)
+		}
+
+		mockPG.ExpectBegin()
+		if test.dbError != nil {
+			//TODO: finish this for negative dbError test case
+			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
+			mockPG.ExpectPrepare(test.expectedUpdatePrepare).ExpectExec().WithArgs(test.expectedUpdateArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
+			mockPG.ExpectCommit()
+		}
+
+		didPatch, err := dPG.PatchSCNSubscription(test.id, test.op, test.sub)
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else {
+				if test.expectedDidPatch && !didPatch {
+					t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
+				} else if !test.expectedDidPatch && didPatch {
+					t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
+				}
+			}
+		} else {
+			if err == nil {
+				t.Errorf("Test %v Failed: Expected an error.", i)
+			} else {
+				if test.expectedDidPatch && !didPatch {
+					t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
+				} else if !test.expectedDidPatch && didPatch {
+					t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
+				}
+			}
+		}
+	}
+}
+
+//TODO: Done
+// DeleteSCNSubscription(id int64) (bool, error)
+func TestDeleteSCNSubscription(t *testing.T) {
+	tests := []struct {
+		id			int64
+		dbError			error
+		expectedPrepare		string
+		expectedArgs		[]driver.Value
+		expectedDidDelete	bool
+	}{{
+		id:			5,
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tDeleteSCNSubscription),
+		expectedArgs:		[]driver.Value{5},
+		expectedDidDelete:	true,
+	}, {
+		id:			0,
+		dbError:		sql.ErrNoRows,
+		expectedPrepare:	regexp.QuoteMeta(tDeleteSCNSubscription),
+		expectedArgs:		[]driver.Value{},
+		expectedDidDelete:	false,
+	}}
+
+	for i, test := range tests {
+		ResetMockDB()
+		mockPG.ExpectBegin()
+		if test.dbError != nil {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WithArgs(test.expectedArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
+			mockPG.ExpectCommit()
+		}
+
+		didDelete, err := dPG.DeleteSCNSubscription(test.id)
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else {
+				if test.expectedDidDelete && !didDelete {
+					t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
+				} else if !test.expectedDidDelete && didDelete {
+					t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
+				}
+			}
+		} else {
+			if err == nil {
+				t.Errorf("Test %v Failed: Expected an error.", i)
+			} else {
+				if test.expectedDidDelete && !didDelete {
+					t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
+				} else if !test.expectedDidDelete && didDelete {
+					t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
+				}
+			}
+		}
+	}
+}
+
+//TODO: Done
+// DeleteSCNSubscriptionsAll() (int64, error)
+func TestDeleteSCNSubscriptionsAll(t *testing.T) {
+	tests := []struct {
+		dbError			error
+		expectedPrepare		string
+		expectedNumSubsDeleted	int64
+	}{{
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tDeleteSCNSubscriptionAll),
+		expectedNumSubsDeleted:	1,
+	}, {
+		dbError:		nil,
+		expectedPrepare:	regexp.QuoteMeta(tDeleteSCNSubscriptionAll),
+		expectedNumSubsDeleted:	5,
+	}, {
+		dbError:		sql.ErrNoRows,
+		expectedPrepare:	regexp.QuoteMeta(tDeleteSCNSubscriptionAll),
+		expectedNumSubsDeleted:	0,
+	}}
+
+	for i, test := range tests {
+                ResetMockDB()
+		mockPG.ExpectBegin()
+		if test.dbError != nil {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectRollback()
+		} else {
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnResult(sqlmock.NewResult(0, test.expectedNumSubsDeleted))
+			mockPG.ExpectCommit()
+		}
+
+		numSubsDeleted, err := dPG.DeleteSCNSubscriptionsAll()
+		// ensure all expectations have been met
+		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
+			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
+		}
+		if test.dbError == nil {
+			if err != nil {
+				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
+			} else if test.expectedNumSubsDeleted != numSubsDeleted {
+				t.Errorf("Test %v Failed: Expected deletion of '%v' subs; Deleted '%v'", i, test.expectedNumSubsDeleted, numSubsDeleted)
+			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
 		}
 	}
 }
