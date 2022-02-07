@@ -1,6 +1,6 @@
 # MIT License
 
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -139,25 +139,9 @@ stages:
                       Role:
                         type: str
                         required: True
-                        enum:
-                          - "Compute"
-                          - "Service"
-                          - "System"
-                          - "Application"
-                          - "Storage"
-                          - "Management"
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       NID:
                         type: int
                         required: True
@@ -476,15 +460,6 @@ stages:
               SubRole:
                 type: str
                 required: False
-                enum:
-                  - "Gateway"
-                  - "LNETRouter"
-                  - "Master"
-                  - "Storage"
-                  - "UAN"
-                  - "UserDefined"
-                  - "Visualization"
-                  - "Worker"
               Subtype:
                 type: str
                 required: False
@@ -547,15 +522,6 @@ stages:
               SubRole:
                 type: str
                 required: False
-                enum:
-                  - "Gateway"
-                  - "LNETRouter"
-                  - "Master"
-                  - "Storage"
-                  - "UAN"
-                  - "UserDefined"
-                  - "Visualization"
-                  - "Worker"
               Subtype:
                 type: str
                 required: False
@@ -627,15 +593,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -711,15 +668,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -795,15 +743,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -879,15 +818,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -961,15 +891,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Subtype:
                         type: str
                         required: False
@@ -1113,15 +1034,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Type:
                         type: str
                         required: True
@@ -1236,13 +1148,6 @@ stages:
                       Role:
                         type: str
                         required: True
-                        enum:
-                          - "Compute"
-                          - "Service"
-                          - "System"
-                          - "Application"
-                          - "Storage"
-                          - "Management"
                       SoftwareStatus:
                         type: str
                         required: False
@@ -1252,15 +1157,6 @@ stages:
                       SubRole:
                         type: str
                         required: False
-                        enum:
-                          - "Gateway"
-                          - "LNETRouter"
-                          - "Master"
-                          - "Storage"
-                          - "UAN"
-                          - "UserDefined"
-                          - "Visualization"
-                          - "Worker"
                       Subtype:
                         type: str
                         required: False
