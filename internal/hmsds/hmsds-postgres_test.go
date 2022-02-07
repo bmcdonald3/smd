@@ -3589,8 +3589,6 @@ func TestDeleteCompEthInterfacesAll(t *testing.T) {
 //
 ////////////////////////////////////////////////////////////////////////////
 
-//TODO: Done
-// GetSCNSubscriptionsAll() (*sm.SCNSubscriptionArray, error)
 func TestGetSCNSubscriptionsAll(t *testing.T) {
 	tests := []struct {
 		dbColumns		[]string
@@ -3713,8 +3711,6 @@ func TestGetSCNSubscriptionsAll(t *testing.T) {
 	}
 }
 
-//TODO: Done
-//GetSCNSubscription(id int64) (*sm.SCNSubscription, error)
 func TestGetSCNSubscription(t *testing.T) {
 	tests := []struct {
 		id			int64
@@ -3763,7 +3759,7 @@ func TestGetSCNSubscription(t *testing.T) {
 		},
 		dbError:		sql.ErrNoRows,
 		expectedPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionQueryId),
-		expectedArgs:		[]driver.Value{0},
+		expectedArgs:		[]driver.Value{},
 		expectedSCNSub:		&sm.SCNSubscription{},
 	}}
 
@@ -3780,11 +3776,7 @@ func TestGetSCNSubscription(t *testing.T) {
 			mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WillReturnError(test.dbError)
 			mockPG.ExpectRollback()
 		} else {
-			if test.expectedArgs != nil {
-				mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WithArgs(test.expectedArgs...).WillReturnRows(rows)
-			} else {
-				mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WillReturnRows(rows)
-			}
+			mockPG.ExpectPrepare(test.expectedPrepare).ExpectQuery().WithArgs(test.expectedArgs...).WillReturnRows(rows)
 			mockPG.ExpectCommit()
 		}
 
@@ -3805,8 +3797,6 @@ func TestGetSCNSubscription(t *testing.T) {
 	}
 }
 
-//TODO: Done
-// InsertSCNSubscription(sub sm.SCNPostSubscription) (int64, error)
 func TestInsertSCNSubscription(t *testing.T) {
 	tests := []struct {
 		sub			sm.SCNPostSubscription
@@ -3867,9 +3857,7 @@ func TestInsertSCNSubscription(t *testing.T) {
 
 		ResetMockDB()
 		mockPG.ExpectBegin()
-		if test.expectedPrepare == "" && test.dbError != nil {
-			mockPG.ExpectRollback()
-		} else if test.dbError != nil {
+		if test.dbError != nil {
 			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
 			mockPG.ExpectRollback()
 		} else {
@@ -3895,8 +3883,6 @@ func TestInsertSCNSubscription(t *testing.T) {
 	}
 }
 
-//TODO: Done
-// UpdateSCNSubscription(id int64, sub sm.SCNPostSubscription) (bool, error)
 func TestUpdateSCNSubscription(t *testing.T) {
 	tests := []struct {
 		id			int64
@@ -3965,8 +3951,6 @@ func TestUpdateSCNSubscription(t *testing.T) {
 	}
 }
 
-//TODO: In progress
-// PatchSCNSubscription(id int64, op string, patch sm.SCNPatchSubscription) (bool, error)
 func TestPatchSCNSubscription(t *testing.T) {
 	tests := []struct {
 		id			int64
@@ -3982,7 +3966,6 @@ func TestPatchSCNSubscription(t *testing.T) {
 		expectedDidPatch	bool
 	}{{
 		id:			4,
-					//TODO: add, remove, replace map to PatchOpAdd, PatchOpRemove, PatchOpReplace
 		op:			"add",
 		sub:			sm.SCNPatchSubscription{
 						Op:		"add",
@@ -3998,28 +3981,20 @@ func TestPatchSCNSubscription(t *testing.T) {
 		expectedQueryArgs:	[]driver.Value{4},
 		expectedUpdateArgs:	[]driver.Value{"cray-hmnfd-69d99579c5-shpmk_3http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`),4},
 		expectedDidPatch:	true,
-	/*
 	}, {
 		id:			0,
 		op:			"remove",
-		sub:			sm.SCNPatchSubscription{
-						Op:		"add",
-						States:		[]string{"On", "Off"},
-		},
-		dbColumns:		[]string{"id", "subscription"},
+		sub:			sm.SCNPatchSubscription{},
+		dbColumns:		[]string{"", ""},
 		dbRows:			[][]driver.Value{
-						[]driver.Value{0, `{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`},
+						[]driver.Value{0, `{}`},
 		},
 		dbError:		sql.ErrNoRows,
 		expectedQueryPrepare:	regexp.QuoteMeta(tGetSCNSubscriptionUpdate),
 		expectedUpdatePrepare:	regexp.QuoteMeta(tUpdateSCNSubscription),
-		//expectedQueryArgs:	[]driver.Value{4},
-		expectedQueryArgs:	[]driver.Value{0},
-		//expectedUpdateArgs:	[]driver.Value{"cray-hmnfd-69d99579c5-shpmk_3http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`),4},
-		//TODO: continue
-		expectedUpdateArgs:	[]driver.Value{"cray-hmnfd-69d99579c5-shpmk_3http://cray-hmnfd/hmi/v1/scn",json.RawMessage(`{"Subscriber":"cray-hmnfd-69d99579c5-shpmk_3","States":["Empty","Populated","Off","On","Standby","Halt","Ready"],"Url":"http://cray-hmnfd/hmi/v1/scn"}`),4},
+		expectedQueryArgs:	[]driver.Value{},
+		expectedUpdateArgs:	[]driver.Value{"",json.RawMessage(`{}`),0},
 		expectedDidPatch:	false,
-	*/
 	}}
 
 	for i, test := range tests {
@@ -4032,8 +4007,7 @@ func TestPatchSCNSubscription(t *testing.T) {
 
 		mockPG.ExpectBegin()
 		if test.dbError != nil {
-			//TODO: finish this for negative dbError test case
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectExec().WillReturnError(test.dbError)
+			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WillReturnError(test.dbError)
 			mockPG.ExpectRollback()
 		} else {
 			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
@@ -4070,8 +4044,6 @@ func TestPatchSCNSubscription(t *testing.T) {
 	}
 }
 
-//TODO: Done
-// DeleteSCNSubscription(id int64) (bool, error)
 func TestDeleteSCNSubscription(t *testing.T) {
 	tests := []struct {
 		id			int64
@@ -4133,8 +4105,6 @@ func TestDeleteSCNSubscription(t *testing.T) {
 	}
 }
 
-//TODO: Done
-// DeleteSCNSubscriptionsAll() (int64, error)
 func TestDeleteSCNSubscriptionsAll(t *testing.T) {
 	tests := []struct {
 		dbError			error
