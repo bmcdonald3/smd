@@ -3848,14 +3848,13 @@ func TestInsertSCNSubscription(t *testing.T) {
 	}}
 
 	for i, test := range tests {
-
+		ResetMockDB()
 		// before we actually execute our api function, we need to expect required DB actions
 		rows := sqlmock.NewRows(test.dbColumns)
 		for _, row := range test.dbRows {
 			rows.AddRow(row...)
 		}
 
-		ResetMockDB()
 		mockPG.ExpectBegin()
 		if test.dbError != nil {
 			mockPG.ExpectPrepare(test.expectedPrepare).ExpectExec().WillReturnError(test.dbError)
@@ -3930,22 +3929,18 @@ func TestUpdateSCNSubscription(t *testing.T) {
 		if test.dbError == nil {
 			if err != nil {
 				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			} else {
-				if test.expectedDidUpdate && !didUpdate {
-					t.Errorf("Test %v Failed: Expected update; no update occurred", i)
-				} else if !test.expectedDidUpdate && didUpdate {
-					t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
-				}
+			} else if test.expectedDidUpdate && !didUpdate {
+				t.Errorf("Test %v Failed: Expected update; no update occurred", i)
+			} else if !test.expectedDidUpdate && didUpdate {
+				t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
 			}
 		} else {
 			if err == nil {
 				t.Errorf("Test %v Failed: Expected an error.", i)
-			} else {
-				if test.expectedDidUpdate && !didUpdate {
-					t.Errorf("Test %v Failed: Expected update; no update occurred", i)
-				} else if !test.expectedDidUpdate && didUpdate {
-					t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
-				}
+			} else if test.expectedDidUpdate && !didUpdate {
+				t.Errorf("Test %v Failed: Expected update; no update occurred", i)
+			} else if !test.expectedDidUpdate && didUpdate {
+				t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
 			}
 		}
 	}
@@ -4023,22 +4018,18 @@ func TestPatchSCNSubscription(t *testing.T) {
 		if test.dbError == nil {
 			if err != nil {
 				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			} else {
-				if test.expectedDidPatch && !didPatch {
-					t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
-				} else if !test.expectedDidPatch && didPatch {
-					t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
-				}
+			} else if test.expectedDidPatch && !didPatch {
+				t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
+			} else if !test.expectedDidPatch && didPatch {
+				t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
 			}
 		} else {
 			if err == nil {
 				t.Errorf("Test %v Failed: Expected an error.", i)
-			} else {
-				if test.expectedDidPatch && !didPatch {
-					t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
-				} else if !test.expectedDidPatch && didPatch {
-					t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
-				}
+			} else if test.expectedDidPatch && !didPatch {
+				t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
+			} else if !test.expectedDidPatch && didPatch {
+				t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
 			}
 		}
 	}
@@ -4084,22 +4075,18 @@ func TestDeleteSCNSubscription(t *testing.T) {
 		if test.dbError == nil {
 			if err != nil {
 				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			} else {
-				if test.expectedDidDelete && !didDelete {
-					t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
-				} else if !test.expectedDidDelete && didDelete {
-					t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
-				}
+			} else if test.expectedDidDelete && !didDelete {
+				t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
+			} else if !test.expectedDidDelete && didDelete {
+				t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
 			}
 		} else {
 			if err == nil {
 				t.Errorf("Test %v Failed: Expected an error.", i)
-			} else {
-				if test.expectedDidDelete && !didDelete {
-					t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
-				} else if !test.expectedDidDelete && didDelete {
-					t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
-				}
+			} else if test.expectedDidDelete && !didDelete {
+				t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
+			} else if !test.expectedDidDelete && didDelete {
+				t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
 			}
 		}
 	}
