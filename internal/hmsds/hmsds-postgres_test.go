@@ -3934,14 +3934,8 @@ func TestUpdateSCNSubscription(t *testing.T) {
 			} else if !test.expectedDidUpdate && didUpdate {
 				t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
 			}
-		} else {
-			if err == nil {
-				t.Errorf("Test %v Failed: Expected an error.", i)
-			} else if test.expectedDidUpdate && !didUpdate {
-				t.Errorf("Test %v Failed: Expected update; no update occurred", i)
-			} else if !test.expectedDidUpdate && didUpdate {
-				t.Errorf("Test %v Failed: Did not expect update; update occurred", i)
-			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
 		}
 	}
 }
@@ -4023,14 +4017,8 @@ func TestPatchSCNSubscription(t *testing.T) {
 			} else if !test.expectedDidPatch && didPatch {
 				t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
 			}
-		} else {
-			if err == nil {
-				t.Errorf("Test %v Failed: Expected an error.", i)
-			} else if test.expectedDidPatch && !didPatch {
-				t.Errorf("Test %v Failed: Expected patch; no patch occurred", i)
-			} else if !test.expectedDidPatch && didPatch {
-				t.Errorf("Test %v Failed: Did not expect patch; patch occurred", i)
-			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
 		}
 	}
 }
@@ -4080,14 +4068,8 @@ func TestDeleteSCNSubscription(t *testing.T) {
 			} else if !test.expectedDidDelete && didDelete {
 				t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
 			}
-		} else {
-			if err == nil {
-				t.Errorf("Test %v Failed: Expected an error.", i)
-			} else if test.expectedDidDelete && !didDelete {
-				t.Errorf("Test %v Failed: Expected deletion; no deletion occurred", i)
-			} else if !test.expectedDidDelete && didDelete {
-				t.Errorf("Test %v Failed: Did not expect deletion; deletion occurred", i)
-			}
+		} else if err == nil {
+			t.Errorf("Test %v Failed: Expected an error.", i)
 		}
 	}
 }
