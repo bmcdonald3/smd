@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.45.0] - 2022-02-07
+
+### Changed
+
+- CASMHMS-5365 - Updated HSM CT tests for custom roles and subroles.
+
+## [1.44.0] - 2022-02-02
+
+### Added
+
+- CASMHMS-5353 - Added CheckDeputyKeys() method to service_reservations package.
+
+## [1.43.0] - 2022-01-31
+
+### Added
+
+- CASMHMS-5348 - Fixed NULL value issue with POST /Inventory/EthernetInterfaces
+
 ## [1.42.0] - 2022-01-24
 
 ### Added
