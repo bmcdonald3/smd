@@ -86,17 +86,26 @@ type ServiceReservation interface {
 
 	InitInstance(stateManagerServer string, reservationPath string, defaultTermMinutes int, logger *logrus.Logger, svcName string)
 
-	//Try to aquire the lock, renewing it within 30 seconds of expiration.
+	//Try to aquire locks for a list of xnames, renewing them within 30 seconds of expiration.
 	Aquire(xnames []string) error
+
+	//Same as Aquire() will acquire what it can, indicate which succeeded/failed
+	FlexAquire(xname []string) (ReservationCreateResponse,error)
 
 	//Validate that I still own the lock for the xnames listed.
 	Check(xnames []string) bool
+
+	//Validate which locks I still own from the xnames listed.
+	FlexCheck(xnames []string) (ReservationCreateResponse,bool)
 
 	//Validate deputy keys given by another actor
 	ValidateDeputyKeys(keys []Key) (ReservationCheckResponse,error)
 
 	//Release the locks on the xnames
 	Release(xnames []string) error
+
+	//Release from a list of xnames, only fail on total failure
+	FlexRelease(xnames []string) (ReservationReleaseRenewResponse,error)
 
 	Status() map[string]Reservation
 }
@@ -340,8 +349,9 @@ func (i *Production) Aquire(xnames []string) error {
 			return err
 		}
 
-		if len(response.Failure) > 0 {
-			// because we have HARDCODED rigid; if failure > 0; success MUST == 0
+		if (len(response.Success) < len(xnames)) {
+			// because we have HARDCODED rigid; if failure > 0 or successes < xnames,
+			// success MUST == 0
 			err = errors.New("at least one xname could not be reserved")
 			i.logger.WithField("error", err).Error("Aquire() - END")
 			return err
@@ -374,7 +384,93 @@ func (i *Production) Aquire(xnames []string) error {
 		i.logger.WithField("error", err).Error("Aquire() - END")
 		return err
 	}
+}
 
+func (i *Production) FlexAquire(xnames []string) (ReservationCreateResponse,error) {
+	var resResponse ReservationCreateResponse
+
+	i.logger.Trace("SoftAquire() - START")
+
+	//prepare the request
+	reservation := ReservationCreateParameters{
+		ID:                  xnames,
+		ProcessingModel:     CLProcessingModelFlex,
+		ReservationDuration: i.defaultTermMinutes,
+	}
+	marshalReservation, _ := json.Marshal(reservation)
+	stringReservation := string(marshalReservation)
+	targetURL, _ := url.Parse(i.stateManagerServer + i.reservationPath)
+	i.logger.WithField("params", stringReservation).Trace("SoftAquire() - Sending command")
+	newRequest, err := http.NewRequest("POST", targetURL.String(), bytes.NewBuffer([]byte(stringReservation)))
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftAquire() - END")
+		return resResponse,err
+	}
+	base.SetHTTPUserAgent(newRequest,serviceName)
+
+	reqContext, _ := context.WithTimeout(context.Background(), time.Second*40)
+	req, err := retryablehttp.FromRequest(newRequest)
+	req = req.WithContext(reqContext)
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftAquire() - END")
+		return resResponse,err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	//make request
+	resp, err := i.httpClient.Do(req)
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftAquire() - END")
+		return resResponse,err
+	}
+
+	//process response
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftAquire() - END")
+		return resResponse,err
+	}
+
+	i.logger.WithField("response", string(body)).Trace("SoftAquire() - Recieved response")
+
+	switch statusCode := resp.StatusCode; statusCode {
+
+	case http.StatusOK:
+		err = json.Unmarshal(body, &resResponse)
+		if err != nil {
+			i.logger.WithField("error", err).Error("SoftAquire() - END")
+			return resResponse,err
+		}
+
+		for _, v := range resResponse.Success {
+			res := Reservation{
+				Xname:          v.ID,
+				DeputyKey:      v.DeputyKey,
+				ReservationKey: v.ReservationKey,
+			}
+			res.Expiration, _ = time.Parse(time.RFC3339, v.ExpirationTime)
+			i.reservationMutex.Lock()
+			i.reservedMap[res.Xname] = res
+			i.reservationMutex.Unlock()
+		}
+		i.logger.Trace("SoftAquire() - END")
+
+	case http.StatusBadRequest:
+		var pResponse Problem7807
+		_ = json.Unmarshal(body, &pResponse)
+		err = errors.New(pResponse.Detail)
+		i.logger.WithField("error", err).Error("SoftAquire() - END")
+		return resResponse,err
+
+	default:
+		err = errors.New(string(body))
+		i.logger.WithField("error", err).Error("SoftAquire() - END")
+		return resResponse,err
+	}
+
+	return resResponse,nil
 }
 
 func (i *Production) Check(xnames []string) bool {
@@ -389,6 +485,29 @@ func (i *Production) Check(xnames []string) bool {
 	}
 	i.logger.Trace("Check() - END")
 	return valid
+}
+
+func (i *Production) FlexCheck(xnames []string) (ReservationCreateResponse,bool) {
+	var retData ReservationCreateResponse
+	i.logger.Trace("SoftCheck() - START")
+
+	valid := true
+	for _, xname := range xnames {
+		if comp, ok := i.reservedMap[xname]; ok {
+			retData.Success = append(retData.Success,
+				ReservationCreateSuccessResponse{ID: comp.Xname,
+				DeputyKey: comp.DeputyKey,
+				ReservationKey: comp.ReservationKey,
+				ExpirationTime: comp.Expiration.Format(time.RFC3339)})
+		} else {
+			i.logger.Tracef("SoftCheck() - no reservation match for '%s'",xname)
+			retData.Failure = append(retData.Failure,
+				FailureResponse{ID: xname, Reason: "Reservation not found."})
+			valid = false
+		}
+	}
+
+	return retData,valid
 }
 
 func (i *Production) Release(xnames []string) error {
@@ -422,12 +541,11 @@ func (i *Production) Release(xnames []string) error {
 	}
 
 	marshalReleaseParams, _ := json.Marshal(releaseParams)
-	stringReleaseParams := string(marshalReleaseParams)
 	targetURL, _ := url.Parse(i.stateManagerServer + i.reservationPath + "/release")
 
-	i.logger.WithField("Params:", stringReleaseParams).Trace("Release() - Sending command")
+	i.logger.WithField("Params:", string(marshalReleaseParams)).Trace("Release() - Sending command")
 
-	newRequest, err := http.NewRequest("POST", targetURL.String(), bytes.NewBuffer([]byte(stringReleaseParams)))
+	newRequest, err := http.NewRequest("POST", targetURL.String(), bytes.NewBuffer(marshalReleaseParams))
 	if err != nil {
 		i.logger.WithField("error", err).Error("Release() - END")
 		return err
@@ -504,7 +622,123 @@ func (i *Production) Release(xnames []string) error {
 		i.logger.WithField("error", err).Error("Release() - END")
 		return err
 	}
+}
 
+func (i *Production) FlexRelease(xnames []string) (ReservationReleaseRenewResponse,error) {
+	var retData ReservationReleaseRenewResponse
+
+	i.logger.Trace("SoftRelease() - START")
+	if len(xnames) == 0 {
+		i.logger.Trace("SoftRelease() - END -> nothing to do ")
+		err := errors.New("empty set; failing release operation")
+		return retData,err
+	}
+
+	var releaseParams ReservationReleaseParameters
+	var unMapped []FailureResponse
+	releaseParams.ProcessingModel = "flexible"
+
+	for _, xname := range xnames {
+		if res, ok := i.reservedMap[xname]; ok {
+
+			key := Key{
+				ID:  res.Xname,
+				Key: res.ReservationKey,
+			}
+
+			//add the key to the list
+			releaseParams.ReservationKeys = append(releaseParams.ReservationKeys, key)
+
+		} else { // xname not in map
+			retData.Failure = append(retData.Failure,FailureResponse{ID: xname,
+									Reason: "Reservation not found."})
+			err := errors.New(xname + " not found in reservation map")
+			i.logger.WithField("error", err).Error("SoftRelease() - END")
+		}
+	}
+
+	marshalReleaseParams, _ := json.Marshal(releaseParams)
+	targetURL, _ := url.Parse(i.stateManagerServer + i.reservationPath + "/release")
+
+	i.logger.WithField("Params:", string(marshalReleaseParams)).Trace("SoftRelease() - Sending command")
+
+	newRequest, err := http.NewRequest("POST", targetURL.String(), bytes.NewBuffer(marshalReleaseParams))
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftRelease() - END")
+		return retData,err
+	}
+	base.SetHTTPUserAgent(newRequest,serviceName)
+
+	reqContext, _ := context.WithTimeout(context.Background(), time.Second*40)
+	req, err := retryablehttp.FromRequest(newRequest)
+	req = req.WithContext(reqContext)
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftRelease() - END")
+		return retData,err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	//make request
+	resp, err := i.httpClient.Do(req)
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftRelease() - END")
+		return retData,err
+	}
+
+	//process response
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		i.logger.WithField("error", err).Error("SoftRelease() - END")
+		return retData,err
+	}
+	i.logger.WithField("response", string(body)).Trace("SoftRelease() - Received response")
+
+	switch statusCode := resp.StatusCode; statusCode {
+
+	case http.StatusOK:
+		var response ReservationReleaseRenewResponse
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			i.logger.WithField("error", err).Error("SoftRelease() - END")
+			return retData,err
+		}
+
+		i.logger.WithFields(logrus.Fields{"Total": response.Counts.Total,
+			"Success": response.Counts.Success,
+			"Failure": response.Counts.Failure}).Debug("SoftRelease() - release action complete")
+
+		for _, xname := range response.Success.ComponentIDs {
+			if _, ok := i.reservedMap[xname]; ok {
+				i.logger.WithFields(logrus.Fields{"reservation": i.reservedMap[xname]}).Trace("SoftRelease() - deleting released reservations")
+
+				i.reservationMutex.Lock()
+				delete(i.reservedMap, xname)
+				i.reservationMutex.Unlock()
+				retData.Success.ComponentIDs = append(retData.Success.ComponentIDs,xname)
+			}
+		}
+		retData.Failure = append(retData.Failure,unMapped...)
+
+		retData.Counts.Success = len(retData.Success.ComponentIDs)
+		retData.Counts.Failure = len(retData.Failure)
+		retData.Counts.Total = retData.Counts.Success + retData.Counts.Failure
+
+	case http.StatusBadRequest:
+		var response Problem7807
+		_ = json.Unmarshal(body, &response)
+		err = errors.New(response.Detail)
+		i.logger.WithField("error", err).Error("SoftRelease() - END")
+		return retData,err
+
+	default:
+		err = errors.New(string(body))
+		i.logger.WithField("error", err).Error("SoftRelease() - END")
+		return retData,err
+	}
+
+	return retData,nil
 }
 
 func (i *Production) update() {
@@ -573,9 +807,6 @@ func (i *Production) update() {
 			i.logger.WithField("error", err).Error("update() - END")
 			return
 		}
-
-		//i.logger.WithFields(logrus.Fields{"failure count:":len(response.Failure),
-		//"success count:":len(response.Success), "failure":response.Failure, "success":response.Success}).Trace("StatusOK")
 
 		for _, v := range response.Failure {
 			i.logger.WithFields(logrus.Fields{"reservation": i.reservedMap[v.ID]}).Trace("deleting: removing failures in update()")
