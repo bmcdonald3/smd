@@ -252,6 +252,10 @@ stages:
                       Enabled:
                         type: bool
                         required: True
+                      # BMCs of NCNs are marked with the Management role
+                      Role:
+                        type: str
+                        required: False
                       NetType:
                         type: str
                         required: True
@@ -332,6 +336,10 @@ stages:
               # anything with an xname can be locked, including NodeBMCs
               Locked:
                 type: bool
+                required: False
+              # BMCs of NCNs are marked with the Management role
+              Role:
+                type: str
                 required: False
               NetType:
                 type: str
@@ -896,8 +904,6 @@ stages:
                         required: False
                       Type:
                         type: str
-                        enum:
-                          - "Node"
 
   # 31. GET /Components?type=Booster invalid API response code
   # 32. GET /Components?type=Booster invalid API response body
@@ -1238,6 +1244,10 @@ stages:
                       NetType:
                         type: str
                         required: True
+                      # BMCs of NCNs are marked with the Management role
+                      Role:
+                        type: str
+                        required: False
                       State:
                         type: str
                         required: True
