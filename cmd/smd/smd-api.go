@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -106,6 +106,17 @@ type CompLockFltr struct {
 	ID    []string `json:"id"`
 	Owner []string `json:"owner"`
 	Xname []string `json:"xname"`
+}
+
+//TODO: this is new
+type CompGetLockFltr struct {
+	Type                []string `json:"Type"`
+	State               []string `json:"State"`
+	Role                []string `json:"Role"`
+	SubRole             []string `json:"Subrole"`
+	Locked              []string `json:"Locked"`
+	Reserved            []string `json:"Reserved"`
+	ReservationDisabled []string `json:"ReservationDisabled"`
 }
 
 type CompEthInterfaceFltr struct {
@@ -263,6 +274,18 @@ func nidRangeToCompFilter(nidRanges []string, f *hmsds.ComponentFilter) (*hmsds.
 	f.NIDEnd = NIDEnd
 	f.NID = NID
 	return f, nil
+}
+
+//TODO: this is new
+func compGetLockFltrToCompLockV2Filter(cglf CompGetLockFltr) (clf sm.CompLockV2Filter) {
+	clf.Type = cglf.Type
+	clf.State = cglf.State
+	clf.Role = cglf.Role
+	clf.SubRole = cglf.SubRole
+	clf.Locked = cglf.Locked
+	clf.Reserved = cglf.Reserved
+	clf.ReservationDisabled = cglf.ReservationDisabled
+	return clf
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -442,7 +465,7 @@ func (s *SmD) doComponentsGet(w http.ResponseWriter, r *http.Request) {
 	// Get the component field filter options (i.e. stateonly)
 	fieldFltrIn := new(FieldFltrInForm)
 	if err = json.Unmarshal(formJSON, fieldFltrIn); err != nil {
-		s.lg.Printf("doComponentsQueryGet(): Unmarshall form: %s", err)
+		s.lg.Printf("doComponentsGet(): Unmarshall form: %s", err)
 		sendJsonError(w, http.StatusInternalServerError,
 			"failed to decode query parameters.")
 		return
@@ -5511,6 +5534,66 @@ func (s *SmD) doCompLocksStatus(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+
+	sendJsonCompLockV2Rsp(w, results)
+	return
+}
+
+//TODO: this is new
+func (s *SmD) doCompLocksStatusGet(w http.ResponseWriter, r *http.Request) {
+	var inFilter CompGetLockFltr
+	var filter sm.CompLockV2Filter
+	var results sm.CompLockV2Status
+	results.Components = make([]sm.CompLockV2, 0, 1)
+
+	// Parse query parameters
+	if err := r.ParseForm(); err != nil {
+		s.lg.Printf("doCompLocksStatusGet(): ParseForm: %s", err)
+		sendJsonError(w, http.StatusInternalServerError,
+			"failed to decode query parameters.")
+		return
+	}
+	formJSON, err := json.Marshal(r.Form)
+	if err != nil {
+		s.lg.Printf("doCompLocksStatusGet(): Marshall form: %s", err)
+		sendJsonError(w, http.StatusInternalServerError,
+			"failed to decode query parameters.")
+		return
+	}
+	if err = json.Unmarshal(formJSON, &inFilter); err != nil {
+		s.lg.Printf("doCompLocksStatusGet(): Unmarshall form: %s", err)
+		sendJsonError(w, http.StatusInternalServerError,
+			"failed to decode query parameters.")
+		return
+	}
+	filter = compGetLockFltrToCompLockV2Filter(inFilter)
+	err = filter.VerifyNormalize()
+	if err != nil {
+		s.lg.Printf("doCompLocksStatusGet(): Couldn't validate component lock filter: %s", err)
+		sendJsonError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	if filter.Reserved != nil {
+		// Only use the first Reserved query parameter supplied since
+		// asking for reserved and unreserved components with multiple
+		// query parameters in one call doesn't make sense.
+		_, err = strconv.ParseBool(filter.Reserved[0])
+		if err != nil {
+			reservedParamBoolErrMsg := "invalid 'Reserved' query parameter: " + filter.Reserved[0]
+			s.lg.Printf("doCompLocksStatusGet(): " + reservedParamBoolErrMsg)
+			sendJsonError(w, http.StatusBadRequest, reservedParamBoolErrMsg)
+			return
+		}
+	}
+	locks, err := s.db.GetCompLocksV2(filter)
+	if err != nil {
+		s.lg.Printf("doCompLocksStatus(): %s %s Err: %s", r.RemoteAddr, string(formJSON), err)
+		// Send this message as 500 or 400 plus error message if it is
+		// an HMSError and not, e.g. an internal DB error code.
+		sendJsonDBError(w, "", "operation 'GET' failed during query.", err)
+		return
+	}
+	results.Components = locks
 
 	sendJsonCompLockV2Rsp(w, results)
 	return

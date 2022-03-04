@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -1075,6 +1075,9 @@ func whereComponentCols(q sq.SelectBuilder, alias string, f *ComponentFilter) sq
 	q = whereComponentCol(q, alias+"."+compSubTypeCol, f.Subtype)
 	q = whereComponentCol(q, alias+"."+compArchCol, f.Arch)
 	q = whereComponentCol(q, alias+"."+compClassCol, f.Class)
+	//TODO: these are new
+	q = whereComponentCol(q, alias+"."+compResDisabledCol, f.ReservationDisabled)
+	q = whereComponentCol(q, alias+"."+compLockedCol, f.Locked)
 
 	// Special handling for NIDStart, NIDEnd and NID because of the
 	// interaction between them

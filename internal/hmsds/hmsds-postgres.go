@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -4388,10 +4388,14 @@ func compLockFilterToCompFilter(clf sm.CompLockV2Filter) (cf ComponentFilter) {
 	cf.SwStatus = clf.SwStatus
 	cf.Role = clf.Role
 	cf.SubRole = clf.SubRole
+	cf.Subtype = clf.Subtype
 	cf.Arch = clf.Arch
 	cf.Class = clf.Class
 	cf.Group = clf.Group
 	cf.Partition = clf.Partition
+	//TODO: these are new
+	cf.ReservationDisabled = clf.ReservationDisabled
+	cf.Locked = clf.Locked
 	return cf
 }
 
@@ -4811,6 +4815,7 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 		key := sm.CompLockV2Key{ID: comp.ID}
 		keys = append(keys, key)
 	}
+
 	// Get any reservations associated with the list of components
 	reservations, _, err := t.GetCompReservationsTx(keys, true)
 	if err != nil {
@@ -4821,6 +4826,7 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 	for _, reservation := range reservations {
 		reservationMap[reservation.ID] = reservation
 	}
+
 	for _, comp := range affectedComps {
 		lock := sm.CompLockV2{
 			ID:                  comp.ID,
@@ -4833,7 +4839,24 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 			lock.CreationTime = reservation.CreationTime
 			lock.ExpirationTime = reservation.ExpirationTime
 		}
-		result = append(result, lock)
+		//TODO: this is new
+		if f.Reserved != nil {
+			reservedParam, err := strconv.ParseBool(f.Reserved[0])
+			if err != nil {
+				return result, ErrHMSDSArgBadArg
+			}
+			if reservedParam && lock.Reserved {
+				result = append(result, lock)
+			} else if !reservedParam && !lock.Reserved {
+				result = append(result, lock)
+			}
+		} else {
+			result = append(result, lock)
+		}
+	}
+
+	if len(result) == 0 {
+		return result, sm.ErrCompLockV2NotFound
 	}
 
 	t.Commit()

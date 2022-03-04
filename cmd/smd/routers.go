@@ -1682,6 +1682,13 @@ func (s *SmD) generateRoutes() Routes {
 			s.compLockBaseV2 + "/status",
 			s.doCompLocksStatus,
 		},
+		//TODO: this is new
+		Route{
+			"doCompLocksStatusGetV2",
+			strings.ToUpper("Get"),
+			s.compLockBaseV2 + "/status",
+			s.doCompLocksStatusGet,
+		},
 		Route{
 			"doCompLocksLockV2",
 			strings.ToUpper("Post"),

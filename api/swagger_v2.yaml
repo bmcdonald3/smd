@@ -1519,7 +1519,7 @@ paths:
           in: body
           description: >-
             List of xnames to remove reservations. A `rigid` processing model will result in the entire set
-            of xnames not having their reservation removed if an xname does exist, or isn't reserved. A
+            of xnames not having their reservation removed if an xname doesn't exist, or isn't reserved. A
             `flexible` processing model will perform all actions possible.
           required: true
           schema:
@@ -1555,7 +1555,7 @@ paths:
           required: true
           description: >-
             List of {xname and reservation key} to release reservations. A `rigid` processing model will
-            result in the entire set of xnames not having their reservation released if an xname does exist,
+            result in the entire set of xnames not having their reservation released if an xname doesn't exist,
             or isn't reserved. A `flexible` processing model will perform all actions possible.
           schema:
             $ref: '#/definitions/ReservedKeys.1.0.0'
@@ -1591,7 +1591,7 @@ paths:
           in: body
           description: >-
             List of components to create reservations. A `rigid` processing model will result in the entire
-            set of xnames not having reservations created if an xname does exist, or isn't locked, or if
+            set of xnames not having reservations created if an xname doesn't exist, or isn't locked, or if
             already reserved. A `flexible` processing model will perform all actions possible.
           required: true
           schema:
@@ -1625,7 +1625,7 @@ paths:
           in: body
           description: >-
             List of {xname and reservation key} to release reservations. A `rigid` processing model will
-            result in the entire set of xnames not having their reservation released if an xname does exist,
+            result in the entire set of xnames not having their reservation released if an xname doesn't exist,
             or isn't reserved. A `flexible` processing model will perform all actions possible.
           required: true
           schema:
@@ -1662,7 +1662,7 @@ paths:
           in: body
           description: >-
             List of components to create reservations. A `rigid` processing model will result in the
-            entire set of xnames not having reservations created if an xname does exist, or isn't locked,
+            entire set of xnames not having reservations created if an xname doesn't exist, or isn't locked,
             or if already reserved. A `flexible` processing model will perform all actions possible.
           required: true
           schema:
@@ -1696,7 +1696,7 @@ paths:
           in: body
           description: >-
             List of {xname and reservation key} to renew reservations. A `rigid` processing model will
-            result in the entire set of xnames not having their reservation renewed if an xname does exist,
+            result in the entire set of xnames not having their reservation renewed if an xname doesn't exist,
             or isn't reserved. A `flexible` processing model will perform all actions possible.
           required: true
           schema:
@@ -1779,6 +1779,51 @@ paths:
       tags:
         - Locking
         - admin-locks
+
+    #TODO: this is new
+    get:
+      summary: Retrieve lock status for all components or a filtered subset of components.
+      description: >-
+        Retrieve the status of all component locks and/or reservations. Results can be
+        filtered by query parameters.
+      parameters:
+        - $ref: '#/parameters/compTypeParam'
+        - $ref: '#/parameters/compStateParam'
+        - $ref: '#/parameters/compRoleParam'
+        - $ref: '#/parameters/compSubroleParam'
+        - name: locked
+          in: query
+          type: boolean
+          description: Return components based on the 'Locked' field of their lock status.
+          required: false
+        - name: reserved
+          in: query
+          type: boolean
+          description: Return components based on the 'Reserved' field of their lock status.
+          required: false
+        - name: reservationDisabled
+          in: query
+          type: boolean
+          description: Return components based on the 'ReservationDisabled' field of their lock status.
+          required: false
+
+      responses:
+        '200':
+          description: Got lock(s) status.
+          schema:
+            $ref: '#/definitions/AdminStatusCheck_Response.1.0.0'
+        '400':
+          description: Bad request.
+          schema:
+            $ref: '#/definitions/Problem7807'
+        '500':
+          description: Server error, could not get lock status.
+          schema:
+            $ref: '#/definitions/Problem7807'
+      tags:
+        - Locking
+        - admin-locks
+
   '/locks/lock':
     post:
       summary: Locks components.
@@ -1877,7 +1922,8 @@ paths:
       summary: Disables the ability to create a reservation on components.
       description: >-
         Disables the ability to create a reservation on components, deletes any existing reservations.
-        Does not change lock state. Can disable a currently disabled component.
+        Does not change lock state. Attempting to disable an already-disabled component will not result
+        in an error.
       parameters:
         - name: payload
           in: body
@@ -10958,11 +11004,9 @@ definitions:
         type: string
       DeputyKey:
         type: string
-        format: uuid
         description: The key that can be passed to a delegate.
       ReservationKey:
         type: string
-        format: uuid
         description: The key that can be used to renew/release the reservation. Should not be delegated or shared.
   XnameKeys.1.0.0:
     type: object
@@ -10971,11 +11015,9 @@ definitions:
         type: string
       DeputyKey:
         type: string
-        format: uuid
         description: The key that can be passed to a delegate.
       ReservationKey:
         type: string
-        format: uuid
         description: The key that can be used to renew/release the reservation. Should not be delegated or shared.
       ExpirationTime:
         type: string
@@ -10987,7 +11029,6 @@ definitions:
         type: string
       DeputyKey:
         type: string
-        format: uuid
         description: The key that can be passed to a delegate.
       ExpirationTime:
         type: string
@@ -11436,7 +11477,7 @@ definitions:
         readOnly: true
       MACAddress:
         description: >-
-          The Redfish 'MacAddress` field for the interface.  This should
+          The Redfish 'MacAddress' field for the interface.  This should
           normally be set but is not necessarily the same as the MacAddr of
           the ComponentEndpoint (as there may be multiple interfaces).
         pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
@@ -11444,7 +11485,7 @@ definitions:
         example: ae:12:ce:7a:aa:99
       PermanentMACAddress:
         description: >-
-          The Redfish 'PermanentMacAddress` field for the interface. This may
+          The Redfish 'PermanentMacAddress' field for the interface. This may
           or may not be set and is not necessarily the same as the MacAddr
           of the ComponentEndpoint (as there may be multiple interfaces).
         pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
