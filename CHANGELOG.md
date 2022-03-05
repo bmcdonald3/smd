@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- CASMHMS-4974 - Added HSM GET /status/locks API.
+- CASMHMS-4974 - Added HSM GET /v2/status/locks API.
 
 ## [1.48.0] - 2022-02-18
 

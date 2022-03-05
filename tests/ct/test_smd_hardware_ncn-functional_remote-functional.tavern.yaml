@@ -1,6 +1,6 @@
 # MIT License
 
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -862,8 +862,6 @@ stages:
                               Type:
                                 type: str
                                 required: True
-                                enum:
-                                  - "Drive"
                               Ordinal:
                                 type: int
                                 required: True
@@ -892,6 +890,7 @@ stages:
                                 type: map
                                 # Some nodes may have empty drive bays which is okay
                                 required: False
+                                allowempty: True
                                 mapping:
                                   FRUID:
                                     type: str
@@ -899,19 +898,15 @@ stages:
                                   Type:
                                     type: str
                                     required: True
-                                    enum:
-                                      - "Drive"
                                   Subtype:
                                     type: str
                                     required: True
                                   HWInventoryByFRUType:
                                     type: str
                                     required: True
-                                    enum:
-                                      - "HWInvByFRUDrive"
                                   DriveFRUInfo:
                                     type: map
-                                    required: True
+                                    required: False
                                     mapping:
                                       Manufacturer:
                                         type: str

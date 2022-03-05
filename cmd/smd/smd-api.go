@@ -108,7 +108,6 @@ type CompLockFltr struct {
 	Xname []string `json:"xname"`
 }
 
-//TODO: this is new
 type CompGetLockFltr struct {
 	Type                []string `json:"Type"`
 	State               []string `json:"State"`
@@ -276,7 +275,6 @@ func nidRangeToCompFilter(nidRanges []string, f *hmsds.ComponentFilter) (*hmsds.
 	return f, nil
 }
 
-//TODO: this is new
 func compGetLockFltrToCompLockV2Filter(cglf CompGetLockFltr) (clf sm.CompLockV2Filter) {
 	clf.Type = cglf.Type
 	clf.State = cglf.State
@@ -5539,7 +5537,6 @@ func (s *SmD) doCompLocksStatus(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-//TODO: this is new
 func (s *SmD) doCompLocksStatusGet(w http.ResponseWriter, r *http.Request) {
 	var inFilter CompGetLockFltr
 	var filter sm.CompLockV2Filter
@@ -5579,7 +5576,7 @@ func (s *SmD) doCompLocksStatusGet(w http.ResponseWriter, r *http.Request) {
 		// query parameters in one call doesn't make sense.
 		_, err = strconv.ParseBool(filter.Reserved[0])
 		if err != nil {
-			reservedParamBoolErrMsg := "invalid 'Reserved' query parameter: " + filter.Reserved[0]
+			reservedParamBoolErrMsg := "bad 'Reserved' query parameter: " + filter.Reserved[0]
 			s.lg.Printf("doCompLocksStatusGet(): " + reservedParamBoolErrMsg)
 			sendJsonError(w, http.StatusBadRequest, reservedParamBoolErrMsg)
 			return
@@ -5590,7 +5587,7 @@ func (s *SmD) doCompLocksStatusGet(w http.ResponseWriter, r *http.Request) {
 		s.lg.Printf("doCompLocksStatus(): %s %s Err: %s", r.RemoteAddr, string(formJSON), err)
 		// Send this message as 500 or 400 plus error message if it is
 		// an HMSError and not, e.g. an internal DB error code.
-		sendJsonDBError(w, "", "operation 'GET' failed during query.", err)
+		sendJsonDBError(w, "bad query param: ", "", err)
 		return
 	}
 	results.Components = locks
