@@ -66,7 +66,6 @@ type ComponentFilter struct {
 	Class     []string `json:"class"`
 	Group     []string `json:"group"` // Arbitrary Groups have UUID ids as well as globally unique names
 	Partition []string `json:"partition"`
-	//TODO: these are new
 	Locked    []string `json:"locked"`
 	ReservationDisabled []string `json:"reservation_disabled"`
 

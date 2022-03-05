@@ -266,7 +266,6 @@ type CompLockV2Filter struct {
 	Partition           []string `json:"Partition"`
 	ProcessingModel     string   `json:"ProcessingModel"`
 	ReservationDuration int      `json:"ReservationDuration"`
-	//TODO: these are new
 	Locked              []string `json:"Locked"`
 	Reserved            []string `json:"Reserved"`
 	ReservationDisabled []string `json:"ReservationDisabled"`

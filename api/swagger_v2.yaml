@@ -1780,7 +1780,6 @@ paths:
         - Locking
         - admin-locks
 
-    #TODO: this is new
     get:
       summary: Retrieve lock status for all components or a filtered subset of components.
       description: >-

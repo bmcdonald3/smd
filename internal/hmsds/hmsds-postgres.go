@@ -4393,7 +4393,6 @@ func compLockFilterToCompFilter(clf sm.CompLockV2Filter) (cf ComponentFilter) {
 	cf.Class = clf.Class
 	cf.Group = clf.Group
 	cf.Partition = clf.Partition
-	//TODO: these are new
 	cf.ReservationDisabled = clf.ReservationDisabled
 	cf.Locked = clf.Locked
 	return cf
@@ -4839,7 +4838,6 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 			lock.CreationTime = reservation.CreationTime
 			lock.ExpirationTime = reservation.ExpirationTime
 		}
-		//TODO: this is new
 		if f.Reserved != nil {
 			reservedParam, err := strconv.ParseBool(f.Reserved[0])
 			if err != nil {

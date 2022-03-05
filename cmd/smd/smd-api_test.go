@@ -11418,7 +11418,6 @@ func TestDoCompLocksStatus(t *testing.T) {
 	}
 }
 
-// TODO: this is new
 func TestDoCompLocksStatusGet(t *testing.T) {
 	reqType := "GET"
 	hmsdsResp := []sm.CompLockV2{
@@ -11531,11 +11530,11 @@ func TestDoCompLocksStatusGet(t *testing.T) {
 		expectError: false,
 	}, {
 		reqURI: "https://localhost/hsm/v2/locks/status",
-		hmsdsRespErr: sm.ErrCompLockV2BadProcessingModel,
+		hmsdsRespErr: sm.ErrCompLockV2NotFound,
 		expectedFilter: sm.CompLockV2Filter{
 			ProcessingModel:     sm.CLProcessingModelRigid,
 		},
-		expectedResp: json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Invalid Processing Model","status":400}` + "\n"),
+		expectedResp: json.RawMessage(`{"type":"about:blank","title":"Bad Request","detail":"Component not found","status":400}` + "\n"),
 		expectError: true,
 	}, {
 		reqURI: "https://localhost/hsm/v2/locks/status?type=Fake",

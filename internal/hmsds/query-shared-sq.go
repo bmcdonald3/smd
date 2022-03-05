@@ -1075,7 +1075,6 @@ func whereComponentCols(q sq.SelectBuilder, alias string, f *ComponentFilter) sq
 	q = whereComponentCol(q, alias+"."+compSubTypeCol, f.Subtype)
 	q = whereComponentCol(q, alias+"."+compArchCol, f.Arch)
 	q = whereComponentCol(q, alias+"."+compClassCol, f.Class)
-	//TODO: these are new
 	q = whereComponentCol(q, alias+"."+compResDisabledCol, f.ReservationDisabled)
 	q = whereComponentCol(q, alias+"."+compLockedCol, f.Locked)
 
