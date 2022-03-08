@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -66,6 +66,8 @@ type ComponentFilter struct {
 	Class     []string `json:"class"`
 	Group     []string `json:"group"` // Arbitrary Groups have UUID ids as well as globally unique names
 	Partition []string `json:"partition"`
+	Locked    []string `json:"locked"`
+	ReservationDisabled []string `json:"reservation_disabled"`
 
 	// private options
 	writeLock bool   // default is false
