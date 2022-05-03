@@ -2104,7 +2104,9 @@ func (t *hmsdbPgTx) BulkInsertHWInvByLocTx(hls []*sm.HWInvByLoc) error {
 				fruId.String = hl.PopulatedFRU.FRUID
 				fruId.Valid = true
 			}
-		}
+		} else {
+            fruId.Valid = false
+        }
 		infoJSON, err := hl.EncodeLocationInfo()
 		if err != nil {
 			t.LogAlways("Error: BulkInsertHWInvByLocTx(): EncodeLocationInfo: %s", err)
