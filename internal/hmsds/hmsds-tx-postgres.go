@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -2104,7 +2104,9 @@ func (t *hmsdbPgTx) BulkInsertHWInvByLocTx(hls []*sm.HWInvByLoc) error {
 				fruId.String = hl.PopulatedFRU.FRUID
 				fruId.Valid = true
 			}
-		}
+		} else {
+            fruId.Valid = false
+        }
 		infoJSON, err := hl.EncodeLocationInfo()
 		if err != nil {
 			t.LogAlways("Error: BulkInsertHWInvByLocTx(): EncodeLocationInfo: %s", err)
