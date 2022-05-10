@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.51.0] - 2022-05-10
+
+### Changed
+
+- Converted image builds to be via github actions, updated the image links to be in artifactory.algol60.net
+- Added a runCT.sh script that can run the tavern tests and smoke tests in a docker-compose environment.
+- Refactored CT tests and their directory structure.
+- Renamed dockerfiles.
+
 ## [1.50.0] - 2022-05-03
 
 ### Fixed

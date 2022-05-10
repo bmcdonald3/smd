@@ -51,10 +51,8 @@ stages:
   # 2. GET /memberships API response body
   - name: Ensure that we can conduct a query on the memberships collection
     request:
-      url: "{base_url}/smd/hsm/v1/memberships"
+      url: "{smd_base_url}/hsm/v2/memberships"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -80,10 +78,8 @@ stages:
 
   - name: Get info about a node from the Components collection to use in the following stages
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -101,10 +97,8 @@ stages:
   # 4. GET /memberships/{xname} node API response body
   - name: Get membership data for a given node using API endpoint
     request:
-      url: "{base_url}/smd/hsm/v1/memberships/{id}"
+      url: "{smd_base_url}/hsm/v2/memberships/{id}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -128,10 +122,8 @@ stages:
   # 6. GET /memberships?arch={arch} API response body
   - name: Get membership data for a given node using arch query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?arch={arch}"
+      url: "{smd_base_url}/hsm/v2/memberships?arch={arch}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -158,10 +150,8 @@ stages:
   # 8. GET /memberships?flag={flag} API response body
   - name: Get membership data for a given node using flag query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?flag={flag}"
+      url: "{smd_base_url}/hsm/v2/memberships?flag={flag}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -188,10 +178,8 @@ stages:
   # 10. GET /memberships?id={xname} node API response body
   - name: Get membership data for a given node using id query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?id={id}"
+      url: "{smd_base_url}/hsm/v2/memberships?id={id}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -218,10 +206,8 @@ stages:
   # 12. GET /memberships?nid={nid} API response body
   - name: Get membership data for a given node using nid query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?nid={nid}"
+      url: "{smd_base_url}/hsm/v2/memberships?nid={nid}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -248,10 +234,8 @@ stages:
   # 14. GET /memberships?role={role} API response body
   - name: Get membership data for a given node using role query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?role={role}"
+      url: "{smd_base_url}/hsm/v2/memberships?role={role}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -278,10 +262,8 @@ stages:
   # 16. GET /memberships?state={state} API response body
   - name: Get membership data for a given node using state query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?state={state}"
+      url: "{smd_base_url}/hsm/v2/memberships?state={state}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -308,10 +290,8 @@ stages:
   # 18. GET /memberships?type={type} API response body
   - name: Get membership data for a given node using type query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/memberships?type={type}"
+      url: "{smd_base_url}/hsm/v2/memberships?type={type}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200

@@ -24,7 +24,7 @@ version: '3'
 services:
   hmsds-postgres:
     hostname: hmsds-postgres
-    image: arti.dev.cray.com/third-party-docker-stable-local/postgres:11-alpine
+    image: artifactory.algol60.net/docker.io/library/postgres:11-alpine
     environment:
       - POSTGRES_PASSWORD=hmsdsuser
       - POSTGRES_USER=hmsdsuser
@@ -34,7 +34,7 @@ services:
   cray-smd-init:
     build:
       context: .
-      dockerfile: Dockerfile.smd
+      dockerfile: Dockerfile
     command: ["smd-init"]
     entrypoint: ["/entrypoint.sh"]
     environment:
@@ -45,7 +45,7 @@ services:
       - /persistent_migrations
   vault:
     hostname: vault
-    image: arti.dev.cray.com/third-party-docker-stable-local/vault:1.5.5
+    image: artifactory.algol60.net/docker.io/library/vault:1.5.5
     environment:
       - VAULT_DEV_ROOT_TOKEN_ID=hms
       - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
@@ -57,7 +57,7 @@ services:
   cray-smd:
     build:
       context: .
-      dockerfile: Dockerfile.smd
+      dockerfile: Dockerfile
     environment:
       - POSTGRES_HOST=hmsds-postgres
       - POSTGRES_PORT=5432

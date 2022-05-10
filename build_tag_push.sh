@@ -66,6 +66,6 @@ shift $((OPTIND - 1))
 echo "Building $FORCE and pushing to $REGISTRY_HOSTNAME in repo $REPO with tag $TAG"
 
 set -ex
-docker build -f Dockerfile.smd ${FORCE} -t cray/${IMAGE_NAME}:${TAG} .
+docker build -f Dockerfile ${FORCE} -t cray/${IMAGE_NAME}:${TAG} .
 docker tag cray/${IMAGE_NAME}:${TAG} "${REGISTRY_HOSTNAME}/${REPO}/${IMAGE_NAME}:${TAG}"
 docker push "${REGISTRY_HOSTNAME}/${REPO}/${IMAGE_NAME}:${TAG}"

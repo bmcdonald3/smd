@@ -70,10 +70,8 @@ test_name: Verify POST, GET, PATCH, and DELETE methods for various /groups APIs
 stages:
   - name: Get four Node xnames from the HSM Components collection to use in upcoming stages
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -86,20 +84,16 @@ stages:
 
   - name: Delete existing test group1 in HSM (if present) to prevent conflict
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
 
   # 1. POST /groups group1 API response code
   - name: Verify /groups POST method group1
     request:
-      url: "{base_url}/smd/hsm/v1/groups"
+      url: "{smd_base_url}/hsm/v2/groups"
       json: {"label":"hsmtestgroup1","description":"Test group 1 for HSM API testing in CT framework.","tags":["hsmtestgroup1_tag1","hsmtestgroup1_tag2"],"members":{"ids":["{xname1}","{xname2}"]}}
       method: POST
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 201
@@ -108,10 +102,8 @@ stages:
   # 3. GET /groups/{group1} API response body
   - name: Verify /groups/{label} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -162,10 +154,8 @@ stages:
   - name: Verify /groups GET method with group parameter
     request:
       # this "group" parameter name should change, see CASMHMS-2504
-      url: "{base_url}/smd/hsm/v1/groups?group=hsmtestgroup1"
+      url: "{smd_base_url}/hsm/v2/groups?group=hsmtestgroup1"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -182,10 +172,8 @@ stages:
   # 7. GET /groups?tag={tag1} API response body
   - name: Verify /groups GET method with tag parameter (1)
     request:
-      url: "{base_url}/smd/hsm/v1/groups?tag=hsmtestgroup1_tag1"
+      url: "{smd_base_url}/hsm/v2/groups?tag=hsmtestgroup1_tag1"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -202,10 +190,8 @@ stages:
   # 9. GET /groups?tag={tag2} API response body
   - name: Verify /groups GET method with tag parameter (2)
     request:
-      url: "{base_url}/smd/hsm/v1/groups?tag=hsmtestgroup1_tag2"
+      url: "{smd_base_url}/hsm/v2/groups?tag=hsmtestgroup1_tag2"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -221,11 +207,9 @@ stages:
   # 10. PATCH /groups/{group1} API response code
   - name: Verify /groups/{label} PATCH method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
       json: {"description":"Test group 1 for HSM API testing in CT framework (UPDATED).","tags":["hsmtestgroup1_tag3","hsmtestgroup1_tag4"]}
       method: PATCH
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 204
@@ -234,10 +218,8 @@ stages:
   # 12. GET /groups/{group1} updated API response body
   - name: Verify /groups/{label} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -285,20 +267,16 @@ stages:
 
   - name: Delete existing test group2 in HSM (if present) to prevent conflict
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup2"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
 
   # 13. POST /groups group2 API response code
   - name: Verify /groups POST method group2
     request:
-      url: "{base_url}/smd/hsm/v1/groups"
+      url: "{smd_base_url}/hsm/v2/groups"
       json: {"label":"hsmtestgroup2","description":"Test group 2 for HSM API testing in CT framework.","tags":["hsmtestgroup2_tag1","hsmtestgroup2_tag2"],"members":{"ids":["{xname2}","{xname3}"]}}
       method: POST
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 201
@@ -307,10 +285,8 @@ stages:
   # 15. GET /groups/{group2} API response body
   - name: Verify /groups/{label} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup2"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -360,10 +336,8 @@ stages:
   # 17. GET /groups/labels API response body
   - name: Verify /groups/labels GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/labels"
+      url: "{smd_base_url}/hsm/v2/groups/labels"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -390,10 +364,8 @@ stages:
   # 19. GET /groups/{group1}/members API response body
   - name: Verify /groups/{label}/members GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1/members"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -430,11 +402,9 @@ stages:
   # 20. POST /groups/{group1}/members API response code
   - name: Verify /groups/{label}/members POST method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1/members"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       json: {"id":"{xname4}"}
       method: POST
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 201
@@ -443,10 +413,8 @@ stages:
   # 22. GET /groups/{group1}/members API response body
   - name: Verify /groups/{label}/members GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1/members"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -488,10 +456,8 @@ stages:
   # 24. DELETE /groups/{group1}/members/{xname} API response body
   - name: Verify /groups/{label}/members/{xname} DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1/members/{xname1}"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members/{xname1}"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -517,10 +483,8 @@ stages:
   # 26. GET /groups/{group1}/members updated API response body
   - name: Verify /groups/{label}/members GET method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1/members"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -559,20 +523,16 @@ stages:
 
   - name: Delete existing test partition in HSM (if present) to prevent conflict
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/p98"
+      url: "{smd_base_url}/hsm/v2/partitions/p98"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
 
   # 27. POST /partitions API response code
   - name: Verify /partitions POST method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions"
+      url: "{smd_base_url}/hsm/v2/partitions"
       json: {"name":"p98","description":"Test partition 1 for HSM API testing in CT framework.","tags":["p98_tag1","p98_tag2"],"members":{"ids":["{xname4}"]}}
       method: POST
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 201
@@ -581,10 +541,8 @@ stages:
   # 29. GET /partitions/{partition} API response body
   - name: Verify /partitions/{partition} GET method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/p98"
+      url: "{smd_base_url}/hsm/v2/partitions/p98"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -642,10 +600,8 @@ stages:
   # 31. GET /groups/{group1}?partition={partition} API response body
   - name: Verify /groups/{label} GET method with partition parameter
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1?partition=p98"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1?partition=p98"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -703,10 +659,8 @@ stages:
   # 33. GET /groups/{group1}/members?partition={partition} API response body
   - name: Verify /groups/{label}/members GET method with partition parameter
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1/members?partition=p98"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members?partition=p98"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -746,10 +700,8 @@ stages:
   # 35. DELETE /partitions/{partition} API response body
   - name: Verify /partitions/{partition} DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/partitions/p98"
+      url: "{smd_base_url}/hsm/v2/partitions/p98"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -775,10 +727,8 @@ stages:
   # 37. DELETE /groups/{group1} API response body
   - name: Verify /groups/{label} DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup1"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -804,10 +754,8 @@ stages:
   # 39. DELETE /groups/{group2} API response body
   - name: Verify /groups/{label} DELETE method
     request:
-      url: "{base_url}/smd/hsm/v1/groups/hsmtestgroup2"
+      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: DELETE
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200

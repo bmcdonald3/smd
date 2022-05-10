@@ -38,10 +38,8 @@ stages:
   # 2. GET /DiscoveryStatus API response body
   - name: Ensure that we can conduct a discovery status query
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/DiscoveryStatus"
+      url: "{smd_base_url}/hsm/v2/Inventory/DiscoveryStatus"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -61,7 +59,16 @@ stages:
                     type: timestamp
                   Status:
                     type: str
-                    pattern: "Complete"
+                    enum:
+                      - "Complete"
+                      - "NotStarted"
+                  Details:
+                    type: map
+                    required: False
+                    mapping:
+                      description:
+                        type: str
+                        required: False
       save:
         json:
           id: "[0].ID"
@@ -70,10 +77,8 @@ stages:
   # 4. GET /DiscoveryStatus/{xname} API response body
   - name: Get discovery status data for a single discovery instance using API endpoint
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/DiscoveryStatus/{id}"
+      url: "{smd_base_url}/hsm/v2/Inventory/DiscoveryStatus/{id}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -91,4 +96,13 @@ stages:
                 type: timestamp
               Status:
                 type: str
-                pattern: "Complete"
+                enum:
+                  - "Complete"
+                  - "NotStarted"
+              Details:
+                type: map
+                required: False
+                mapping:
+                  description:
+                    type: str
+                    required: False
