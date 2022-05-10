@@ -1,6 +1,8 @@
+#!/bin/bash
+
 # MIT License
 #
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,32 +22,27 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
+# wait-for.sh; used by runCT.sh to make sure HSM has been populated with data before running.
+echo "Initiating..."
+URL="http://cray-smd:27779/hsm/v2/State/Components"
+sentry=1
+limit=200
+while :; do
+  length=$(curl --silent ${URL} | jq '.Components | length')
 
-### Build Base Stage ###
-FROM arti.dev.cray.com/baseos-docker-master-local/golang:1.16-alpine3.13 AS build-base
+  if [ ! -z "$length" ] && [ "$length" -gt "0" ]; then
+    echo $URL" is available"
+    break
+  fi
 
-RUN set -ex \
-    && apk -U upgrade \
-    && apk add build-base
+  if [ "$sentry" -gt "$limit" ]; then
+    echo "Failed to connect for $limit, exiting"
+    exit 1
+  fi
 
+  ((sentry++))
 
-### Base Stage ###
-# Base copies in the files we need to test/build.
-FROM build-base AS base
+  echo $URL" is unavailable - sleeping"
+  sleep 1
 
-RUN go env -w GO111MODULE=auto
-
-# Copy all the necessary files to the image.
-COPY cmd $GOPATH/src/github.com/Cray-HPE/hms-smd/cmd
-COPY internal $GOPATH/src/github.com/Cray-HPE/hms-smd/internal
-COPY pkg $GOPATH/src/github.com/Cray-HPE/hms-smd/pkg
-COPY vendor $GOPATH/src/github.com/Cray-HPE/hms-smd/vendor
-
-
-### Final Stage ###
-FROM base
-# Run unit tests...
-RUN set -ex && \
-    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/cmd/smd && \
-    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/internal/./... && \
-    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/pkg/./...
+done

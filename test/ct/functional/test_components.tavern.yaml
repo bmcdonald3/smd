@@ -83,10 +83,8 @@ stages:
   # 2. GET /Components?type=Node API response body all Nodes
   - name: Verify the expected response fields for all Nodes
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -170,10 +168,8 @@ stages:
   # 4. GET /Components API response body
   - name: Make sure that a list of Components is returned
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components"
+      url: "{smd_base_url}/hsm/v2/State/Components"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -187,10 +183,8 @@ stages:
   # 6. GET /Components?id={xname} any API response body
   - name: Make sure that the Component is returned
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?id={ID}"
+      url: "{smd_base_url}/hsm/v2/State/Components?id={ID}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -208,10 +202,8 @@ stages:
   # 8. GET /Components?type=NodeBMC API response body all NodeBMCs
   - name: Verify the expected response fields for all NodeBMCs
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=NodeBMC"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -282,10 +274,8 @@ stages:
   # 10. GET /Components?type=NodeBMC API response body
   - name: Verify successfully querying for NodeBMCs and get an xname for a particular NodeBMC from the response
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=NodeBMC"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -299,10 +289,8 @@ stages:
   # 12. GET /Components/{xname} nodeBMC API response body
   - name: Ensure that we can conduct a query on a specific xname in the Component collection by looking for Node BMCs
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components/{xname}"
+      url: "{smd_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -367,10 +355,8 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node&role=Compute"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -393,10 +379,8 @@ stages:
   # 16. GET /Components/{xname} node API response body
   - name: Ensure that we can conduct a query on a specific compute node xname in the Component collection
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components/{xname}"
+      url: "{smd_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -416,10 +400,8 @@ stages:
   # 18. GET /Components/ByNID/{nid} node API response body
   - name: Ensure that we can conduct a query on a specific NID in the Components collection
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components/ByNID/{NID}"
+      url: "{smd_base_url}/hsm/v2/State/Components/ByNID/{NID}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -478,10 +460,8 @@ stages:
   # 20. GET /Components/{xname} node API response body
   - name: GET the State for a given xname
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components/{xname}"
+      url: "{smd_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -542,10 +522,8 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node&role=Compute"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -615,10 +593,8 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node&role=Compute&Flag={Flag}"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute&Flag={Flag}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -690,10 +666,8 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node&role=Compute&Arch=X86"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute&Arch=X86"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -763,10 +737,8 @@ stages:
   # 28. GET /Components?type=Node&nid={nid} API response body
   - name: Conduct a query using the type and nid query parameters
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node&nid={NID}"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&nid={NID}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -838,10 +810,8 @@ stages:
   # 30. GET /Components?role=Compute API response body
   - name: Conduct a query using the role query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?role=Compute"
+      url: "{smd_base_url}/hsm/v2/State/Components?role=Compute"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -909,10 +879,8 @@ stages:
   # 32. GET /Components?type=Booster invalid API response body
   - name: Verify failure when conducting a query on the Component collection by looking for a fictitious type of hardware (Booster)
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Booster"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Booster"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 400
@@ -926,10 +894,8 @@ stages:
   # 34. GET /Components?state=Ready API response body
   - name: Conduct a query on the Components collection using the State query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?state=Ready"
+      url: "{smd_base_url}/hsm/v2/State/Components?state=Ready"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -943,10 +909,8 @@ stages:
   # 36. GET /Components?stateonly=True API response body
   - name: Conduct a query on the Components collection using the StateOnly query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?stateonly=True"
+      url: "{smd_base_url}/hsm/v2/State/Components?stateonly=True"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -979,10 +943,8 @@ stages:
   # 38. GET /Components?flagonly=True API response body
   - name: Conduct a query on the Components collection using the FlagOnly query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?flagonly=True"
+      url: "{smd_base_url}/hsm/v2/State/Components?flagonly=True"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -1012,10 +974,8 @@ stages:
   # 40. GET /Components?roleonly=True API response body
   - name: Conduct a query on the Components collection using the RoleOnly query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?roleonly=True"
+      url: "{smd_base_url}/hsm/v2/State/Components?roleonly=True"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -1048,10 +1008,8 @@ stages:
   # 42. GET /Components?nidonly=True API response body
   - name: Conduct a query on the Components collection using the NidOnly query parameter
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?nidonly=True"
+      url: "{smd_base_url}/hsm/v2/State/Components?nidonly=True"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -1085,10 +1043,8 @@ stages:
   # 44. GET /Components?type=Node API response body
   - name: Verify successfully querying for Nodes and get an xname for a particular Node from the response
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=Node"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -1102,10 +1058,8 @@ stages:
   # 46. GET /Components/Query/{xname} node API response body
   - name: Ensure that we can conduct a query for a specific Node xname using the Component Query API
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components/Query/{xname}"
+      url: "{smd_base_url}/hsm/v2/State/Components/Query/{xname}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -1180,10 +1134,8 @@ stages:
   # 48. GET /Components?type=NodeBMC API response body
   - name: Verify successfully querying for NodeBMCs and get an xname for a particular NodeBMC from the response
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components?type=NodeBMC"
+      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -1197,10 +1149,8 @@ stages:
   # 50. GET /Components/Query/{xname} nodeBMC API response body
   - name: Ensure that we can conduct a query for a specific NodeBMC xname using the Component Query API
     request:
-      url: "{base_url}/smd/hsm/v1/State/Components/Query/{xname}"
+      url: "{smd_base_url}/hsm/v2/State/Components/Query/{xname}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200

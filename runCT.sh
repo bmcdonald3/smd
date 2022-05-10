@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
+#
 # MIT License
 #
-# (C) Copyright [2021-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -32,8 +33,7 @@ fi
 
 # Configure docker compose
 export COMPOSE_PROJECT_NAME=$RANDOM
-export COMPOSE_FILE=docker-compose.test.unit.yaml
-
+export COMPOSE_FILE=docker-compose.test.ct.yaml
 args="-f $COMPOSE_FILE -p $COMPOSE_PROJECT_NAME"
 
 echo "COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}"
@@ -41,6 +41,7 @@ echo "COMPOSE_FILE: $COMPOSE_FILE"
 
 
 function cleanup() {
+  echo "Cleaning up containers..."
   docker-compose $args down
   if ! [[ $? -eq 0 ]]; then
     echo "Failed to decompose environment!"
@@ -50,18 +51,27 @@ function cleanup() {
 }
 
 
+# Get the base containers running
 echo "Starting containers..."
 docker-compose $args build --no-cache
-docker-compose $args up --exit-code-from unit-tests unit-tests
-
+# docker-compose up -d cray-smd #this will stand up everything except for the integration test container
+docker-compose $args up -d ct-tests-functional-wait-for-smd
+docker wait ${COMPOSE_PROJECT_NAME}_ct-tests-functional-wait-for-smd_1
+docker logs ${COMPOSE_PROJECT_NAME}_ct-tests-functional-wait-for-smd_1
+docker-compose $args up --exit-code-from ct-tests-smoke ct-tests-smoke
 test_result=$?
-
-# Clean up
-echo "Cleaning up containers..."
 if [[ $test_result -ne 0 ]]; then
-  echo "Unit tests FAILED!"
+  echo "CT smoke tests FAILED!"
   cleanup 1
 fi
 
-echo "Unit tests PASSED!"
+docker-compose $args up --exit-code-from ct-tests-functional ct-tests-functional
+test_result=$?
+if [[ $test_result -ne 0 ]]; then
+  echo "CT functional tests FAILED!"
+  cleanup 1
+fi
+
+# Cleanup
+echo "CT tests PASSED!"
 cleanup 0

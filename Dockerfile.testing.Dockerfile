@@ -1,7 +1,6 @@
-#! /bin/bash
 # MIT License
 #
-# (C) Copyright [2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -21,27 +20,31 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-SNYK_OPTS="--dev --show-vulnerable-paths=all --fail-on=all --severity-threshold=${SEVERITY:-high} --skip-unresolved=true --json"
 
-OUT=$(set -x; snyk test --all-projects --detection-depth=999 $SNYK_OPTS)
+### Build Base Stage ###
+FROM artifactory.algol60.net/docker.io/library/golang:1.16-alpine AS build-base
 
-PROJ_CHECK=OK
-jq .[].ok <<<"$OUT" | grep -q false && PROJ_CHECK=FAIL
+RUN set -ex \
+    && apk -U upgrade \
+    && apk add build-base
 
-echo Snyk project check: $PROJ_CHECK
 
-DOCKER_CHECK=
-if [ -f Dockerfile ]; then
-    DOCKER_IMAGE=${PWD/*\//}:$(cat .version)
-    docker build --tag $DOCKER_IMAGE -f Dockerfile .
-    OUT=$(set -x; snyk test --docker $DOCKER_IMAGE --file=${PWD}/Dockerfile $SNYK_OPTS)
-    DOCKER_CHECK=OK
-    jq .ok <<<"$OUT" | grep -q false && DOCKER_CHECK=FAIL
-fi
+### Base Stage ###
+# Base copies in the files we need to test/build.
+FROM build-base AS base
 
-echo
-echo Snyk project check: $PROJ_CHECK
-echo Snyk docker check: $DOCKER_CHECK
+RUN go env -w GO111MODULE=auto
 
-test "$PROJ_CHECK" == OK -a "$DOCKER_CHECK" == OK
-exit $?
+# Copy all the necessary files to the image.
+COPY cmd $GOPATH/src/github.com/Cray-HPE/hms-smd/cmd
+COPY internal $GOPATH/src/github.com/Cray-HPE/hms-smd/internal
+COPY pkg $GOPATH/src/github.com/Cray-HPE/hms-smd/pkg
+COPY vendor $GOPATH/src/github.com/Cray-HPE/hms-smd/vendor
+
+
+### Final Stage ###
+FROM base
+# Run unit tests...
+CMD ["sh", "-c", "go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/cmd/smd && \
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/internal/./... && \
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/pkg/./..."]

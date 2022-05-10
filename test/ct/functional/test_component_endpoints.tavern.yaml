@@ -50,10 +50,8 @@ stages:
   # 2. GET /ComponentEndpoints API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -400,10 +398,8 @@ stages:
   # 4. GET /ComponentEndpoints?type=Node API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints?type=Node"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=Node"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -446,10 +442,8 @@ stages:
   # 6. GET /ComponentEndpoints/{node} API response body
   - name: Ensure that we can conduct a query on a specific node xname in the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/{id}"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -482,10 +476,8 @@ stages:
   # 8. GET /ComponentEndpoints?type=NodeBMC API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular BMC
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints?type=NodeBMC"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeBMC"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -528,10 +520,8 @@ stages:
   # 10. GET /ComponentEndpoints/{nodeBMC} API response body
   - name: Ensure that we can conduct a query on a specific node BMC xname in the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/{id}"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -564,10 +554,8 @@ stages:
   # 12. GET /ComponentEndpoints?type=NodeEnclosure API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node enclosure
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints?type=NodeEnclosure"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeEnclosure"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -610,10 +598,8 @@ stages:
   # 14. GET /ComponentEndpoints/{nodeEnclosure} API response body
   - name: Ensure that we can conduct a query on a specific node enclosure xname in the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/{id}"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -645,10 +631,8 @@ stages:
   # 15. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
   - name: Verify failure when providing a valid but nonexistent BMC xname in the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/x1025c7s4b4"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025c7s4b4"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 404
@@ -660,10 +644,8 @@ stages:
   # 16. GET /ComponentEndpoints/{nodeBMC} invalid API response code
   - name: Verify failure when providing an invalid BMC xname in the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/x1025000c7s4b4"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025000c7s4b4"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 400
@@ -675,10 +657,8 @@ stages:
   # 17. GET /ComponentEndpoints/{nid} unsupported id API response code
   - name: Verify failure when providing a nid name instead of a valid BMC xname in the ComponentEndpoints collection
     request:
-      url: "{base_url}/smd/hsm/v1/Inventory/ComponentEndpoints/1"
+      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/1"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 400

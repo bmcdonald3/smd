@@ -37,10 +37,8 @@ stages:
   # 2. GET /Subscriptions/SCN API response body
   - name: Ensure that we can conduct a query on the state change notifications collection
     request:
-      url: "{base_url}/smd/hsm/v1/Subscriptions/SCN"
+      url: "{smd_base_url}/hsm/v2/Subscriptions/SCN"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
@@ -104,19 +102,15 @@ stages:
                         type: str
                         required: True
       save:
-        $ext:
-          function: hms_hsm_lib_ncn-resources_remote-resources:get_scn_subscription_first_id
         json:
-          ID: SubscriptionList
+          ID: SubscriptionList[0].ID
 
   # 3. GET /Subscriptions/SCN/{num} API response code
   # 4. GET /Subscriptions/SCN/{num} API response body
   - name: Ensure that we can conduct a query for a specific ID from the state change notifications collection
     request:
-      url: "{base_url}/smd/hsm/v1/Subscriptions/SCN/{ID}"
+      url: "{smd_base_url}/hsm/v2/Subscriptions/SCN/{ID}"
       method: GET
-      headers:
-        Authorization: "Bearer {access_token}"
       verify: !bool "{verify}"
     response:
       status_code: 200
