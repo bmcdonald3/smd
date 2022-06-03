@@ -506,8 +506,8 @@ func (s *SmD) doComponentsPost(w http.ResponseWriter, r *http.Request) {
 	// Get the nid and role defaults for all node types
 	for _, comp := range compsIn.Components {
 		if comp.Type == base.Node.String() {
-			if len(comp.Role) == 0 || len(comp.NID) == 0 {
-				newNID, defRole, defSubRole := s.GetCompDefaults(comp.ID, base.RoleCompute.String(), "")
+			if len(comp.Role) == 0 || len(comp.NID) == 0 || len(comp.Class) == 0 {
+				newNID, defRole, defSubRole, defClass := s.GetCompDefaults(comp.ID, base.RoleCompute.String(), "", "")
 				if len(comp.Role) == 0 {
 					comp.Role = defRole
 				}
@@ -516,6 +516,9 @@ func (s *SmD) doComponentsPost(w http.ResponseWriter, r *http.Request) {
 				}
 				if len(comp.NID) == 0 {
 					comp.NID = json.Number(strconv.FormatUint(newNID, 10))
+				}
+				if len(comp.Class) == 0 {
+					comp.Class = defClass
 				}
 			}
 		}
@@ -1048,8 +1051,8 @@ func (s *SmD) doComponentPut(w http.ResponseWriter, r *http.Request) {
 	}
 	// Get the nid and role defaults for all node types
 	if component.Type == base.Node.String() {
-		if len(component.Role) == 0 || len(component.NID) == 0 {
-			newNID, defRole, defSubRole := s.GetCompDefaults(component.ID, base.RoleCompute.String(), "")
+		if len(component.Role) == 0 || len(component.NID) == 0 || len(component.Class) == 0 {
+			newNID, defRole, defSubRole, defClass := s.GetCompDefaults(component.ID, base.RoleCompute.String(), "", "")
 			if len(component.Role) == 0 {
 				component.Role = defRole
 			}
@@ -1058,6 +1061,9 @@ func (s *SmD) doComponentPut(w http.ResponseWriter, r *http.Request) {
 			}
 			if len(component.NID) == 0 {
 				component.NID = json.Number(strconv.FormatUint(newNID, 10))
+			}
+			if len(component.Class) == 0 {
+				component.Class = defClass
 			}
 		}
 	}
