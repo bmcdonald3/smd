@@ -182,9 +182,9 @@ func (s *SmD) DiscoverComponentSystem(sysEP *rf.EpSystem) *base.Component {
 	comp.Subtype = sysEP.Subtype
 	comp.Arch = sysEP.Arch
 	comp.NetType = sysEP.NetType
-	comp.Class = sysEP.DefaultClass
 
-	newNID, defRole, defSubRole := s.GetCompDefaults(comp.ID, sysEP.DefaultRole, sysEP.DefaultSubRole)
+	newNID, defRole, defSubRole, defClass := s.GetCompDefaults(comp.ID, sysEP.DefaultRole, sysEP.DefaultSubRole, sysEP.DefaultClass)
+	comp.Class = defClass
 	comp.Role = defRole
 	comp.SubRole = defSubRole
 	comp.NID = json.Number(strconv.FormatUint(newNID, 10))
@@ -336,11 +336,12 @@ func (s *SmD) DiscoverComponentOutlet(outEP *rf.EpOutlet) *base.Component {
 }
 
 // Get default NID and Role from SLS or the uploaded NodeMaps in priority order.
-func (s *SmD) GetCompDefaults(xname, defaultRole, defaultSubRole string) (uint64, string, string) {
+func (s *SmD) GetCompDefaults(xname, defaultRole, defaultSubRole, defaultClass string) (uint64, string, string, string) {
 	var (
 		nid     uint64
 		role    string
 		subRole string
+		class   string
 	)
 	if s.sls != nil {
 		nodeInfo, err := s.sls.GetNodeInfo(xname)
@@ -350,6 +351,7 @@ func (s *SmD) GetCompDefaults(xname, defaultRole, defaultSubRole string) (uint64
 			nid = uint64(nodeInfo.NID)
 			role = nodeInfo.Role
 			subRole = nodeInfo.SubRole
+			class = nodeInfo.Class
 		}
 	}
 	if nid == 0 || len(role) == 0 {
@@ -376,7 +378,10 @@ func (s *SmD) GetCompDefaults(xname, defaultRole, defaultSubRole string) (uint64
 		role = defaultRole
 		subRole = defaultSubRole
 	}
-	return nid, role, subRole
+	if class == "" {
+		class = defaultClass
+	}
+	return nid, role, subRole, class
 }
 
 // Get a bogus nid for an xname

@@ -64,6 +64,13 @@ type ComptypeNode struct {
 	SubRole string `json:"SubRole"`
 }
 
+type NodeInfo struct {
+	NID     int    `json:"NID,omitempty"`
+	Role    string `json:"Role"`
+	SubRole string `json:"SubRole"`
+	Class   string `json:"Class"`
+}
+
 var serviceName string
 
 // Allocate and initialize new SLS struct.
@@ -125,38 +132,46 @@ func (sls *SLS) IsReady() (bool, error) {
 
 // Query SLS for node information. This just picks up the ExtraProperties
 // struct for nodes from SLS.
-func (sls *SLS) GetNodeInfo(id string) (ComptypeNode, error) {
+func (sls *SLS) GetNodeInfo(id string) (NodeInfo, error) {
 	var nh NodeHardware
 	// Validate inputs
 	if sls.Url == nil {
-		return ComptypeNode{}, fmt.Errorf("SLS struct has no URL")
+		return NodeInfo{}, fmt.Errorf("SLS struct has no URL")
 	}
 	if len(id) == 0 {
-		return ComptypeNode{}, fmt.Errorf("Id is missing")
+		return NodeInfo{}, fmt.Errorf("Id is missing")
 	}
 
 	// Construct a GET to /hardware/<xname> for SLS to get the node info
 	uri := sls.Url.String() + "/hardware/" + id
 	req, err := http.NewRequest(http.MethodGet, uri, nil)
 	if err != nil {
-		return ComptypeNode{}, err
+		return NodeInfo{}, err
 	}
 	body, err := sls.doRequest(req)
 	if err != nil {
-		return ComptypeNode{}, err
+		return NodeInfo{}, err
 	}
 
 	// SLS returns null if the component was not found
 	if body == nil {
-		return ComptypeNode{}, nil
+		return NodeInfo{}, nil
 	}
 
 	err = json.Unmarshal(body, &nh)
 	if err != nil {
-		return ComptypeNode{}, err
+		return NodeInfo{}, err
 	}
 
-	return nh.ExtraProperties, nil
+	// Grab the fields we care about
+	nodeInfo := NodeInfo{
+		NID: nh.ExtraProperties.NID,
+		Role: nh.ExtraProperties.Role,
+		SubRole: nh.ExtraProperties.SubRole,
+		Class: nh.Class,
+	}
+
+	return nodeInfo, nil
 }
 
 // doRequest sends a HTTP request to SLS
