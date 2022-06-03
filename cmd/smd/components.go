@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -103,7 +103,15 @@ func (s *SmD) DiscoverComponentChassis(chEP *rf.EpChassis) *base.Component {
 			comp.Class = base.ClassMountain.String()
 			// Just incase our redfish endpoint didn't exist when our child
 			// components were discovered, update them to be Mountain too.
-			children, err := s.db.GetComponentsQuery(nil, hmsds.FLTR_ID_ONLY, []string{comp.ID})
+			f := hmsds.ComponentFilter{
+				Type: []string{
+					base.NodeBMC.String(),
+					base.NodeEnclosure.String(),
+					base.Node.String(),
+					base.RouterBMC.String(),
+				},
+			}
+			children, err := s.db.GetComponentsQuery(&f, hmsds.FLTR_ID_ONLY, []string{comp.ID})
 			if err != nil {
 				s.LogAlways("DiscoverComponentChassis: Could not get child components for %s: %s", comp.ID, err)
 			} else {
