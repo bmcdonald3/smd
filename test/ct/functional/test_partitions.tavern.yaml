@@ -1,17 +1,17 @@
 # MIT License
-
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
-
+#
+# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -91,7 +91,7 @@ stages:
 
   # 2. GET /partitions/{partition1} API response code
   # 3. GET /partitions/{partition1} API response body
-  - name: Verify /partitions/{partition} GET method
+  - name: Verify /partitions/partition GET method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98"
       method: GET
@@ -195,7 +195,7 @@ stages:
           member2: "[0].members.ids[1]"
 
   # 10. PATCH /partitions/{partition1} API response code
-  - name: Verify /partitions/{partition} PATCH method
+  - name: Verify /partitions/partition PATCH method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98"
       json: {"description":"Test partition 1 for HSM API testing in CT framework (UPDATED).","tags":["p98_tag3","p98_tag4"]}
@@ -206,7 +206,7 @@ stages:
 
   # 11. GET /partitions/{partition1} updated description tag API response code
   # 12. GET /partitions/{partition1} updated description tag API response body
-  - name: Verify /partitions/{partition} GET method
+  - name: Verify /partitions/partition GET method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98"
       method: GET
@@ -273,7 +273,7 @@ stages:
 
   # 14. GET /partitions/{partition2} API response code
   # 15. GET /partitions/{partition2} API response body
-  - name: Verify /partitions/{partition} GET method
+  - name: Verify /partitions/partition GET method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p99"
       method: GET
@@ -351,7 +351,7 @@ stages:
 
   # 18. GET /partitions/{partition1}/members API response code
   # 19. GET /partitions/{partition1}/members API response body
-  - name: Verify /partitions/{partition}/members GET method
+  - name: Verify /partitions/partition/members GET method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98/members"
       method: GET
@@ -389,7 +389,7 @@ stages:
               expected: True
 
   # 20. POST /partitions/{partition1}/members API response code
-  - name: Verify /partitions/{partition}/members POST method
+  - name: Verify /partitions/partition/members POST method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98/members"
       json: {"id":"{xname4}"}
@@ -400,7 +400,7 @@ stages:
 
   # 21. GET /partitions/{partition1}/members new member API response code
   # 22. GET /partitions/{partition1}/members new member API response body
-  - name: Verify /partitions/{partition}/members GET method
+  - name: Verify /partitions/partition/members GET method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98/members"
       method: GET
@@ -443,7 +443,7 @@ stages:
 
   # 23. DELETE /partitions/{partition1}/members/{xname} API response code
   # 24. DELETE /partitions/{partition1}/members/{xname} API response body
-  - name: Verify /partitions/{partition}/members/{xname} DELETE method
+  - name: Verify /partitions/partition/members/xname DELETE method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98/members/{xname1}"
       method: DELETE
@@ -470,7 +470,7 @@ stages:
 
   # 25. GET /partitions/{partition1}/members deleted member API response code
   # 26. GET /partitions/{partition1}/members deleted member API response body
-  - name: Verify /partitions/{partition}/members GET method
+  - name: Verify /partitions/partition/members GET method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98/members"
       method: GET
@@ -512,7 +512,7 @@ stages:
 
   # 27. DELETE /partitions/{partition1} API response code
   # 28. DELETE /partitions/{partition1} API response body
-  - name: Verify /partitions/{partition} DELETE method
+  - name: Verify /partitions/partition DELETE method
     request:
       url: "{smd_base_url}/hsm/v2/partitions/p98"
       method: DELETE
