@@ -1,6 +1,6 @@
 #TODO
 #FROM artifactory.algol60.net/csm-docker/stable/hms-test:3.0.0
-FROM artifactory.algol60.net/csm-docker/unstable/hms-test:3.0.0-20220609055548.eea4731
+FROM artifactory.algol60.net/csm-docker/unstable/hms-test:3.0.0-20220613230508.79e6979
 
 COPY smoke/ /src/app
 COPY functional/ /src/app
