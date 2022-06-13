@@ -1,5 +1,5 @@
 {
-  "smoke_test_name": "SMD-smoke-tests",
+  "smoke_test_name": "smd-smoke-tests",
   "default_base_url": "http://cray-smd/",
   "test_paths": [
     {
