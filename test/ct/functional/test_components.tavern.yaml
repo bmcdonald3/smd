@@ -83,7 +83,7 @@ stages:
   # 2. GET /Components?type=Node API response body all Nodes
   - name: Verify the expected response fields for all Nodes
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -168,7 +168,7 @@ stages:
   # 4. GET /Components API response body
   - name: Make sure that a list of Components is returned
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components"
+      url: "{hsm_base_url}/hsm/v2/State/Components"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -183,7 +183,7 @@ stages:
   # 6. GET /Components?id={xname} any API response body
   - name: Make sure that the Component is returned
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?id={ID}"
+      url: "{hsm_base_url}/hsm/v2/State/Components?id={ID}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -202,7 +202,7 @@ stages:
   # 8. GET /Components?type=NodeBMC API response body all NodeBMCs
   - name: Verify the expected response fields for all NodeBMCs
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -274,7 +274,7 @@ stages:
   # 10. GET /Components?type=NodeBMC API response body
   - name: Verify successfully querying for NodeBMCs and get an xname for a particular NodeBMC from the response
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -289,7 +289,7 @@ stages:
   # 12. GET /Components/{xname} nodeBMC API response body
   - name: Ensure that we can conduct a query on a specific xname in the Component collection by looking for Node BMCs
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components/{xname}"
+      url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -355,7 +355,7 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -379,7 +379,7 @@ stages:
   # 16. GET /Components/{xname} node API response body
   - name: Ensure that we can conduct a query on a specific compute node xname in the Component collection
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components/{xname}"
+      url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -400,7 +400,7 @@ stages:
   # 18. GET /Components/ByNID/{nid} node API response body
   - name: Ensure that we can conduct a query on a specific NID in the Components collection
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components/ByNID/{NID}"
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/{NID}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -460,7 +460,7 @@ stages:
   # 20. GET /Components/{xname} node API response body
   - name: GET the State for a given xname
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components/{xname}"
+      url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -522,7 +522,7 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -593,7 +593,7 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute&Flag={Flag}"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&role=Compute&Flag={Flag}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -666,7 +666,7 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute&Arch=X86"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&role=Compute&Arch=X86"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -737,7 +737,7 @@ stages:
   # 28. GET /Components?type=Node&nid={nid} API response body
   - name: Conduct a query using the type and nid query parameters
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&nid={NID}"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&nid={NID}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -810,7 +810,7 @@ stages:
   # 30. GET /Components?role=Compute API response body
   - name: Conduct a query using the role query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?role=Compute"
+      url: "{hsm_base_url}/hsm/v2/State/Components?role=Compute"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -879,7 +879,7 @@ stages:
   # 32. GET /Components?type=Booster invalid API response body
   - name: Verify failure when conducting a query on the Component collection by looking for a fictitious type of hardware (Booster)
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Booster"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Booster"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -894,7 +894,7 @@ stages:
   # 34. GET /Components?state=Ready API response body
   - name: Conduct a query on the Components collection using the State query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?state=Ready"
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Ready"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -909,7 +909,7 @@ stages:
   # 36. GET /Components?stateonly=True API response body
   - name: Conduct a query on the Components collection using the StateOnly query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?stateonly=True"
+      url: "{hsm_base_url}/hsm/v2/State/Components?stateonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -943,7 +943,7 @@ stages:
   # 38. GET /Components?flagonly=True API response body
   - name: Conduct a query on the Components collection using the FlagOnly query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?flagonly=True"
+      url: "{hsm_base_url}/hsm/v2/State/Components?flagonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -974,7 +974,7 @@ stages:
   # 40. GET /Components?roleonly=True API response body
   - name: Conduct a query on the Components collection using the RoleOnly query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?roleonly=True"
+      url: "{hsm_base_url}/hsm/v2/State/Components?roleonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -1008,7 +1008,7 @@ stages:
   # 42. GET /Components?nidonly=True API response body
   - name: Conduct a query on the Components collection using the NidOnly query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?nidonly=True"
+      url: "{hsm_base_url}/hsm/v2/State/Components?nidonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -1043,7 +1043,7 @@ stages:
   # 44. GET /Components?type=Node API response body
   - name: Verify successfully querying for Nodes and get an xname for a particular Node from the response
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -1058,7 +1058,7 @@ stages:
   # 46. GET /Components/Query/{xname} node API response body
   - name: Ensure that we can conduct a query for a specific Node xname using the Component Query API
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components/Query/{xname}"
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -1134,7 +1134,7 @@ stages:
   # 48. GET /Components?type=NodeBMC API response body
   - name: Verify successfully querying for NodeBMCs and get an xname for a particular NodeBMC from the response
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -1149,7 +1149,7 @@ stages:
   # 50. GET /Components/Query/{xname} nodeBMC API response body
   - name: Ensure that we can conduct a query for a specific NodeBMC xname using the Component Query API
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components/Query/{xname}"
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:

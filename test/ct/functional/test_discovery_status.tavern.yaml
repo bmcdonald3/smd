@@ -37,7 +37,7 @@ stages:
   # 2. GET /DiscoveryStatus API response body
   - name: Ensure that we can conduct a discovery status query
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/DiscoveryStatus"
+      url: "{hsm_base_url}/hsm/v2/Inventory/DiscoveryStatus"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -76,7 +76,7 @@ stages:
   # 4. GET /DiscoveryStatus/{xname} API response body
   - name: Get discovery status data for a single discovery instance using API endpoint
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/DiscoveryStatus/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/DiscoveryStatus/{id}"
       method: GET
       verify: !bool "{verify}"
     response:

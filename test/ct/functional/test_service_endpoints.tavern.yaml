@@ -59,7 +59,7 @@ stages:
   # 2. GET /ServiceEndpoints API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -78,7 +78,7 @@ stages:
   # 4. GET /ServiceEndpoints/AccountService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the AccountService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -90,7 +90,7 @@ stages:
   # 5. GET /ServiceEndpoints?service=AccountService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the AccountService using the service query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=AccountService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=AccountService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -99,7 +99,7 @@ stages:
   # 6. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the AccountService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -113,7 +113,7 @@ stages:
   # 8. GET /ServiceEndpoints/EventService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the EventService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -125,7 +125,7 @@ stages:
   # 9. GET /ServiceEndpoints?service=EventService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the EventService using the service query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=EventService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=EventService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -134,7 +134,7 @@ stages:
   # 10. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the EventService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -148,7 +148,7 @@ stages:
   # 12. GET /ServiceEndpoints/SessionService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the SessionService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -160,7 +160,7 @@ stages:
   # 13. GET /ServiceEndpoints?service=SessionService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the SessionService using the service query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=SessionService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=SessionService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -169,7 +169,7 @@ stages:
   # 14. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the SessionService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -183,7 +183,7 @@ stages:
   # 16. GET /ServiceEndpoints/UpdateService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the UpdateService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -195,7 +195,7 @@ stages:
   # 17. GET /ServiceEndpoints?service=UpdateService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the UpdateService using the service query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=UpdateService"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=UpdateService"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -204,7 +204,7 @@ stages:
   # 18. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the UpdateService
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -217,7 +217,7 @@ stages:
   # 19. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the AccountService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/x1025c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/x1025c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -230,7 +230,7 @@ stages:
   # 20. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the EventService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/x1025c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/x1025c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -243,7 +243,7 @@ stages:
   # 21. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the SessionService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/x1025c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/x1025c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -256,7 +256,7 @@ stages:
   # 22. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the UpdateService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/x1025c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/x1025c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -269,7 +269,7 @@ stages:
   # 23. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the AccountService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/x1025000c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/x1025000c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -282,7 +282,7 @@ stages:
   # 24. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the EventService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/x1025000c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/x1025000c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -295,7 +295,7 @@ stages:
   # 25. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the SessionService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/x1025000c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/x1025000c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -308,7 +308,7 @@ stages:
   # 26. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the UpdateService in the ServiceEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/x1025000c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/x1025000c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:

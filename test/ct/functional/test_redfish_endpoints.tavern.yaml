@@ -47,7 +47,7 @@ stages:
   # 2. GET /RedfishEndpoints API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints"
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -134,7 +134,7 @@ stages:
   # 4. GET /RedfishEndpoints?type=NodeBMC API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection using the type parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints?type=NodeBMC"
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -216,7 +216,7 @@ stages:
 
   - name: Get a NodeBMC xname from the Components collection to use in the next stage
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeBMC"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -229,7 +229,7 @@ stages:
   # 6. GET /RedfishEndpoints/{xname} nodeBMC API response body
   - name: Get Redfish endpoint data for a given NodeBMC xname
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints/{xname}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -313,7 +313,7 @@ stages:
   # 8. GET /RedfishEndpoints?id={xname} nodeBMC API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection using the id parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints?id={xname}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?id={xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -399,7 +399,7 @@ stages:
   # 10. GET /RedfishEndpoints?fqdn={fqdn} API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection using the fqdn parameter
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints?fqdn={fqdn}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?fqdn={fqdn}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -485,7 +485,7 @@ stages:
   ## 12. Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response body
   #- name: Ensure that we can conduct a query on the RedfishEndpoints collection using the uuid parameter
   #  request:
-  #    url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints?uuid={uuid}"
+  #    url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?uuid={uuid}"
   #    method: GET
   #    headers:
   #      Authorization: "Bearer {access_token}"
@@ -573,7 +573,7 @@ stages:
   # 14. GET /RedfishEndpoints/Query/{xname} nodeBMC API response body
   - name: Call the RedfishEndpoints Query API with a NodeBMC xname
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/RedfishEndpoints/Query/{xname}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints/Query/{xname}"
       method: GET
       verify: !bool "{verify}"
     response:

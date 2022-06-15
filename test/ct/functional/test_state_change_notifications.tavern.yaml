@@ -37,7 +37,7 @@ stages:
   # 2. GET /Subscriptions/SCN API response body
   - name: Ensure that we can conduct a query on the state change notifications collection
     request:
-      url: "{smd_base_url}/hsm/v2/Subscriptions/SCN"
+      url: "{hsm_base_url}/hsm/v2/Subscriptions/SCN"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -109,7 +109,7 @@ stages:
   # 4. GET /Subscriptions/SCN/{num} API response body
   - name: Ensure that we can conduct a query for a specific ID from the state change notifications collection
     request:
-      url: "{smd_base_url}/hsm/v2/Subscriptions/SCN/{ID}"
+      url: "{hsm_base_url}/hsm/v2/Subscriptions/SCN/{ID}"
       method: GET
       verify: !bool "{verify}"
     response:
