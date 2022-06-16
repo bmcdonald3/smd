@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.53.0] - 2022-06-16
 
-### Fix
+### Fixed
 
 - CASMHMS-4972 - HSM now ignores A100 NV Switch and Baseboard when discovering GPUs on Proliant iLO devices.
 
