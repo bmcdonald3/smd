@@ -100,7 +100,11 @@ stages:
 
   # 2. GET /groups/{group1} API response code
   # 3. GET /groups/{group1} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label GET method
+=======
+  - name: Verify /groups/<label> GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: GET
@@ -205,7 +209,11 @@ stages:
           member2: "[0].members.ids[1]"
 
   # 10. PATCH /groups/{group1} API response code
+<<<<<<< HEAD
   - name: Verify /groups/label PATCH method
+=======
+  - name: Verify /groups/<label> PATCH method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       json: {"description":"Test group 1 for HSM API testing in CT framework (UPDATED).","tags":["hsmtestgroup1_tag3","hsmtestgroup1_tag4"]}
@@ -216,7 +224,11 @@ stages:
 
   # 11. GET /groups/{group1} updated API response code
   # 12. GET /groups/{group1} updated API response body
+<<<<<<< HEAD
   - name: Verify /groups/label GET method
+=======
+  - name: Verify /groups/<label> GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: GET
@@ -283,7 +295,11 @@ stages:
 
   # 14. GET /groups/{group2} API response code
   # 15. GET /groups/{group2} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label GET method
+=======
+  - name: Verify /groups/<label> GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: GET
@@ -362,7 +378,11 @@ stages:
 
   # 18. GET /groups/{group1}/members API response code
   # 19. GET /groups/{group1}/members API response body
+<<<<<<< HEAD
   - name: Verify /groups/label/members GET method
+=======
+  - name: Verify /groups/<label>/members GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
@@ -400,7 +420,11 @@ stages:
               expected: True
 
   # 20. POST /groups/{group1}/members API response code
+<<<<<<< HEAD
   - name: Verify /groups/label/members POST method
+=======
+  - name: Verify /groups/<label>/members POST method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       json: {"id":"{xname4}"}
@@ -411,7 +435,11 @@ stages:
 
   # 21. GET /groups/{group1}/members API response code
   # 22. GET /groups/{group1}/members API response body
+<<<<<<< HEAD
   - name: Verify /groups/label/members GET method
+=======
+  - name: Verify /groups/<label>/members GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
@@ -454,7 +482,11 @@ stages:
 
   # 23. DELETE /groups/{group1}/members/{xname} API response code
   # 24. DELETE /groups/{group1}/members/{xname} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label/members/xname DELETE method
+=======
+  - name: Verify /groups/<label>/members/<xname> DELETE method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members/{xname1}"
       method: DELETE
@@ -481,7 +513,11 @@ stages:
 
   # 25. GET /groups/{group1}/members updated API response code
   # 26. GET /groups/{group1}/members updated API response body
+<<<<<<< HEAD
   - name: Verify /groups/label/members GET method
+=======
+  - name: Verify /groups/<label>/members GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
@@ -539,7 +575,11 @@ stages:
 
   # 28. GET /partitions/{partition} API response code
   # 29. GET /partitions/{partition} API response body
+<<<<<<< HEAD
   - name: Verify /partitions/partition GET method
+=======
+  - name: Verify /partitions/<partition> GET method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: GET
@@ -598,7 +638,11 @@ stages:
 
   # 30. GET /groups/{group1}?partition={partition} API response code
   # 31. GET /groups/{group1}?partition={partition} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label GET method with partition parameter
+=======
+  - name: Verify /groups/<label> GET method with partition parameter
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1?partition=p98"
       method: GET
@@ -657,7 +701,11 @@ stages:
 
   # 32. GET /groups/{group1}/members?partition={partition} API response code
   # 33. GET /groups/{group1}/members?partition={partition} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label/members GET method with partition parameter
+=======
+  - name: Verify /groups/<label>/members GET method with partition parameter
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members?partition=p98"
       method: GET
@@ -698,7 +746,11 @@ stages:
 
   # 34. DELETE /partitions/{partition} API response code
   # 35. DELETE /partitions/{partition} API response body
+<<<<<<< HEAD
   - name: Verify /partitions/partition DELETE method
+=======
+  - name: Verify /partitions/<partition> DELETE method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: DELETE
@@ -725,7 +777,11 @@ stages:
 
   # 36. DELETE /groups/{group1} API response code
   # 37. DELETE /groups/{group1} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label DELETE method
+=======
+  - name: Verify /groups/<label> DELETE method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: DELETE
@@ -752,7 +808,11 @@ stages:
 
   # 38. DELETE /groups/{group2} API response code
   # 39. DELETE /groups/{group2} API response body
+<<<<<<< HEAD
   - name: Verify /groups/label DELETE method
+=======
+  - name: Verify /groups/<label> DELETE method
+>>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: DELETE
