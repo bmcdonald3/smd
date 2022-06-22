@@ -91,11 +91,7 @@ stages:
 
   # 2. GET /partitions/{partition1} API response code
   # 3. GET /partitions/{partition1} API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition GET method
-=======
-  - name: Verify /partitions/<partition> GET method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: GET
@@ -199,11 +195,7 @@ stages:
           member2: "[0].members.ids[1]"
 
   # 10. PATCH /partitions/{partition1} API response code
-<<<<<<< HEAD
   - name: Verify /partitions/partition PATCH method
-=======
-  - name: Verify /partitions/<partition> PATCH method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
       json: {"description":"Test partition 1 for HSM API testing in CT framework (UPDATED).","tags":["p98_tag3","p98_tag4"]}
@@ -214,11 +206,7 @@ stages:
 
   # 11. GET /partitions/{partition1} updated description tag API response code
   # 12. GET /partitions/{partition1} updated description tag API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition GET method
-=======
-  - name: Verify /partitions/<partition> GET method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: GET
@@ -285,11 +273,7 @@ stages:
 
   # 14. GET /partitions/{partition2} API response code
   # 15. GET /partitions/{partition2} API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition GET method
-=======
-  - name: Verify /partitions/<partition> GET method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p99"
       method: GET
@@ -367,11 +351,7 @@ stages:
 
   # 18. GET /partitions/{partition1}/members API response code
   # 19. GET /partitions/{partition1}/members API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition/members GET method
-=======
-  - name: Verify /partitions/<partition>/members GET method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
       method: GET
@@ -409,11 +389,7 @@ stages:
               expected: True
 
   # 20. POST /partitions/{partition1}/members API response code
-<<<<<<< HEAD
   - name: Verify /partitions/partition/members POST method
-=======
-  - name: Verify /partitions/<partition>/members POST method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
       json: {"id":"{xname4}"}
@@ -424,11 +400,7 @@ stages:
 
   # 21. GET /partitions/{partition1}/members new member API response code
   # 22. GET /partitions/{partition1}/members new member API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition/members GET method
-=======
-  - name: Verify /partitions/<partition>/members GET method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
       method: GET
@@ -471,11 +443,7 @@ stages:
 
   # 23. DELETE /partitions/{partition1}/members/{xname} API response code
   # 24. DELETE /partitions/{partition1}/members/{xname} API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition/members/xname DELETE method
-=======
-  - name: Verify /partitions/<partition>/members/<xname> DELETE method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members/{xname1}"
       method: DELETE
@@ -502,11 +470,7 @@ stages:
 
   # 25. GET /partitions/{partition1}/members deleted member API response code
   # 26. GET /partitions/{partition1}/members deleted member API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition/members GET method
-=======
-  - name: Verify /partitions/<partition>/members GET method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
       method: GET
@@ -548,11 +512,7 @@ stages:
 
   # 27. DELETE /partitions/{partition1} API response code
   # 28. DELETE /partitions/{partition1} API response body
-<<<<<<< HEAD
   - name: Verify /partitions/partition DELETE method
-=======
-  - name: Verify /partitions/<partition> DELETE method
->>>>>>> master
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: DELETE
