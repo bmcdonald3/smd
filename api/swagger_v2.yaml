@@ -216,7 +216,7 @@ info:
 
     ### Create and Delete a New Group
 
-    #### GET /hsm/v1/State/Components
+    #### GET /hsm/v2/State/Components
 
     Retrieve a list of desired components and their state. Select the nodes that you want
     to group.
@@ -771,8 +771,8 @@ paths:
   #            application/json:
   #              Name: State Component by NID Collection
   #              Members:
-  #                - URI: /hsm/v1/State/Components/ByNID/0
-  #                - URI: /hsm/v1/State/Components/ByNID/1
+  #                - URI: /hsm/v2/State/Components/ByNID/0
+  #                - URI: /hsm/v2/State/Components/ByNID/1
   #              MemberCount: 2
   #        "400":
   #          description: Bad Request
@@ -2020,7 +2020,7 @@ paths:
         created, the operation will fail.
 
         * If the node has already been discovered for the first time (that is, it exists in
-        /hsm/v1/State/Components and already has a previous/default NID), modifying the
+        /hsm/v2/State/Components and already has a previous/default NID), modifying the
         NodeMap entry will not automatically reassign the current NID.
 
         * If you wish to use POST to completely replace the current NodeMaps collection
@@ -2158,7 +2158,7 @@ paths:
         created, the operation will fail.
 
         * If the node has already been discovered for the first time (that is, it exists in
-        /hsm/v1/State/Components and already has a previous/default NID), modifying the
+        /hsm/v2/State/Components and already has a previous/default NID), modifying the
         NodeMap entry will not automatically reassign the current NID.
       operationId: doNodeMapPut
       parameters:
@@ -3200,7 +3200,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - URI: /hsm/v1/Inventory/RedfishEndpoints/x0c0s0b0
+              - URI: /hsm/v2/Inventory/RedfishEndpoints/x0c0s0b0
         "400":
           description: Bad Request
           schema:
@@ -4162,7 +4162,7 @@ paths:
             $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              uri: /hsm/v1/Inventory/a4bf012b7311
+              uri: /hsm/v2/Inventory/a4bf012b7311
         "400":
           description: Bad Request
           schema:
@@ -4537,7 +4537,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - URI: /hsm/v1/Inventory/DiscoveryStatus/0
+              - URI: /hsm/v2/Inventory/DiscoveryStatus/0
         "400":
           description: Bad Request
           schema:
@@ -4882,7 +4882,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v1/groups/mygrouplabel
+              - uri: /hsm/v2/groups/mygrouplabel
         "400":
           description: Bad Request
           schema:
@@ -5113,7 +5113,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v1/groups/mygrouplabel/members/x0c0s1b0n0
+              - uri: /hsm/v2/groups/mygrouplabel/members/x0c0s1b0n0
         "400":
           description: Bad Request - e.g. malformed string
           schema:
@@ -5242,7 +5242,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v1/partitions/p1
+              - uri: /hsm/v2/partitions/p1
         "400":
           description: Bad Request
           schema:
@@ -5461,7 +5461,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v1/partitions/p1/members/x0c0s1b0n0
+              - uri: /hsm/v2/partitions/p1/members/x0c0s1b0n0
         "400":
           description: Bad Request - Bad partition_name or malformed string?
           schema:
@@ -11835,7 +11835,7 @@ definitions:
     properties:
       ResourceURI:
         type: string
-        example: /hsm/v1/API_TYPE/OBJECT_TYPE/OBJECT_ID
+        example: /hsm/v2/API_TYPE/OBJECT_TYPE/OBJECT_ID
   ResourceURICollection_ResourceURICollection:
     description: >-
       A ResourceURI is like an odata.id, it provides a path to a resource

@@ -58,12 +58,12 @@ The main components of _smd_'s RESTful API are as follows:
 #### Redfish Endpoints
 
 ```text
-/hsm/v1/Inventory/RedfishEndpoints
+/hsm/v2/Inventory/RedfishEndpoints
 
     POST   A new RedfishEndpoint to be inventoried by state manager
     GET    The collection of all RedfishEndpoints, with optional filters.
     
-/hsm/v1/Inventory/RedfishEndpoints/{xname-id}
+/hsm/v2/Inventory/RedfishEndpoints/{xname-id}
     
     PUT    Updates to a RedfishEndpoint
     GET    The RedfishEndpoint's details or check its discovery status
@@ -73,11 +73,11 @@ The main components of _smd_'s RESTful API are as follows:
 #### Component Redfish endpoint information
 
 ```text
-/hsm/v1/Inventory/ComponentsEndpoints?filter-option1=xxx...
+/hsm/v2/Inventory/ComponentsEndpoints?filter-option1=xxx...
 
     GET    Array of Redfish details for a filtered subset of components
 
-/hsm/v1/Inventory/ComponentsEndpoints/{xname-id}
+/hsm/v2/Inventory/ComponentsEndpoints/{xname-id}
 
     GET    Redfish details for a specific component
 ```
@@ -85,15 +85,15 @@ The main components of _smd_'s RESTful API are as follows:
 #### Component State
 
 ```text
-/hsm/v1/State/Components?filter-option1=xxx...
+/hsm/v2/State/Components?filter-option1=xxx...
 
     GET    A filtered subset of all components, or a specific component by its id
 
-/hsm/v1/State/Components
+/hsm/v2/State/Components
 
     POST   A list of individual component ids to query, and filtering options.
 
-/hsm/v1/State/Components/{xname-id}
+/hsm/v2/State/Components/{xname-id}
 
     GET    The HW state, flag, role, enabled status, NID, etc. of the component
     PATCH  The HW state, flag, role, enabled status, NID, etc. of a component
@@ -102,11 +102,11 @@ The main components of _smd_'s RESTful API are as follows:
 #### Additional Component State Queries
 
 ```text
-/hsm/v1/State/Components/Query
+/hsm/v2/State/Components/Query
 
     POST   A list of parents and filtering options
 
-/hsm/v1/State/Components/Query/{parent-id}?filter-option1=xxx...
+/hsm/v2/State/Components/Query/{parent-id}?filter-option1=xxx...
 
     GET    Parent and children of selected component parent id, optionally filtering
 ```
@@ -114,15 +114,15 @@ The main components of _smd_'s RESTful API are as follows:
 #### Hardware Inventory and FRUs
 
 ```text
-/hsm/v1/Inventory/Hardware/Query/all
+/hsm/v2/Inventory/Hardware/Query/all
 
     GET    An xthwinv-like json representation of the system's hardware and FRUs.
 
-/hsm/v1/Inventory/HardwareByFRU/{fru-id}
+/hsm/v2/Inventory/HardwareByFRU/{fru-id}
 
     GET    Details on a particular FRU by it's ID.
 
-/hsm/v1/Inventory/HardwareByFRU/{fru-id}
+/hsm/v2/Inventory/HardwareByFRU/{fru-id}
 
     GET    Details on a particular FRU by it's ID.
 ```
@@ -130,12 +130,12 @@ The main components of _smd_'s RESTful API are as follows:
 #### NodeMaps
 
 ```text
-/hsm/v1/Defaults/NodeMaps
+/hsm/v2/Defaults/NodeMaps
 
     GET    All NodeMaps entries, with default NID and Role per xname
     POST   One or more new NodeMaps entries to be added or overwritten
 
-/hsm/v1/Defaults/NodeMaps/{xname}
+/hsm/v2/Defaults/NodeMaps/{xname}
 
     GET    The default NID and Role for {xname}
     PUT    Update the default NID and Role for xname {xname}
@@ -144,22 +144,22 @@ The main components of _smd_'s RESTful API are as follows:
 #### Component Groups
 
 ```text
-/hsm/v1/groups
+/hsm/v2/groups
 
     GET    Details on all groups
     POST   A new component group with a list of members
     
-/hsm/v1/groups/{group-label}
+/hsm/v2/groups/{group-label}
 
     PATCH  Metadata for an existing group {group-label}
     GET    Details on the group {group-label}, i.e. it's members and metadata
 
-/hsm/v1/groups/{group-label}/members
+/hsm/v2/groups/{group-label}/members
 
     GET    Just the member list for a group
     POST   The id of a new component to add to the group's members list
     
-/hsm/v1/groups/{group-label}/members/{xname-id}
+/hsm/v2/groups/{group-label}/members/{xname-id}
 
     DELETE Component {xname-id} from the members of the group {group-label}
 ```
@@ -167,22 +167,22 @@ The main components of _smd_'s RESTful API are as follows:
 #### Component Partitions
 
 ```text
-/hsm/v1/partitions
+/hsm/v2/partitions
 
     GET    Details on all partitions
     POST   A new partition with a list of members
     
-/hsm/v1/partitions/{part-name}
+/hsm/v2/partitions/{part-name}
 
     PATCH  Metadata for an existing partition {part-name}
     GET    Details on the partition {part-name}, i.e. it's members and metadata
 
-/hsm/v1/partitions/{part-name}/members
+/hsm/v2/partitions/{part-name}/members
 
     GET    Just the members list for a partition
     POST   The id of a new component to add to the partition's members list
     
-/hsm/v1/partitions/{part-name}/members/{xname-id}
+/hsm/v2/partitions/{part-name}/members/{xname-id}
 
     DELETE Component {xname-id} from the members of partition {part-name}
 ```
@@ -190,11 +190,11 @@ The main components of _smd_'s RESTful API are as follows:
 #### Component Group and Partition Memberships
 
 ```text
-/hsm/v1/memberships?filter-option1=xxx...
+/hsm/v2/memberships?filter-option1=xxx...
 
     GET    A filtered list of each system component's group/partition memberships
 
-/hsm/v1/memberships/{xname-id}
+/hsm/v2/memberships/{xname-id}
 
     GET    The group and partition memberships (if any) of component {xname-id}
 ```
@@ -232,15 +232,15 @@ This is primarily intended to compare XC-Shasta functionality.
 
 | V1 Feature | V1+ Feature | XC Equivalent |
 | --- | --- | --- |
-| /hsm/v1/State/Components (structure) | - | rs_node_t |
-| /hsm/v1/State/Components (GET) | - | xtcli status, but with all fields, including NIDs |
-| /hsm/v1/State/Components/Query/<comp> (GET) | - | xtcli status <comp> |
-| /hsm/v1/State/Components/<xname>/Enabled (PATCH) | - | xtcli enable/disable <cname> |
-| /hsm/v1/State/Components/<xname>/Role (PATCH) | - | xtcli mark <role>(1) |
-| /hsm/v1/State/Components/<xname>/StateData (PATCH) | - | xtcli set_empty -f <cname> |
-| /hsm/v1/State/Components/<xname>/FlagOnly (PATCH) | - | xtcli set_flag/clr_flag <cname>(2) |
-| /hsm/v1/Inventory/Hardware/Query/all (GET) | - | xthwinv s0 |
-| /hsm/v1/Inventory/Discover (POST XNames list) | - | xtdiscover --warmswap <xnames>(3) |
+| /hsm/v2/State/Components (structure) | - | rs_node_t |
+| /hsm/v2/State/Components (GET) | - | xtcli status, but with all fields, including NIDs |
+| /hsm/v2/State/Components/Query/<comp> (GET) | - | xtcli status <comp> |
+| /hsm/v2/State/Components/<xname>/Enabled (PATCH) | - | xtcli enable/disable <cname> |
+| /hsm/v2/State/Components/<xname>/Role (PATCH) | - | xtcli mark <role>(1) |
+| /hsm/v2/State/Components/<xname>/StateData (PATCH) | - | xtcli set_empty -f <cname> |
+| /hsm/v2/State/Components/<xname>/FlagOnly (PATCH) | - | xtcli set_flag/clr_flag <cname>(2) |
+| /hsm/v2/Inventory/Hardware/Query/all (GET) | - | xthwinv s0 |
+| /hsm/v2/Inventory/Discover (POST XNames list) | - | xtdiscover --warmswap <xnames>(3) |
 | - | Additional Hardware/Query options | xthwinv <other-flags> |
 | SCN Events | - | ec_node_(un)available, ec_node_failed |
 | - | See Future Features and Updates Below| - |
@@ -442,7 +442,7 @@ Set via -e during docker run or in k8s configuration:
     ```
 4. Double check everything is working:
     ```text
-    bshields@shasta-sms:~> curl -k https://localhost:27779/hsm/v1/groups
+    bshields@shasta-sms:~> curl -k https://localhost:27779/hsm/v2/groups
     []
     ```
 
@@ -467,7 +467,7 @@ you can then create endpoints for every BMC you wish to discover using their
 native BMC IP addresses.
 
 _NOTE: If you need particular NIDs and Roles, you will need to set up xname_
-_entries in /hsm/v1/Defaults/NodeMaps BEFORE discovery OR patch the NID and/or_
+_entries in /hsm/v2/Defaults/NodeMaps BEFORE discovery OR patch the NID and/or_
 _Role fields after discovery:_
 
 See: https://connect.us.cray.com/confluence/display/HSOS/HSM+Documentation+for+SPS2+-+Setting+Default+NIDs
@@ -477,13 +477,13 @@ See: https://connect.us.cray.com/confluence/display/HSOS/HSM+Documentation+for+S
 These are the usual computes found on a standard preview system, but you can easily adapt this example for whatever is in /etc/hosts.  Just make sure you use the BMC xname and a raw IP (if using a socks5 proxy):
 
 ```text
-curl -k -d '{"ID": "x0c0s28b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.5", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v1/Inventory/RedfishEndpoints
-curl -k -d '{"ID": "x0c0s26b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.6", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v1/Inventory/RedfishEndpoints
-curl -k -d '{"ID": "x0c0s24b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.7", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v1/Inventory/RedfishEndpoints
-curl -k -d '{"ID": "x0c0s21b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.8", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v1/Inventory/RedfishEndpoints
+curl -k -d '{"ID": "x0c0s28b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.5", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v2/Inventory/RedfishEndpoints
+curl -k -d '{"ID": "x0c0s26b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.6", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v2/Inventory/RedfishEndpoints
+curl -k -d '{"ID": "x0c0s24b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.7", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v2/Inventory/RedfishEndpoints
+curl -k -d '{"ID": "x0c0s21b0", "RediscoverOnUpdate":true, "Hostname":"10.4.0.8", "User": "root","Password": "somePassword"}' -H "Content-Type: application/json" -X POST https://localhost:27779/hsm/v2/Inventory/RedfishEndpoints
 ```
 
-NOTE: the above path is assuming you are running docker in a bare container (see above).  Otherwise use 'https://<standard-api-gateway-host>/apis/smd/hsm/v1/... instead of 'https://localhost:27779/hsm/...'
+NOTE: the above path is assuming you are running docker in a bare container (see above).  Otherwise use 'https://<standard-api-gateway-host>/apis/smd/hsm/v2/... instead of 'https://localhost:27779/hsm/...'
 
 Also note that inventory discovery is a read-only operation and should not do anything to the endpoints besides walk them via GETs.   The "RediscoverOnUpdate":true field is important because it will automatically kick off inventory discovery.
 

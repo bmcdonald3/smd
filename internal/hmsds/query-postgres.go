@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -733,25 +733,6 @@ func (d *hmsdbPg) scanPgPartition(rows *sql.Rows) (
 	// Ensure we get an empty array instead of null.
 	if p.Tags == nil {
 		p.Tags = make([]string, 0, 1)
-	}
-	return
-}
-
-// This is used for all routines that read component lock entries (sans members) as
-// rows and replaces rows.Scan in normal usage.
-func (d *hmsdbPg) scanPgCompLock(rows *sql.Rows) (
-	cl *sm.CompLock, err error,
-) {
-	cl = new(sm.CompLock)
-	err = rows.Scan(
-		&cl.ID,
-		&cl.Created,
-		&cl.Reason,
-		&cl.Owner,
-		&cl.Lifetime)
-	if err != nil {
-		cl = nil
-		return
 	}
 	return
 }

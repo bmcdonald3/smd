@@ -15,26 +15,26 @@ NOTE: Setting "RediscoverOnUpdate":true will automatically start inventory disco
 
 * _Case 1: FQDN already contains a valid BMC name_
 
-    curl -d '{"FQDN": "x0c0s14b0.mgmt.domain.name.com", "RediscoverOnUpdate":true}' -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl -d '{"FQDN": "x0c0s14b0.mgmt.domain.name.com", "RediscoverOnUpdate":true}' -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 * _Case 2: FQDN has right domain but is not a BMC/controler name.  ID must be given explicitly along with FQDN_
 
-    curl -d '{"ID": "x0c0s14b0","FQDN": "somebmcname.mgmt.domain.name.com", "RediscoverOnUpdate":true}' -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl -d '{"ID": "x0c0s14b0","FQDN": "somebmcname.mgmt.domain.name.com", "RediscoverOnUpdate":true}' -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 
 * _Case 3: If a valid xname ID is given, FQDN also may be an IP address, but then there will be no domain name info for BMC or node's mgmt network FQDN in HSM_
 
-    curl -d '{"ID": "x0c0s14b0","FQDN": "10.100.164.207", "RediscoverOnUpdate":true}' -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl -d '{"ID": "x0c0s14b0","FQDN": "10.100.164.207", "RediscoverOnUpdate":true}' -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 
 * _Case 4: Add named array of RedfishEndpoints via json file (all at once).  The array in the file should also be entitled "RedfishEndpoints"_
 
-    curl -d "@crush_endpoints.json" -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl -d "@crush_endpoints.json" -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 ==== Query the Collection of RedfishEndpoints
 
 * _Check endpoints after adding them via POST_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 This produces a named array, RedfishEndpoints, that contains all
 Redfish endpoints currently known.
@@ -42,16 +42,16 @@ Redfish endpoints currently known.
 ==== Query a Particular RedfishEndpoint
 
 * _Get a particular RedfishEndpoint by its xname ID_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints/x0c0s27b0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints/x0c0s27b0
 
 ==== Delete RedfishEndpoints
 
 * _Delete all RedfishEndpoints known to the system_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 
 * _Delete a single RedfishEndpoint_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints/x0c0s27b0
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints/x0c0s27b0
 
 Note that this also deletes any
 ComponentEndpoints that link to it if it has already been discovered.
@@ -62,7 +62,7 @@ To bootstrap the discovery of components, we must know not only how to contact e
 
 * _Get endpoint at specified xname_
 
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints/x0c0s16b0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints/x0c0s16b0
 
 _Output_
 
@@ -94,15 +94,15 @@ Inventory discovery is a non-blocking operation.  A URI to a DiscoveryStatus obj
 ==== Initiate Inventory Discovery
 
 * _Start Inventory Discovery of system's subcomponents by querying ALL RedfishEndpoints_
-    curl -d '{}'  -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/Discover
+    curl -d '{}'  -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/Discover
 
 * _Discover inventory info for just the given RedfishEndpoints and not the whole set_
-    curl -d '{"xnames": ["x0c0s26b0","x0c0s27b0"]}'  -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/Discover
+    curl -d '{"xnames": ["x0c0s26b0","x0c0s27b0"]}'  -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/Discover
 
 If for some reason, a discovery operation completes abnormally and never completes, forcing an inventory operation to start is possible.  However, care should be taken not to start multiple queries on any endpoint or one or both may fail.
 
 * _Force inventory_
-    curl -d '{"force": true}'  -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/Discover
+    curl -d '{"force": true}'  -H "Content-Type: application/json" -X POST https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/Discover
 
 
 ==== Check Inventory Discovery Status
@@ -110,12 +110,12 @@ The discovery operation will return a link to a DiscoveryStatus object.  Read it
 
 
 * _Check discovery status_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/DiscoveryStatus/0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/DiscoveryStatus/0
 
 Also, to check the status of discovery for each individual endpoint, you can re-query the RedfishEndpoint objects and check their read-only DiscoveryStatus fields (this is usual query of the RedfishEndpoint collection, but there will be updates to read-only fields following discovery).
 
 * _Check discovery status (individual endpoints)_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/RedfishEndpoints
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/RedfishEndpoints
 
 
 === Query Component Endpoints
@@ -126,7 +126,7 @@ The collection of ComponentEndpoints can be obtained in full, optionally filtere
 
 
 * _Get ComponentEndpoint at xname_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints/x0c0s16b0n0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints/x0c0s16b0n0
 
 _Output_
 
@@ -176,16 +176,16 @@ _Output_
 ==== Obtain the Collection of All ComponentEndpoints
 
 * _Obtain the complete set of ComponentEndpoints (e.g. post-discovery) as a named array, with no filtering_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints
 
 * _Filter 1: Obtain only the ComponentEndpoints that have a particular RedfishEndpoint as their parent_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints?redfish_ep=x0c0s27b0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints?redfish_ep=x0c0s27b0
 
 * _Filter 2: Obtain just the ComponentEndpoints with a given type (in this case just the nodes)_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints?type=Node
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints?type=Node
 
 * _Combining multiple query options is also allowed.  In this case, the query types are treated as a logical AND_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints?redfish_ep=x0c0s27b0\&type=Node
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints?redfish_ep=x0c0s27b0\&type=Node
 
 This would produce only the Node ComponentEndpoint types found when discovering RedfishEndpoint x0c0s27b0.
 
@@ -193,17 +193,17 @@ This would produce only the Node ComponentEndpoint types found when discovering 
 The object representing a particular ComponentEndpoint can also be obtained via its xname ID.
 
 * _Obtain component endpoint by xname ID_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints/x0c0s27b0n0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints/x0c0s27b0n0
 
 ==== Delete ComponentEndpoints
 Delete all ComponentEndpoints known to the system, e.g. prior to completely rediscovering the system.  Note that this does NOT delete any parent RedfishEndpoints.
 
 
 * _Delete all component endpoints_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints
 
 * _Delete a single ComponentEndpoint.  Does not delete the parent RedfishEndpoint_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/Inventory/ComponentEndpoints/x0c0s27b0n0
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/Inventory/ComponentEndpoints/x0c0s27b0n0
 
 
 === Query and Update HMS Component Info (State/NID Info)
@@ -214,7 +214,7 @@ HMS Components are also created during inventory discovery.  Unlike ComponentEnd
 
 
 * _Get HMS Component information_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s16b0n0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s16b0n0
 
 _Output_
 
@@ -233,17 +233,17 @@ _Output_
 Get all HMS Components found by inventory discovery as a named ("Components") array.
 
 * _Get all HMS components_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components
 
 * _Get a particular HMS Component by its xname ID_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s27b0n0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s27b0n0
 
 * _Get a particular HMS component by its NID (Nodes alone have NIDs)_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/ByNID/832
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/ByNID/832
 
 
 * _Use filtering options. Just get the "Node" typed components_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components?type=Node
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components?type=Node
 
 
 The complete list of currently supported filter parameters is as follows:
@@ -263,19 +263,19 @@ The complete list of currently supported filter parameters is as follows:
 Combining multiple query options is also allowed.  In this case, the query types are treated as a logical AND. So the following command
 provides only components of type Node whose NIDs are greater than or equal to 1 and less than or equal to 850.
 
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components?type=Node\&nid_start=1\&nid_end=850
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components?type=Node\&nid_start=1\&nid_end=850
 
 
 ==== Delete HMS Components
 
 * _Delete all HMS Components known to the system_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components
 
 As noted, these are NOT automatically deleted when RedfishEndpoints or ComponentEndpoints are deleted.
 
 
 * _Delete just a single Component with the given xname ID_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s27b0n0
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s27b0n0
 
 CAUTION: Not recommended in normal operation.
 
@@ -287,7 +287,7 @@ These are PATCH operations and each modifies a only a given field or fields, lea
 ===== Modify State and Flag Value
 
 * _Patch the State and Flag (Flag field is optional here, and defaults to OK if omitted)_
-    curl -X PATCH -d '{"State": "Ready", "Flag": "OK"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s27b0n0/StateData
+    curl -X PATCH -d '{"State": "Ready", "Flag": "OK"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s27b0n0/StateData
 
 State values include the following:
 
@@ -314,25 +314,25 @@ Flag values are one of the following:
 
 ===== Flag Only:
 * _Patch the Health Status Flag only - State is not modified_
-    curl -X PATCH -d '{"Flag": "OK"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s27b0n0/FlagOnly
+    curl -X PATCH -d '{"Flag": "OK"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s27b0n0/FlagOnly
 
 
 ===== Node Role
 
 * _Patch the Role of a node (e.g. Compute or NCN type, for example Storage)_
-    curl -X PATCH -d '{"Role": "Compute"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s27b0n0/Role
+    curl -X PATCH -d '{"Role": "Compute"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s27b0n0/Role
 
 
 ===== NID
 You can patch the NID field, but currently the NID assigned during inventory discovery will overwrite it if inventory discovery is run again (so it needs to be changed back after each one). NOTE: this is not necessarily the long-term way to manage changes to NIDs.
 
 * _Patch the NID field_
-    curl -X PATCH -d '{"NID": 27}'   https://api-gw-service-nmn.local/apis/smd/hsm/v1/State/Components/x0c0s27b0n0/NID
+    curl -X PATCH -d '{"NID": 27}'   https://api-gw-service-nmn.local/apis/smd/hsm/v2/State/Components/x0c0s27b0n0/NID
 
 === Component Groups, Partitions, and Memberships
 ==== Groups
 
-Groups are groupings of the components in /hsm/v1/State/Components, usually
+Groups are groupings of the components in /hsm/v2/State/Components, usually
 nodes.  Components can be members of any number of groups, but if a group
 has exclusiveGroup=<excl-label> set, then a node may only be a member of one
 group that matches that exclusive label.  For example, if the exclusive group
@@ -371,11 +371,11 @@ can begin empty and have component ids added individually through the operations
 on its members object (see below).
 
 * _Create a new non-exclusive group with an empty members list and two (optional) tags_
-    curl -X POST -d '{"label":"grp1", "tags":["tag1","tag2"], "description":"node group 1"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups
+    curl -X POST -d '{"label":"grp1", "tags":["tag1","tag2"], "description":"node group 1"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups
 
 
 * _Create a new group with a pre-set members list, and which is part of the 'colors' exclusive group_
-    curl -X POST -d '{"label": "blue", "description":"blue node group", "exclusiveGroup":"colors","members":{"ids":["x0c0s0b0n0","x0c0s0b0n1","x0c0s0b1n0","x0c0s0b1n1"]}}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups
+    curl -X POST -d '{"label": "blue", "description":"blue node group", "exclusiveGroup":"colors","members":{"ids":["x0c0s0b0n0","x0c0s0b0n1","x0c0s0b1n0","x0c0s0b1n1"]}}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups
 
 ===== Retrieving a Group
 
@@ -385,7 +385,7 @@ from the members set.
 
 
 * _Retrieve all fields for the just-created blue group, including the members list_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue
 
 ===== Deleting a Group
 
@@ -393,7 +393,7 @@ This removes the group entirely.  It's label will no longer exist, and will
 be removed from all members who were formerly a part of it.
 
 * _Delete the just-created blue group_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue
 
 ==== Group Members
 
@@ -411,13 +411,13 @@ _Sample Output_
 ===== Retrieve Members
 
 * _Retrieve just the members array for the blue group_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue/members
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue/members
 
 * _Retrieve only the members of blue that are ALSO in partition p1_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue/members?partition=p1
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue/members?partition=p1
 
 * _Retrieve only the members of blue that are NOT in ANY partition currently_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue/members?partition=NULL
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue/members?partition=NULL
 
 ===== Add Component to Group
 
@@ -427,14 +427,14 @@ and the component is already a member of a group with that exclusive label.
 
 
 * _Add the component 'x1c0s0b0n0' to group 'blue'_
-    curl -X POST -d '{"id":"x1c0s0b0n0"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue/members
+    curl -X POST -d '{"id":"x1c0s0b0n0"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue/members
 
 ===== Remove Group Member
 
 This removes a single member with the given xname id from the given group.
 
 * _Delete the component 'x1c0s0b0n0' from group 'blue'_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/groups/blue/members/x1c0s0b0n0
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/groups/blue/members/x1c0s0b0n0
 
 ==== Partitions
 
@@ -471,10 +471,10 @@ exclusive (at most one partition of any name for a given component).
 
 
 * _Create a new partition with an empty members list and two optional tags_
-    curl -X POST -d '{"name":"partition1", "tags":["tag1","tag2"], "description":"node partition 1"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions
+    curl -X POST -d '{"name":"partition1", "tags":["tag1","tag2"], "description":"node partition 1"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions
 
 * _Create a new partition with a pre-set members list_
-    curl -X POST -d '{"name": "partition1", "description":"node partition1","members":{"ids":["x0c0s0b0n0","x0c0s0b0n1","x0c0s0b1n0","x0c0s0b1n1"]}}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions
+    curl -X POST -d '{"name": "partition1", "description":"node partition1","members":{"ids":["x0c0s0b0n0","x0c0s0b0n1","x0c0s0b1n0","x0c0s0b1n1"]}}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions
 
 ===== Retrieving a Partition
 
@@ -483,7 +483,7 @@ retrieved and modified.
 
 
 * _Retrieve all fields for the just-created partition1 partition, including the members list_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions/partition1
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions/partition1
 
 ===== Deleting a Partition
 
@@ -492,7 +492,7 @@ no partition assigned to them and are ready to be assigned to a new partition.
 
 
 * _Delete the just-created partition1 partition, so all members are no longer in it_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions/partition1
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions/partition1
 
 ==== Partition Members
 
@@ -510,12 +510,12 @@ _Sample Output_
 
 Again, very similar to how group members are retrieved and modified,
 except that there are no filtering options (but there are partition and
-group filtering parameters (among others) for the /hsm/v1/State/Components and
-/hsm/v1/memberships collections, with both essentially working the same way).
+group filtering parameters (among others) for the /hsm/v2/State/Components and
+/hsm/v2/memberships collections, with both essentially working the same way).
 
 
 * _Retrieve just the members array for the 'partition1' partition_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions/partition1/members
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions/partition1/members
 
 ===== Add Component to PartitioSamplen
 
@@ -526,7 +526,7 @@ by looking at it's memberships info (see /memberships below).
 
 
 * _Add the component 'x1c0s0b0n0' to 'partition1'_
-    curl -X POST -d '{"id":"x1c0s0b0n0"}' https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions/partition1/members
+    curl -X POST -d '{"id":"x1c0s0b0n0"}' https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions/partition1/members
 
 ===== Remove Partition Member
 
@@ -535,7 +535,7 @@ It will no longer be in any partition and is free to be assigned to a new one.
 
 
 * _Delete the component 'x1c0s0b0n0' from partition 'partition1'_
-    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v1/partitions/partition1/members/x1c0s0b0n0
+    curl -X DELETE https://api-gw-service-nmn.local/apis/smd/hsm/v2/partitions/partition1/members/x1c0s0b0n0
 
 ==== Memberships
 
@@ -562,24 +562,24 @@ _Example Membership_
 By default, the memberships collection contains all components, whether in
 any groups or not, but more frequently a filtered subset will be desired.
 Querying the memberships collection supports the same query options as
-/hsm/v1/State/Components (see above).
+/hsm/v2/State/Components (see above).
 
 
 * _Retrieve all component memberships_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/memberships
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/memberships
 
 * _Retrieve component memberships filtered by type=node_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/memberships?type=node
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/memberships?type=node
 
 * _Retrieve only nodes not in any partition_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/memberships?type=node\&partition=NULL
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/memberships?type=node\&partition=NULL
 
 
 ===== Revieve group and partition membership data for a given component
 
-Any component in /hsm/v1/State/Components can have it's group and memberships
+Any component in /hsm/v2/State/Components can have it's group and memberships
 (if any) looked up by individual xname.
 
 
 * _Retrieve group and partition membership for node x0c0s0b0n0_
-    curl https://api-gw-service-nmn.local/apis/smd/hsm/v1/memberships/x0c0s0b0n0
+    curl https://api-gw-service-nmn.local/apis/smd/hsm/v2/memberships/x0c0s0b0n0

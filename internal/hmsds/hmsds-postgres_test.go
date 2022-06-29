@@ -6318,954 +6318,6 @@ func TestPgGetMemberships(t *testing.T) {
 //
 ////////////////////////////////////////////////////////////////////////////
 
-func TestPgInsertCompLock(t *testing.T) {
-	var dLock1 = &sm.CompLock{
-		ID:       uuid.New().String(),
-		Reason:   "Because I want to",
-		Owner:    "my_service",
-		Lifetime: 120,
-		Xnames:   []string{"x0c0s0b0n0"},
-	}
-	var dLock2 = &sm.CompLock{
-		ID:       uuid.New().String(),
-		Reason:   "Because I want to",
-		Owner:    "my_service",
-		Lifetime: 0,
-		Xnames:   []string{"x0c0s0b0n0"},
-	}
-	resInsert := compReservation{
-		component_id: dLock1.Xnames[0],
-		create_timestamp: sql.NullTime{
-			Valid: true,
-			Time:  time.Now(),
-		},
-		expiration_timestamp: sql.NullTime{
-			Valid: true,
-			Time:  time.Now(),
-		},
-		deputy_key:      dLock1.Xnames[0] + ":dk:de1a20c2-efc9-41ad-b839-1e3cef197d17",
-		reservation_key: dLock1.Xnames[0] + ":rk:cbff2077-952f-4536-a102-c442227fdc5d",
-		v1_lock_id: sql.NullString{
-			Valid:  true,
-			String: dLock1.ID,
-		},
-	}
-
-	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-
-	// Note we only use the query here so the args values don't really matter.
-	dLock1InsertLock, _, _ := sqq.Insert(compLocksTable).
-		Columns(compLocksColsNoTS...).
-		Values(sq.Expr("?", dLock1.ID), dLock1.Reason, dLock1.Owner, dLock1.Lifetime).ToSql()
-
-	dLock1InsertLockMembers, _, _ := sqq.Insert(compLockMembersTable).
-		Columns(compLockMembersCols...).
-		Values(dLock1.Xnames[0], sq.Expr("?", dLock1.ID)).ToSql()
-
-	dLock1GetCompIDs := "SELECT id FROM components WHERE (id = $1);"
-
-	dLock1UpdateComp := updateCompPrefix + " flag = $1 WHERE (id = $2);"
-
-	resInsertReservation, _, _ := sqq.Insert(compResTable).
-		Columns(compResCols...).
-		Values(resInsert.component_id,
-			sq.Expr("?", resInsert.create_timestamp),
-			sq.Expr("?", resInsert.expiration_timestamp),
-			sq.Expr("?", resInsert.deputy_key),
-			sq.Expr("?", resInsert.reservation_key),
-			resInsert.v1_lock_id).
-		Suffix("ON CONFLICT DO NOTHING RETURNING " + compResCompIdCol + ", " + compResDKCol + ", " + compResRKCol).ToSql()
-
-	tests := []struct {
-		cl                        *sm.CompLock
-		dbInsertCLError           error
-		expectedInsertCLPrepare   string
-		expectedInsertCLArgs      []driver.Value
-		dbInsertCLMError          error
-		expectedInsertCLMPrepare  string
-		expectedInsertCLMArgs     []driver.Value
-		dbGetCompIDsError         error
-		expectedGetCompIDsPrepare string
-		expectedGetCompIDsArgs    []driver.Value
-		dbGetCompIDsReturnCols    []string
-		dbGetCompIDsReturnRows    [][]driver.Value
-		dbUpdateFlagError         error
-		expectedUpdateFlagPrepare string
-		expectedUpdateFlagArgs    []driver.Value
-		expectedMembers           int64
-		dbGetCompsError           error
-		expectedGetCompsPrepare   string
-		expectedGetCompsArgs      []driver.Value
-		dbGetCompsReturnCols      []string
-		dbGetCompsReturnRows      [][]driver.Value
-		dbInsertResError          error
-		expectedInsertResPrepare  string
-		expectedInsertResArgs     []driver.Value
-		dbInsertResReturnCols     []string
-		dbInsertResReturnRows     [][]driver.Value
-		expectErr                 bool
-	}{{
-		cl:                        dLock1,
-		dbInsertCLError:           nil,
-		expectedInsertCLPrepare:   regexp.QuoteMeta(dLock1InsertLock),
-		expectedInsertCLArgs:      []driver.Value{AnyUUID{}, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		dbInsertCLMError:          nil,
-		expectedInsertCLMPrepare:  regexp.QuoteMeta(dLock1InsertLockMembers),
-		expectedInsertCLMArgs:     []driver.Value{dLock1.Xnames[0], AnyUUID{}},
-		dbGetCompIDsError:         nil,
-		expectedGetCompIDsPrepare: regexp.QuoteMeta(dLock1GetCompIDs),
-		expectedGetCompIDsArgs:    []driver.Value{dLock1.Xnames[0]},
-		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows:    [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbUpdateFlagError:         nil,
-		expectedUpdateFlagPrepare: regexp.QuoteMeta(dLock1UpdateComp),
-		expectedUpdateFlagArgs:    []driver.Value{"Locked", dLock1.Xnames[0]},
-		expectedMembers:           int64(len(dLock1.Xnames)),
-		expectedGetCompsPrepare:   regexp.QuoteMeta(tGetCompBaseQuery + " WHERE c.id IN ($1)"),
-		expectedGetCompsArgs:      []driver.Value{dLock1.Xnames[0]},
-		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows:      [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0], "Node", "Ready", "OK", true, "", "Compute", "", 42, "", "Sling", "X86", "Mountain", false, false},
-		},
-		dbInsertResError:         nil,
-		expectedInsertResPrepare: regexp.QuoteMeta(resInsertReservation),
-		expectedInsertResArgs:    []driver.Value{dLock1.Xnames[0], AnyTime{}, AnyTime{}, AnyUUID{}, AnyUUID{}, AnyString{}},
-		dbInsertResReturnCols:    []string{"component_id", "deputy_key", "reservation_key"},
-		dbInsertResReturnRows:    [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0], resInsert.deputy_key, resInsert.reservation_key},
-		},
-		expectErr:                false,
-	}, {
-		cl:                        dLock1,
-		dbInsertCLError:           nil,
-		expectedInsertCLPrepare:   regexp.QuoteMeta(dLock1InsertLock),
-		expectedInsertCLArgs:      []driver.Value{AnyUUID{}, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		dbInsertCLMError:          nil,
-		expectedInsertCLMPrepare:  regexp.QuoteMeta(dLock1InsertLockMembers),
-		expectedInsertCLMArgs:     []driver.Value{dLock1.Xnames[0], AnyUUID{}},
-		dbGetCompIDsError:         nil,
-		expectedGetCompIDsPrepare: regexp.QuoteMeta(dLock1GetCompIDs),
-		expectedGetCompIDsArgs:    []driver.Value{dLock1.Xnames[0]},
-		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows:    [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbUpdateFlagError:         ErrHMSDSArgBadID,
-		expectedUpdateFlagPrepare: regexp.QuoteMeta(dLock1UpdateComp),
-		expectedUpdateFlagArgs:    []driver.Value{},
-		expectedMembers:           int64(len(dLock1.Xnames)),
-		expectedGetCompsPrepare:   "",
-		expectedGetCompsArgs:      []driver.Value{},
-		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows:      [][]driver.Value{},
-		dbInsertResError:          nil,
-		expectedInsertResPrepare:  "",
-		expectedInsertResArgs:     []driver.Value{},
-		dbInsertResReturnCols:     []string{},
-		dbInsertResReturnRows:     [][]driver.Value{},
-		expectErr:                 true,
-	}, {
-		cl:                        dLock1,
-		dbInsertCLError:           nil,
-		expectedInsertCLPrepare:   regexp.QuoteMeta(dLock1InsertLock),
-		expectedInsertCLArgs:      []driver.Value{AnyUUID{}, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		dbInsertCLMError:          nil,
-		expectedInsertCLMPrepare:  regexp.QuoteMeta(dLock1InsertLockMembers),
-		expectedInsertCLMArgs:     []driver.Value{dLock1.Xnames[0], AnyUUID{}},
-		dbGetCompIDsError:         ErrHMSDSArgBadID,
-		expectedGetCompIDsPrepare: regexp.QuoteMeta(dLock1GetCompIDs),
-		expectedGetCompIDsArgs:    []driver.Value{dLock1.Xnames[0]},
-		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows:    [][]driver.Value{},
-		dbUpdateFlagError:         nil,
-		expectedUpdateFlagPrepare: "",
-		expectedUpdateFlagArgs:    []driver.Value{},
-		expectedMembers:           int64(len(dLock1.Xnames)),
-		expectedGetCompsPrepare:   "",
-		expectedGetCompsArgs:      []driver.Value{},
-		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows:      [][]driver.Value{},
-		dbInsertResError:          nil,
-		expectedInsertResPrepare:  "",
-		expectedInsertResArgs:     []driver.Value{},
-		dbInsertResReturnCols:     []string{},
-		dbInsertResReturnRows:     [][]driver.Value{},
-		expectErr:                 true,
-	}, {
-		cl:                        dLock1,
-		dbInsertCLError:           nil,
-		expectedInsertCLPrepare:   regexp.QuoteMeta(dLock1InsertLock),
-		expectedInsertCLArgs:      []driver.Value{AnyUUID{}, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		dbInsertCLMError:          ErrHMSDSArgBadID,
-		expectedInsertCLMPrepare:  regexp.QuoteMeta(dLock1InsertLockMembers),
-		expectedInsertCLMArgs:     []driver.Value{dLock1.Xnames[0], AnyUUID{}},
-		dbGetCompIDsError:         nil,
-		expectedGetCompIDsPrepare: "",
-		expectedGetCompIDsArgs:    []driver.Value{},
-		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows:    [][]driver.Value{},
-		dbUpdateFlagError:         nil,
-		expectedUpdateFlagPrepare: "",
-		expectedUpdateFlagArgs:    []driver.Value{},
-		expectedMembers:           int64(len(dLock1.Xnames)),
-		expectedGetCompsPrepare:   "",
-		expectedGetCompsArgs:      []driver.Value{},
-		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows:      [][]driver.Value{},
-		dbInsertResError:          nil,
-		expectedInsertResPrepare:  "",
-		expectedInsertResArgs:     []driver.Value{},
-		dbInsertResReturnCols:     []string{},
-		dbInsertResReturnRows:     [][]driver.Value{},
-		expectErr:                 true,
-	}, {
-		cl:                        dLock1,
-		dbInsertCLError:           ErrHMSDSArgBadID,
-		expectedInsertCLPrepare:   regexp.QuoteMeta(dLock1InsertLock),
-		expectedInsertCLArgs:      []driver.Value{AnyUUID{}, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		dbInsertCLMError:          nil,
-		expectedInsertCLMPrepare:  "",
-		expectedInsertCLMArgs:     []driver.Value{},
-		dbGetCompIDsError:         nil,
-		expectedGetCompIDsPrepare: "",
-		expectedGetCompIDsArgs:    []driver.Value{},
-		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows:    [][]driver.Value{},
-		dbUpdateFlagError:         nil,
-		expectedUpdateFlagPrepare: "",
-		expectedUpdateFlagArgs:    []driver.Value{},
-		expectedMembers:           int64(len(dLock1.Xnames)),
-		expectedGetCompsPrepare:   "",
-		expectedGetCompsArgs:      []driver.Value{},
-		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows:      [][]driver.Value{},
-		dbInsertResError:          nil,
-		expectedInsertResPrepare:  "",
-		expectedInsertResArgs:     []driver.Value{},
-		dbInsertResReturnCols:     []string{},
-		dbInsertResReturnRows:     [][]driver.Value{},
-		expectErr:                 true,
-	}, {
-		cl:                        dLock2,
-		dbInsertCLError:           sm.ErrCompLockBadLifetime,
-		expectedInsertCLPrepare:   "",
-		expectedInsertCLArgs:      []driver.Value{},
-		dbInsertCLMError:          nil,
-		expectedInsertCLMPrepare:  "",
-		expectedInsertCLMArgs:     []driver.Value{},
-		dbGetCompIDsError:         nil,
-		expectedGetCompIDsPrepare: "",
-		expectedGetCompIDsArgs:    []driver.Value{},
-		dbGetCompIDsReturnCols:    []string{"id"},
-		dbGetCompIDsReturnRows:    [][]driver.Value{},
-		dbUpdateFlagError:         nil,
-		expectedUpdateFlagPrepare: "",
-		expectedUpdateFlagArgs:    []driver.Value{},
-		expectedMembers:           int64(len(dLock2.Xnames)),
-		expectedGetCompsPrepare:   "",
-		expectedGetCompsArgs:      []driver.Value{},
-		dbGetCompsReturnCols:      []string{"id", "type", "state", "flag", "enabled", "admin", "role", "subrole", "nid", "subtype", "nettype", "arch", "class", "reservation_disabled", "locked"},
-		dbGetCompsReturnRows:      [][]driver.Value{},
-		dbInsertResError:          nil,
-		expectedInsertResPrepare:  "",
-		expectedInsertResArgs:     []driver.Value{},
-		dbInsertResReturnCols:     []string{},
-		dbInsertResReturnRows:     [][]driver.Value{},
-		expectErr:                 true,
-	}}
-
-	for i, test := range tests {
-		ResetMockDB()
-		rows := sqlmock.NewRows(test.dbGetCompIDsReturnCols)
-		for _, row := range test.dbGetCompIDsReturnRows {
-			rows.AddRow(row...)
-		}
-		v2rows := sqlmock.NewRows(test.dbGetCompsReturnCols)
-		for _, row := range test.dbGetCompsReturnRows {
-			v2rows.AddRow(row...)
-		}
-		resRows := sqlmock.NewRows(test.dbInsertResReturnCols)
-		for _, row := range test.dbInsertResReturnRows {
-			resRows.AddRow(row...)
-		}
-
-		mockPG.ExpectBegin()
-		if test.expectedInsertCLPrepare == "" && test.dbInsertCLError != nil {
-			mockPG.ExpectRollback()
-		} else if test.dbInsertCLError != nil {
-			mockPG.ExpectPrepare(test.expectedInsertCLPrepare).ExpectExec().WillReturnError(test.dbInsertCLError)
-			mockPG.ExpectRollback()
-		} else if test.dbInsertCLMError != nil {
-			mockPG.ExpectPrepare(test.expectedInsertCLPrepare).ExpectExec().WithArgs(test.expectedInsertCLArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-			mockPG.ExpectPrepare(test.expectedInsertCLMPrepare).ExpectExec().WillReturnError(test.dbInsertCLMError)
-			mockPG.ExpectRollback()
-		} else if test.dbGetCompIDsError != nil {
-			mockPG.ExpectPrepare(test.expectedInsertCLPrepare).ExpectExec().WithArgs(test.expectedInsertCLArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-			mockPG.ExpectPrepare(test.expectedInsertCLMPrepare).ExpectExec().WithArgs(test.expectedInsertCLMArgs...).WillReturnResult(sqlmock.NewResult(0, test.expectedMembers))
-			mockPG.ExpectPrepare(test.expectedGetCompIDsPrepare).ExpectQuery().WillReturnError(test.dbGetCompIDsError)
-			mockPG.ExpectRollback()
-		} else if test.dbUpdateFlagError != nil {
-			mockPG.ExpectPrepare(test.expectedInsertCLPrepare).ExpectExec().WithArgs(test.expectedInsertCLArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-			mockPG.ExpectPrepare(test.expectedInsertCLMPrepare).ExpectExec().WithArgs(test.expectedInsertCLMArgs...).WillReturnResult(sqlmock.NewResult(0, test.expectedMembers))
-			mockPG.ExpectPrepare(test.expectedGetCompIDsPrepare).ExpectQuery().WithArgs(test.expectedGetCompIDsArgs...).WillReturnRows(rows)
-			mockPG.ExpectPrepare(test.expectedUpdateFlagPrepare).ExpectExec().WillReturnError(test.dbUpdateFlagError)
-			mockPG.ExpectRollback()
-		} else {
-			mockPG.ExpectPrepare(test.expectedInsertCLPrepare).ExpectExec().WithArgs(test.expectedInsertCLArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-			mockPG.ExpectPrepare(test.expectedInsertCLMPrepare).ExpectExec().WithArgs(test.expectedInsertCLMArgs...).WillReturnResult(sqlmock.NewResult(0, test.expectedMembers))
-			mockPG.ExpectPrepare(test.expectedGetCompIDsPrepare).ExpectQuery().WithArgs(test.expectedGetCompIDsArgs...).WillReturnRows(rows)
-			mockPG.ExpectPrepare(test.expectedUpdateFlagPrepare).ExpectExec().WithArgs(test.expectedUpdateFlagArgs...).WillReturnResult(sqlmock.NewResult(0, test.expectedMembers))
-			mockPG.ExpectPrepare(test.expectedGetCompsPrepare).ExpectQuery().WithArgs(test.expectedGetCompsArgs...).WillReturnRows(v2rows)
-			mockPG.ExpectPrepare(test.expectedInsertResPrepare).ExpectQuery().WithArgs(test.expectedInsertResArgs...).WillReturnRows(resRows)
-			mockPG.ExpectCommit()
-		}
-
-		lockId, err := dPG.InsertCompLock(test.cl)
-		// ensure all expectations have been met
-		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
-			t.Errorf("Test %v Failed: Sql expectations were not met: %s",
-				i, mock_err)
-		}
-		if !test.expectErr {
-			if err != nil {
-				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			} else {
-				if lockId == "" {
-					t.Errorf("Test %v Failed: Expected a new lock id", i)
-				}
-			}
-		} else if err == nil {
-			t.Errorf("Test %v Failed: Expected an error.", i)
-		}
-	}
-}
-
-func TestPgGetCompLock(t *testing.T) {
-	var dLock1 = &sm.CompLock{
-		ID:       uuid.New().String(),
-		Created:  "",
-		Reason:   "Because I want to",
-		Owner:    "my_service",
-		Lifetime: 100,
-		Xnames:   []string{"x0c0s0b0n0"},
-	}
-
-	columns := compLocksCols
-
-	memberCols := []string{"component_id"}
-
-	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-
-	dLock1Query1, _, _ := sqq.Select(compLocksCols...).
-		From(compLocksTable).
-		Where("id = ?", dLock1.ID).ToSql()
-
-	dLock1MQuery1, _, _ := sqq.Select(compLockMembersColsId...).
-		From(compLockMembersTable).
-		Where("lock_id = ?", dLock1.ID).ToSql()
-
-	tests := []struct {
-		lockId                string
-		dbColumns             []string
-		dbRows                [][]driver.Value
-		dbQueryError          error
-		expectedQueryPrepare  string
-		expectedQueryArgs     []driver.Value
-		dbMColumns            []string
-		dbMRows               [][]driver.Value
-		dbMQueryError         error
-		expectedMQueryPrepare string
-		expectedMQueryArgs    []driver.Value
-		expectedCL            *sm.CompLock
-	}{{
-		lockId:    dLock1.ID,
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         nil,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query1),
-		expectedQueryArgs:    []driver.Value{dLock1.ID},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         nil,
-		expectedMQueryPrepare: regexp.QuoteMeta(dLock1MQuery1),
-		expectedMQueryArgs:    []driver.Value{dLock1.ID},
-		expectedCL:            dLock1,
-	}, {
-		lockId:    dLock1.ID,
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         nil,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query1),
-		expectedQueryArgs:    []driver.Value{dLock1.ID},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         ErrHMSDSArgBadID,
-		expectedMQueryPrepare: regexp.QuoteMeta(dLock1MQuery1),
-		expectedMQueryArgs:    []driver.Value{dLock1.ID},
-		expectedCL:            nil,
-	}, {
-		lockId:    dLock1.ID,
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         ErrHMSDSArgBadID,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query1),
-		expectedQueryArgs:    []driver.Value{dLock1.ID},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         nil,
-		expectedMQueryPrepare: "",
-		expectedMQueryArgs:    []driver.Value{},
-		expectedCL:            nil,
-	}}
-
-	for i, test := range tests {
-		ResetMockDB()
-		// before we actually execute our api function, we need to expect required DB actions
-		rows := sqlmock.NewRows(test.dbColumns)
-		for _, row := range test.dbRows {
-			rows.AddRow(row...)
-		}
-		mrows := sqlmock.NewRows(test.dbMColumns)
-		for _, mrow := range test.dbMRows {
-			mrows.AddRow(mrow...)
-		}
-
-		mockPG.ExpectBegin()
-		if test.expectedQueryPrepare == "" && test.dbQueryError != nil {
-			mockPG.ExpectRollback()
-		} else if test.dbQueryError != nil {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WillReturnError(test.dbQueryError)
-			mockPG.ExpectRollback()
-		} else if test.dbMQueryError != nil {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
-			mockPG.ExpectPrepare(test.expectedMQueryPrepare).ExpectQuery().WillReturnError(test.dbMQueryError)
-			mockPG.ExpectRollback()
-		} else {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
-			mockPG.ExpectPrepare(test.expectedMQueryPrepare).ExpectQuery().WithArgs(test.expectedMQueryArgs...).WillReturnRows(mrows)
-			mockPG.ExpectCommit()
-		}
-
-		cl, err := dPG.GetCompLock(test.lockId)
-		// ensure all expectations have been met
-		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
-			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
-		}
-		if test.dbQueryError == nil && test.dbMQueryError == nil {
-			if err != nil {
-				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			}
-			if cl == nil {
-				t.Errorf("Test %v Failed: Expected non-nil CompLock", i)
-			} else {
-				if cl.ID != test.expectedCL.ID {
-					t.Errorf("Test %v Failed: Expected id %s (got %s)",
-						i, cl.ID, test.expectedCL.ID)
-				}
-				if cl.Reason != test.expectedCL.Reason {
-					t.Errorf("Test %v Failed: Expected reason %s (got %s)",
-						i, cl.Reason, test.expectedCL.Reason)
-				}
-				if cl.Owner != test.expectedCL.Owner {
-					t.Errorf("Test %v Failed: Expected owner %s (got %s)",
-						i, cl.Owner, test.expectedCL.Owner)
-				}
-				if cl.Lifetime != test.expectedCL.Lifetime {
-					t.Errorf("Test %v Failed: Expected lifetime %d (got %d)",
-						i, cl.Lifetime, test.expectedCL.Lifetime)
-				}
-				if !reflect.DeepEqual(cl.Xnames, test.expectedCL.Xnames) {
-					t.Errorf("Test %v Failed: Expected xnames %v (got %v)",
-						i, cl.Xnames, test.expectedCL.Xnames)
-				}
-			}
-		} else if err == nil {
-			t.Errorf("Test %v Failed: Expected an error.", i)
-		}
-	}
-}
-
-func TestPgGetCompLocks(t *testing.T) {
-	var dLock1 = &sm.CompLock{
-		ID:       uuid.New().String(),
-		Created:  "",
-		Reason:   "Because I want to",
-		Owner:    "my_service",
-		Lifetime: 100,
-		Xnames:   []string{"x0c0s0b0n0"},
-	}
-
-	columns := []string{compLockIdColAlias, compLockCreatedColAlias, compLockReasonColAlias, compLockOwnerColAlias, compLockLifetimeColAlias}
-
-	memberCols := []string{"component_id"}
-
-	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-
-	dLock1Query1, _, _ := sqq.Select(addAliasToCols(compLocksAlias, compLocksCols, compLocksCols)...).
-		From(compLocksTable + " " + compLocksAlias).
-		Where(sq.Eq{compLockIdColAlias: []string{dLock1.ID}}).ToSql()
-
-	dLock1MQuery1, _, _ := sqq.Select(compLockMembersColsId...).
-		From(compLockMembersTable).
-		Where("lock_id = ?", dLock1.ID).ToSql()
-
-	dLock1Query2, _, _ := sqq.Select(addAliasToCols(compLocksAlias, compLocksCols, compLocksCols)...).
-		From(compLocksTable + " " + compLocksAlias).
-		Where(sq.Eq{compLockOwnerColAlias: []string{dLock1.Owner}}).ToSql()
-
-	dLock1MQuery2, _, _ := sqq.Select(compLockMembersColsId...).
-		From(compLockMembersTable).
-		Where("lock_id = ?", dLock1.ID).ToSql()
-
-	dLock1Query3, _, _ := sqq.Select(addAliasToCols(compLocksAlias, compLocksCols, compLocksCols)...).
-		From(compLocksTable + " " + compLocksAlias).
-		LeftJoin(compLockMembersTable + " " + compLockMembersAlias +
-			" ON " + compLockMembersLckIdColAlias + " = " + compLockIdColAlias).
-		Where(sq.Eq{compLockMembersCmpIdColAlias: []string{dLock1.Xnames[0]}}).ToSql()
-
-	dLock1MQuery3, _, _ := sqq.Select(compLockMembersColsId...).
-		From(compLockMembersTable).
-		Where("lock_id = ?", dLock1.ID).ToSql()
-
-	dLock1Query4, _, _ := sqq.Select(addAliasToCols(compLocksAlias, compLocksCols, compLocksCols)...).
-		From(compLocksTable + " " + compLocksAlias).
-		Where("NOW()-" + compLockCreatedColAlias +
-			" >= (" + compLockLifetimeColAlias + " * '1 sec'::interval)").ToSql()
-
-	dLock1MQuery4, _, _ := sqq.Select(compLockMembersColsId...).
-		From(compLockMembersTable).
-		Where("lock_id = ?", dLock1.ID).ToSql()
-
-	tests := []struct {
-		f_opts                []CompLockFiltFunc
-		dbColumns             []string
-		dbRows                [][]driver.Value
-		dbQueryError          error
-		expectedQueryPrepare  string
-		expectedQueryArgs     []driver.Value
-		dbMColumns            []string
-		dbMRows               [][]driver.Value
-		dbMQueryError         error
-		expectedMQueryPrepare string
-		expectedMQueryArgs    []driver.Value
-		expectedCL            *sm.CompLock
-	}{{
-		f_opts:    []CompLockFiltFunc{CL_ID(dLock1.ID)},
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         nil,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query1),
-		expectedQueryArgs:    []driver.Value{dLock1.ID},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         nil,
-		expectedMQueryPrepare: regexp.QuoteMeta(dLock1MQuery1),
-		expectedMQueryArgs:    []driver.Value{dLock1.ID},
-		expectedCL:            dLock1,
-	}, {
-		f_opts:    []CompLockFiltFunc{CL_Owner(dLock1.Owner)},
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         nil,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query2),
-		expectedQueryArgs:    []driver.Value{dLock1.Owner},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         nil,
-		expectedMQueryPrepare: regexp.QuoteMeta(dLock1MQuery2),
-		expectedMQueryArgs:    []driver.Value{dLock1.ID},
-		expectedCL:            dLock1,
-	}, {
-		f_opts:    []CompLockFiltFunc{CL_Xname(dLock1.Xnames[0])},
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         nil,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query3),
-		expectedQueryArgs:    []driver.Value{dLock1.Xnames[0]},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         nil,
-		expectedMQueryPrepare: regexp.QuoteMeta(dLock1MQuery3),
-		expectedMQueryArgs:    []driver.Value{dLock1.ID},
-		expectedCL:            dLock1,
-	}, {
-		f_opts:    []CompLockFiltFunc{CL_Expired},
-		dbColumns: columns,
-		dbRows: [][]driver.Value{
-			[]driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime},
-		},
-		dbQueryError:         nil,
-		expectedQueryPrepare: regexp.QuoteMeta(dLock1Query4),
-		expectedQueryArgs:    []driver.Value{},
-		dbMColumns:           memberCols,
-		dbMRows: [][]driver.Value{
-			[]driver.Value{dLock1.Xnames[0]},
-		},
-		dbMQueryError:         nil,
-		expectedMQueryPrepare: regexp.QuoteMeta(dLock1MQuery4),
-		expectedMQueryArgs:    []driver.Value{dLock1.ID},
-		expectedCL:            dLock1,
-	}}
-
-	for i, test := range tests {
-		ResetMockDB()
-		// before we actually execute our api function, we need to expect required DB actions
-		rows := sqlmock.NewRows(test.dbColumns)
-		for _, row := range test.dbRows {
-			rows.AddRow(row...)
-		}
-		mrows := sqlmock.NewRows(test.dbMColumns)
-		for _, mrow := range test.dbMRows {
-			mrows.AddRow(mrow...)
-		}
-
-		mockPG.ExpectBegin()
-		if test.expectedQueryPrepare == "" && test.dbQueryError != nil {
-			mockPG.ExpectRollback()
-		} else if test.dbQueryError != nil {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WillReturnError(test.dbQueryError)
-			mockPG.ExpectRollback()
-		} else if test.dbMQueryError != nil {
-			if len(test.expectedQueryArgs) == 0 {
-				mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WillReturnRows(rows)
-			} else {
-				mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
-			}
-			mockPG.ExpectPrepare(test.expectedMQueryPrepare).ExpectQuery().WillReturnError(test.dbMQueryError)
-			mockPG.ExpectRollback()
-		} else {
-			if len(test.expectedQueryArgs) == 0 {
-				mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WillReturnRows(rows)
-			} else {
-				mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
-			}
-			mockPG.ExpectPrepare(test.expectedMQueryPrepare).ExpectQuery().WithArgs(test.expectedMQueryArgs...).WillReturnRows(mrows)
-			mockPG.ExpectCommit()
-		}
-
-		cls, err := dPG.GetCompLocks(test.f_opts...)
-		// ensure all expectations have been met
-		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
-			t.Errorf("Test %v Failed: Sql expectations were not met: %s", i, mock_err)
-		}
-		if test.dbQueryError == nil && test.dbMQueryError == nil {
-			if err != nil {
-				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			}
-			if len(cls) == 0 {
-				t.Errorf("Test %v Failed: Expected non-empty list of CompLocks", i)
-			} else {
-				if cls[0].ID != test.expectedCL.ID {
-					t.Errorf("Test %v Failed: Expected id %s (got %s)",
-						i, cls[0].ID, test.expectedCL.ID)
-				}
-				if cls[0].Reason != test.expectedCL.Reason {
-					t.Errorf("Test %v Failed: Expected reason %s (got %s)",
-						i, cls[0].Reason, test.expectedCL.Reason)
-				}
-				if cls[0].Owner != test.expectedCL.Owner {
-					t.Errorf("Test %v Failed: Expected owner %s (got %s)",
-						i, cls[0].Owner, test.expectedCL.Owner)
-				}
-				if cls[0].Lifetime != test.expectedCL.Lifetime {
-					t.Errorf("Test %v Failed: Expected lifetime %d (got %d)",
-						i, cls[0].Lifetime, test.expectedCL.Lifetime)
-				}
-				if !reflect.DeepEqual(cls[0].Xnames, test.expectedCL.Xnames) {
-					t.Errorf("Test %v Failed: Expected xnames %v (got %v)",
-						i, cls[0].Xnames, test.expectedCL.Xnames)
-				}
-			}
-		} else if err == nil {
-			t.Errorf("Test %v Failed: Expected an error.", i)
-		}
-	}
-}
-
-func TestPgUpdateCompLock(t *testing.T) {
-	var dLock1 = &sm.CompLock{
-		ID:       uuid.New().String(),
-		Created:  "",
-		Reason:   "Because I want to",
-		Owner:    "my_service",
-		Lifetime: 120,
-		Xnames:   []string{"x0c0s0b0n0"},
-	}
-	resInsert := compReservation{
-		component_id: dLock1.Xnames[0],
-		create_timestamp: sql.NullTime{
-			Valid: true,
-			Time:  time.Now(),
-		},
-		expiration_timestamp: sql.NullTime{
-			Valid: true,
-			Time:  time.Now(),
-		},
-		deputy_key:      "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17",
-		reservation_key: "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d",
-		v1_lock_id: sql.NullString{
-			Valid:  true,
-			String: dLock1.ID,
-		},
-	}
-
-	lpReason := "Because you want to"
-	lpOwner := "your_service"
-	lpLifetime := 60
-
-	columns := compLocksCols
-
-	dLock1Rows := []driver.Value{dLock1.ID, dLock1.Created, dLock1.Reason, dLock1.Owner, dLock1.Lifetime}
-
-	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-
-	dLockQuery, _, _ := sqq.Select(compLocksCols...).
-		From(compLocksTable).
-		Where("id = ?", dLock1.ID).ToSql()
-
-	dLock1Update1, _, _ := sqq.Update("").
-		Table(compLocksTable).
-		Where("id = ?", dLock1.ID).
-		Set(compLockReasonCol, lpReason).ToSql()
-
-	dLock1Update2, _, _ := sqq.Update("").
-		Table(compLocksTable).
-		Where("id = ?", dLock1.ID).
-		Set(compLockOwnerCol, lpOwner).ToSql()
-
-	dLock1Update3, _, _ := sqq.Update("").
-		Table(compLocksTable).
-		Where("id = ?", dLock1.ID).
-		Set(compLockLifetimeCol, lpLifetime).
-		Set(compLockCreatedCol, "NOW()").ToSql()
-
-	dLock1Update4, _, _ := sqq.Update("").
-		Table(compLocksTable).
-		Where("id = ?", dLock1.ID).
-		Set(compLockReasonCol, lpReason).
-		Set(compLockOwnerCol, lpOwner).
-		Set(compLockLifetimeCol, lpLifetime).
-		Set(compLockCreatedCol, "NOW()").ToSql()
-
-	resUpdate, _, _ := sqq.Update("").
-		Table(compResTable).
-		Where(sq.Eq{compResV1LockIDCol: dLock1.ID}).
-		Set(compResExpireCol, sq.Expr("?", resInsert.expiration_timestamp)).ToSql()
-
-	tests := []struct {
-		id                       string
-		lp                       *sm.CompLockPatch
-		dbColumns                []string
-		dbRows                   [][]driver.Value
-		dbQueryError             error
-		expectedQueryPrepare     string
-		expectedQueryArgs        []driver.Value
-		dbUpdateError            error
-		expectedUpdatePrepare    string
-		expectedUpdateArgs       []driver.Value
-		dbUpdateResError         error
-		expectedUpdateResPrepare string
-		expectedUpdateResArgs    []driver.Value
-		expectedError            error
-	}{{
-		id:                       dLock1.ID,
-		lp:                       &sm.CompLockPatch{Reason: &lpReason},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(dLock1Update1),
-		expectedUpdateArgs:       []driver.Value{lpReason, dLock1.ID},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: "",
-		expectedUpdateResArgs:    []driver.Value{},
-		expectedError:            nil,
-	}, {
-		id:                       dLock1.ID,
-		lp:                       &sm.CompLockPatch{Owner: &lpOwner},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(dLock1Update2),
-		expectedUpdateArgs:       []driver.Value{lpOwner, dLock1.ID},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: "",
-		expectedUpdateResArgs:    []driver.Value{},
-		expectedError:            nil,
-	}, {
-		id:                       dLock1.ID,
-		lp:                       &sm.CompLockPatch{Lifetime: &lpLifetime},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(dLock1Update3),
-		expectedUpdateArgs:       []driver.Value{lpLifetime, "NOW()", dLock1.ID},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: regexp.QuoteMeta(resUpdate),
-		expectedUpdateResArgs:    []driver.Value{AnyTime{}, dLock1.ID},
-		expectedError:            nil,
-	}, {
-		id:                       dLock1.ID,
-		lp:                       &sm.CompLockPatch{Reason: &lpReason, Owner: &lpOwner, Lifetime: &lpLifetime},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(dLock1Update4),
-		expectedUpdateArgs:       []driver.Value{lpReason, lpOwner, lpLifetime, "NOW()", dLock1.ID},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: regexp.QuoteMeta(resUpdate),
-		expectedUpdateResArgs:    []driver.Value{AnyTime{}, dLock1.ID},
-		expectedError:            nil,
-	}, {
-		id:                       dLock1.ID,
-		lp:                       &sm.CompLockPatch{}, // No updates - do nothing
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(""),
-		expectedUpdateArgs:       []driver.Value{},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: "",
-		expectedUpdateResArgs:    []driver.Value{},
-		expectedError:            nil,
-	}, {
-		id:                       dLock1.ID, // No update- should already match
-		lp:                       &sm.CompLockPatch{Reason: &dLock1.Reason, Owner: &dLock1.Owner},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(""),
-		expectedUpdateArgs:       []driver.Value{},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: "",
-		expectedUpdateResArgs:    []driver.Value{},
-		expectedError:            nil,
-	}, {
-		id:                       dLock1.ID, // Unexpected DB error during update.
-		lp:                       &sm.CompLockPatch{Reason: &lpReason},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{dLock1Rows},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            sql.ErrNoRows,
-		expectedUpdatePrepare:    regexp.QuoteMeta(dLock1Update1),
-		expectedUpdateArgs:       []driver.Value{lpReason, dLock1.ID},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: "",
-		expectedUpdateResArgs:    []driver.Value{},
-		expectedError:            sql.ErrNoRows,
-	}, {
-		id:                       dLock1.ID,
-		lp:                       &sm.CompLockPatch{},
-		dbColumns:                columns,
-		dbRows:                   [][]driver.Value{},
-		dbQueryError:             nil,
-		expectedQueryPrepare:     regexp.QuoteMeta(dLockQuery),
-		expectedQueryArgs:        []driver.Value{dLock1.ID},
-		dbUpdateError:            nil,
-		expectedUpdatePrepare:    regexp.QuoteMeta(""),
-		expectedUpdateArgs:       []driver.Value{},
-		dbUpdateResError:         nil,
-		expectedUpdateResPrepare: "",
-		expectedUpdateResArgs:    []driver.Value{},
-		expectedError:            ErrHMSDSNoCompLock,
-	}}
-
-	for i, test := range tests {
-		ResetMockDB()
-		// before we actually execute our api function, we need to expect required DB actions
-		rows := sqlmock.NewRows(test.dbColumns)
-		for _, row := range test.dbRows {
-			rows.AddRow(row...)
-		}
-
-		mockPG.ExpectBegin()
-		if test.expectedQueryPrepare == "" && test.dbQueryError != nil {
-			mockPG.ExpectRollback()
-		} else if test.dbQueryError != nil {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WillReturnError(test.dbQueryError)
-			mockPG.ExpectRollback()
-		} else if test.dbUpdateError != nil || test.expectedError != nil {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
-			if test.dbUpdateError != nil {
-				mockPG.ExpectPrepare(test.expectedUpdatePrepare).ExpectExec().WillReturnError(test.dbUpdateError)
-			}
-			mockPG.ExpectRollback()
-		} else {
-			mockPG.ExpectPrepare(test.expectedQueryPrepare).ExpectQuery().WithArgs(test.expectedQueryArgs...).WillReturnRows(rows)
-			if test.expectedUpdatePrepare != "" {
-				mockPG.ExpectPrepare(test.expectedUpdatePrepare).ExpectExec().WithArgs(test.expectedUpdateArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-				if test.expectedUpdateResPrepare != "" {
-					mockPG.ExpectPrepare(test.expectedUpdateResPrepare).ExpectExec().WithArgs(test.expectedUpdateResArgs...).WillReturnResult(sqlmock.NewResult(0, 1))
-				}
-			}
-			mockPG.ExpectCommit()
-		}
-
-		err := dPG.UpdateCompLock(test.id, test.lp)
-		if mock_err := mockPG.ExpectationsWereMet(); mock_err != nil {
-			t.Errorf("Test %v Failed: Sql expectations were not met: %s",
-				i, mock_err)
-		}
-		if test.dbQueryError == nil && test.dbUpdateError == nil && test.expectedError == nil {
-			if err != nil {
-				t.Errorf("Test %v Failed: Unexpected error received: %s", i, err)
-			}
-		} else if err != test.expectedError {
-			t.Errorf("Test %v Failed: Expected an error (%s).",
-				i, test.expectedError)
-		}
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// Locking v2
-///////////////////////////////////////////////////////////////////////////////
-
 // Define UUID dummy type and implement sqlmocj Match interface.
 type AnyTime struct{}
 
@@ -7308,9 +6360,6 @@ func TestPgInsertCompReservations(t *testing.T) {
 		},
 		deputy_key:      "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17",
 		reservation_key: "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d",
-		v1_lock_id: sql.NullString{
-			Valid: false,
-		},
 	}
 
 	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
@@ -7322,8 +6371,7 @@ func TestPgInsertCompReservations(t *testing.T) {
 			sq.Expr("?", resInsert.create_timestamp),
 			sq.Expr("?", resInsert.expiration_timestamp),
 			sq.Expr("?", resInsert.deputy_key),
-			sq.Expr("?", resInsert.reservation_key),
-			resInsert.v1_lock_id).
+			sq.Expr("?", resInsert.reservation_key)).
 		Suffix("ON CONFLICT DO NOTHING RETURNING " + compResCompIdCol + ", " + compResDKCol + ", " + compResRKCol).ToSql()
 
 	tests := []struct {
@@ -7356,7 +6404,7 @@ func TestPgInsertCompReservations(t *testing.T) {
 		},
 		dbInsertError:           nil,
 		expectedInsertPrepare:   regexp.QuoteMeta(resInsertReservation),
-		expectedInsertArgs:      []driver.Value{"x3000c0s9b0n0", AnyTime{}, AnyTime{}, AnyUUID{}, AnyUUID{}, AnyString{}},
+		expectedInsertArgs:      []driver.Value{"x3000c0s9b0n0", AnyTime{}, AnyTime{}, AnyUUID{}, AnyUUID{}},
 		dbInsertV2ResReturnCols: []string{"component_id", "deputy_key", "reservation_key"},
 		dbInsertV2ResReturnRows: [][]driver.Value{
 			[]driver.Value{"x3000c0s9b0n0", "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17", "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d"},
@@ -7492,9 +6540,6 @@ func TestPgDeleteCompReservationsForce(t *testing.T) {
 		},
 		deputy_key:      "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17",
 		reservation_key: "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d",
-		v1_lock_id: sql.NullString{
-			Valid: false,
-		},
 	}
 
 	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
@@ -7502,7 +6547,7 @@ func TestPgDeleteCompReservationsForce(t *testing.T) {
 	// Note we only use the query here so the args values don't really matter.
 	resDeleteReservation, _, _ := sqq.Delete(compResTable).
 		Where(sq.Eq{compResCompIdCol: []string{res.component_id}}).
-		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol).ToSql()
+		Suffix("RETURNING " + compResCompIdCol).ToSql()
 
 	tests := []struct {
 		f                         sm.CompLockV2Filter
@@ -7534,9 +6579,9 @@ func TestPgDeleteCompReservationsForce(t *testing.T) {
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
 		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0"},
-		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
+		dbDeleteReturnCols:    []string{"component_id"},
 		dbDeleteReturnRows:    [][]driver.Value{
-			[]driver.Value{"x3000c0s9b0n0", nil},
+			[]driver.Value{"x3000c0s9b0n0"},
 		},
 		expectedSuccess: 1,
 		expectedFailure: 0,
@@ -7628,10 +6673,6 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		},
 		deputy_key:      "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17",
 		reservation_key: "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d",
-		v1_lock_id: sql.NullString{
-			Valid:  true,
-			String: "de1a20c2-efc9-41ad-b839-1e3cef197d17",
-		},
 	}
 
 	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
@@ -7639,7 +6680,7 @@ func TestPgDeleteCompReservations(t *testing.T) {
 	// Note we only use the query here so the args values don't really matter.
 	resDeleteReservation, _, _ := sqq.Delete(compResTable).
 		Where(sq.Eq{compResRKCol: []string{res.reservation_key}}).
-		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol).ToSql()
+		Suffix("RETURNING " + compResCompIdCol).ToSql()
 
 	tests := []struct {
 		f                     sm.CompLockV2ReservationFilter
@@ -7648,7 +6689,6 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		expectedDeleteArgs    []driver.Value
 		dbDeleteReturnCols    []string
 		dbDeleteReturnRows    [][]driver.Value
-		dbDeleteReturnv1ID    bool
 		expectedSuccess       int
 		expectedFailure       int
 		expectErr             bool
@@ -7665,32 +6705,10 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
 		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d"},
-		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
+		dbDeleteReturnCols:    []string{"component_id"},
 		dbDeleteReturnRows:    [][]driver.Value{
-			[]driver.Value{"x3000c0s9b0n0", nil},
+			[]driver.Value{"x3000c0s9b0n0"},
 		},
-		dbDeleteReturnv1ID: false,
-		expectedSuccess:    1,
-		expectedFailure:    0,
-		expectErr:          false,
-	}, {
-		f: sm.CompLockV2ReservationFilter{
-			ReservationKeys: []sm.CompLockV2Key{
-				sm.CompLockV2Key{
-					ID:  "x3000c0s9b0n0",
-					Key: "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d",
-				},
-			},
-			ProcessingModel: sm.CLProcessingModelRigid,
-		},
-		dbDeleteError:         nil,
-		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
-		expectedDeleteArgs:    []driver.Value{"x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d"},
-		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
-		dbDeleteReturnRows:    [][]driver.Value{
-			[]driver.Value{"x3000c0s9b0n0", res.v1_lock_id.String},
-		},
-		dbDeleteReturnv1ID: true,
 		expectedSuccess:    1,
 		expectedFailure:    0,
 		expectErr:          false,
@@ -7708,7 +6726,6 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		expectedDeleteArgs:    []driver.Value{},
 		dbDeleteReturnCols:    []string{},
 		dbDeleteReturnRows:    [][]driver.Value{},
-		dbDeleteReturnv1ID:    false,
 		expectedSuccess:       0,
 		expectedFailure:       0,
 		expectErr:             true,
@@ -7727,27 +6744,12 @@ func TestPgDeleteCompReservations(t *testing.T) {
 		compRows := sqlmock.NewRows([]string{"id"})
 		compRows.AddRow([]driver.Value{"x3000c0s9b0n0"}...)
 
-		noRows := sqlmock.NewRows(test.dbDeleteReturnCols)
-
 		mockPG.ExpectBegin()
 		if test.expectedDeletePrepare == "" && test.dbDeleteError == nil {
 			mockPG.ExpectRollback()
 		} else if test.dbDeleteError != nil {
 			mockPG.ExpectPrepare(test.expectedDeletePrepare).ExpectQuery().WillReturnError(test.dbDeleteError)
 			mockPG.ExpectRollback()
-		} else if test.dbDeleteReturnv1ID {
-			mockPG.ExpectPrepare(test.expectedDeletePrepare).ExpectQuery().WithArgs(test.expectedDeleteArgs...).WillReturnRows(rows)
-			// Get members
-			mockPG.ExpectPrepare("").ExpectQuery().WillReturnRows(v1rows)
-			// Get components
-			mockPG.ExpectPrepare("").ExpectQuery().WillReturnRows(compRows)
-			// Get update components
-			mockPG.ExpectPrepare("").ExpectExec().WillReturnResult(sqlmock.NewResult(0, 1))
-			// Delete v1 lock
-			mockPG.ExpectPrepare("").ExpectExec().WillReturnResult(sqlmock.NewResult(0, 1))
-			// Delete reservation
-			mockPG.ExpectPrepare("").ExpectQuery().WillReturnRows(noRows)
-			mockPG.ExpectCommit()
 		} else {
 			mockPG.ExpectPrepare(test.expectedDeletePrepare).ExpectQuery().WithArgs(test.expectedDeleteArgs...).WillReturnRows(rows)
 			mockPG.ExpectCommit()
@@ -7776,57 +6778,28 @@ func TestPgDeleteCompReservations(t *testing.T) {
 }
 
 func TestPgDeleteCompReservationsExpired(t *testing.T) {
-	res := compReservation{
-		component_id: "x3000c0s9b0n0",
-		create_timestamp: sql.NullTime{
-			Valid: true,
-			Time:  time.Now(),
-		},
-		expiration_timestamp: sql.NullTime{
-			Valid: true,
-			Time:  time.Now(),
-		},
-		deputy_key:      "x3000c0s9b0n0:dk:de1a20c2-efc9-41ad-b839-1e3cef197d17",
-		reservation_key: "x3000c0s9b0n0:rk:cbff2077-952f-4536-a102-c442227fdc5d",
-		v1_lock_id: sql.NullString{
-			Valid:  false,
-			String: "de1a20c2-efc9-41ad-b839-1e3cef197d17",
-		},
-	}
 
 	sqq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 	// Note we only use the query here so the args values don't really matter.
 	resDeleteReservation, _, _ := sqq.Delete(compResTable).
 		Where(compResExpireCol + " IS NOT NULL AND NOW() >= " + compResExpireCol).
-		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol).ToSql()
+		Suffix("RETURNING " + compResCompIdCol).ToSql()
 
 	tests := []struct {
 		dbDeleteError         error
 		expectedDeletePrepare string
 		dbDeleteReturnCols    []string
 		dbDeleteReturnRows    [][]driver.Value
-		dbDeleteReturnv1ID    bool
 		expectedSuccess       int
 		expectErr             bool
 	}{{
 		dbDeleteError:         nil,
 		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
-		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
+		dbDeleteReturnCols:    []string{"component_id"},
 		dbDeleteReturnRows:    [][]driver.Value{
-			[]driver.Value{"x3000c0s9b0n0", nil},
+			[]driver.Value{"x3000c0s9b0n0"},
 		},
-		dbDeleteReturnv1ID: false,
-		expectedSuccess:    1,
-		expectErr:          false,
-	}, {
-		dbDeleteError:         nil,
-		expectedDeletePrepare: regexp.QuoteMeta(resDeleteReservation),
-		dbDeleteReturnCols:    []string{"component_id", "v1_lock_id"},
-		dbDeleteReturnRows:    [][]driver.Value{
-			[]driver.Value{"x3000c0s9b0n0", res.v1_lock_id.String},
-		},
-		dbDeleteReturnv1ID: true,
 		expectedSuccess:    1,
 		expectErr:          false,
 	}}
@@ -7844,27 +6817,12 @@ func TestPgDeleteCompReservationsExpired(t *testing.T) {
 		compRows := sqlmock.NewRows([]string{"id"})
 		compRows.AddRow([]driver.Value{"x3000c0s9b0n0"}...)
 
-		noRows := sqlmock.NewRows(test.dbDeleteReturnCols)
-
 		mockPG.ExpectBegin()
 		if test.expectedDeletePrepare == "" && test.dbDeleteError == nil {
 			mockPG.ExpectRollback()
 		} else if test.dbDeleteError != nil {
 			mockPG.ExpectPrepare(test.expectedDeletePrepare).ExpectQuery().WillReturnError(test.dbDeleteError)
 			mockPG.ExpectRollback()
-		} else if test.dbDeleteReturnv1ID {
-			mockPG.ExpectPrepare(test.expectedDeletePrepare).ExpectQuery().WillReturnRows(rows)
-			// Get members
-			mockPG.ExpectPrepare("").ExpectQuery().WillReturnRows(v1rows)
-			// Get components
-			mockPG.ExpectPrepare("").ExpectQuery().WillReturnRows(compRows)
-			// Get update components
-			mockPG.ExpectPrepare("").ExpectExec().WillReturnResult(sqlmock.NewResult(0, 1))
-			// Delete v1 lock
-			mockPG.ExpectPrepare("").ExpectExec().WillReturnResult(sqlmock.NewResult(0, 1))
-			// Delete reservation
-			mockPG.ExpectPrepare("").ExpectQuery().WillReturnRows(noRows)
-			mockPG.ExpectCommit()
 		} else {
 			mockPG.ExpectPrepare(test.expectedDeletePrepare).ExpectQuery().WillReturnRows(rows)
 			mockPG.ExpectCommit()

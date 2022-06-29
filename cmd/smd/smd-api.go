@@ -2498,8 +2498,8 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 	go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
 
 	// Send a URI array of the created resources, along with 201 (created).
-	uris := eps.GetResourceURIArray(s.redfishEPBase)
-	sendJsonNewResourceIDArray(w, s.redfishEPBase, uris)
+	uris := eps.GetResourceURIArray(s.redfishEPBaseV2)
+	sendJsonNewResourceIDArray(w, s.redfishEPBaseV2, uris)
 	return
 }
 
@@ -2775,163 +2775,8 @@ func (s *SmD) doServiceEndpointsDeleteAll(w http.ResponseWriter, r *http.Request
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// Component Ethernet Interfaces - V1 API
+// Component Ethernet Interfaces
 /////////////////////////////////////////////////////////////////////////////
-
-// Get all component ethernet interfaces that currently exist, optionally filtering the set,
-// returning an array of component ethernet interface records.
-func (s *SmD) doCompEthInterfacesGet(w http.ResponseWriter, r *http.Request) {
-	var err error
-	if err := r.ParseForm(); err != nil {
-		s.lg.Printf("doCompEthInterfacesGet(): ParseForm: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"failed to decode query parameters.")
-		return
-	}
-	formJSON, err := json.Marshal(r.Form)
-	if err != nil {
-		s.lg.Printf("doCompEthInterfacesGet(): Marshal form: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"failed to decode query parameters.")
-		return
-	}
-	filter := new(CompEthInterfaceFltr)
-	if err = json.Unmarshal(formJSON, filter); err != nil {
-		s.lg.Printf("doCompEthInterfacesGet(): Unmarshal form: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"failed to decode query parameters.")
-		return
-	}
-
-	ceiFilter := []hmsds.CompEthInterfaceFiltFunc{}
-
-	if len(filter.ID) > 0 {
-		for i, id := range filter.ID {
-			if len(id) == 0 {
-				s.lg.Printf("doCompEthInterfacesGet(): Invalid component ethernet interface ID.")
-				sendJsonError(w, http.StatusBadRequest, "Invalid component ethernet interface ID.")
-				return
-			}
-			filter.ID[i] = strings.ToLower(id)
-		}
-		ceiFilter = append(ceiFilter, hmsds.CEI_IDs(filter.ID))
-	}
-	if len(filter.MACAddr) > 0 {
-		for i, mac := range filter.MACAddr {
-			if len(mac) == 0 {
-				s.lg.Printf("doCompEthInterfacesGet(): Invalid component ethernet interface MAC address.")
-				sendJsonError(w, http.StatusBadRequest, "Invalid component ethernet interface MAC address.")
-				return
-			}
-			filter.MACAddr[i] = strings.ToLower(mac)
-		}
-		ceiFilter = append(ceiFilter, hmsds.CEI_MACAddrs(filter.MACAddr))
-	}
-	if len(filter.IPAddr) > 0 {
-		ceiFilter = append(ceiFilter, hmsds.CEI_IPAddrs(filter.IPAddr))
-	}
-	if len(filter.OlderThan) > 0 {
-		ceiFilter = append(ceiFilter, hmsds.CEI_OlderThan(filter.OlderThan[0]))
-	}
-	if len(filter.NewerThan) > 0 {
-		ceiFilter = append(ceiFilter, hmsds.CEI_NewerThan(filter.NewerThan[0]))
-	}
-	if len(filter.CompID) > 0 {
-		for i, xname := range filter.CompID {
-			xnameNorm := base.VerifyNormalizeCompID(xname)
-			if len(xnameNorm) == 0 && len(xname) != 0 {
-				s.lg.Printf("doCompEthInterfacesGet(): Invalid CompID.")
-				sendJsonError(w, http.StatusBadRequest, "Invalid CompID.")
-				return
-			}
-			filter.CompID[i] = xnameNorm
-		}
-		ceiFilter = append(ceiFilter, hmsds.CEI_CompIDs(filter.CompID))
-	}
-
-	if len(filter.Type) > 0 {
-		for i, compType := range filter.Type {
-			compTypeNorm := base.VerifyNormalizeType(compType)
-			if len(compTypeNorm) == 0 {
-				s.lg.Printf("doCompEthInterfacesGet(): Invalid HMS type.")
-				sendJsonError(w, http.StatusBadRequest, "Invalid HMS type.")
-				return
-			}
-			filter.Type[i] = compTypeNorm
-		}
-		ceiFilter = append(ceiFilter, hmsds.CEI_CompTypes(filter.Type))
-	}
-	ceisV2, err := s.db.GetCompEthInterfaceFilter(ceiFilter...)
-	if err != nil {
-		s.lg.Printf("doCompEthInterfacesGet(): Lookup failure: %s", err)
-		sendJsonDBError(w, "bad query param: ", "", err)
-		return
-	}
-
-	// Convert to V1 API schema
-	ceis := []*sm.CompEthInterface{}
-	for _, ceiV2 := range ceisV2 {
-		ceis = append(ceis, ceiV2.ToV1())
-	}
-
-	sendJsonCompEthInterfaceArrayRsp(w, ceis)
-	return
-}
-
-// Create a new component ethernet interface.
-func (s *SmD) doCompEthInterfacePost(w http.ResponseWriter, r *http.Request) {
-	var ceiIn sm.CompEthInterface
-
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &ceiIn)
-	if err != nil {
-		s.lg.Printf("doCompEthInterfacePostV2(): Unmarshal body: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"error decoding JSON "+err.Error())
-		return
-	}
-
-	// Convert to CompEthInterfaceV2
-	// Okay, for backwards compatibility wrap the provided IP/Network into a single IP mapping
-	ipAddrs := []sm.IPAddressMapping{}
-	if ceiIn.IPAddr != "" {
-		ipMapping := sm.IPAddressMapping{
-			IPAddr: ceiIn.IPAddr,
-		}
-
-		ipAddrs = []sm.IPAddressMapping{ipMapping}
-	}
-
-	mac, err := rf.NormalizeVerifyMAC(ceiIn.MACAddr)
-	if err != nil {
-		s.lg.Printf("doCompEthInterfacePostV2(): Invalid MAC address: %s", err)
-		sendJsonError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	cei, err := sm.NewCompEthInterfaceV2(ceiIn.Desc, mac, ceiIn.CompID, ipAddrs)
-	if err != nil {
-		sendJsonError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	err = s.db.InsertCompEthInterface(cei)
-	if err != nil {
-		s.lg.Printf("doCompEthInterfacePost(): %s %s Err: %s", r.RemoteAddr, string(body), err)
-		if err == hmsds.ErrHMSDSDuplicateKey {
-			sendJsonError(w, http.StatusConflict, "operation would conflict "+
-				"with an existing component ethernet interface that has the same MAC address.")
-		} else {
-			// Send this message as 500 or 400 plus error message if it is
-			// an HMSError and not, e.g. an internal DB error code.
-			sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
-		}
-		return
-	}
-
-	uri := &sm.ResourceURI{s.compEthIntBase + "/" + cei.ID}
-	sendJsonNewResourceID(w, uri)
-	return
-}
 
 // Delete collection containing all component ethernet interface entries.
 func (s *SmD) doCompEthInterfaceDeleteAll(w http.ResponseWriter, r *http.Request) {
@@ -2948,35 +2793,6 @@ func (s *SmD) doCompEthInterfaceDeleteAll(w http.ResponseWriter, r *http.Request
 	}
 	numStr := strconv.FormatInt(numDeleted, 10)
 	sendJsonError(w, http.StatusOK, "deleted "+numStr+" entries")
-}
-
-// Retrieve the component ethernet interface which was created with the given {id}.
-func (s *SmD) doCompEthInterfaceGet(w http.ResponseWriter, r *http.Request) {
-	var err error
-	vars := mux.Vars(r)
-	id := strings.ToLower(vars["id"])
-
-	if len(id) == 0 {
-		s.lg.Printf("doCompEthInterfaceGet(): Invalid id.")
-		sendJsonError(w, http.StatusBadRequest,
-			"Invalid id.")
-		return
-	}
-
-	ceis, err := s.db.GetCompEthInterfaceFilter(hmsds.CEI_ID(id))
-	if err != nil {
-		s.lg.Printf("doCompEthInterfaceGet(): Lookup failure: %s", err)
-		sendJsonDBError(w, "bad query param: ", "", err)
-		return
-	}
-	if ceis == nil || len(ceis) == 0 {
-		s.lg.Printf("doCompEthInterfaceGet(): No such component ethernet interface, %s", id)
-		sendJsonError(w, http.StatusNotFound, "No such component ethernet interface: "+id)
-		return
-	}
-
-	sendJsonCompEthInterfaceRsp(w, ceis[0].ToV1())
-	return
 }
 
 // Delete component ethernet interface {id}.
@@ -3004,57 +2820,6 @@ func (s *SmD) doCompEthInterfaceDelete(w http.ResponseWriter, r *http.Request) {
 	sendJsonError(w, http.StatusOK, "deleted 1 entry")
 	return
 }
-
-// To update the IP address and/or description of a component ethernet interface,
-// a PATCH operation can be used. Omitted fields are not updated. LastUpdate is
-// only updated if an IP address is specified.
-func (s *SmD) doCompEthInterfacePatch(w http.ResponseWriter, r *http.Request) {
-	// For simplicity, only allow patches on compent endpoints that have 0/1 IP Address
-	var ceip sm.CompEthInterfacePatch
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	if len(id) == 0 {
-		s.lg.Printf("doCompEthInterfacePatch(): Invalid id.")
-		sendJsonError(w, http.StatusBadRequest, "Invalid id.")
-		return
-	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &ceip)
-	if err != nil {
-		s.lg.Printf("doCompEthInterfacePatch(): Unmarshal body: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"error decoding JSON "+err.Error())
-		return
-	}
-	if ceip.Desc == nil && ceip.IPAddr == nil && ceip.CompID == nil {
-		s.lg.Printf("doCompEthInterfacePatch(): Request must have at least one patch field.")
-		sendJsonError(w, http.StatusBadRequest, "Request must have at least one patch field.")
-		return
-	}
-	cei, err := s.db.UpdateCompEthInterfaceV1(id, &ceip)
-	if err == hmsds.ErrHMSDSCompEthInterfaceMultipleIPs {
-		s.lg.Printf("doCompEthInterfacePatch(): unable to patch component ethernet interface with multiple IP Addresses")
-		sendJsonError(w, http.StatusBadRequest, "unable to patch component ethernet interface with multiple IP Addresses")
-		return
-	} else if err != nil {
-		s.lg.Printf("doCompEthInterfacePatch(): Lookup failure: %s", err)
-		sendJsonDBError(w, "bad query param: ", "", err)
-		return
-	} else if cei == nil {
-		s.lg.Printf("doCompEthInterfacePatch(): no such component ethernet interface.")
-		sendJsonError(w, http.StatusNotFound, "no such component ethernet interface.")
-		return
-	}
-
-	sendJsonCompEthInterfaceRsp(w, cei.ToV1())
-	return
-}
-
-/////////////////////////////////////////////////////////////////////////////
-// Component Ethernet Interfaces - V2 API
-/////////////////////////////////////////////////////////////////////////////
 
 // Get all component ethernet interfaces that currently exist, optionally filtering the set,
 // returning an array of component ethernet interface records.
@@ -3528,7 +3293,7 @@ func (s *SmD) doInventoryDiscoverPost(w http.ResponseWriter, r *http.Request) {
 	// always fixed.
 	uris := make([]*sm.ResourceURI, 0, 1)
 	uri := new(sm.ResourceURI)
-	uri.URI = s.invDiscStatusBase + "/" + strconv.FormatUint(uint64(id), 10)
+	uri.URI = s.invDiscStatusBaseV2 + "/" + strconv.FormatUint(uint64(id), 10)
 	uris = append(uris, uri)
 
 	sendJsonResourceIDArray(w, uris)
@@ -4283,8 +4048,8 @@ func (s *SmD) doGroupsPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.groupsBase + "/" + label}}
-	sendJsonNewResourceIDArray(w, s.groupsBase, uris)
+	uris := []*sm.ResourceURI{{s.groupsBaseV2 + "/" + label}}
+	sendJsonNewResourceIDArray(w, s.groupsBaseV2, uris)
 	return
 }
 
@@ -4553,8 +4318,8 @@ func (s *SmD) doGroupMembersPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.groupsBase + "/" + label + "/members/" + id}}
-	sendJsonNewResourceIDArray(w, s.groupsBase, uris)
+	uris := []*sm.ResourceURI{{s.groupsBaseV2 + "/" + label + "/members/" + id}}
+	sendJsonNewResourceIDArray(w, s.groupsBaseV2, uris)
 	return
 }
 
@@ -4740,8 +4505,8 @@ func (s *SmD) doPartitionsPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.partitionsBase + "/" + name}}
-	sendJsonNewResourceIDArray(w, s.partitionsBase, uris)
+	uris := []*sm.ResourceURI{{s.partitionsBaseV2 + "/" + name}}
+	sendJsonNewResourceIDArray(w, s.partitionsBaseV2, uris)
 	return
 }
 
@@ -4954,8 +4719,8 @@ func (s *SmD) doPartitionMembersPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.partitionsBase + "/" + name + "/members/" + id}}
-	sendJsonNewResourceIDArray(w, s.partitionsBase, uris)
+	uris := []*sm.ResourceURI{{s.partitionsBaseV2 + "/" + name + "/members/" + id}}
+	sendJsonNewResourceIDArray(w, s.partitionsBaseV2, uris)
 	return
 }
 
@@ -5058,218 +4823,7 @@ func (s *SmD) doMembershipGet(w http.ResponseWriter, r *http.Request) {
 }
 
 /*
- * HSM Component Lock API V1
- */
-
-// Get all component locks that currently exist, optionally filtering the set,
-// returning an array of component lock records.
-func (s *SmD) doCompLocksGet(w http.ResponseWriter, r *http.Request) {
-	var err error
-	if err := r.ParseForm(); err != nil {
-		s.lg.Printf("doCompLocksGet(): ParseForm: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"failed to decode query parameters.")
-		return
-	}
-	formJSON, err := json.Marshal(r.Form)
-	if err != nil {
-		s.lg.Printf("doCompLocksGet(): Marshal form: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"failed to decode query parameters.")
-		return
-	}
-	filter := new(CompLockFltr)
-	if err = json.Unmarshal(formJSON, filter); err != nil {
-		s.lg.Printf("doCompLocksGet(): Unmarshal form: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"failed to decode query parameters.")
-		return
-	}
-	for i, xname := range filter.Xname {
-		xnameNorm := base.VerifyNormalizeCompID(xname)
-		if len(xnameNorm) == 0 {
-			s.lg.Printf("doCompLocksGet(): Invalid xname.")
-			sendJsonError(w, http.StatusBadRequest,
-				"Invalid xname.")
-			return
-		}
-		filter.Xname[i] = xnameNorm
-	}
-	cls, err := s.db.GetCompLocks(hmsds.CL_IDs(filter.ID),
-		hmsds.CL_Owners(filter.Owner),
-		hmsds.CL_Xnames(filter.Xname))
-	if err != nil {
-		s.lg.Printf("doCompLocksGet(): Lookup failure: %s", err)
-		sendJsonDBError(w, "bad query param: ", "", err)
-		return
-	}
-	sendJsonCompLockArrayRsp(w, cls)
-	return
-}
-
-// Create a new component lock. The xname list must not
-// overlap with any existing component locks.
-func (s *SmD) doCompLocksPost(w http.ResponseWriter, r *http.Request) {
-	var compLockIn sm.CompLock
-
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &compLockIn)
-	if err != nil {
-		s.lg.Printf("doCompLocksPost(): Unmarshal body: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"error decoding JSON "+err.Error())
-		return
-	}
-	if len(compLockIn.Reason) == 0 {
-		sendJsonError(w, http.StatusBadRequest, "Missing a reason for the lock")
-		return
-	}
-	if len(compLockIn.Owner) == 0 {
-		sendJsonError(w, http.StatusBadRequest, "Missing an owner for the lock")
-		return
-	}
-	if len(compLockIn.Xnames) == 0 {
-		sendJsonError(w, http.StatusBadRequest, "Missing xnames for the lock")
-		return
-	}
-	cl, err := sm.NewCompLock(
-		compLockIn.Reason,
-		compLockIn.Owner,
-		compLockIn.Lifetime,
-		compLockIn.Xnames)
-	if err != nil {
-		s.lg.Printf("doCompLocksPost(): Couldn't validate component lock: %s", err)
-		sendJsonError(w, http.StatusBadRequest,
-			"couldn't validate component lock: "+err.Error())
-		return
-	}
-	id, err := s.db.InsertCompLock(cl)
-	if err != nil {
-		s.lg.Printf("doCompLocksPost(): %s %s Err: %s", r.RemoteAddr, string(body), err)
-		if err == hmsds.ErrHMSDSExclusiveCompLock {
-			sendJsonError(w, http.StatusConflict, "operation would conflict "+
-				"with an existing xname in another component lock.")
-		} else {
-			// Send this message as 500 or 400 plus error message if it is
-			// an HMSError and not, e.g. an internal DB error code.
-			sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
-		}
-		return
-	}
-
-	uri := &sm.ResourceURI{s.compLockBase + "/" + id}
-	sendJsonNewResourceID(w, uri)
-	return
-}
-
-// Retrieve the component lock which was created with the given {lockId}.
-func (s *SmD) doCompLockGet(w http.ResponseWriter, r *http.Request) {
-	var err error
-	vars := mux.Vars(r)
-	id := vars["lock_id"]
-
-	if len(id) == 0 {
-		s.lg.Printf("doCompLockGet(): Invalid lock id.")
-		sendJsonError(w, http.StatusBadRequest,
-			"Invalid lock id.")
-		return
-	}
-
-	cl, err := s.db.GetCompLock(id)
-	if err != nil {
-		s.lg.Printf("doCompLockGet(): Lookup failure: %s", err)
-		sendJsonDBError(w, "bad query param: ", "", err)
-		return
-	}
-	if cl == nil {
-		s.lg.Printf("doCompLockGet(): No such component lock, %s", id)
-		sendJsonError(w, http.StatusNotFound, "No such component lock: "+id)
-		return
-	}
-
-	sendJsonCompLockRsp(w, cl)
-	return
-}
-
-// Delete component lock {lockId}. Any members previously in the component lock
-// will no longer be locked.
-func (s *SmD) doCompLockDelete(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["lock_id"]
-
-	if len(id) == 0 {
-		s.lg.Printf("doCompLockDelete(): Invalid lock id.")
-		sendJsonError(w, http.StatusBadRequest,
-			"Invalid lock id.")
-		return
-	}
-	didDelete, err := s.db.DeleteCompLock(id)
-	if err != nil {
-		s.lg.Printf("doCompLockDelete(): delete failure: (%s) %s", id, err)
-		sendJsonError(w, http.StatusInternalServerError, "DB query failed.")
-		return
-	}
-	if didDelete == false {
-		s.lg.Printf("doCompLockDelete(): No such component lock, %s", id)
-		sendJsonError(w, http.StatusNotFound, "no such component lock.")
-		return
-	}
-	sendJsonError(w, http.StatusOK, "deleted 1 entry")
-	return
-}
-
-// To update the reason, owner, and/or refresh the lifetime of a component
-// lock, a PATCH operation can be used.
-// Omitted fields are not updated.
-func (s *SmD) doCompLockPatch(w http.ResponseWriter, r *http.Request) {
-	var compLockPatch sm.CompLockPatch
-	vars := mux.Vars(r)
-	id := vars["lock_id"]
-
-	if len(id) == 0 {
-		s.lg.Printf("doCompLockPatch(): Invalid lock id.")
-		sendJsonError(w, http.StatusBadRequest,
-			"Invalid lock id.")
-		return
-	}
-
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &compLockPatch)
-	if err != nil {
-		s.lg.Printf("doCompLockPatch(): Unmarshal body: %s", err)
-		sendJsonError(w, http.StatusInternalServerError,
-			"error decoding JSON "+err.Error())
-		return
-	}
-	if compLockPatch.Reason == nil && compLockPatch.Owner == nil &&
-		compLockPatch.Lifetime == nil {
-		s.lg.Printf("doCompLockPatch(): Request must have at least one patch field.")
-		sendJsonError(w, http.StatusBadRequest,
-			"Request must have at least one patch field.")
-	}
-	if err = compLockPatch.Verify(); err != nil {
-		s.lg.Printf("doCompLockPatch(): Couldn't validate component lock patch: %s", err)
-		sendJsonError(w, http.StatusBadRequest,
-			"couldn't validate component lock patch: "+err.Error())
-		return
-	}
-	err = s.db.UpdateCompLock(id, &compLockPatch)
-	if err != nil {
-		s.lg.Printf("doCompLockPatch(): Lookup failure: %s", err)
-		if err == hmsds.ErrHMSDSNoCompLock {
-			sendJsonError(w, http.StatusNotFound, "no such component lock.")
-		} else {
-			sendJsonDBError(w, "bad query param: ", "", err)
-		}
-		return
-	}
-
-	sendJsonError(w, http.StatusNoContent, "Success")
-	return
-}
-
-/*
- * HSM Component Lock V2 API
+ * HSM Component Lock API
  */
 
 func (s *SmD) compLocksV2Helper(w http.ResponseWriter, r *http.Request, action string) {

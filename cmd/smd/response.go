@@ -721,33 +721,6 @@ func sendJsonMembershipRsp(w http.ResponseWriter, membership *sm.Membership) {
 	}
 }
 
-// Array of component locks
-func sendJsonCompLockArrayRsp(w http.ResponseWriter, cls []*sm.CompLock) {
-	http_code := 200
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http_code)
-	err := json.NewEncoder(w).Encode(cls)
-	if err != nil {
-		fmt.Printf("Couldn't encode a JSON command response: %s\n", err)
-	}
-}
-
-// A component lock
-func sendJsonCompLockRsp(w http.ResponseWriter, cl *sm.CompLock) {
-	http_code := 200
-	if cl == nil {
-		http_code = 204
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http_code)
-	if cl != nil {
-		err := json.NewEncoder(w).Encode(cl)
-		if err != nil {
-			fmt.Printf("Couldn't encode a JSON command response: %s\n", err)
-		}
-	}
-}
-
 // Array of v2 component locks
 func sendJsonCompLockV2Rsp(w http.ResponseWriter, cls sm.CompLockV2Status) {
 	http_code := 200
