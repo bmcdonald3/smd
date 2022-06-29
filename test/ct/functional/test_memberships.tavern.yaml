@@ -1,17 +1,17 @@
 # MIT License
-
+#
 # (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -51,7 +51,7 @@ stages:
   # 2. GET /memberships API response body
   - name: Ensure that we can conduct a query on the memberships collection
     request:
-      url: "{smd_base_url}/hsm/v2/memberships"
+      url: "{hsm_base_url}/hsm/v2/memberships"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -78,7 +78,7 @@ stages:
 
   - name: Get info about a node from the Components collection to use in the following stages
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -97,7 +97,7 @@ stages:
   # 4. GET /memberships/{xname} node API response body
   - name: Get membership data for a given node using API endpoint
     request:
-      url: "{smd_base_url}/hsm/v2/memberships/{id}"
+      url: "{hsm_base_url}/hsm/v2/memberships/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -122,7 +122,7 @@ stages:
   # 6. GET /memberships?arch={arch} API response body
   - name: Get membership data for a given node using arch query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?arch={arch}"
+      url: "{hsm_base_url}/hsm/v2/memberships?arch={arch}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -150,7 +150,7 @@ stages:
   # 8. GET /memberships?flag={flag} API response body
   - name: Get membership data for a given node using flag query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?flag={flag}"
+      url: "{hsm_base_url}/hsm/v2/memberships?flag={flag}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -178,7 +178,7 @@ stages:
   # 10. GET /memberships?id={xname} node API response body
   - name: Get membership data for a given node using id query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?id={id}"
+      url: "{hsm_base_url}/hsm/v2/memberships?id={id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -206,7 +206,7 @@ stages:
   # 12. GET /memberships?nid={nid} API response body
   - name: Get membership data for a given node using nid query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?nid={nid}"
+      url: "{hsm_base_url}/hsm/v2/memberships?nid={nid}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -234,7 +234,7 @@ stages:
   # 14. GET /memberships?role={role} API response body
   - name: Get membership data for a given node using role query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?role={role}"
+      url: "{hsm_base_url}/hsm/v2/memberships?role={role}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -262,7 +262,7 @@ stages:
   # 16. GET /memberships?state={state} API response body
   - name: Get membership data for a given node using state query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?state={state}"
+      url: "{hsm_base_url}/hsm/v2/memberships?state={state}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -290,7 +290,7 @@ stages:
   # 18. GET /memberships?type={type} API response body
   - name: Get membership data for a given node using type query parameter
     request:
-      url: "{smd_base_url}/hsm/v2/memberships?type={type}"
+      url: "{hsm_base_url}/hsm/v2/memberships?type={type}"
       method: GET
       verify: !bool "{verify}"
     response:

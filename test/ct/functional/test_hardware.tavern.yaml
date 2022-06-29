@@ -1,17 +1,17 @@
 # MIT License
-
+#
 # (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -52,7 +52,7 @@ stages:
   # 1. GET /Hardware API response code
   - name: Retrieve the hardware information from the Hardware collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/Hardware"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -65,7 +65,7 @@ stages:
   # 2. GET /HardwareByFRU API response code
   - name: Retrieve the hardware information from the HardwareByFRU collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/HardwareByFRU"
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -79,7 +79,7 @@ stages:
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&role=Compute"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -92,7 +92,7 @@ stages:
   # 4. GET /Hardware/{xname} node API response body
   - name: Retrieve the hardware information for a given node xname from the Hardware collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/Hardware/{node_xname}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -136,7 +136,7 @@ stages:
   # 6. GET /HardwareByFRU/{fruid} node API response body
   - name: Retrieve the FRU information for a given node FRUID from the HardwareByFRU collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -163,7 +163,7 @@ test_name: Query the Hardware collection for Node Enclosure information
 stages:
   - name: Retrieve a node enclosure xname from the Components collection to use in the next stage
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=NodeEnclosure"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeEnclosure"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -176,7 +176,7 @@ stages:
   # 8. GET /Hardware/{xname} node enclosure API response body
   - name: Retrieve the hardware information for a given node enclosure xname from the Hardware collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/Hardware/{node_enclosure_xname}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_enclosure_xname}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -213,7 +213,7 @@ stages:
   # 10. GET /HardwareByFRU/{fruid} node enclosure API response body
   - name: Retrieve the FRU information for a given node enclosure FRUID from the HardwareByFRU collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -241,7 +241,7 @@ stages:
 #stages:
 #  - name: Retrieve a node xname from the Components collection to use in the next stage
 #    request:
-#      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+#      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
 #      method: GET
 #      headers:
 #        Authorization: "Bearer {access_token}"
@@ -256,7 +256,7 @@ stages:
 #  # 12. Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response body
 #  - name: Retrieve the hardware information for a given node processor xname from the Hardware collection
 #    request:
-#      url: "{smd_base_url}/hsm/v2/Inventory/Hardware/{node_xname}p0"
+#      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_xname}p0"
 #      method: GET
 #      headers:
 #        Authorization: "Bearer {access_token}"
@@ -303,7 +303,7 @@ stages:
 #  # 14. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response body
 #  - name: Retrieve the FRU information for a given node processor FRUID from the HardwareByFRU collection
 #    request:
-#      url: "{smd_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
+#      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
 #      method: GET
 #      headers:
 #        Authorization: "Bearer {access_token}"
@@ -341,7 +341,7 @@ stages:
 #stages:
 #  - name: Retrieve a node xname from the Components collection to use in the next stage
 #    request:
-#      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+#      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
 #      method: GET
 #      headers:
 #        Authorization: "Bearer {access_token}"
@@ -356,7 +356,7 @@ stages:
 #  # 16. Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response body
 #  - name: Retrieve the hardware information for a given node memory dimm xname from the Hardware collection
 #    request:
-#      url: "{smd_base_url}/hsm/v2/Inventory/Hardware/{node_xname}d0"
+#      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_xname}d0"
 #      method: GET
 #      headers:
 #        Authorization: "Bearer {access_token}"
@@ -404,7 +404,7 @@ stages:
 #  # 18. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response body
 #  - name: Retrieve the FRU information for a given node memory dimm FRUID from the HardwareByFRU collection
 #    request:
-#      url: "{smd_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
+#      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
 #      method: GET
 #      headers:
 #        Authorization: "Bearer {access_token}"
@@ -436,7 +436,7 @@ test_name: Call the Hardware Inventory Query API with a Node xname
 stages:
   - name: Retrieve a node xname from the Components collection to use in the next stage
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -449,7 +449,7 @@ stages:
   # 20. GET /Hardware/Query/{xname} node API response body
   - name: Retrieve the hardware information for a given node xname from the Hardware Query collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/Hardware/Query/{node_xname}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/{node_xname}"
       method: GET
       verify: !bool "{verify}"
     response:

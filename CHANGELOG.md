@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.55.0] - 2022-06-29
+## [1.56.0] - 2022-06-29
 
 ### Removed
 
 - CASMHMS-5539 - Removed v1 API
+
+## [1.55.0] - 2022-06-22
+
+### Changed
+
+- Updated CT tests to hms-test:3.1.0 image as part of Helm test coordination.
 
 ## [1.54.0] - 2022-06-21
 

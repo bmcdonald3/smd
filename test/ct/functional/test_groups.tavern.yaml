@@ -1,17 +1,17 @@
 # MIT License
-
+#
 # (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
-
+#
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
 # to deal in the Software without restriction, including without limitation
 # the rights to use, copy, modify, merge, publish, distribute, sublicense,
 # and/or sell copies of the Software, and to permit persons to whom the
 # Software is furnished to do so, subject to the following conditions:
-
+#
 # The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
@@ -70,7 +70,7 @@ test_name: Verify POST, GET, PATCH, and DELETE methods for various /groups APIs
 stages:
   - name: Get four Node xnames from the HSM Components collection to use in upcoming stages
     request:
-      url: "{smd_base_url}/hsm/v2/State/Components?type=Node"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -84,14 +84,14 @@ stages:
 
   - name: Delete existing test group1 in HSM (if present) to prevent conflict
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: DELETE
       verify: !bool "{verify}"
 
   # 1. POST /groups group1 API response code
   - name: Verify /groups POST method group1
     request:
-      url: "{smd_base_url}/hsm/v2/groups"
+      url: "{hsm_base_url}/hsm/v2/groups"
       json: {"label":"hsmtestgroup1","description":"Test group 1 for HSM API testing in CT framework.","tags":["hsmtestgroup1_tag1","hsmtestgroup1_tag2"],"members":{"ids":["{xname1}","{xname2}"]}}
       method: POST
       verify: !bool "{verify}"
@@ -100,9 +100,9 @@ stages:
 
   # 2. GET /groups/{group1} API response code
   # 3. GET /groups/{group1} API response body
-  - name: Verify /groups/<label> GET method
+  - name: Verify /groups/label GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -154,7 +154,7 @@ stages:
   - name: Verify /groups GET method with group parameter
     request:
       # this "group" parameter name should change, see CASMHMS-2504
-      url: "{smd_base_url}/hsm/v2/groups?group=hsmtestgroup1"
+      url: "{hsm_base_url}/hsm/v2/groups?group=hsmtestgroup1"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -172,7 +172,7 @@ stages:
   # 7. GET /groups?tag={tag1} API response body
   - name: Verify /groups GET method with tag parameter (1)
     request:
-      url: "{smd_base_url}/hsm/v2/groups?tag=hsmtestgroup1_tag1"
+      url: "{hsm_base_url}/hsm/v2/groups?tag=hsmtestgroup1_tag1"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -190,7 +190,7 @@ stages:
   # 9. GET /groups?tag={tag2} API response body
   - name: Verify /groups GET method with tag parameter (2)
     request:
-      url: "{smd_base_url}/hsm/v2/groups?tag=hsmtestgroup1_tag2"
+      url: "{hsm_base_url}/hsm/v2/groups?tag=hsmtestgroup1_tag2"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -205,9 +205,9 @@ stages:
           member2: "[0].members.ids[1]"
 
   # 10. PATCH /groups/{group1} API response code
-  - name: Verify /groups/<label> PATCH method
+  - name: Verify /groups/label PATCH method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       json: {"description":"Test group 1 for HSM API testing in CT framework (UPDATED).","tags":["hsmtestgroup1_tag3","hsmtestgroup1_tag4"]}
       method: PATCH
       verify: !bool "{verify}"
@@ -216,9 +216,9 @@ stages:
 
   # 11. GET /groups/{group1} updated API response code
   # 12. GET /groups/{group1} updated API response body
-  - name: Verify /groups/<label> GET method
+  - name: Verify /groups/label GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -267,14 +267,14 @@ stages:
 
   - name: Delete existing test group2 in HSM (if present) to prevent conflict
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup2"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: DELETE
       verify: !bool "{verify}"
 
   # 13. POST /groups group2 API response code
   - name: Verify /groups POST method group2
     request:
-      url: "{smd_base_url}/hsm/v2/groups"
+      url: "{hsm_base_url}/hsm/v2/groups"
       json: {"label":"hsmtestgroup2","description":"Test group 2 for HSM API testing in CT framework.","tags":["hsmtestgroup2_tag1","hsmtestgroup2_tag2"],"members":{"ids":["{xname2}","{xname3}"]}}
       method: POST
       verify: !bool "{verify}"
@@ -283,9 +283,9 @@ stages:
 
   # 14. GET /groups/{group2} API response code
   # 15. GET /groups/{group2} API response body
-  - name: Verify /groups/<label> GET method
+  - name: Verify /groups/label GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup2"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -336,7 +336,7 @@ stages:
   # 17. GET /groups/labels API response body
   - name: Verify /groups/labels GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/labels"
+      url: "{hsm_base_url}/hsm/v2/groups/labels"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -362,9 +362,9 @@ stages:
 
   # 18. GET /groups/{group1}/members API response code
   # 19. GET /groups/{group1}/members API response body
-  - name: Verify /groups/<label>/members GET method
+  - name: Verify /groups/label/members GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -400,9 +400,9 @@ stages:
               expected: True
 
   # 20. POST /groups/{group1}/members API response code
-  - name: Verify /groups/<label>/members POST method
+  - name: Verify /groups/label/members POST method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       json: {"id":"{xname4}"}
       method: POST
       verify: !bool "{verify}"
@@ -411,9 +411,9 @@ stages:
 
   # 21. GET /groups/{group1}/members API response code
   # 22. GET /groups/{group1}/members API response body
-  - name: Verify /groups/<label>/members GET method
+  - name: Verify /groups/label/members GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -454,9 +454,9 @@ stages:
 
   # 23. DELETE /groups/{group1}/members/{xname} API response code
   # 24. DELETE /groups/{group1}/members/{xname} API response body
-  - name: Verify /groups/<label>/members/<xname> DELETE method
+  - name: Verify /groups/label/members/xname DELETE method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members/{xname1}"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members/{xname1}"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -481,9 +481,9 @@ stages:
 
   # 25. GET /groups/{group1}/members updated API response code
   # 26. GET /groups/{group1}/members updated API response body
-  - name: Verify /groups/<label>/members GET method
+  - name: Verify /groups/label/members GET method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -523,14 +523,14 @@ stages:
 
   - name: Delete existing test partition in HSM (if present) to prevent conflict
     request:
-      url: "{smd_base_url}/hsm/v2/partitions/p98"
+      url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: DELETE
       verify: !bool "{verify}"
 
   # 27. POST /partitions API response code
   - name: Verify /partitions POST method
     request:
-      url: "{smd_base_url}/hsm/v2/partitions"
+      url: "{hsm_base_url}/hsm/v2/partitions"
       json: {"name":"p98","description":"Test partition 1 for HSM API testing in CT framework.","tags":["p98_tag1","p98_tag2"],"members":{"ids":["{xname4}"]}}
       method: POST
       verify: !bool "{verify}"
@@ -539,9 +539,9 @@ stages:
 
   # 28. GET /partitions/{partition} API response code
   # 29. GET /partitions/{partition} API response body
-  - name: Verify /partitions/<partition> GET method
+  - name: Verify /partitions/partition GET method
     request:
-      url: "{smd_base_url}/hsm/v2/partitions/p98"
+      url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -598,9 +598,9 @@ stages:
 
   # 30. GET /groups/{group1}?partition={partition} API response code
   # 31. GET /groups/{group1}?partition={partition} API response body
-  - name: Verify /groups/<label> GET method with partition parameter
+  - name: Verify /groups/label GET method with partition parameter
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1?partition=p98"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1?partition=p98"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -657,9 +657,9 @@ stages:
 
   # 32. GET /groups/{group1}/members?partition={partition} API response code
   # 33. GET /groups/{group1}/members?partition={partition} API response body
-  - name: Verify /groups/<label>/members GET method with partition parameter
+  - name: Verify /groups/label/members GET method with partition parameter
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1/members?partition=p98"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members?partition=p98"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -698,9 +698,9 @@ stages:
 
   # 34. DELETE /partitions/{partition} API response code
   # 35. DELETE /partitions/{partition} API response body
-  - name: Verify /partitions/<partition> DELETE method
+  - name: Verify /partitions/partition DELETE method
     request:
-      url: "{smd_base_url}/hsm/v2/partitions/p98"
+      url: "{hsm_base_url}/hsm/v2/partitions/p98"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -725,9 +725,9 @@ stages:
 
   # 36. DELETE /groups/{group1} API response code
   # 37. DELETE /groups/{group1} API response body
-  - name: Verify /groups/<label> DELETE method
+  - name: Verify /groups/label DELETE method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup1"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -752,9 +752,9 @@ stages:
 
   # 38. DELETE /groups/{group2} API response code
   # 39. DELETE /groups/{group2} API response body
-  - name: Verify /groups/<label> DELETE method
+  - name: Verify /groups/label DELETE method
     request:
-      url: "{smd_base_url}/hsm/v2/groups/hsmtestgroup2"
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup2"
       method: DELETE
       verify: !bool "{verify}"
     response:

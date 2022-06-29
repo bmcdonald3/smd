@@ -50,7 +50,7 @@ stages:
   # 2. GET /ComponentEndpoints API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -398,7 +398,7 @@ stages:
   # 4. GET /ComponentEndpoints?type=Node API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=Node"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=Node"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -442,7 +442,7 @@ stages:
   # 6. GET /ComponentEndpoints/{node} API response body
   - name: Ensure that we can conduct a query on a specific node xname in the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -476,7 +476,7 @@ stages:
   # 8. GET /ComponentEndpoints?type=NodeBMC API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular BMC
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeBMC"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -520,7 +520,7 @@ stages:
   # 10. GET /ComponentEndpoints/{nodeBMC} API response body
   - name: Ensure that we can conduct a query on a specific node BMC xname in the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -554,7 +554,7 @@ stages:
   # 12. GET /ComponentEndpoints?type=NodeEnclosure API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node enclosure
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeEnclosure"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeEnclosure"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -598,7 +598,7 @@ stages:
   # 14. GET /ComponentEndpoints/{nodeEnclosure} API response body
   - name: Ensure that we can conduct a query on a specific node enclosure xname in the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -631,7 +631,7 @@ stages:
   # 15. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
   - name: Verify failure when providing a valid but nonexistent BMC xname in the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -644,7 +644,7 @@ stages:
   # 16. GET /ComponentEndpoints/{nodeBMC} invalid API response code
   - name: Verify failure when providing an invalid BMC xname in the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025000c7s4b4"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025000c7s4b4"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -657,7 +657,7 @@ stages:
   # 17. GET /ComponentEndpoints/{nid} unsupported id API response code
   - name: Verify failure when providing a nid name instead of a valid BMC xname in the ComponentEndpoints collection
     request:
-      url: "{smd_base_url}/hsm/v2/Inventory/ComponentEndpoints/1"
+      url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/1"
       method: GET
       verify: !bool "{verify}"
     response:
