@@ -1163,52 +1163,6 @@ type TestResults struct {
 		}
 	}
 	// Component Locks
-	InsertCompLock struct {
-		Input struct {
-			cl *sm.CompLock
-		}
-		Return struct {
-			id  string
-			err error
-		}
-	}
-	UpdateCompLock struct {
-		Input struct {
-			lockId string
-			clp    *sm.CompLockPatch
-		}
-		Return struct {
-			err error
-		}
-	}
-	GetCompLock struct {
-		Input struct {
-			lockId string
-		}
-		Return struct {
-			cl  *sm.CompLock
-			err error
-		}
-	}
-	GetCompLocks struct {
-		Input struct {
-			f *hmsds.CompLockFilter
-		}
-		Return struct {
-			cls []*sm.CompLock
-			err error
-		}
-	}
-	DeleteCompLock struct {
-		Input struct {
-			lockId string
-		}
-		Return struct {
-			didDelete bool
-			err       error
-		}
-	}
-	// V2 locking
 	InsertCompReservations struct {
 		Input struct {
 			f sm.CompLockV2Filter
@@ -2563,55 +2517,6 @@ func (d *hmsdbtest) GetMemberships(f *hmsds.ComponentFilter) ([]*sm.Membership, 
 // Component Lock Management
 //
 ////////////////////////////////////////////////////////////////////////////
-
-//
-// Component Locks
-//
-
-// Create a component lock.  Returns new lockid if successful, otherwise
-// non-nil error.  Will return ErrHMSDSDuplicateKey if an xname id already
-// exists in another lock.
-// In addition, returns ErrHMSDSNoComponent if a component doesn't exist.
-func (d *hmsdbtest) InsertCompLock(cl *sm.CompLock) (string, error) {
-	d.t.InsertCompLock.Input.cl = cl
-	return d.t.InsertCompLock.Return.id, d.t.InsertCompLock.Return.err
-}
-
-// Update component lock with given id
-func (d *hmsdbtest) UpdateCompLock(lockId string, clp *sm.CompLockPatch) error {
-	d.t.UpdateCompLock.Input.lockId = lockId
-	d.t.UpdateCompLock.Input.clp = clp
-	return d.t.UpdateCompLock.Return.err
-}
-
-// Get component lock with given id.  Nil if not found and nil error,
-// otherwise non-nil error (not normally expected)
-func (d *hmsdbtest) GetCompLock(lockId string) (*sm.CompLock, error) {
-	d.t.GetCompLock.Input.lockId = lockId
-	return d.t.GetCompLock.Return.cl, d.t.GetCompLock.Return.err
-}
-
-// Get list of component locks.
-func (d *hmsdbtest) GetCompLocks(f_opts ...hmsds.CompLockFiltFunc) ([]*sm.CompLock, error) {
-	f := new(hmsds.CompLockFilter)
-	for _, opts := range f_opts {
-		opts(f)
-	}
-	d.t.GetCompLocks.Input.f = f
-	return d.t.GetCompLocks.Return.cls, d.t.GetCompLocks.Return.err
-}
-
-// Delete a component lock with lockid and unlock components held by the
-// lock.  If no error, bool indicates whether component lock was present
-// to remove.
-func (d *hmsdbtest) DeleteCompLock(lockId string) (bool, error) {
-	d.t.DeleteCompLock.Input.lockId = lockId
-	return d.t.DeleteCompLock.Return.didDelete, d.t.DeleteCompLock.Return.err
-}
-
-//
-// Component Locks V2
-//
 
 // Create component reservations if one doesn't already exist.
 // To create reservations without a duration, the component must be locked.

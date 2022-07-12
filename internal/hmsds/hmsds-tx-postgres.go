@@ -5151,378 +5151,12 @@ func (t *hmsdbPgTx) DeleteMemberTx(uuid, id string) (bool, error) {
 //
 ////////////////////////////////////////////////////////////////////////////
 
-//
-// Component Locks
-//
-
-// Creates new component lock, but adds nothing to the members
-// table (in tx, so this can be done in separate query)
-//
-// Returns: (new lockId string, error)
-func (t *hmsdbPgTx) InsertEmptyCompLockTx(cl *sm.CompLock) (string, error) {
-	var err error
-	cli := new(compLocksInsertNoTS)
-
-	if !t.IsConnected() {
-		return "", ErrHMSDSPtrClosed
-	}
-	// Normalize and verify fields (note these functions track if this
-	// has been done and only does each once.)
-	cl.Normalize()
-	if err = cl.Verify(); err != nil {
-		return "", err
-	}
-	// Set fields for update
-	cli.id = uuid.New().String() // The new unique lockId
-	cli.reason = cl.Reason       // Free-form shortish string
-	cli.owner = cl.Owner         // Free-form shortish string
-	cli.lifetime = cl.Lifetime   // Expiration time for the lock
-
-	// Generate query
-	query := sq.Insert(compLocksTable).
-		Columns(compLocksColsNoTS...).
-		Values(cli.id, cli.reason, cli.owner, cli.lifetime)
-
-	// Exec with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
-	return cli.id, ParsePgDBError(err)
-}
-
-// Update fields in CompLockPatch on the returned partition object provided
-// (in transaction).
-func (t *hmsdbPgTx) UpdateEmptyCompLockTx(
-	lockId string,
-	cl *sm.CompLock,
-	clp *sm.CompLockPatch,
-) error {
-	var err error
-	var doUpdate bool
-
-	if !t.IsConnected() {
-		return ErrHMSDSPtrClosed
-	}
-
-	if cl == nil || clp == nil {
-		return nil
-	}
-	// Start update query string
-	update := sq.Update("").
-		Table(compLocksTable).
-		Where(sq.Eq{compLockIdCol: lockId})
-
-	// Check to see if there are any fields set in the update and then
-	// see if they need to be updated.
-	if clp.Reason != nil && cl.Reason != *clp.Reason {
-		update = update.Set(compLockReasonCol, *clp.Reason)
-		doUpdate = true
-	}
-	if clp.Owner != nil && cl.Owner != *clp.Owner {
-		update = update.Set(compLockOwnerCol, *clp.Owner)
-		doUpdate = true
-	}
-	if clp.Lifetime != nil {
-		update = update.Set(compLockLifetimeCol, *clp.Lifetime)
-		// Update the created timestamp when lifetime is refreshed.
-		update = update.Set(compLockCreatedCol, "NOW()")
-		doUpdate = true
-	}
-	// Have a change to make...
-	if doUpdate == true {
-		// Exec with statement cache for caching prepared statements
-		update = update.PlaceholderFormat(sq.Dollar)
-		_, err = update.RunWith(t.sc).ExecContext(t.ctx)
-	}
-	return err
-}
-
-// Get the user-readable fields in a component lock entry but don't fetch
-// its members (done in transaction, so we can fetch them as part of the
-// same one).
-func (t *hmsdbPgTx) GetEmptyCompLockTx(lockId string) (cl *sm.CompLock, err error) {
-	if !t.IsConnected() {
-		err = ErrHMSDSPtrClosed
-		return
-	}
-	// Generate query
-	query := sq.Select(compLocksCols...).
-		From(compLocksTable).
-		Where("id = ?", lockId)
-
-	// Exec with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		t.LogAlways("Error: GetEmptyCompLockTx(%s): query failed: %s",
-			lockId, err)
-		return
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		cl, err = t.hdb.scanPgCompLock(rows)
-		if err != nil {
-			t.LogAlways("Error: GetEmptyCompLockTx(%s): Scan failed: %s",
-				lockId, err)
-			return
-		}
-		t.Log(LOG_DEBUG, "Debug: GetEmptyCompLockTx(%s) scanned (%v)",
-			lockId, cl)
-	}
-	return
-}
-
-// Get the user-readable fields in a component lock entry but don't fetch
-// its members (done in transaction, so we can fetch them as part of the
-// same one).
-func (t *hmsdbPgTx) GetEmptyCompLocksTx(f_opts ...CompLockFiltFunc) (cls []*sm.CompLock, err error) {
-	var cl *sm.CompLock
-	if !t.IsConnected() {
-		err = ErrHMSDSPtrClosed
-		return
-	}
-	f := new(CompLockFilter)
-	for _, opts := range f_opts {
-		opts(f)
-	}
-	cls = make([]*sm.CompLock, 0, 1)
-	// Generate query
-	query := sq.Select(addAliasToCols(compLocksAlias, compLocksCols, compLocksCols)...).
-		From(compLocksTable + " " + compLocksAlias)
-	// Filter by lockId
-	if f.ID != nil && len(f.ID) != 0 {
-		query = query.Where(sq.Eq{compLockIdColAlias: f.ID})
-	}
-	// Filter by owner
-	if f.Owner != nil && len(f.Owner) != 0 {
-		query = query.Where(sq.Eq{compLockOwnerColAlias: f.Owner})
-	}
-	// Reverse lookup. Get a component by xname
-	if f.Xname != nil && len(f.Xname) != 0 {
-		query = query.LeftJoin(compLockMembersTable + " " + compLockMembersAlias +
-			" ON " + compLockMembersLckIdColAlias + " = " + compLockIdColAlias).
-			Where(sq.Eq{compLockMembersCmpIdColAlias: f.Xname})
-	}
-	if f.isExpired {
-		query = query.Where("NOW()-" + compLockCreatedColAlias +
-			" >= (" + compLockLifetimeColAlias + " * '1 sec'::interval)")
-	}
-
-	// Exec with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		t.LogAlways("Error: GetEmptyCompLocksTx(): query failed: %s", err)
-		return
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		cl, err = t.hdb.scanPgCompLock(rows)
-		if err != nil {
-			t.LogAlways("Error: GetEmptyCompLocksTx(): Scan failed: %s", err)
-			return
-		}
-		t.Log(LOG_DEBUG, "Debug: GetEmptyCompLocksTx() scanned (%v)", cl)
-		cls = append(cls, cl)
-	}
-	return
-}
-
-// Given an CompLock lockId, delete the given id and unlock its components,
-// if it exists. If it does not, result will be false, nil vs. true,nil on
-// deletion.
-func (t *hmsdbPgTx) DeleteCompLockTx(lockId string) (bool, error) {
-	if !t.IsConnected() {
-		return false, ErrHMSDSPtrClosed
-	}
-
-	// Build query - works like AND
-	query := sq.Delete(compLocksTable).
-		Where("id = ?", lockId)
-
-	// Execute - Should delete one row.
-	query = query.PlaceholderFormat(sq.Dollar)
-	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
-	if err != nil {
-		return false, err
-	}
-	// See if any rows were affected
-	num, err := res.RowsAffected()
-	if err != nil {
-		return false, err
-	} else {
-		if num > 0 {
-			if num > 1 {
-				t.LogAlways("Error: DeleteCompLockTx(): multiple deletions!")
-			}
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
-//
-// Component Lock Members
-//
-
-// Insert memberlist for a component lock.  The lockId parameter should be
-// as-returned by  InsertEmptyCompLockTx()/InsertEmptyCompLockTx().
-func (t *hmsdbPgTx) InsertCompLockMembersTx(lockId string, xnames []string) error {
-	if !t.IsConnected() {
-		return ErrHMSDSPtrClosed
-	}
-	if len(xnames) == 0 {
-		return nil
-	}
-
-	// Generate query
-	query := sq.Insert(compLockMembersTable).
-		Columns(compLockMembersCols...)
-
-	// Append members
-	for _, xname := range xnames {
-		query = query.Values(xname, lockId)
-	}
-	// Exec with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	_, err := query.RunWith(t.sc).ExecContext(t.ctx)
-	return ParsePgDBError(err)
-}
-
-// Get the members associated with a component lock.  lockId string should
-// be as retried from one of the CompLock calls.  No guarantees made about
-// alternate formatting of the underlying binary value.
-func (t *hmsdbPgTx) GetCompLockMembersTx(lockId string) ([]string, error) {
-	if !t.IsConnected() {
-		return nil, ErrHMSDSPtrClosed
-	}
-	// Generate query
-	clms := make([]string, 0, 1)
-	query := sq.Select(compLockMembersColsId...).
-		From(compLockMembersTable).
-		Where("lock_id = ?", lockId)
-
-	// Query with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		t.LogAlways("Error: GetCompLockMembersTx(%s): query failed: %s", lockId, err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var xname string
-		if err := rows.Scan(&xname); err != nil {
-			t.LogAlways("Error: GetCompLockMembersTx(%s): scan failed: %s", lockId, err)
-			return nil, err
-		}
-		clms = append(clms, xname)
-	}
-	return clms, err
-}
-
-// Given an CompLock lockId, delete the given xname, if it exists.
-// if it does not, result will be false, nil vs. true,nil on deletion.
-func (t *hmsdbPgTx) DeleteCompLockMemberTx(lockId, xname string) (bool, error) {
-	// Build query - works like AND
-	query := sq.Delete(compLockMembersTable).
-		Where("lock_id = ?", lockId).
-		Where("component_id = ?", base.NormalizeHMSCompID(xname))
-
-	// Execute - Should delete one row.
-	query = query.PlaceholderFormat(sq.Dollar)
-	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
-	if err != nil {
-		return false, err
-	}
-	// See if any rows were affected
-	num, err := res.RowsAffected()
-	if err != nil {
-		return false, err
-	} else {
-		if num > 0 {
-			if num > 1 {
-				t.LogAlways("Error: DeleteCompLockMemberTx(): multiple deletions!")
-			}
-			return true, nil
-		}
-	}
-	return false, nil
-}
-
-//
-// Component Locks v2
-//
-
-// Insert a component reservation into the database.
-// To Insert a reservation without a duration, the component must be locked.
-// To Insert a reservation with a duration, the component must be unlocked.
-// v1LockId is populated if this reservation is being created due to a v1 lock creation.
-func (t *hmsdbPgTx) InsertCompReservationTx(id string, duration int, v1LockId string) (sm.CompLockV2Success, string, error) {
-	var err error
-	var expiration_timestamp sql.NullTime
-	var lockId sql.NullString
-	var result sm.CompLockV2Success
-
-	if !t.IsConnected() {
-		return result, sm.CLResultServerError, ErrHMSDSPtrClosed
-	}
-
-	// Set fields for update
-	deputy_key := id + ":dk:" + uuid.New().String()      // The new unique public key
-	reservation_key := id + ":rk:" + uuid.New().String() // The new unique private key
-
-	create_timestamp := time.Now()
-
-	// Expiration timestamp is only added if it is an expiring reservation
-	if duration > 0 {
-		expiration_timestamp.Time = create_timestamp.Add(time.Duration(duration) * time.Minute)
-		expiration_timestamp.Valid = true
-	} else {
-		expiration_timestamp.Valid = false
-	}
-
-	if v1LockId != "" {
-		lockId.String = v1LockId
-		lockId.Valid = true
-	} else {
-		lockId.Valid = false
-	}
-
-	// Generate query
-	query := sq.Insert(compResTable).
-		Columns(compResCols...).
-		Values(id, create_timestamp, expiration_timestamp, deputy_key, reservation_key, lockId)
-
-	// Exec with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	_, err = query.RunWith(t.sc).ExecContext(t.ctx)
-	if err != nil {
-		if IsPgDuplicateKeyErr(err) {
-			return result, sm.CLResultReserved, nil
-		}
-		return result, sm.CLResultServerError, err
-	}
-
-	result.ID = id
-	result.DeputyKey = deputy_key
-	result.ReservationKey = reservation_key
-	if expiration_timestamp.Valid {
-		result.ExpirationTime = expiration_timestamp.Time.Format(time.RFC3339)
-	}
-	return result, sm.CLResultSuccess, nil
-}
-
 // Insert component reservations into the database.
 // To Insert reservations without a duration, the component must be locked.
 // To Insert reservations with a duration, the component must be unlocked.
-// v1LockId is populated if this reservation is being created due to a v1 lock creation.
-func (t *hmsdbPgTx) InsertCompReservationsTx(ids []string, duration int, v1LockId string) ([]sm.CompLockV2Success, string, error) {
+func (t *hmsdbPgTx) InsertCompReservationsTx(ids []string, duration int) ([]sm.CompLockV2Success, string, error) {
 	var err error
 	var expiration_timestamp sql.NullTime
-	var lockId sql.NullString
 	var results []sm.CompLockV2Success
 
 	if !t.IsConnected() {
@@ -5539,13 +5173,6 @@ func (t *hmsdbPgTx) InsertCompReservationsTx(ids []string, duration int, v1LockI
 		expiration_timestamp.Valid = false
 	}
 
-	if v1LockId != "" {
-		lockId.String = v1LockId
-		lockId.Valid = true
-	} else {
-		lockId.Valid = false
-	}
-
 	// Generate query
 	query := sq.Insert(compResTable).
 		Columns(compResCols...)
@@ -5554,7 +5181,7 @@ func (t *hmsdbPgTx) InsertCompReservationsTx(ids []string, duration int, v1LockI
 		// Set fields for update
 		deputy_key := id + ":dk:" + uuid.New().String()      // The new unique public key
 		reservation_key := id + ":rk:" + uuid.New().String() // The new unique private key
-		query = query.Values(id, create_timestamp, expiration_timestamp, deputy_key, reservation_key, lockId)
+		query = query.Values(id, create_timestamp, expiration_timestamp, deputy_key, reservation_key)
 	}
 
 	query = query.Suffix("ON CONFLICT DO NOTHING RETURNING " + compResCompIdCol + ", " + compResDKCol + ", " + compResRKCol)
@@ -5587,53 +5214,9 @@ func (t *hmsdbPgTx) InsertCompReservationsTx(ids []string, duration int, v1LockI
 
 // Remove/release component reservations.
 // Both a component ID and reservation key are required for these operations unless force = true.
-// Returns a v1LockId if there was one associated with the reservation
-func (t *hmsdbPgTx) DeleteCompReservationTx(rKey sm.CompLockV2Key, force bool) (string, bool, error) {
-	if !t.IsConnected() {
-		return "", false, ErrHMSDSPtrClosed
-	}
-
-	// Build query - works like AND
-	query := sq.Delete(compResTable).
-		Where(sq.Eq{compResCompIdCol: rKey.ID})
-	if !force {
-		if rKey.Key == "" {
-			return "", false, sm.ErrCompLockV2RKey
-		}
-		query = query.Where(sq.Eq{compResRKCol: rKey.Key})
-	}
-	query = query.Suffix("RETURNING " + compResV1LockIDCol)
-
-	// Execute - Should delete one row.
-	query = query.PlaceholderFormat(sq.Dollar)
-	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		return "", false, err
-	}
-	defer rows.Close()
-
-	// See if there was a v1LockId associated with
-	// the reservation we just deleted.
-	if rows.Next() {
-		var lockId sql.NullString
-		v1LockId := ""
-		err = rows.Scan(&lockId)
-		if err != nil {
-			return "", false, err
-		}
-		if lockId.Valid {
-			v1LockId = lockId.String
-		}
-		return v1LockId, true, err
-	}
-	return "", false, nil
-}
-
-// Remove/release component reservations.
-// Both a component ID and reservation key are required for these operations unless force = true.
-// Returns a v1LockId if there was one associated with the reservation
-func (t *hmsdbPgTx) DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force bool) ([]sm.CompLock, error) {
-	var results []sm.CompLock
+// Returns an array of xnames associated with the reservations.
+func (t *hmsdbPgTx) DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force bool) ([]string, error) {
+	var results []string
 	var ids []string
 	var keys []string
 
@@ -5663,7 +5246,7 @@ func (t *hmsdbPgTx) DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force boo
 			return results, sm.ErrCompLockV2RKey
 		}
 	}
-	query = query.Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol)
+	query = query.Suffix("RETURNING " + compResCompIdCol)
 
 	// Execute - Should delete one row.
 	query = query.PlaceholderFormat(sq.Dollar)
@@ -5676,122 +5259,48 @@ func (t *hmsdbPgTx) DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force boo
 	// See if there was a v1LockId associated with
 	// the reservation we just deleted.
 	for rows.Next() {
-		var lockId sql.NullString
 		var xname string
-		err = rows.Scan(&xname, &lockId)
+		err = rows.Scan(&xname)
 		if err != nil {
 			return results, err
 		}
-		v1Lock := sm.CompLock{
-			Xnames: []string{xname},
-		}
-		if lockId.Valid {
-			v1Lock.ID = lockId.String
-		}
-		results = append(results, v1Lock)
+		results = append(results, xname)
 	}
 	return results, nil
 }
 
 // Release all expired component reservations
-func (t *hmsdbPgTx) DeleteCompReservationExpiredTx() ([]string, []string, error) {
+func (t *hmsdbPgTx) DeleteCompReservationExpiredTx() ([]string, error) {
 	xnames := make([]string, 0, 1)
-	v1LockIDs := make([]string, 0, 1)
 	if !t.IsConnected() {
-		return xnames, v1LockIDs, ErrHMSDSPtrClosed
+		return xnames, ErrHMSDSPtrClosed
 	}
 
 	// Build query - works like AND
 	query := sq.Delete(compResTable).
 		Where(compResExpireCol + " IS NOT NULL AND NOW() >= " + compResExpireCol).
-		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol)
+		Suffix("RETURNING " + compResCompIdCol)
 
 	// Execute - Should delete one row.
 	query = query.PlaceholderFormat(sq.Dollar)
 	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
 	if err != nil {
-		return xnames, v1LockIDs, err
+		return xnames, err
 	}
 	defer rows.Close()
 
-	// See if there was a v1LockId associated with
-	// the reservation we just deleted.
+	// Process the xnames associated with the reservations we deleted.
 	for rows.Next() {
-		var lockId sql.NullString
 		id := ""
-		v1LockID := ""
 
-		err = rows.Scan(&id, &lockId)
+		err = rows.Scan(&id)
 		if err != nil {
-			return xnames, v1LockIDs, err
-		}
-		if lockId.Valid {
-			v1LockID = lockId.String
+			return xnames, err
 		}
 
 		xnames = append(xnames, id)
-		if v1LockID != "" {
-			v1LockIDs = append(v1LockIDs, v1LockID)
-		}
 	}
-	return xnames, v1LockIDs, nil
-}
-
-// Retrieve the status of reservations. The public key and xname is
-// required to address the reservation unless force = true.
-func (t *hmsdbPgTx) GetCompReservationTx(dKey sm.CompLockV2Key, force bool) (sm.CompLockV2Success, string, error) {
-	var result sm.CompLockV2Success
-	var err error
-	if !t.IsConnected() {
-		err = ErrHMSDSPtrClosed
-		return result, sm.CLResultServerError, err
-	}
-
-	// Generate query
-	query := sq.Select(addAliasToCols(compResAlias, compResPubCols, compResPubCols)...).
-		From(compResTable + " " + compResAlias).
-		Where(sq.Eq{compResCompIdColAlias: dKey.ID})
-	if !force {
-		if dKey.Key == "" {
-			return result, sm.CLResultServerError, sm.ErrCompLockV2DKey
-		}
-		query = query.Where(sq.Eq{compResDKCol: dKey.Key})
-	}
-
-	// Exec with statement cache for caching prepared statements (local to tx)
-	query = query.PlaceholderFormat(sq.Dollar)
-	rows, err := query.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		t.LogAlways("Error: GetCompReservationTx(): query failed: %s", err)
-		return result, sm.CLResultServerError, err
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		var cr compReservation
-		err = rows.Scan(
-			&cr.component_id,
-			&cr.create_timestamp,
-			&cr.expiration_timestamp,
-			&cr.deputy_key,
-		)
-		if err != nil {
-			t.LogAlways("Error: GetCompReservationTx(): Scan failed: %s", err)
-			return result, sm.CLResultServerError, err
-		}
-		result := sm.CompLockV2Success{
-			ID:        cr.component_id,
-			DeputyKey: cr.deputy_key,
-		}
-		if cr.create_timestamp.Valid {
-			result.CreationTime = cr.create_timestamp.Time.Format(time.RFC3339)
-		}
-		if cr.expiration_timestamp.Valid {
-			result.ExpirationTime = cr.expiration_timestamp.Time.Format(time.RFC3339)
-		}
-		return result, sm.CLResultSuccess, nil
-	}
-	return result, sm.CLResultNotFound, nil
+	return xnames, nil
 }
 
 // Retrieve the status of reservations. The public key and xname is
@@ -5868,58 +5377,8 @@ func (t *hmsdbPgTx) GetCompReservationsTx(dKeys []sm.CompLockV2Key, force bool) 
 
 // Update/renew the expiration time of component reservations with the given
 // ID/Key combinations.
-func (t *hmsdbPgTx) UpdateCompReservationTx(rKey sm.CompLockV2Key, duration int, force bool) (string, bool, error) {
-	var err error
-
-	if !t.IsConnected() {
-		return "", false, ErrHMSDSPtrClosed
-	}
-
-	// Start update query string
-	update := sq.Update("").
-		Table(compResTable).
-		Where(sq.Eq{compResCompIdCol: rKey.ID}).
-		Where(compResExpireCol + " IS NOT NULL")
-	if !force {
-		if rKey.Key == "" {
-			return "", false, sm.ErrCompLockV2RKey
-		}
-		update = update.Where(sq.Eq{compResRKCol: rKey.Key})
-	}
-
-	expiration_timestamp := time.Now().Add(time.Duration(duration) * time.Minute)
-	update = update.Set(compResExpireCol, expiration_timestamp).
-		Suffix("RETURNING " + compResV1LockIDCol)
-
-	// Exec with statement cache for caching prepared statements
-	update = update.PlaceholderFormat(sq.Dollar)
-	rows, err := update.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		return "", false, err
-	}
-	defer rows.Close()
-
-	// See if there was a v1LockId associated with
-	// the reservation we just updated.
-	if rows.Next() {
-		var lockId sql.NullString
-		v1LockId := ""
-		err = rows.Scan(&lockId)
-		if err != nil {
-			return "", false, err
-		}
-		if lockId.Valid {
-			v1LockId = lockId.String
-		}
-		return v1LockId, true, err
-	}
-	return "", false, nil
-}
-
-// Update/renew the expiration time of component reservations with the given
-// ID/Key combinations.
-func (t *hmsdbPgTx) UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration int, force bool) ([]sm.CompLock, error) {
-	var results []sm.CompLock
+func (t *hmsdbPgTx) UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration int, force bool) ([]string, error) {
+	var results []string
 	var ids []string
 	var keys []string
 	var err error
@@ -5955,7 +5414,7 @@ func (t *hmsdbPgTx) UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration 
 
 	expiration_timestamp := time.Now().Add(time.Duration(duration) * time.Minute)
 	update = update.Set(compResExpireCol, expiration_timestamp).
-		Suffix("RETURNING " + compResCompIdCol + ", " + compResV1LockIDCol)
+		Suffix("RETURNING " + compResCompIdCol)
 
 	// Exec with statement cache for caching prepared statements
 	update = update.PlaceholderFormat(sq.Dollar)
@@ -5968,110 +5427,14 @@ func (t *hmsdbPgTx) UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration 
 	// See if there was a v1LockId associated with
 	// the reservation we just updated.
 	for rows.Next() {
-		var lockId sql.NullString
 		var xname string
-		err = rows.Scan(&xname, &lockId)
+		err = rows.Scan(&xname)
 		if err != nil {
 			return results, err
 		}
-		v1Lock := sm.CompLock{
-			Xnames: []string{xname},
-		}
-		if lockId.Valid {
-			v1Lock.ID = lockId.String
-		}
-		results = append(results, v1Lock)
+		results = append(results, xname)
 	}
 	return results, nil
-}
-
-// Update/renew the expiration time of component reservations with the given
-// v1LockID. For v1 Locking compatability.
-func (t *hmsdbPgTx) UpdateCompReservationsByV1LockIDTx(lockId string, duration int) error {
-	var err error
-
-	if !t.IsConnected() {
-		return ErrHMSDSPtrClosed
-	}
-
-	// Start update query string
-	update := sq.Update("").
-		Table(compResTable).
-		Where(sq.Eq{compResV1LockIDCol: lockId})
-
-	expiration_timestamp := time.Now().Add(time.Duration(duration) * time.Minute)
-	update = update.Set(compResExpireCol, expiration_timestamp)
-
-	// Exec with statement cache for caching prepared statements
-	update = update.PlaceholderFormat(sq.Dollar)
-	_, err = update.RunWith(t.sc).ExecContext(t.ctx)
-
-	return err
-}
-
-// Update/renew the expiration time of component reservations with the given
-// v1LockID. For v1 Locking compatability.
-func (t *hmsdbPgTx) UpdateCompReservationsByV1LockIDsTx(lockIds []string, duration int) ([]string, error) {
-	var err error
-	var results []string
-
-	if !t.IsConnected() {
-		return results, ErrHMSDSPtrClosed
-	}
-
-	// Start update query string
-	update := sq.Update("").
-		Table(compResTable)
-	if len(lockIds) > 0 {
-		update = update.Where(sq.Eq{compResV1LockIDCol: lockIds})
-	} else {
-		return results, nil
-	}
-
-	expiration_timestamp := time.Now().Add(time.Duration(duration) * time.Minute)
-	update = update.Set(compResExpireCol, expiration_timestamp).
-		Suffix("RETURNING " + compResCompIdCol)
-
-	// Exec with statement cache for caching prepared statements
-	update = update.PlaceholderFormat(sq.Dollar)
-	rows, err := update.RunWith(t.sc).QueryContext(t.ctx)
-	if err != nil {
-		t.LogAlways("Error: UpdateCompReservationsByV1LockIDsTx(): query failed: %s", err)
-		return results, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var id string
-		err = rows.Scan(&id)
-		if err != nil {
-			t.LogAlways("Error: UpdateCompReservationsByV1LockIDsTx(): Scan failed: %s", err)
-			return results, err
-		}
-		results = append(results, id)
-	}
-
-	return results, err
-}
-
-// Update component 'ReservationDisabled' field.
-func (t *hmsdbPgTx) UpdateCompResDisabledTx(id string, disabled bool) (int64, error) {
-	if !t.IsConnected() {
-		return 0, ErrHMSDSPtrClosed
-	}
-
-	update := sq.Update("").
-		Table(compTable).
-		Where(sq.Eq{compIdCol: id}).
-		Set(compResDisabledCol, disabled)
-
-	// Exec with statement cache for caching prepared statements
-	update = update.PlaceholderFormat(sq.Dollar)
-	res, err := update.RunWith(t.sc).ExecContext(t.ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.RowsAffected()
 }
 
 // Update component 'ReservationDisabled' field.
@@ -6110,26 +5473,6 @@ func (t *hmsdbPgTx) BulkUpdateCompResDisabledTx(ids []string, disabled bool) ([]
 	}
 
 	return results, nil
-}
-
-// Update component 'locked' field.
-func (t *hmsdbPgTx) UpdateCompResLockedTx(id string, locked bool) (int64, error) {
-	if !t.IsConnected() {
-		return 0, ErrHMSDSPtrClosed
-	}
-
-	update := sq.Update("").
-		Table(compTable).
-		Where(sq.Eq{compIdCol: id}).
-		Set(compLockedCol, locked)
-
-	// Exec with statement cache for caching prepared statements
-	update = update.PlaceholderFormat(sq.Dollar)
-	res, err := update.RunWith(t.sc).ExecContext(t.ctx)
-	if err != nil {
-		return 0, err
-	}
-	return res.RowsAffected()
 }
 
 // Update component 'locked' field.

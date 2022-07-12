@@ -127,17 +127,6 @@ type ServiceEPFilter struct {
 	label     string // Labels query for logging, etc.
 }
 
-type CompLockFilter struct {
-	// User-writable options
-	ID    []string `json:"id"`
-	Owner []string `json:"owner"`
-	Xname []string `json:"xname"`
-
-	// private options
-	isExpired bool
-	label     string // Labels query for logging, etc.
-}
-
 type JobSyncFilter struct {
 	// User-writable options
 	ID     []string `json:"id"`
@@ -846,101 +835,6 @@ func SE_From(callingFunc string) ServiceEPFiltFunc {
 func SE_WRLock(f *ServiceEPFilter) {
 	if f != nil {
 		f.writeLock = true
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////
-//  Component Lock Filter options
-//  - These are intended to be used as variadic function arguments, i.e. they
-//    are combined to generate a filter but in a much more flexible way that
-//    doesn't require unneeded arguments or require changing the function def
-//    to add more.
-////////////////////////////////////////////////////////////////////////////
-
-// Filter functions: must take a pointer to a CompLockFilter presumed to be
-// already initialized and modify the filter accordingly.
-type CompLockFiltFunc func(*CompLockFilter)
-
-// Filter includes just these lock ids.
-func CL_IDs(ids []string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			if len(ids) == 0 {
-				f.ID = []string{}
-			} else {
-				f.ID = ids
-			}
-		}
-	}
-}
-
-// Filter includes just this lock id.  Overwrites other ID calls.
-func CL_ID(id string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			f.ID = []string{id}
-		}
-	}
-}
-
-// Filter includes just locks with these owners.
-func CL_Owners(owners []string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			if len(owners) == 0 {
-				f.Owner = []string{}
-			} else {
-				f.Owner = owners
-			}
-		}
-	}
-}
-
-// Filter includes just locks that have this owner.  Overwrites other Owner calls.
-func CL_Owner(owner string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			f.Owner = []string{owner}
-		}
-	}
-}
-
-// Filter includes just locks with these xnames.
-func CL_Xnames(xnames []string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			if len(xnames) == 0 {
-				f.Xname = []string{}
-			} else {
-				f.Xname = xnames
-			}
-		}
-	}
-}
-
-// Filter includes just locks that contain this xname.  Overwrites other Xname calls.
-func CL_Xname(xname string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			f.Xname = []string{xname}
-		}
-	}
-}
-
-// Filter for expired component locks.
-func CL_Expired(f *CompLockFilter) {
-	if f != nil {
-		f.isExpired = true
-	}
-}
-
-// Set label field so any errors during the query can be attributed
-// to the calling func
-func CL_From(callingFunc string) CompLockFiltFunc {
-	return func(f *CompLockFilter) {
-		if f != nil {
-			f.label = callingFunc
-		}
 	}
 }
 

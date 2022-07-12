@@ -43,7 +43,7 @@ import (
 )
 
 // MUST be kept in sync with schema installed via smd-init job
-const HMSDS_PG_SCHEMA = 18
+const HMSDS_PG_SCHEMA = 20
 const HMSDS_PG_SYSTEM_ID = 0
 
 type hmsdbPg struct {
@@ -190,8 +190,6 @@ func ParsePgDBError(err error) error {
 				} else {
 					return ErrHMSDSExclusiveGroup
 				}
-			} else if strings.Contains(pgErr.Detail, compLockMembersCmpIdCol) {
-				return ErrHMSDSExclusiveCompLock
 			}
 		}
 		return ErrHMSDSDuplicateKey
@@ -4169,212 +4167,6 @@ func (d *hmsdbPg) GetMemberships(f *ComponentFilter) ([]*sm.Membership, error) {
 ////////////////////////////////////////////////////////////////////////////
 
 //
-// Component Locks
-//
-
-// Create a component lock.  Returns new lockid if successful, otherwise
-// non-nil error.  Will return ErrHMSDSDuplicateKey if an xname id already
-// exists in another lock.
-// In addition, returns ErrHMSDSNoComponent if a component doesn't exist.
-func (d *hmsdbPg) InsertCompLock(cl *sm.CompLock) (string, error) {
-	t, err := d.Begin()
-	if err != nil {
-		return "", err
-	}
-
-	// Insert first the CompLock, with no members, after
-	// verifying/normalizing.
-	lockId, err := t.InsertEmptyCompLockTx(cl)
-	if err != nil {
-		t.Rollback()
-		return "", err
-	}
-	// Insert members of this lock
-	err = t.InsertCompLockMembersTx(lockId, cl.Xnames)
-	if err != nil {
-		t.Rollback()
-		return "", err
-	}
-	affectedIDs, err := t.GetComponentIDsTx(IDs(cl.Xnames), From("InsertCompLock"))
-	if err != nil {
-		t.Rollback()
-		return "", err
-	}
-	if len(affectedIDs) != 0 {
-		if _, err := t.BulkUpdateCompFlagOnlyTx(affectedIDs, base.FlagLocked.String()); err != nil {
-			t.Rollback()
-			return "", err
-		}
-	}
-
-	f := sm.CompLockV2Filter{
-		ID:                  cl.Xnames,
-		ReservationDuration: (cl.Lifetime / 60),
-		ProcessingModel:     sm.CLProcessingModelRigid,
-	}
-	_, err = insertCompReservationsHelper(t, lockId, f)
-	if err != nil {
-		t.Rollback()
-		return "", err
-	}
-
-	err = t.Commit()
-	return lockId, err
-}
-
-func updateCompLockV1Helper(t HMSDBTx, lockId string, clp *sm.CompLockPatch) error {
-	// Check input before starting any DB actions
-	clp.Normalize()
-	if err := clp.Verify(); err != nil {
-		return err
-	}
-
-	// Get the existing component lock in a transaction, without members initially.
-	cl, err := t.GetEmptyCompLockTx(lockId)
-	if err != nil {
-		// Unexpected error - couldn't get the component lock
-		return err
-	} else if cl == nil {
-		// Lookup returned nothing - 404
-		return ErrHMSDSNoCompLock
-	}
-	if err := t.UpdateEmptyCompLockTx(lockId, cl, clp); err != nil {
-		return err
-	}
-
-	// Renew the v2 reservations if we are renewing the v1 locks.
-	if clp.Lifetime != nil {
-		err = t.UpdateCompReservationsByV1LockIDTx(lockId, (*clp.Lifetime / 60))
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// Update component lock with given id
-func (d *hmsdbPg) UpdateCompLock(lockId string, clp *sm.CompLockPatch) error {
-
-	// Start the transaction
-	t, err := d.Begin()
-	if err != nil {
-		return err
-	}
-	if err := updateCompLockV1Helper(t, lockId, clp); err != nil {
-		t.Rollback()
-		return err
-	}
-	return t.Commit()
-}
-
-// Get component lock with given id.  Nil if not found and nil error,
-// otherwise non-nil error (not normally expected)
-func (d *hmsdbPg) GetCompLock(lockId string) (*sm.CompLock, error) {
-	t, err := d.Begin()
-	if err != nil {
-		return nil, err
-	}
-	cl, err := t.GetEmptyCompLockTx(lockId)
-	if err != nil {
-		t.Rollback()
-		return nil, err
-	} else if cl != nil {
-		clms, err := t.GetCompLockMembersTx(lockId)
-		if err != nil {
-			t.Rollback()
-			return nil, err
-		}
-		cl.Xnames = clms
-	}
-	t.Commit()
-	return cl, err
-}
-
-// Get component lock with given id.  Nil if not found and nil error,
-// otherwise non-nil error (not normally expected)
-func (d *hmsdbPg) GetCompLocks(f_opts ...CompLockFiltFunc) ([]*sm.CompLock, error) {
-	t, err := d.Begin()
-	if err != nil {
-		return nil, err
-	}
-	cls, err := t.GetEmptyCompLocksTx(f_opts...)
-	if err != nil {
-		t.Rollback()
-		return nil, err
-	} else if len(cls) != 0 {
-		for _, cl := range cls {
-			clms, err := t.GetCompLockMembersTx(cl.ID)
-			if err != nil {
-				t.Rollback()
-				return nil, err
-			}
-			cl.Xnames = clms
-		}
-	}
-	t.Commit()
-	return cls, err
-}
-
-func deleteCompLockV1Helper(t HMSDBTx, lockId string) (bool, error) {
-	// Get the component lock members 1st because they
-	// cascade delete when the lock is deleted.
-	xnames, err := t.GetCompLockMembersTx(lockId)
-	if err != nil {
-		return false, err
-	}
-	// There won't be xnames if there is no lock
-	if len(xnames) > 0 {
-		affectedIDs, err := t.GetComponentIDsTx(IDs(xnames), From("DeleteCompLock"))
-		if err != nil {
-			return false, err
-		}
-		if len(affectedIDs) != 0 {
-			if _, err := t.BulkUpdateCompFlagOnlyTx(affectedIDs, base.FlagOK.String()); err != nil {
-				return false, err
-			}
-		}
-	}
-	// Delete the component lock this will cause the members to get removed too.
-	didDelete, err := t.DeleteCompLockTx(lockId)
-	if err != nil {
-		return false, err
-	} else if !didDelete {
-		// Component lock does not exist
-		return false, ErrHMSDSNoCompLock
-	}
-
-	// Forcibly delete any v2 reservations that were associated with the v1 lock.
-	// Some may have already been deleted if we were called by deleteReservationsHelper().
-	for _, xname := range xnames {
-		key := sm.CompLockV2Key{ID: xname}
-		_, _, err := t.DeleteCompReservationTx(key, true)
-		if err != nil {
-			return false, err
-		}
-	}
-	return true, nil
-}
-
-// Delete a component lock with lockid.  If no error, bool indicates
-// whether component Lock was present to remove.
-func (d *hmsdbPg) DeleteCompLock(lockId string) (bool, error) {
-	// Start transaction, first we need to look up the group, if it exists.
-	t, err := d.Begin()
-	if err != nil {
-		return false, err
-	}
-
-	_, err = deleteCompLockV1Helper(t, lockId)
-	if err != nil {
-		t.Rollback()
-		return false, err
-	}
-
-	err = t.Commit()
-	return true, err
-}
-
-//
 // Component Locks V2
 //
 
@@ -4403,7 +4195,7 @@ func compLockFilterToCompFilter(clf sm.CompLockV2Filter) (cf ComponentFilter) {
 // To create reservations with a duration, the component must be unlocked.
 // ProcessingModel "rigid" is all or nothing. ProcessingModel "flexible" is
 // best try.
-func insertCompReservationsHelper(t HMSDBTx, v1LockId string, f sm.CompLockV2Filter) (sm.CompLockV2ReservationResult, error) {
+func insertCompReservationsHelper(t HMSDBTx, f sm.CompLockV2Filter) (sm.CompLockV2ReservationResult, error) {
 	var result sm.CompLockV2ReservationResult
 	var rigid bool
 	insertComps := make([]string, 0, 1)
@@ -4458,7 +4250,7 @@ func insertCompReservationsHelper(t HMSDBTx, v1LockId string, f sm.CompLockV2Fil
 	if len(insertComps) == 0 {
 		return result, nil
 	}
-	reservations, lockErr, err := t.InsertCompReservationsTx(insertComps, f.ReservationDuration, v1LockId)
+	reservations, lockErr, err := t.InsertCompReservationsTx(insertComps, f.ReservationDuration)
 	if err != nil {
 		return result, err
 	} else if lockErr != sm.CLResultSuccess {
@@ -4510,7 +4302,7 @@ func (d *hmsdbPg) InsertCompReservations(f sm.CompLockV2Filter) (sm.CompLockV2Re
 		return sm.CompLockV2ReservationResult{}, err
 	}
 
-	result, err := insertCompReservationsHelper(t, "", f)
+	result, err := insertCompReservationsHelper(t, f)
 	if err != nil {
 		t.Rollback()
 		return result, err
@@ -4528,9 +4320,8 @@ func deleteCompReservationsHelper(t HMSDBTx, f sm.CompLockV2ReservationFilter, f
 	var result sm.CompLockV2UpdateResult
 	result.Success.ComponentIDs = make([]string, 0, 1)
 	result.Failure = make([]sm.CompLockV2Failure, 0, 1)
-	v1LockMap := make(map[string]bool)
 
-	v1Locks, err := t.DeleteCompReservationsTx(f.ReservationKeys, force)
+	locks, err := t.DeleteCompReservationsTx(f.ReservationKeys, force)
 	if err != nil {
 		if f.ProcessingModel == sm.CLProcessingModelRigid {
 			return result, err
@@ -4543,43 +4334,28 @@ func deleteCompReservationsHelper(t HMSDBTx, f sm.CompLockV2ReservationFilter, f
 				result.Failure = append(result.Failure, fail)
 			}
 		}
-	} else if len(f.ReservationKeys) != len(v1Locks) {
+	} else if len(f.ReservationKeys) != len(locks) {
 		// Component reservation does not exist
 		if f.ProcessingModel == sm.CLProcessingModelRigid {
 			return result, sm.ErrCompLockV2NotFound
 		}
-		v1LockMap := make(map[string]bool)
-		for _, v1Lock := range v1Locks {
-			v1LockMap[v1Lock.ID] = true
+		lockMap := make(map[string]bool)
+		for _, lock := range locks {
+			lockMap[lock] = true
 		}
 		for _, key := range f.ReservationKeys {
-			if _, ok := v1LockMap[key.ID]; !ok {
+			if _, ok := lockMap[key.ID]; !ok {
 				fail := sm.CompLockV2Failure{
 					ID:     key.ID,
 					Reason: sm.CLResultNotFound,
 				}
 				result.Failure = append(result.Failure, fail)
+			} else {
+				result.Success.ComponentIDs = append(result.Success.ComponentIDs, key.ID)
 			}
 		}
 	} else {
-		for _, v1Lock := range v1Locks {
-			result.Success.ComponentIDs = append(result.Success.ComponentIDs, v1Lock.Xnames[0])
-			if v1Lock.ID != "" {
-				v1LockMap[v1Lock.ID] = true
-			}
-		}
-	}
-
-	// Delete any v1 locks that we interrupted.
-	for lockId, _ := range v1LockMap {
-		didDelete, err := deleteCompLockV1Helper(t, lockId)
-		if err != nil {
-			if err != ErrHMSDSNoCompLock {
-				return result, err
-			}
-		} else if !didDelete {
-			return result, sm.ErrCompLockV2Unknown
-		}
+		result.Success.ComponentIDs = append(result.Success.ComponentIDs, locks...)
 	}
 
 	// Do the counts
@@ -4655,23 +4431,10 @@ func (d *hmsdbPg) DeleteCompReservationsExpired() ([]string, error) {
 		return []string{}, err
 	}
 
-	xnames, v1LockIDs, err := t.DeleteCompReservationExpiredTx()
+	xnames, err := t.DeleteCompReservationExpiredTx()
 	if err != nil {
 		t.Rollback()
 		return xnames, err
-	}
-
-	// Reduce the duplicates
-	v1LockIDMap := make(map[string]bool)
-	for _, v1LockID := range v1LockIDs {
-		v1LockIDMap[v1LockID] = true
-	}
-	for v1LockID, _ := range v1LockIDMap {
-		_, err = deleteCompLockV1Helper(t, v1LockID)
-		if err != nil {
-			t.Rollback()
-			return xnames, err
-		}
 	}
 
 	err = t.Commit()
@@ -4719,7 +4482,6 @@ func (d *hmsdbPg) UpdateCompReservations(f sm.CompLockV2ReservationFilter) (sm.C
 	var result sm.CompLockV2UpdateResult
 	result.Success.ComponentIDs = make([]string, 0, 1)
 	result.Failure = make([]sm.CompLockV2Failure, 0, 1)
-	v1LockMap := make(map[string]bool)
 
 	// Start the transaction
 	t, err := d.Begin()
@@ -4728,7 +4490,7 @@ func (d *hmsdbPg) UpdateCompReservations(f sm.CompLockV2ReservationFilter) (sm.C
 	}
 
 	// Update the reservations and retrieve any v1LockIDs associated with our reservations.
-	v1Locks, err := t.UpdateCompReservationsTx(f.ReservationKeys, f.ReservationDuration, false)
+	locks, err := t.UpdateCompReservationsTx(f.ReservationKeys, f.ReservationDuration, false)
 	if err != nil {
 		if f.ProcessingModel == sm.CLProcessingModelRigid {
 			t.Rollback()
@@ -4741,15 +4503,15 @@ func (d *hmsdbPg) UpdateCompReservations(f sm.CompLockV2ReservationFilter) (sm.C
 			}
 			result.Failure = append(result.Failure, fail)
 		}
-	} else if len(v1Locks) != len(f.ReservationKeys) {
+	} else if len(locks) != len(f.ReservationKeys) {
 		// Component reservation does not exist
 		if f.ProcessingModel == sm.CLProcessingModelRigid {
 			t.Rollback()
 			return result, sm.ErrCompLockV2NotFound
 		}
 		lockMap := make(map[string]bool)
-		for _, v1Lock := range v1Locks {
-			lockMap[v1Lock.Xnames[0]] = true
+		for _, lock := range locks {
+			lockMap[lock] = true
 		}
 		for _, key := range f.ReservationKeys {
 			if _, ok := lockMap[key.ID]; !ok {
@@ -4758,27 +4520,12 @@ func (d *hmsdbPg) UpdateCompReservations(f sm.CompLockV2ReservationFilter) (sm.C
 					Reason: sm.CLResultNotFound,
 				}
 				result.Failure = append(result.Failure, fail)
+			} else {
+				result.Success.ComponentIDs = append(result.Success.ComponentIDs, key.ID)
 			}
 		}
-	}
-	for _, v1Lock := range v1Locks {
-		if v1Lock.ID != "" {
-			// Form a list of unique v1Locks we encountered
-			v1LockMap[v1Lock.ID] = true
-		}
-		result.Success.ComponentIDs = append(result.Success.ComponentIDs, v1Lock.Xnames[0])
-	}
-
-	// V1 lock durations are in seconds.
-	v1Duration := f.ReservationDuration * 60
-	for lockId, _ := range v1LockMap {
-		clp := sm.CompLockPatch{Lifetime: &v1Duration}
-		// Update associated v1Locks
-		err = updateCompLockV1Helper(t, lockId, &clp)
-		if err != nil {
-			t.Rollback()
-			return result, err
-		}
+	} else {
+		result.Success.ComponentIDs = append(result.Success.ComponentIDs, locks...)
 	}
 
 	// Do the counts
@@ -4953,6 +4700,7 @@ func (d *hmsdbPg) UpdateCompLocksV2(f sm.CompLockV2Filter, action string) (sm.Co
 		lockErr := sm.CLResultSuccess
 		affectedMap := make(map[string]bool)
 		for _, comp := range affectedComps {
+			lockErr = sm.CLResultSuccess
 			// Components can't be (un)locked if reservations are disabled.
 			if comp.ReservationDisabled {
 				lockErr = sm.CLResultDisabled
@@ -4984,6 +4732,8 @@ func (d *hmsdbPg) UpdateCompLocksV2(f sm.CompLockV2Filter, action string) (sm.Co
 			lockKeys = append(lockKeys, key)
 			affectedMap[comp.ID] = true
 		}
+		// Reset err to clear anything from above for ProcessingModel = Flexible requests
+		err = nil
 		// Check for reservations. Components can't be
 		// (un)locked if there are any reservations.
 		reservations, lockErr, err := t.GetCompReservationsTx(lockKeys, true)

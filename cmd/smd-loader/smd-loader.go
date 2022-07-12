@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -68,7 +68,7 @@ func nodeNids(hsmURL string) {
 
 	fmt.Println("Deleting existing NodeMaps collection...")
 	deleteRequest := baseRequest
-	deleteRequest.FullURL = hsmURL + "/hsm/v1/Defaults/NodeMaps"
+	deleteRequest.FullURL = hsmURL + "/hsm/v2/Defaults/NodeMaps"
 	deleteRequest.Method = "DELETE"
 
 	// Don't bother checking whether the delete worked.
@@ -80,7 +80,7 @@ func nodeNids(hsmURL string) {
 	jsonBytes := readFile(nodeNidMapFile)
 
 	postRequest := baseRequest
-	postRequest.FullURL = hsmURL + "/hsm/v1/Defaults/NodeMaps"
+	postRequest.FullURL = hsmURL + "/hsm/v2/Defaults/NodeMaps"
 	postRequest.Method = "POST"
 	postRequest.Payload = jsonBytes
 

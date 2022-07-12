@@ -271,85 +271,6 @@ type compGroupMembersInsertNoTS struct {
 var compGroupMembersColsUser = []string{compGroupMembersCmpIdCol}
 
 //                                                                           //
-//                              Component Locks                              //
-//                                                                           //
-
-// component_locks table
-
-const compLocksTable = `component_locks`
-const compLocksAlias = `cl` // used during joins, i.e. cl.id
-
-const (
-	compLockIdCol       = `id`
-	compLockCreatedCol  = `created`
-	compLockReasonCol   = `reason`
-	compLockOwnerCol    = `owner`
-	compLockLifetimeCol = `lifetime`
-)
-
-// This adds the base table alias to each column.  it can later be appended to.
-const (
-	compLockIdColAlias       = compLocksAlias + "." + compLockIdCol
-	compLockCreatedColAlias  = compLocksAlias + "." + compLockCreatedCol
-	compLockReasonColAlias   = compLocksAlias + "." + compLockReasonCol
-	compLockOwnerColAlias    = compLocksAlias + "." + compLockOwnerCol
-	compLockLifetimeColAlias = compLocksAlias + "." + compLockLifetimeCol
-)
-
-// component_locks table columns.
-// Skip 'annotations' for now, future use only
-var compLocksCols = []string{compLockIdCol, compLockCreatedCol,
-	compLockReasonCol, compLockOwnerCol, compLockLifetimeCol}
-
-// component_locks table - required columns.
-// created (timestamp) omitted.  Not needed for insert
-var compLocksColsNoTS = []string{compLockIdCol, compLockReasonCol,
-	compLockOwnerCol, compLockLifetimeCol}
-
-type compLocksInsert struct {
-	id       string
-	created  string
-	reason   string
-	owner    string
-	lifetime int
-}
-
-type compLocksInsertNoTS struct {
-	id       string
-	reason   string
-	owner    string
-	lifetime int
-}
-
-// Get only the component id column from component_lock_members
-var compLockMembersColsId = []string{compLockMembersCmpIdCol}
-
-// component_lock_members table
-
-const compLockMembersTable = `component_lock_members`
-const compLockMembersAlias = `clm` // used during joins, i.e. clm.lock_id
-
-const (
-	compLockMembersCmpIdCol = `component_id`
-	compLockMembersLckIdCol = `lock_id`
-)
-
-// This adds the base table alias to each column.  it can later be appended to.
-const (
-	compLockMembersCmpIdColAlias = compLockMembersAlias + "." + compLockMembersCmpIdCol
-	compLockMembersLckIdColAlias = compLockMembersAlias + "." + compLockMembersLckIdCol
-)
-
-// component_lock_members table - all columns
-var compLockMembersCols = []string{compLockMembersCmpIdCol,
-	compLockMembersLckIdCol}
-
-type compLockMembersInsert struct {
-	component_id string
-	group_id     string
-}
-
-//                                                                           //
 //                            Component Locks V2                             //
 //                                                                           //
 
@@ -364,7 +285,6 @@ const (
 	compResExpireCol   = `expiration_timestamp`
 	compResDKCol       = `deputy_key`
 	compResRKCol       = `reservation_key`
-	compResV1LockIDCol = `v1_lock_id`
 )
 
 // This adds the base table alias to each column.  it can later be appended to.
@@ -374,12 +294,11 @@ const (
 	compResExpireColAlias   = compResAlias + "." + compResExpireCol
 	compResDKColAlias       = compResAlias + "." + compResDKCol
 	compResRKColAlias       = compResAlias + "." + compResRKCol
-	compResV1LockIDColAlias = compResAlias + "." + compResV1LockIDCol
 )
 
 // reservations table columns.
 var compResCols = []string{compResCompIdCol, compResCreatedCol,
-	compResExpireCol, compResDKCol, compResRKCol, compResV1LockIDCol}
+	compResExpireCol, compResDKCol, compResRKCol}
 
 // reservations table public columns.
 var compResPubCols = []string{compResCompIdCol, compResCreatedCol,
@@ -391,7 +310,6 @@ type compReservation struct {
 	expiration_timestamp sql.NullTime
 	deputy_key           string
 	reservation_key      string
-	v1_lock_id           sql.NullString
 }
 
 //                                                                          //

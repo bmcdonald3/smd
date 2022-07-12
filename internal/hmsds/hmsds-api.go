@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -850,31 +850,6 @@ type HMSDB interface {
 	//                    Component Lock Management                       //
 	//                                                                    //
 
-	//                      Component Locks
-
-	// Create a component lock.  Returns new lockid if successful, otherwise
-	// non-nil error.  Will return ErrHMSDSDuplicateKey if an xname id already
-	// exists in another lock.
-	// In addition, returns ErrHMSDSNoComponent if a component doesn't exist.
-	InsertCompLock(cl *sm.CompLock) (string, error)
-
-	// Update component lock with given id
-	UpdateCompLock(lockId string, clp *sm.CompLockPatch) error
-
-	// Get component lock with given id.  Nil if not found and nil error,
-	// otherwise non-nil error (not normally expected)
-	GetCompLock(lockId string) (*sm.CompLock, error)
-
-	// Get list of component locks.
-	GetCompLocks(f_opts ...CompLockFiltFunc) ([]*sm.CompLock, error)
-
-	// Delete a component lock with lockid and unlock components held by the
-	// lock.  If no error, bool indicates whether component lock was present
-	// to remove.
-	DeleteCompLock(lockId string) (bool, error)
-
-	//                      Component Locks V2
-
 	// Create component reservations if one doesn't already exist.
 	// To create reservations without a duration, the component must be locked.
 	// To create reservations with a duration, the component must be unlocked.
@@ -1568,74 +1543,17 @@ type HMSDBTx interface {
 	//                    Component Lock Management                       //
 	//                                                                    //
 
-	//                         Component Locks
-
-	// Creates new component lock, but adds nothing to the members
-	// table (in tx, so this can be done in separate query)
-	//
-	// Returns: (new lockId string, error)
-	InsertEmptyCompLockTx(cl *sm.CompLock) (string, error)
-
-	// Update fields in CompLockPatch on the returned partition object provided
-	// (in transaction).
-	UpdateEmptyCompLockTx(lockId string, cl *sm.CompLock, clp *sm.CompLockPatch) error
-
-	// Get the user-readable fields in a component lock entry but don't fetch
-	// its members (done in transaction, so we can fetch them as part of the
-	// same one).
-	GetEmptyCompLockTx(lockId string) (cl *sm.CompLock, err error)
-
-	// Get the user-readable fields in a component lock entry but don't fetch
-	// its members (done in transaction, so we can fetch them as part of the
-	// same one).
-	GetEmptyCompLocksTx(f_opts ...CompLockFiltFunc) ([]*sm.CompLock, error)
-
-	// Given an CompLock lockId, delete the given id and unlock its components,
-	// if it exists. If it does not, result will be false, nil vs. true,nil on
-	// deletion.
-	DeleteCompLockTx(lockId string) (bool, error)
-
-	//                     Component Lock Members
-
-	// Insert memberlist for a component lock.  The lockId parameter should be
-	// as-returned by  InsertEmptyCompLockTx()/InsertEmptyCompLockTx().
-	InsertCompLockMembersTx(lockId string, xnames []string) error
-
-	// Get the members associated with a component lock.  lockId string should
-	// be as retried from one of the CompLock calls.  No guarantees made about
-	// alternate formatting of the underlying binary value.
-	GetCompLockMembersTx(lockId string) ([]string, error)
-
-	// Given an CompLock lockId, delete the given xname, if it exists.
-	// if it does not, result will be false, nil vs. true,nil on deletion.
-	DeleteCompLockMemberTx(lockId, xname string) (bool, error)
-
-	//                      Component Locks V2
-
-	// Insert a component reservation into the database.
-	// To Insert a reservation without a duration, the component must be locked.
-	// To Insert a reservation with a duration, the component must be unlocked.
-	InsertCompReservationTx(id string, duration int, v1LockId string) (sm.CompLockV2Success, string, error)
-
 	// Insert component reservations into the database.
 	// To Insert reservations without a duration, the component must be locked.
 	// To Insert reservations with a duration, the component must be unlocked.
-	InsertCompReservationsTx(ids []string, duration int, v1LockId string) ([]sm.CompLockV2Success, string, error)
+	InsertCompReservationsTx(ids []string, duration int) ([]sm.CompLockV2Success, string, error)
 
 	// Remove/release component reservations.
 	// Both a component ID and reservation key are required for these operations unless force = true.
-	DeleteCompReservationTx(rKey sm.CompLockV2Key, force bool) (string, bool, error)
-
-	// Remove/release component reservations.
-	// Both a component ID and reservation key are required for these operations unless force = true.
-	DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force bool) ([]sm.CompLock, error)
+	DeleteCompReservationsTx(rKeys []sm.CompLockV2Key, force bool) ([]string, error)
 
 	// Release all expired component reservations
-	DeleteCompReservationExpiredTx() ([]string, []string, error)
-
-	// Retrieve the status of reservations. The public key and xname is
-	// required to address the reservation unless force = true.
-	GetCompReservationTx(dKey sm.CompLockV2Key, force bool) (sm.CompLockV2Success, string, error)
+	DeleteCompReservationExpiredTx() ([]string, error)
 
 	// Retrieve the status of reservations. The public key and xname is
 	// required to address the reservation unless force = true.
@@ -1643,28 +1561,10 @@ type HMSDBTx interface {
 
 	// Update/renew the expiration time of component reservations with the given
 	// ID/Key combinations.
-	UpdateCompReservationTx(rKey sm.CompLockV2Key, duration int, force bool) (string, bool, error)
-
-	// Update/renew the expiration time of component reservations with the given
-	// ID/Key combinations.
-	UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration int, force bool) ([]sm.CompLock, error)
-
-	// Update/renew the expiration time of component reservations with the given
-	// v1LockID. For v1 Locking compatability.
-	UpdateCompReservationsByV1LockIDTx(lockId string, duration int) error
-
-	// Update/renew the expiration time of component reservations with the given
-	// v1LockID. For v1 Locking compatability.
-	UpdateCompReservationsByV1LockIDsTx(lockIds []string, duration int) ([]string, error)
-
-	// Update component 'ReservationsDisabled' field.
-	UpdateCompResDisabledTx(id string, disabled bool) (int64, error)
+	UpdateCompReservationsTx(rKeys []sm.CompLockV2Key, duration int, force bool) ([]string, error)
 
 	// Update component 'ReservationsDisabled' field.
 	BulkUpdateCompResDisabledTx(ids []string, disabled bool) ([]string, error)
-
-	// Update component 'locked' field.
-	UpdateCompResLockedTx(id string, locked bool) (int64, error)
 
 	// Update component 'locked' field.
 	BulkUpdateCompResLockedTx(ids []string, locked bool) ([]string, error)
