@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -166,7 +166,7 @@ services:
     networks:
       - rez
   cray-hms-hmcollector:
-    image: artifactory.algol60.net/csm-docker/stable/hms-hmcollector:2.12.4
+    image: artifactory.algol60.net/csm-docker/stable/hms-hmcollector:2.20.0
     environment:
       - LOG_LEVEL=TRACE
       - SM_URL=http://cray-smd:27779
@@ -185,7 +185,7 @@ services:
     networks:
       - rez
   redfish-simulator:
-    image: artifactory.algol60.net/csm-docker/stable/hms-redfish-translation-service:1.13.4
+    image: artifactory.algol60.net/csm-docker/stable/hms-redfish-translation-service:1.19.0
     environment:
       - SCHEMA_VERSION=2019.1
       - LOG_LEVEL=TRACE
