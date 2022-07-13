@@ -136,7 +136,7 @@ services:
       - smd
   rfemulator0:
     hostname: x0c0b0
-    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.1.0
+    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.3.0
     environment:
       - MOCKUPFOLDER=CMM
       - XNAME=x0c0b0
@@ -149,7 +149,7 @@ services:
           - x0c0b0
   rfemulator1:
     hostname: x0c0s1b0
-    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.1.0
+    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.3.0
     environment:
       - MOCKUPFOLDER=EX235a
       - MAC_SCHEMA=Mountain
@@ -163,7 +163,7 @@ services:
           - x0c0s1b0
   rfemulator2:
     hostname: x0c0r2b0
-    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.1.0
+    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.3.0
     environment:
       - MOCKUPFOLDER=Slingshot_Switch_Blade
       - XNAME=x0c0r2b0
@@ -176,7 +176,7 @@ services:
           - x0c0r2b0
   rfemulator3:
     hostname: x1c0s3b0
-    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.1.0
+    image: artifactory.algol60.net/csm-docker/stable/csm-rie:1.3.0
     environment:
       - MOCKUPFOLDER=XL675d_A40
       - XNAME=x1c0s3b0

@@ -2841,6 +2841,11 @@ func (t *hmsdbPgTx) InsertRFEndpointsTx(eps []*sm.RedfishEndpoint) error {
 	res, err := query.RunWith(t.sc).ExecContext(t.ctx)
 	if err != nil {
 		t.LogAlways("Error: InsertRFEndpointsTx(): ExecContext: %s", err)
+		if IsPgDuplicateKeyErr(err) == true {
+			// Key already exists, user error. Set false and clear error.
+			return ErrHMSDSDuplicateKey
+		}
+		// Unexpected internal error.
 		return err
 	}
 	t.Log(LOG_INFO, "Info: InsertRFEndpointsTx() - %s", res)
