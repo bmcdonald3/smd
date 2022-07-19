@@ -5,17 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.1.0] - 2022-07-13
+## [1.56.0] - 2022-07-19
 
 ### Fixed
 
+- CASMHMS-5625 - Removed much of the redundant v1 API code in preparation for removal in CSM 1.4.
 - CASMHMS-5610 - Fixed POST /Inventory/RedfishEndpoints returning 500 instead of 409 for conflicts.
-
-## [2.0.0] - 2022-06-29
-
-### Removed
-
-- CASMHMS-5539 - Removed v1 API
+- CASMHMS-5373 - Fixed locking bug preventing 'Flexible' requests from working.
 
 ## [1.55.0] - 2022-06-22
 
