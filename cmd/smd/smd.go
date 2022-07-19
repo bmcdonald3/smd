@@ -104,6 +104,29 @@ type SmD struct {
 	smapCompEP      *SyncMap
 	genTestPayloads string
 
+	// v1 APIs
+	apiRoot           string
+	serviceBase       string
+	valuesBase        string
+	stateBase         string
+	componentsBase    string
+	redfishEPBase     string
+	compEPBase        string
+	serviceEPBase     string
+	compEthIntBase    string
+	hwinvByLocBase    string
+	hwinvByFRUBase    string
+	invDiscoverBase   string
+	invDiscStatusBase string
+	nodeMapBase       string
+	subscriptionBase  string
+	groupsBase        string
+	partitionsBase    string
+	membershipsBase   string
+	compLockBase      string
+	sysInfoBase       string
+	powerMapBase      string
+
 	// v2 APIs
 	apiRootV2           string
 	serviceBaseV2       string
@@ -720,6 +743,28 @@ func main() {
 	var err error
 
 	s.msgbusHandle = nil
+
+	s.apiRoot = "/hsm/v1"
+	s.serviceBase = s.apiRoot + "/service"
+	s.valuesBase = s.serviceBase + "/values"
+	s.stateBase = s.apiRoot + "/State"
+	s.componentsBase = s.stateBase + "/Components"
+	s.redfishEPBase = s.apiRoot + "/Inventory/RedfishEndpoints"
+	s.nodeMapBase = s.apiRoot + "/Defaults/NodeMaps"
+	s.compEPBase = s.apiRoot + "/Inventory/ComponentEndpoints"
+	s.serviceEPBase = s.apiRoot + "/Inventory/ServiceEndpoints"
+	s.compEthIntBase = s.apiRoot + "/Inventory/EthernetInterfaces"
+	s.hwinvByLocBase = s.apiRoot + "/Inventory/Hardware"
+	s.hwinvByFRUBase = s.apiRoot + "/Inventory/HardwareByFRU"
+	s.invDiscoverBase = s.apiRoot + "/Inventory/Discover"
+	s.invDiscStatusBase = s.apiRoot + "/Inventory/DiscoveryStatus"
+	s.subscriptionBase = s.apiRoot + "/Subscriptions"
+	s.groupsBase = s.apiRoot + "/groups"
+	s.partitionsBase = s.apiRoot + "/partitions"
+	s.membershipsBase = s.apiRoot + "/memberships"
+	s.compLockBase = s.apiRoot + "/locks"
+	s.sysInfoBase = s.apiRoot + "/sysinfo"
+	s.powerMapBase = s.sysInfoBase + "/powermaps"
 
 	s.apiRootV2 = "/hsm/v2"
 	s.serviceBaseV2 = s.apiRootV2 + "/service"
