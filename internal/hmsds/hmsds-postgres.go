@@ -4465,8 +4465,22 @@ func (d *hmsdbPg) GetCompReservations(dkeys []sm.CompLockV2Key) (sm.CompLockV2Re
 			result.Failure = append(result.Failure, fail)
 		}
 	} else {
+		reservationMap := make(map[string]bool)
 		for _, reservation := range reservations {
 			result.Success = append(result.Success, reservation)
+			reservationMap[reservation.ID] = true
+		}
+		// Report the reservations we didn't find
+		if len(reservations) != len(dkeys) {
+			for _, key := range dkeys {
+				if _, ok := reservationMap[key.ID]; !ok {
+					fail := sm.CompLockV2Failure{
+						ID:     key.ID,
+						Reason: sm.CLResultNotFound,
+					}
+					result.Failure = append(result.Failure, fail)
+				}
+			}
 		}
 	}
 
