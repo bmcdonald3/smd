@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - CASMHMS-5355 - /locks/reservations/check now reports the reservations that were not found.
+- CASMHMS-5387 - HSM now discovers the power URL for Intel nodes.
 
 ## [1.56.0] - 2022-07-19
 
