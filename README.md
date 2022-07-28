@@ -219,8 +219,10 @@ https://github.com/Cray-HPE/hms-smd/blob/master/api/swagger_v2.yaml (current)
 
 ## SMD CT Testing
 
-This repository builds and publishes the cray-smd-test image along with the service itself containing tests that verify SMD on live Shasta systems. The tests are invoked via helm test.
-The version of the cray-smd-test image should always match the version of cray-smd image (vX.Y.Z (build metadata not withstanding)).
+In addition to the service itself, this repository builds and publishes cray-smd-test images containing tests that verify HSM
+on live Shasta systems. The tests are invoked via helm test as part of the Continuous Test (CT) framework during CSM installs
+and upgrades. The version of the cray-smd-test image (vX.Y.Z) should match the version of the cray-smd image being tested, both
+of which are specified in the helm chart for the service.
 
 ## smd Features
 
