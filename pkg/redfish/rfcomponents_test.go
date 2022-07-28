@@ -6035,6 +6035,14 @@ func NewRTFuncIntel1() RTFunc {
 
 				Header: make(http.Header),
 			}
+		case "https://" + testFQDN + testPathIntelChassis_Baseboard_Power:
+			return &http.Response{
+				StatusCode: 200,
+				// Send mock response for rpath
+				Body: ioutil.NopCloser(bytes.NewBufferString(testPayloadIntelChassis_Baseboard_Power)),
+
+				Header: make(http.Header),
+			}
 		case "https://" + testFQDN + testPathIntelChassis_RackMount:
 			return &http.Response{
 				StatusCode: 200,
@@ -6618,6 +6626,171 @@ const testPayloadIntelChassis_Baseboard = `
                         }
                 ]
         }
+}
+`
+
+const testPathIntelChassis_Baseboard_Power = "/redfish/v1/Chassis/Baseboard/Power"
+
+const testPayloadIntelChassis_Baseboard_Power = `
+{
+  "@odata.context": "/redfish/v1/$metadata#Power.Power",
+  "@odata.id": "/redfish/v1/Chassis/RackMount/Baseboard/Power",
+  "@odata.type": "#Power.v1_5_0.Power",
+  "Id": "Power",
+  "Name": "Power",
+  "PowerControl": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/RackMount/Baseboard/Power#/PowerControl/0",
+      "MemberId": "0",
+      "Name": "Server Power Control",
+      "PowerConsumedWatts": 124,
+      "PowerMetrics": {
+        "IntervalInMin": 7120,
+        "MinConsumedWatts": 1,
+        "MaxConsumedWatts": 157,
+        "AverageConsumedWatts": 124
+      },
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Systems/QSBP74304715"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/RackMount"
+        }
+      ]
+    }
+  ],
+  "Voltages": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/RackMount/Baseboard/Power#/Voltages/0",
+      "MemberId": "0",
+      "Name": "BB +12.0V",
+      "SensorNumber": 208,
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK",
+        "HealthRollup": "OK"
+      },
+      "ReadingVolts": 11.991999626159668,
+      "UpperThresholdNonCritical": 13.256999969482422,
+      "UpperThresholdCritical": 13.642000198364258,
+      "LowerThresholdNonCritical": 11.001999855041504,
+      "LowerThresholdCritical": 10.67199993133545,
+      "MinReadingRange": -0.21799999475479126,
+      "MaxReadingRange": 13.807000160217285,
+      "PhysicalContext": "SystemBoard",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Systems/QSBP74304715"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/RackMount"
+        }
+      ]
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/RackMount/Baseboard/Power#/Voltages/1",
+      "MemberId": "1",
+      "Name": "BB +3.3V Vbat",
+      "SensorNumber": 222,
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK",
+        "HealthRollup": "OK"
+      },
+      "ReadingVolts": 2.8405001163482666,
+      "LowerThresholdNonCritical": 2.450500011444092,
+      "LowerThresholdCritical": 2.125499963760376,
+      "MinReadingRange": 0.006500000134110451,
+      "MaxReadingRange": 3.321500062942505,
+      "PhysicalContext": "SystemBoard",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Systems/QSBP74304715"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/RackMount"
+        }
+      ]
+    }
+  ],
+  "PowerSupplies": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/RackMount/Baseboard/Power#/PowerSupplies/0",
+      "MemberId": "0",
+      "Name": "Power Supply Bay",
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK",
+        "HealthRollup": "OK"
+      },
+      "LineInputVoltage": 377,
+      "Model": "PSSF222201A",
+      "Manufacturer": "SOLUM CO., LTD.                  ",
+      "FirmwareVersion": "04A",
+      "SerialNumber": "CNS2221A4AH9R0619",
+      "PartNumber": "H66158-010",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/Baseboard/Power"
+        }
+      ],
+      "Redundancy": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/Baseboard/Power#/Redundancy/0"
+        }
+      ]
+    },
+    {
+      "@odata.id": "/redfish/v1/Chassis/Baseboard/Power#/PowerSupplies/1",
+      "MemberId": "1",
+      "Name": "Power Supply Bay",
+      "Status": {
+        "State": "Enabled",
+        "Health": "OK",
+        "HealthRollup": "OK"
+      },
+      "LineInputVoltage": 13,
+      "Model": "PSSF222201A",
+      "Manufacturer": "SOLUM CO., LTD.                  ",
+      "FirmwareVersion": "04A",
+      "SerialNumber": "CNS2221A4AHAP0374",
+      "PartNumber": "H66158-010",
+      "RelatedItem": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/Baseboard/Power"
+        }
+      ],
+      "Redundancy": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/Baseboard/Power#/Redundancy/0"
+        }
+      ]
+    }
+  ],
+  "Redundancy": [
+    {
+      "@odata.id": "/redfish/v1/Chassis/Baseboard/Power#/Redundancy/0",
+      "MemberId": "0",
+      "Name": "Baseboard Power Supply",
+      "RedundancySet": [
+        {
+          "@odata.id": "/redfish/v1/Chassis/Baseboard/Power#/PowerSupplies/0"
+        },
+        {
+          "@odata.id": "/redfish/v1/Chassis/Baseboard/Power#/PowerSupplies/1"
+        }
+      ],
+      "Mode": "N+m",
+      "Status": {
+        "State": "Disabled",
+        "Health": "OK",
+        "HealthRollup": "OK"
+      },
+      "MinNumNeeded": 1,
+      "MaxNumSupported": 2
+    }
+  ]
 }
 `
 
