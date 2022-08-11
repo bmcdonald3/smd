@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -1006,7 +1006,8 @@ func (s *SmD) DiscoverHWInvByLocHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWIn
 		}
 		hwloc.PopulatedFRU = hwfru
 	}
-	if hpeDeviceEP.Type == base.NodeAccel.String() {
+	switch base.ToHMSType(hwloc.Type) {
+	case base.NodeAccel:
 		accelInfo := rf.ProcessorLocationInfoRF{
 			Id:          hpeDeviceEP.DeviceRF.Id,
 			Name:        hpeDeviceEP.DeviceRF.Name,
@@ -1014,10 +1015,20 @@ func (s *SmD) DiscoverHWInvByLocHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWIn
 		}
 		hwloc.HMSNodeAccelLocationInfo = &accelInfo
 		hwloc.HWInventoryByLocationType = sm.HWInvByLocNodeAccel
-	} else {
-		s.LogAlways("DiscoverHWInvByLocHpeDevice: EP: %s RF Subtype %s "+
-			"not supported.", hpeDeviceEP.RfEndpointID, hpeDeviceEP.RedfishSubtype)
-		return nil, base.ErrHMSTypeUnsupported
+	case base.NodeHsnNic:
+		nicInfo := rf.NALocationInfoRF{
+			Id:          hpeDeviceEP.DeviceRF.Id,
+			Name:        hpeDeviceEP.DeviceRF.Name,
+			Description: hpeDeviceEP.DeviceRF.Location,
+		}
+		hwloc.HMSHSNNICLocationInfo = &nicInfo
+		hwloc.HWInventoryByLocationType = sm.HWInvByLocHSNNIC
+	case base.HMSTypeInvalid:
+		err := base.ErrHMSTypeInvalid
+		return nil, err
+	default:
+		err := base.ErrHMSTypeUnsupported
+		return nil, err
 	}
 	return hwloc, nil
 }
@@ -1435,7 +1446,8 @@ func (s *SmD) DiscoverHWInvByFRUHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWIn
 	hwfru.Type = hpeDeviceEP.Type
 	hwfru.Subtype = hpeDeviceEP.Subtype
 
-	if hpeDeviceEP.Type == base.NodeAccel.String() {
+	switch base.ToHMSType(hwfru.Type) {
+	case base.NodeAccel:
 		accelInfo := rf.ProcessorFRUInfoRF{
 			Manufacturer: hpeDeviceEP.DeviceRF.Manufacturer,
 			Model: hpeDeviceEP.DeviceRF.Model,
@@ -1445,10 +1457,21 @@ func (s *SmD) DiscoverHWInvByFRUHpeDevice(hpeDeviceEP *rf.EpHpeDevice) (*sm.HWIn
 		}
 		hwfru.HMSNodeAccelFRUInfo = &accelInfo
 		hwfru.HWInventoryByFRUType = sm.HWInvByFRUNodeAccel
-	} else {
-		s.LogAlways("DiscoverHWInvByFRUHpeDevice: EP: %s RF Subtype %s "+
-			"not supported.", hpeDeviceEP.RfEndpointID, hpeDeviceEP.RedfishSubtype)
-		return nil, base.ErrHMSTypeUnsupported
+	case base.NodeHsnNic:
+		nicInfo := rf.NAFRUInfoRF{
+			Manufacturer: hpeDeviceEP.DeviceRF.Manufacturer,
+			Model: hpeDeviceEP.DeviceRF.Model,
+			SerialNumber: hpeDeviceEP.DeviceRF.SerialNumber,
+			PartNumber: hpeDeviceEP.DeviceRF.PartNumber,
+		}
+		hwfru.HMSHSNNICFRUInfo = &nicInfo
+		hwfru.HWInventoryByFRUType = sm.HWInvByFRUHSNNIC
+	case base.HMSTypeInvalid:
+		err := base.ErrHMSTypeInvalid
+		return nil, err
+	default:
+		err := base.ErrHMSTypeUnsupported
+		return nil, err
 	}
 
 	return hwfru, nil

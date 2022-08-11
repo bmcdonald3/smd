@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.58.0] - 2022-08-11
+
+### Fixed
+
+- CASMHMS-5675 - HSM now discovers HSN NICs under '/redfish/v1/Chassis/<sysid>/Devices' for Proliant iLO redfish implementations.
+- CASMHMS-5675 - HSN now ignores non-HSN NICs that show up for Proliant iLO redfish implementations.
+
 ## [1.57.0] - 2022-07-27
 
 ### Fixed
