@@ -27,8 +27,8 @@
 # HMS test metrics test cases: 4
 # 1. GET /DiscoveryStatus API response code
 # 2. GET /DiscoveryStatus API response body
-# 3. GET /DiscoveryStatus/{xname} API response code
-# 4. GET /DiscoveryStatus/{xname} API response body
+# 3. GET /DiscoveryStatus/{id} API response code
+# 4. GET /DiscoveryStatus/{id} API response body
 ---
 test_name: Ensure that we can gather the system discovery status information
 
@@ -72,8 +72,8 @@ stages:
         json:
           id: "[0].ID"
 
-  # 3. GET /DiscoveryStatus/{xname} API response code
-  # 4. GET /DiscoveryStatus/{xname} API response body
+  # 3. GET /DiscoveryStatus/{id} API response code
+  # 4. GET /DiscoveryStatus/{id} API response body
   - name: Get discovery status data for a single discovery instance using API endpoint
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/DiscoveryStatus/{id}"

@@ -320,37 +320,37 @@ func (s *SmD) doArchValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValArch, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for class
 func (s *SmD) doClassValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValClass, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for flag
 func (s *SmD) doFlagValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValFlag, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for nettype
 func (s *SmD) doNetTypeValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValNetType, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for role
 func (s *SmD) doRoleValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValRole, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for subrole
 func (s *SmD) doSubRoleValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValSubRole, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for state
 func (s *SmD) doStateValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValState, w, r)
 }
 
-// Get HMS base enum values for arch
+// Get HMS base enum values for type
 func (s *SmD) doTypeValuesGet(w http.ResponseWriter, r *http.Request) {
 	s.getHMSValues(HMSValType, w, r)
 }

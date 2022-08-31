@@ -27,8 +27,8 @@
 # HMS test metrics test cases: 4
 # 1. GET /Subscriptions/SCN API response code
 # 2. GET /Subscriptions/SCN API response body
-# 3. GET /Subscriptions/SCN/{num} API response code
-# 4. GET /Subscriptions/SCN/{num} API response body
+# 3. GET /Subscriptions/SCN/{id} API response code
+# 4. GET /Subscriptions/SCN/{id} API response body
 ---
 test_name: Ensure that we can gather information from the state change notifications collection
 
@@ -105,8 +105,8 @@ stages:
         json:
           ID: SubscriptionList[0].ID
 
-  # 3. GET /Subscriptions/SCN/{num} API response code
-  # 4. GET /Subscriptions/SCN/{num} API response body
+  # 3. GET /Subscriptions/SCN/{id} API response code
+  # 4. GET /Subscriptions/SCN/{id} API response body
   - name: Ensure that we can conduct a query for a specific ID from the state change notifications collection
     request:
       url: "{hsm_base_url}/hsm/v2/Subscriptions/SCN/{ID}"

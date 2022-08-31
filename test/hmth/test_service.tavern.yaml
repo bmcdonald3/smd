@@ -1,0 +1,536 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) service API
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: 22
+# 1. GET /service/ready API response code
+# 2. GET /service/ready API response body
+# 3. GET /service/liveness API response code
+# 4. GET /service/liveness API response body
+# 5. GET /service/values API response code
+# 6. GET /service/values API response body
+# 7. GET /service/values/arch API response code
+# 8. GET /service/values/arch API response body
+# 9. GET /service/values/class API response code
+# 10. GET /service/values/class API response body
+# 11. GET /service/values/flag API response code
+# 12. GET /service/values/flag API response body
+# 13. GET /service/values/nettype API response code
+# 14. GET /service/values/nettype API response body
+# 15. GET /service/values/role API response code
+# 16. GET /service/values/role API response body
+# 17. GET /service/values/subrole API response code
+# 18. GET /service/values/subrole API response body
+# 19. GET /service/values/state API response code
+# 20. GET /service/values/state API response body
+# 21. GET /service/values/type API response code
+# 22. GET /service/values/type API response body
+---
+test_name: hsmAPIService
+
+stages:
+  # 1. GET /service/ready API response code
+  # 2. GET /service/ready API response body
+  - name: hsmAPIServiceReadyGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/ready"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "HSM is healthy"
+
+  # 3. GET /service/liveness API response code
+  # 4. GET /service/liveness API response body
+  - name: hsmAPIServiceLivenessGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/liveness"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 204
+
+  # 5. GET /service/values API response code
+  # 6. GET /service/values API response body
+  - name: hsmAPIServiceValuesGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              Arch:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "ARM"
+                      - "Other"
+                      - "UNKNOWN"
+                      - "X86"
+              Class:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Hill"
+                      - "Mountain"
+                      - "River"
+              Flag:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Alert"
+                      - "Locked"
+                      - "OK"
+                      - "Unknown"
+                      #TODO: Warning being returned twice by API, open minor bug on this
+                      - "Warning"
+              NetType:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Ethernet"
+                      - "Infiniband"
+                      - "None"
+                      - "OEM"
+                      - "Sling"
+              Role:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Application"
+                      - "Compute"
+                      - "Management"
+                      - "Service"
+                      - "Storage"
+                      - "System"
+              SubRole:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Master"
+                      - "Storage"
+                      - "Worker"
+              State:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Empty"
+                      - "Halt"
+                      - "Off"
+                      - "On"
+                      - "Populated"
+                      - "Ready"
+                      - "Standby"
+                      - "Unknown"
+              Type:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "All"
+                      - "AllComp"
+                      - "AllSvc"
+                      - "CDU"
+                      - "CDUMgmtSwitch"
+                      - "CEC"
+                      - "CMMFpga"
+                      - "CMMRectifier"
+                      - "Cabinet"
+                      - "CabinetBMC"
+                      - "CabinetCDU"
+                      - "CabinetPDU"
+                      - "CabinetPDUController"
+                      - "CabinetPDUNic"
+                      - "CabinetPDUOutlet"
+                      - "CabinetPDUPowerConnector"
+                      - "Chassis"
+                      - "ChassisBMC"
+                      - "ChassisBMCNic"
+                      - "ComputeModule"
+                      - "Drive"
+                      - "HSNAsic"
+                      - "HSNBoard"
+                      - "HSNConnector"
+                      - "HSNConnectorPort"
+                      - "HSNLink"
+                      - "INVALID"
+                      - "Memory"
+                      - "MgmtHLSwitch"
+                      - "MgmtSwitch"
+                      - "MgmtSwitchConnector"
+                      - "Node"
+                      - "NodeAccel"
+                      - "NodeAccelRiser"
+                      - "NodeBMC"
+                      - "NodeBMCNic"
+                      - "NodeEnclosure"
+                      - "NodeEnclosurePowerSupply"
+                      - "NodeFpga"
+                      - "NodeHsnNic"
+                      - "NodeNic"
+                      - "NodePowerConnector"
+                      - "Partition"
+                      - "Processor"
+                      - "RouterBMC"
+                      - "RouterBMCNic"
+                      - "RouterFpga"
+                      - "RouterModule"
+                      - "RouterPowerConnector"
+                      - "RouterTORFpga"
+                      - "SMSBox"
+                      - "StorageGroup"
+                      - "System"
+
+  # 7. GET /service/values/arch API response code
+  # 8. GET /service/values/arch API response body
+  - name: hsmAPIServiceValuesArchGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/arch"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              Arch:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "ARM"
+                      - "Other"
+                      - "UNKNOWN"
+                      - "X86"
+
+  # 9. GET /service/values/class API response code
+  # 10. GET /service/values/class API response body
+  - name: hsmAPIServiceValuesClassGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/class"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              Class:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Hill"
+                      - "Mountain"
+                      - "River"
+
+  # 11. GET /service/values/flag API response code
+  # 12. GET /service/values/flag API response body
+  - name: hsmAPIServiceValuesFlagGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/flag"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              Flag:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Alert"
+                      - "Locked"
+                      - "OK"
+                      - "Unknown"
+                      #TODO: Warning being returned twice by API, open minor bug on this
+                      - "Warning"
+
+  # 13. GET /service/values/nettype API response code
+  # 14. GET /service/values/nettype API response body
+  - name: hsmAPIServiceValuesNetTypeGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/nettype"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              NetType:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Ethernet"
+                      - "Infiniband"
+                      - "None"
+                      - "OEM"
+                      - "Sling"
+
+  # 15. GET /service/values/role API response code
+  # 16. GET /service/values/role API response body
+  - name: hsmAPIServiceValuesRoleGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/role"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              Role:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Application"
+                      - "Compute"
+                      - "Management"
+                      - "Service"
+                      - "Storage"
+                      - "System"
+
+  # 17. GET /service/values/subrole API response code
+  # 18. GET /service/values/subrole API response body
+  - name: hsmAPIServiceValuesSubRoleGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/subrole"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              SubRole:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Master"
+                      - "Storage"
+                      - "Worker"
+
+  # 19. GET /service/values/state API response code
+  # 20. GET /service/values/state API response body
+  - name: hsmAPIServiceValuesStateGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/state"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              State:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "Empty"
+                      - "Halt"
+                      - "Off"
+                      - "On"
+                      - "Populated"
+                      - "Ready"
+                      - "Standby"
+                      - "Unknown"
+
+  # 21. GET /service/values/type API response code
+  # 22. GET /service/values/type API response body
+  - name: hsmAPIServiceValuesTypeGET
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values/type"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              Type:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: str
+                    required: True
+                    enum:
+                      - "All"
+                      - "AllComp"
+                      - "AllSvc"
+                      - "CDU"
+                      - "CDUMgmtSwitch"
+                      - "CEC"
+                      - "CMMFpga"
+                      - "CMMRectifier"
+                      - "Cabinet"
+                      - "CabinetBMC"
+                      - "CabinetCDU"
+                      - "CabinetPDU"
+                      - "CabinetPDUController"
+                      - "CabinetPDUNic"
+                      - "CabinetPDUOutlet"
+                      - "CabinetPDUPowerConnector"
+                      - "Chassis"
+                      - "ChassisBMC"
+                      - "ChassisBMCNic"
+                      - "ComputeModule"
+                      - "Drive"
+                      - "HSNAsic"
+                      - "HSNBoard"
+                      - "HSNConnector"
+                      - "HSNConnectorPort"
+                      - "HSNLink"
+                      - "INVALID"
+                      - "Memory"
+                      - "MgmtHLSwitch"
+                      - "MgmtSwitch"
+                      - "MgmtSwitchConnector"
+                      - "Node"
+                      - "NodeAccel"
+                      - "NodeAccelRiser"
+                      - "NodeBMC"
+                      - "NodeBMCNic"
+                      - "NodeEnclosure"
+                      - "NodeEnclosurePowerSupply"
+                      - "NodeFpga"
+                      - "NodeHsnNic"
+                      - "NodeNic"
+                      - "NodePowerConnector"
+                      - "Partition"
+                      - "Processor"
+                      - "RouterBMC"
+                      - "RouterBMCNic"
+                      - "RouterFpga"
+                      - "RouterModule"
+                      - "RouterPowerConnector"
+                      - "RouterTORFpga"
+                      - "SMSBox"
+                      - "StorageGroup"
+                      - "System"
