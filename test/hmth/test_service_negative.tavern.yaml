@@ -24,14 +24,31 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 2
+# HMS test metrics test cases: 24
 # 1. POST /service/ready API response code
 # 2. POST /service/ready API response body
-
-#TODO:
-# PATCH
-# PUT
-# DELETE
+# 3. PATCH /service/ready API response code
+# 4. PATCH /service/ready API response body
+# 5. PUT /service/ready API response code
+# 6. PUT /service/ready API response body
+# 7. DELETE /service/ready API response code
+# 8. DELETE /service/ready API response body
+# 9. POST /service/liveness API response code
+# 10. POST /service/liveness API response body
+# 11. PATCH /service/liveness API response code
+# 12. PATCH /service/liveness API response body
+# 13. PUT /service/liveness API response code
+# 14. PUT /service/liveness API response body
+# 15. DELETE /service/liveness API response code
+# 16. DELETE /service/liveness API response body
+# 17. POST /service/values API response code
+# 18. POST /service/values API response body
+# 19. PATCH /service/values API response code
+# 20. PATCH /service/values API response body
+# 21. PUT /service/values API response code
+# 22. PUT /service/values API response body
+# 23. DELETE /service/values API response code
+# 24. DELETE /service/values API response body
 ---
 test_name: hsmAPIServiceNegative
 
@@ -44,6 +61,410 @@ stages:
       method: POST
       verify: !bool "{verify}"
       json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 3. PATCH /service/ready API response code
+  # 4. PATCH /service/ready API response body
+  - name: hsmAPIServiceReadyPATCH
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/ready"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 5. PUT /service/ready API response code
+  # 6. PUT /service/ready API response body
+  - name: hsmAPIServiceReadyPUT
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/ready"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 7. DELETE /service/ready API response code
+  # 8. DELETE /service/ready API response body
+  - name: hsmAPIServiceReadyDELETE
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/ready"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 9. POST /service/liveness API response code
+  # 10. POST /service/liveness API response body
+  - name: hsmAPIServiceLivenessPOST
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/liveness"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 11. PATCH /service/liveness API response code
+  # 12. PATCH /service/liveness API response body
+  - name: hsmAPIServiceLivenessPATCH
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/liveness"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 13. PUT /service/liveness API response code
+  # 14. PUT /service/liveness API response body
+  - name: hsmAPIServiceLivenessPUT
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/liveness"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 15. DELETE /service/liveness API response code
+  # 16. DELETE /service/liveness API response body
+  - name: hsmAPIServiceLivenessDELETE
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/liveness"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 17. POST /service/values API response code
+  # 18. POST /service/values API response body
+  - name: hsmAPIServiceValuesPOST
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 19. PATCH /service/values API response code
+  # 20. PATCH /service/values API response body
+  - name: hsmAPIServiceValuesPATCH
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 21. PUT /service/values API response code
+  # 22. PUT /service/values API response body
+  - name: hsmAPIServiceValuesPUT
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"fake":"payload"}
+    response:
+      status_code: 405
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Method Not Allowed"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "allow GET"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 405
+
+  # 23. DELETE /service/values API response code
+  # 24. DELETE /service/values API response body
+  - name: hsmAPIServiceValuesDELETE
+    request:
+      url: "{hsm_base_url}/hsm/v2/service/values"
+      method: DELETE
+      verify: !bool "{verify}"
     response:
       status_code: 405
       verify_response_with:
