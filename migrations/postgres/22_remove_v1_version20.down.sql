@@ -26,7 +26,7 @@
 BEGIN;
 
 ALTER TABLE reservations
-    ADD COLUMN IF NOT EXISTS v1_lock_id;
+    ADD COLUMN IF NOT EXISTS v1_lock_id UUID;
 
 CREATE TABLE IF NOT EXISTS component_locks (
     "id"       UUID PRIMARY KEY,
