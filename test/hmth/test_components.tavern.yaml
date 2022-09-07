@@ -25,21 +25,113 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: TODO
-# 1. POST /State/Components Node API response code
-# 2. POST /State/Components Node API response body
-# 3. GET /State/Components API response code
-# 4. GET /State/Components API response body
-# 5. GET /State/Components?id={xname} Node API response code
-# 6. GET /State/Components?id={xname} Node API response body
-# 7. DELETE /State/Components?id={xname} Node API response code
-# 8. DELETE /State/Components?id={xname} Node API response body
+# TODO. DELETE /State/Components API response code
+# TODO. DELETE /State/Components API response body
+# TODO. DELETE /State/Components No Components API response code
+# TODO. DELETE /State/Components No Components API response body
+
+# TODO. POST /State/Components Node API response code
+# TODO. POST /State/Components Node API response body
+# TODO. GET /State/Components API response code
+# TODO. GET /State/Components API response body
+# TODO. GET /State/Components?id={xname} Node Parameter API response code
+# TODO. GET /State/Components?id={xname} Node Parameter API response body
+
+# TODO. PUT /State/Components/{xname} Existing Node No Force API response code
+# TODO. PUT /State/Components/{xname} Existing Node No Force API response body
+# TODO. GET /State/Components/{xname} Node API response code
+# TODO. GET /State/Components/{xname} Node API response body
+# TODO. PUT /State/Components/{xname} Existing Node Force API response code
+# TODO. PUT /State/Components/{xname} Existing Node Force API response body
+# TODO. GET /State/Components/{xname} Node API response code
+# TODO. GET /State/Components/{xname} Node API response body
+
+# TODO. DELETE /State/Components/{xname} Node API response code
+# TODO. DELETE /State/Components/{xname} Node API response body
+# TODO. DELETE /State/Components/{xname} Missing Node API response code
+# TODO. DELETE /State/Components/{xname} Missing Node API response body
+# TODO. GET /State/Components/{xname} Missing Node API response code
+# TODO. GET /State/Components/{xname} Missing Node API response body
+
+# TODO. PUT /State/Components/{xname} Non-Existing Node API response code
+# TODO. PUT /State/Components/{xname} Non-Existing Node API response body
+# TODO. GET /State/Components/{xname} Node API response code
+# TODO. GET /State/Components/{xname} Node API response body
+# TODO. DELETE /State/Components API response code
+# TODO. DELETE /State/Components API response body
+
+# TODO. POST /State/Components NodeBMC API response code
+# TODO. POST /State/Components NodeBMC API response body
+# TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response code
+# TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response body
+# TODO. GET /State/Components/{xname} NodeBMC API response code
+# TODO. GET /State/Components/{xname} NodeBMC API response body
+# TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response code
+# TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response body
+# TODO. GET /State/Components/{xname} NodeBMC API response code
+# TODO. GET /State/Components/{xname} NodeBMC API response body
+
+# TODO. POST /State/Components NodeEnclosure API response code
+# TODO. POST /State/Components NodeEnclosure API response body
+# TODO. POST /State/Components RouterBMC and RouterModule API response code
+# TODO. POST /State/Components RouterBMC and RouterModule API response body
+# TODO. POST /State/Components Chassis and ChassisBMC API response code
+# TODO. POST /State/Components Chassis and ChassisBMC API response body
+# TODO. POST /State/Components HSNBoard and CabinetPDUController API response code
+# TODO. POST /State/Components HSNBoard and CabinetPDUController API response body
 ---
 test_name: hsmAPIStateComponents
 
 stages:
-  # 1. POST /State/Components API response code
-  # 2. POST /State/Components API response body
-  - name: hsmAPIStateComponentsPOST
+  #TODO. DELETE /State/Components API response code
+  #TODO. DELETE /State/Components API response body
+  - name: hsmAPIStateComponentsDELETE
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  #TODO. DELETE /State/Components No Components API response code
+  #TODO. DELETE /State/Components No Components API response body
+  - name: hsmAPIStateComponentsDELETEnoComponents
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no entries to delete"
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: Does Not Exist example in Swagger shows 400
+                  - 404
+
+  # TODO. POST /State/Components Node API response code
+  # TODO. POST /State/Components Node API response body
+  - name: hsmAPIStateComponentsPOSTnode
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -50,8 +142,8 @@ stages:
       status_code: 204
       #TODO: returns no response body, Swagger says it will have a response body
 
-  # 3. GET /State/Components API response code
-  # 4. GET /State/Components API response body
+  # TODO. GET /State/Components API response code
+  # TODO. GET /State/Components API response body
   - name: hsmAPIStateComponentsGET
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -62,9 +154,9 @@ stages:
       json:
         Components: !anything
 
-  # 5. GET /State/Components?id={xname} API response code
-  # 6. GET /State/Components?id={xname} API response body
-  - name: hsmAPIStateComponentsGETid
+  # TODO. GET /State/Components?id={xname} Node Parameter API response code
+  # TODO. GET /State/Components?id={xname} Node Parameter API response body
+  - name: hsmAPIStateComponentsGETidParamNode
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b9n9"
       method: GET
@@ -140,9 +232,175 @@ stages:
                         enum:
                           - "River"
 
-  # 7. DELETE /State/Components?id={xname} Node API response code
-  # 8. DELETE /State/Components?id={xname} Node API response body
-  - name: hsmAPIStateComponentsDELETEid
+  # TODO. PUT /State/Components/{xname} Existing Node No Force API response code
+  # TODO. PUT /State/Components/{xname} Existing Node No Force API response body
+  - name: hsmAPIStateComponentsPUTnodeExistsNoForce
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"Component":{"ID":"x9999c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. GET /State/Components/{xname} Node API response code
+  # TODO. GET /State/Components/{xname} Node API response body
+  - name: hsmAPIStateComponentsGETxnameNode
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "On"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "OK"
+              Enabled:
+                type: bool
+                required: True
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "AdminStatus"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999999
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Sling"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "X86"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "River"
+
+  # TODO. PUT /State/Components/{xname} Existing Node Force API response code
+  # TODO. PUT /State/Components/{xname} Existing Node Force API response body
+  - name: hsmAPIStateComponentsPUTnodeExistsForce
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"Component":{"ID":"x9999c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":true}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. GET /State/Components/{xname} Node API response code
+  # TODO. GET /State/Components/{xname} Node API response body
+  - name: hsmAPIStateComponentsGETxnameNode
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Standby"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "Alert"
+              Enabled:
+                type: bool
+                required: True
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "AdminStatus"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999999
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Infiniband"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "ARM"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "River"
+
+  # TODO. DELETE /State/Components/{xname} Node API response code
+  # TODO. DELETE /State/Components/{xname} Node API response body
+  - name: hsmAPIStateComponentsDELETExname
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -166,3 +424,404 @@ stages:
                 required: True
                 enum:
                   - "deleted 1 entry"
+
+  # TODO. DELETE /State/Components/{xname} Missing Node API response code
+  # TODO. DELETE /State/Components/{xname} Missing Node API response body
+  - name: hsmAPIStateComponentsDELETExnameMissing
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: Does Not Exist example in Swagger shows 400
+                  - 404
+
+  # TODO. GET /State/Components/{xname} Missing Node API response code
+  # TODO. GET /State/Components/{xname} Missing Node API response body
+  - name: hsmAPIStateComponentsGETidMissingNode
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: Does Not Exist example in Swagger shows 400
+                  - 404
+
+  # TODO. PUT /State/Components/{xname} Non-Existing Node API response code
+  # TODO. PUT /State/Components/{xname} Non-Existing Node API response body
+  - name: hsmAPIStateComponentsPUTdoesntExistNoForce
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"Component":{"ID":"x9999c7s9b9n9","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Ethernet","Arch":"Other","Class":"River"},"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. GET /State/Components/{xname} Node API response code
+  # TODO. GET /State/Components/{xname} Node API response body
+  - name: hsmAPIStateComponentsGETxnameNode
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Ready"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "OK"
+              Enabled:
+                type: bool
+                required: True
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "AdminStatus"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999999
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Ethernet"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "Other"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "River"
+
+  # TODO. DELETE /State/Components API response code
+  # TODO. DELETE /State/Components API response body
+  - name: hsmAPIStateComponentsDELETE
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entries"
+
+  # TODO. POST /State/Components NodeBMC API response code
+  # TODO. POST /State/Components NodeBMC API response body
+  - name: hsmAPIStateComponentsPOSTnodeBMC
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Ready","Flag":"OK","Enabled":true,"Role":"Management","NetType":"Sling","Arch":"X86","Class":"River","Locked":false}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response code
+  # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response body
+  - name: hsmAPIStateComponentsPOSTnodeBMCexistsNoForce
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Off","Flag":"Warning","Enabled":false,"Role":"Management","NetType":"Infiniband","Arch":"ARM","Class":"Mountain","Locked":true}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. GET /State/Components/{xname} NodeBMC API response code
+  # TODO. GET /State/Components/{xname} NodeBMC API response body
+  - name: hsmAPIStateComponentsGETxnameNodeBMC
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "NodeBMC"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Ready"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "OK"
+              Enabled:
+                type: bool
+                required: True
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Management"
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Sling"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "X86"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "River"
+
+  # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response code
+  # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response body
+  - name: hsmAPIStateComponentsPOSTnodeBMCexistsForce
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Off","Flag":"Warning","Enabled":false,"Role":"Management","NetType":"Infiniband","Arch":"ARM","Class":"Mountain","Locked":true}],"Force":true}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. GET /State/Components/{xname} NodeBMC API response code
+  # TODO. GET /State/Components/{xname} NodeBMC API response body
+  - name: hsmAPIStateComponentsGETxnameNodeBMC
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "NodeBMC"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Off"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "Warning"
+              Enabled:
+                type: bool
+                required: True
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Management"
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Infiniband"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "ARM"
+              Class:
+                type: str
+                required: True
+                enum:
+                  #TODO: Swagger says "If the component already exists it will not be overwritten unless force=true
+                  # in which case State, Flag, Subtype, NetType, and Arch will get overwritten." This test case shows
+                  # that Class also gets overwritten.
+                  #- "River"
+                  - "Mountain"
+
+  # TODO. POST /State/Components NodeEnclosure API response code
+  # TODO. POST /State/Components NodeEnclosure API response body
+  - name: hsmAPIStateComponentsPOSTnodeEnclosure
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9e9","Type":"NodeEnclosure","State":"On","Flag":"OK","Enabled":false,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. POST /State/Components RouterBMC and RouterModule API response code
+  # TODO. POST /State/Components RouterBMC and RouterModule API response body
+  - name: hsmAPIStateComponentsPOSTrouterBMCandRouterModule
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7r9b9","Type":"RouterBMC","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"},{"ID":"x9999c7r9","Type":"RouterModule","State":"Empty","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. POST /State/Components Chassis and ChassisBMC API response code
+  # TODO. POST /State/Components Chassis and ChassisBMC API response body
+  - name: hsmAPIStateComponentsPOSTchassisAndChassisBMC
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7","Type":"Chassis","State":"Off","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"},{"ID":"x9999c7b0","Type":"ChassisBMC","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. POST /State/Components HSNBoard and CabinetPDUController API response code
+  # TODO. POST /State/Components HSNBoard and CabinetPDUController API response body
+  - name: hsmAPIStateComponentsPOSThsnBoardandCabinetPDUController
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7r9e9","Type":"HSNBoard","State":"On","Flag":"Warning","Enabled":false,"NetType":"Sling","Arch":"X86","Class":"River"},{"ID":"x9999m3","Type":"CabinetPDUController","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Infiniband","Arch":"X86"}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
