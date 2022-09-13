@@ -23,7 +23,7 @@
 FROM artifactory.algol60.net/csm-docker/stable/hms-test:3.2.0
 
 COPY smoke/ /src/app
-COPY functional/ /src/app
+COPY api/non-disruptive/ /src/app
 COPY tavern_global_config_ct_test.yaml /src/app/tavern_global_config_ct_test.yaml
 
 ENV PATH="/src/libs:${PATH}"
