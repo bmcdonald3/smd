@@ -4,7 +4,7 @@ networks:
   smd:
 
 services:
-  ct-tests-functional-wait-for-smd:
+  wait-for-smd:
     build:
       context: test/ct/
       dockerfile: Dockerfile.wait-for-smd.Dockerfile
@@ -16,16 +16,16 @@ services:
       - emulator-loader
     networks:
       - smd
-  ct-tests-functional:
+  tavern-tests:
     build:
       context: test/ct/
       dockerfile: Dockerfile
     depends_on:
       - cray-smd
-    entrypoint: entrypoint.sh functional -c /src/app/tavern_global_config_ct_test.yaml -p /src/app
+    entrypoint: entrypoint.sh tavern -c /src/app/tavern_global_config_ct_test.yaml -p /src/app/api
     networks:
       - smd
-  ct-tests-smoke:
+  smoke-tests:
     build:
       context: test/ct/
       dockerfile: Dockerfile
