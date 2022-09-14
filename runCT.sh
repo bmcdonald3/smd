@@ -55,17 +55,17 @@ function cleanup() {
 echo "Starting containers..."
 docker-compose $args build --no-cache
 # docker-compose up -d cray-smd #this will stand up everything except for the integration test container
-docker-compose $args up -d ct-tests-functional-wait-for-smd
-docker wait ${COMPOSE_PROJECT_NAME}_ct-tests-functional-wait-for-smd_1
-docker logs ${COMPOSE_PROJECT_NAME}_ct-tests-functional-wait-for-smd_1
-docker-compose $args up --exit-code-from ct-tests-smoke ct-tests-smoke
+docker-compose $args up -d wait-for-smd
+docker wait ${COMPOSE_PROJECT_NAME}_wait-for-smd_1
+docker logs ${COMPOSE_PROJECT_NAME}_wait-for-smd_1
+docker-compose $args up --exit-code-from smoke-tests smoke-tests
 test_result=$?
 if [[ $test_result -ne 0 ]]; then
   echo "CT smoke tests FAILED!"
   cleanup 1
 fi
 
-docker-compose $args up --exit-code-from ct-tests-functional ct-tests-functional
+docker-compose $args up --exit-code-from tavern-tests tavern-tests
 test_result=$?
 if [[ $test_result -ne 0 ]]; then
   echo "CT functional tests FAILED!"
