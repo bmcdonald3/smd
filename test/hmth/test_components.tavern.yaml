@@ -34,8 +34,8 @@
 # TODO. POST /State/Components Node API response body
 # TODO. GET /State/Components API response code
 # TODO. GET /State/Components API response body
-# TODO. GET /State/Components?id={xname} Node Parameter API response code
-# TODO. GET /State/Components?id={xname} Node Parameter API response body
+# TODO. GET /State/Components?id={id} Node Parameter API response code
+# TODO. GET /State/Components?id={id} Node Parameter API response body
 
 # TODO. PUT /State/Components/{xname} Existing Node No Force API response code
 # TODO. PUT /State/Components/{xname} Existing Node No Force API response body
@@ -71,6 +71,8 @@
 # TODO. GET /State/Components/{xname} NodeBMC API response code
 # TODO. GET /State/Components/{xname} NodeBMC API response body
 
+# TODO. POST /State/Components Nodes API response code
+# TODO. POST /State/Components Nodes API response body
 # TODO. POST /State/Components NodeEnclosure API response code
 # TODO. POST /State/Components NodeEnclosure API response body
 # TODO. POST /State/Components RouterBMC and RouterModule API response code
@@ -79,13 +81,49 @@
 # TODO. POST /State/Components Chassis and ChassisBMC API response body
 # TODO. POST /State/Components HSNBoard and CabinetPDUController API response code
 # TODO. POST /State/Components HSNBoard and CabinetPDUController API response body
+
+# TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response code
+# TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response body
+# TODO. GET /State/Components?type={type} ChassisBMC Parameter API response code
+# TODO. GET /State/Components?type={type} ChassisBMC Parameter API response body
+# TODO. GET /State/Components?type={type} Chassis Parameter API response code
+# TODO. GET /State/Components?type={type} Chassis Parameter API response body
+# TODO. GET /State/Components?type={type} HSNBoard Parameter API response code
+# TODO. GET /State/Components?type={type} HSNBoard Parameter API response body
+# TODO. GET /State/Components?type={type} NodeBMC Parameter API response code
+# TODO. GET /State/Components?type={type} NodeBMC Parameter API response body
+# TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response code
+# TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response body
+# TODO. GET /State/Components?type={type} Node Parameter API response code
+# TODO. GET /State/Components?type={type} Node Parameter API response body
+# TODO. GET /State/Components?type={type} RouterBMC Parameter API response code
+# TODO. GET /State/Components?type={type} RouterBMC Parameter API response body
+# TODO. GET /State/Components?type={type} RouterModule Parameter API response code
+# TODO. GET /State/Components?type={type} RouterModule Parameter API response body
+
+# TODO. GET /State/Components?state={state} Unknown Parameter API response code
+# TODO. GET /State/Components?state={state} Unknown Parameter API response body
+# TODO. GET /State/Components?state={state} Empty Parameter API response code
+# TODO. GET /State/Components?state={state} Empty Parameter API response body
+# TODO. GET /State/Components?state={state} Populated Parameter API response code
+# TODO. GET /State/Components?state={state} Populated Parameter API response body
+# TODO. GET /State/Components?state={state} Off Parameter API response code
+# TODO. GET /State/Components?state={state} Off Parameter API response body
+# TODO. GET /State/Components?state={state} On Parameter API response code
+# TODO. GET /State/Components?state={state} On Parameter API response body
+# TODO. GET /State/Components?state={state} Standby Parameter API response code
+# TODO. GET /State/Components?state={state} Standby Parameter API response body
+# TODO. GET /State/Components?state={state} Halt Parameter API response code
+# TODO. GET /State/Components?state={state} Halt Parameter API response body
+# TODO. GET /State/Components?state={state} Ready Parameter API response code
+# TODO. GET /State/Components?state={state} Ready Parameter API response body
 ---
 test_name: hsmAPIStateComponents
 
 stages:
   #TODO. DELETE /State/Components API response code
   #TODO. DELETE /State/Components API response body
-  - name: hsmAPIStateComponentsDELETE
+  - name: hsmAPIStateComponentsDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -93,7 +131,7 @@ stages:
 
   #TODO. DELETE /State/Components No Components API response code
   #TODO. DELETE /State/Components No Components API response body
-  - name: hsmAPIStateComponentsDELETEnoComponents
+  - name: hsmAPIStateComponentsDELETEnoComponents - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -131,7 +169,7 @@ stages:
 
   # TODO. POST /State/Components Node API response code
   # TODO. POST /State/Components Node API response body
-  - name: hsmAPIStateComponentsPOSTnode
+  - name: hsmAPIStateComponentsPOSTnode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -144,7 +182,7 @@ stages:
 
   # TODO. GET /State/Components API response code
   # TODO. GET /State/Components API response body
-  - name: hsmAPIStateComponentsGET
+  - name: hsmAPIStateComponentsGET - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: GET
@@ -154,9 +192,9 @@ stages:
       json:
         Components: !anything
 
-  # TODO. GET /State/Components?id={xname} Node Parameter API response code
-  # TODO. GET /State/Components?id={xname} Node Parameter API response body
-  - name: hsmAPIStateComponentsGETidParamNode
+  # TODO. GET /State/Components?id={id} Node Parameter API response code
+  # TODO. GET /State/Components?id={id} Node Parameter API response body
+  - name: hsmAPIStateComponentsGETidParamNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b9n9"
       method: GET
@@ -234,7 +272,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Existing Node No Force API response code
   # TODO. PUT /State/Components/{xname} Existing Node No Force API response body
-  - name: hsmAPIStateComponentsPUTnodeExistsNoForce
+  - name: hsmAPIStateComponentsPUTnodeExistsNoForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -247,7 +285,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsGETxnameNode
+  - name: hsmAPIStateComponentsGETxnameNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -317,7 +355,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Existing Node Force API response code
   # TODO. PUT /State/Components/{xname} Existing Node Force API response body
-  - name: hsmAPIStateComponentsPUTnodeExistsForce
+  - name: hsmAPIStateComponentsPUTnodeExistsForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -330,7 +368,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsGETxnameNode
+  - name: hsmAPIStateComponentsGETxnameNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -400,7 +438,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Node API response code
   # TODO. DELETE /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsDELETExname
+  - name: hsmAPIStateComponentsDELETExname - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -427,7 +465,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Missing Node API response code
   # TODO. DELETE /State/Components/{xname} Missing Node API response body
-  - name: hsmAPIStateComponentsDELETExnameMissing
+  - name: hsmAPIStateComponentsDELETExnameMissing - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -465,7 +503,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Missing Node API response code
   # TODO. GET /State/Components/{xname} Missing Node API response body
-  - name: hsmAPIStateComponentsGETidMissingNode
+  - name: hsmAPIStateComponentsGETidMissingNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -503,7 +541,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Non-Existing Node API response code
   # TODO. PUT /State/Components/{xname} Non-Existing Node API response body
-  - name: hsmAPIStateComponentsPUTdoesntExistNoForce
+  - name: hsmAPIStateComponentsPUTdoesntExistNoForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -516,7 +554,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsGETxnameNode
+  - name: hsmAPIStateComponentsGETxnameNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -586,7 +624,7 @@ stages:
 
   # TODO. DELETE /State/Components API response code
   # TODO. DELETE /State/Components API response body
-  - name: hsmAPIStateComponentsDELETE
+  - name: hsmAPIStateComponentsDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -613,7 +651,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC API response code
   # TODO. POST /State/Components NodeBMC API response body
-  - name: hsmAPIStateComponentsPOSTnodeBMC
+  - name: hsmAPIStateComponentsPOSTnodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -626,7 +664,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response code
   # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response body
-  - name: hsmAPIStateComponentsPOSTnodeBMCexistsNoForce
+  - name: hsmAPIStateComponentsPOSTnodeBMCexistsNoForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -639,7 +677,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} NodeBMC API response code
   # TODO. GET /State/Components/{xname} NodeBMC API response body
-  - name: hsmAPIStateComponentsGETxnameNodeBMC
+  - name: hsmAPIStateComponentsGETxnameNodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
       method: GET
@@ -699,7 +737,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response code
   # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response body
-  - name: hsmAPIStateComponentsPOSTnodeBMCexistsForce
+  - name: hsmAPIStateComponentsPOSTnodeBMCexistsForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -712,7 +750,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} NodeBMC API response code
   # TODO. GET /State/Components/{xname} NodeBMC API response body
-  - name: hsmAPIStateComponentsGETxnameNodeBMC
+  - name: hsmAPIStateComponentsGETxnameNodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
       method: GET
@@ -774,9 +812,24 @@ stages:
                   #- "River"
                   - "Mountain"
 
+  # TODO. POST /State/Components Nodes API response code
+  # TODO. POST /State/Components Nodes API response body
+  - name: hsmAPIStateComponentsPOSTnodes - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      #TODO: Enum for Flag missing Unknown in Swagger
+      #TODO: Enum for Arch missing Unknown in Swagger
+      json: {"Components":[{"ID":"x9999c7s9b9n8","Type":"Node","State":"Unknown","Flag":"Unknown","Enabled":true,"SoftwareStatus":"TestStatus8","Role":"Compute","SubRole":"Master","NID":9999999998,"NetType":"Sling","Arch":"X86","Class":"River"},{"ID":"x9999c7s9b9n7","Type":"Node","State":"Empty","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus7","Role":"Service","SubRole":"Worker","NID":9999999997,"NetType":"Infiniband","Arch":"X86","Class":"River"},{"ID":"x9999c7s9b9n6","Type":"Node","State":"Populated","Flag":"Warning","Enabled":true,"SoftwareStatus":"TestStatus6","Role":"System","SubRole":"Storage","NID":9999999996,"NetType":"Ethernet","Arch":"ARM","Class":"River"},{"ID":"x9999c7s9b9n5","Type":"Node","State":"Off","Flag":"Warn","Enabled":true,"SoftwareStatus":"TestStatus5","Role":"Application","SubRole":"Master","NID":9999999995,"NetType":"OEM","Arch":"ARM","Class":"Mountain"},{"ID":"x9999c7s9b9n4","Type":"Node","State":"On","Flag":"Alert","Enabled":false,"SoftwareStatus":"TestStatus4","Role":"Storage","SubRole":"Worker","NID":9999999994,"NetType":"None","Arch":"Other","Class":"Mountain"},{"ID":"x9999c7s9b9n3","Type":"Node","State":"Standby","Flag":"Locked","Enabled":false,"SoftwareStatus":"TestStatus3","Role":"Management","SubRole":"Storage","NID":9999999993,"NetType":"Sling","Arch":"Other","Class":"Mountain"},{"ID":"x9999c7s9b9n2","Type":"Node","State":"Halt","Flag":"OK","Enabled":false,"SoftwareStatus":"TestStatus2","Role":"Compute","SubRole":"Master","NID":9999999992,"NetType":"Sling","Arch":"Unknown","Class":"Hill"},{"ID":"x9999c7s9b9n1","Type":"Node","State":"Ready","Flag":"OK","Enabled":false,"SoftwareStatus":"TestStatus1","Role":"Compute","SubRole":"Worker","NID":9999999991,"NetType":"Sling","Arch":"Unknown","Class":"Hill"},{"ID":"x9999c7s9b9n0","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus0","Role":"Compute","SubRole":"Storage","NID":9999999990,"NetType":"Sling","Arch":"X86","Class":"Hill"}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
+
   # TODO. POST /State/Components NodeEnclosure API response code
   # TODO. POST /State/Components NodeEnclosure API response body
-  - name: hsmAPIStateComponentsPOSTnodeEnclosure
+  - name: hsmAPIStateComponentsPOSTnodeEnclosure - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -789,7 +842,7 @@ stages:
 
   # TODO. POST /State/Components RouterBMC and RouterModule API response code
   # TODO. POST /State/Components RouterBMC and RouterModule API response body
-  - name: hsmAPIStateComponentsPOSTrouterBMCandRouterModule
+  - name: hsmAPIStateComponentsPOSTrouterBMCandRouterModule - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -802,7 +855,7 @@ stages:
 
   # TODO. POST /State/Components Chassis and ChassisBMC API response code
   # TODO. POST /State/Components Chassis and ChassisBMC API response body
-  - name: hsmAPIStateComponentsPOSTchassisAndChassisBMC
+  - name: hsmAPIStateComponentsPOSTchassisAndChassisBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -815,7 +868,7 @@ stages:
 
   # TODO. POST /State/Components HSNBoard and CabinetPDUController API response code
   # TODO. POST /State/Components HSNBoard and CabinetPDUController API response body
-  - name: hsmAPIStateComponentsPOSThsnBoardandCabinetPDUController
+  - name: hsmAPIStateComponentsPOSThsnBoardandCabinetPDUController - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -825,3 +878,1161 @@ stages:
       #TODO: returns 204, Swagger says it will be 200
       status_code: 204
       #TODO: returns no response body, Swagger says it will have a response body
+
+  # TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response code
+  # TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamCabinetPDUController - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=CabinetPDUController"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999m3"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "CabinetPDUController"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Infiniband"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+
+  # TODO. GET /State/Components?type={type} ChassisBMC Parameter API response code
+  # TODO. GET /State/Components?type={type} ChassisBMC Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamChassisBMC - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=ChassisBMC"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7b0"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "ChassisBMC"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?type={type} Chassis Parameter API response code
+  # TODO. GET /State/Components?type={type} Chassis Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamChassis - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Chassis"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Chassis"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Off"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?type={type} HSNBoard Parameter API response code
+  # TODO. GET /State/Components?type={type} HSNBoard Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamHSNBoard - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=HSNBoard"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7r9e9"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "HSNBoard"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "On"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components?type={type} NodeBMC Parameter API response code
+  # TODO. GET /State/Components?type={type} NodeBMC Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamNodeBMC - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "NodeBMC"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Off"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Management"
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Infiniband"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response code
+  # TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamNodeEnclosure - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeEnclosure"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9e9"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "NodeEnclosure"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "On"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?type={type} Node Parameter API response code
+  # TODO. GET /State/Components?type={type} Node Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamNode - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        pattern: "^x([0-9]{{1,4}})c([0-7])s([0-9]+)b([0-9]+)n([0-9]+)$"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. GET /State/Components?type={type} RouterBMC Parameter API response code
+  # TODO. GET /State/Components?type={type} RouterBMC Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamRouterBMC - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=RouterBMC"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7r9b9"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "RouterBMC"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?type={type} RouterModule Parameter API response code
+  # TODO. GET /State/Components?type={type} RouterModule Parameter API response body
+  - name: hsmAPIStateComponentsGETtypeParamRouterModule - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=RouterModule"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7r9"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "RouterModule"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Empty"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?state={state} Unknown Parameter API response code
+  # TODO. GET /State/Components?state={state} Unknown Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamUnknown - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Unknown"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components?state={state} Empty Parameter API response code
+  # TODO. GET /State/Components?state={state} Empty Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamEmpty - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Empty"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Empty"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: False
+                      Role:
+                        type: str
+                        required: False
+                      SubRole:
+                        type: str
+                        required: False
+                      NID:
+                        type: int
+                        required: False
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. GET /State/Components?state={state} Populated Parameter API response code
+  # TODO. GET /State/Components?state={state} Populated Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamPopulated - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Populated"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Populated"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus6"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "System"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ethernet"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components?state={state} Off Parameter API response code
+  # TODO. GET /State/Components?state={state} Off Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamOff - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Off"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Off"
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: False
+                      Role:
+                        type: str
+                        required: False
+                      SubRole:
+                        type: str
+                        required: False
+                      NID:
+                        type: int
+                        required: False
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?state={state} On Parameter API response code
+  # TODO. GET /State/Components?state={state} On Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamOn - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=On"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "On"
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: False
+                      Role:
+                        type: str
+                        required: False
+                      SubRole:
+                        type: str
+                        required: False
+                      NID:
+                        type: int
+                        required: False
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. GET /State/Components?state={state} Standby Parameter API response code
+  # TODO. GET /State/Components?state={state} Standby Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamStandby - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Standby"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n3"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Standby"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Locked"
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus3"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Management"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999993
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "Other"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components?state={state} Halt Parameter API response code
+  # TODO. GET /State/Components?state={state} Halt Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamHalt - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Halt"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n2"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Halt"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus2"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999992
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "UNKNOWN"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Hill"
+
+  # TODO. GET /State/Components?state={state} Ready Parameter API response code
+  # TODO. GET /State/Components?state={state} Ready Parameter API response body
+  - name: hsmAPIStateComponentsGETstateParamReady - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Ready"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: False
+                      Role:
+                        type: str
+                        required: False
+                      SubRole:
+                        type: str
+                        required: False
+                      NID:
+                        type: int
+                        required: False
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: False
