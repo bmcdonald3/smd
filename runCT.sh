@@ -68,7 +68,7 @@ fi
 docker-compose $args up --exit-code-from tavern-tests tavern-tests
 test_result=$?
 if [[ $test_result -ne 0 ]]; then
-  echo "CT functional tests FAILED!"
+  echo "CT tavern tests FAILED!"
   cleanup 1
 fi
 

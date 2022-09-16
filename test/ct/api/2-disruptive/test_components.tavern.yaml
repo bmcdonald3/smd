@@ -52,6 +52,8 @@
 # TODO. DELETE /State/Components/{xname} Missing Node API response body
 # TODO. GET /State/Components/{xname} Missing Node API response code
 # TODO. GET /State/Components/{xname} Missing Node API response body
+# TODO. GET /State/Components/ByNID/{nid} Missing NID API response code
+# TODO. GET /State/Components/ByNID/{nid} Missing NID API response body
 
 # TODO. PUT /State/Components/{xname} Non-Existing Node API response code
 # TODO. PUT /State/Components/{xname} Non-Existing Node API response body
@@ -169,6 +171,26 @@
 # TODO. GET /State/Components?class={class} Hill Parameter API response code
 # TODO. GET /State/Components?class={class} Hill Parameter API response body
 
+#TODO
+    # GET /State/Components?
+    # nid
+    # nid_start
+    # nid_end
+    # partition
+    # group
+    # stateonly
+    # flagonly
+    # roleonly
+    # nidonly
+    # multi/most params in one
+
+# TODO. GET /State/Components/ByNID/{nid} Existing NodeA API response code
+# TODO. GET /State/Components/ByNID/{nid} Existing NodeA API response body
+# TODO. GET /State/Components/ByNID/{nid} Exisitng NodeB API response code
+# TODO. GET /State/Components/ByNID/{nid} Existing NodeB API response body
+
+# TODO. POST /State/Components Nodes For Bulk Updates API response code
+# TODO. POST /State/Components Nodes For Bulk Updates API response body
 ---
 test_name: hsmAPIStateComponents
 
@@ -584,6 +606,44 @@ stages:
                 required: True
                 enum:
                   - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: Does Not Exist example in Swagger shows 400
+                  - 404
+
+  # TODO. GET /State/Components/ByNID/{nid} Missing NID API response code
+  # TODO. GET /State/Components/ByNID/{nid} Missing NID API response body
+  - name: hsmAPIStateComponentsByNidGETmissingNid - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999999"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such NID."
               status:
                 type: int
                 required: True
@@ -3626,3 +3686,189 @@ stages:
                         required: True
                         enum:
                           - "Hill"
+
+#TODO
+    # GET /State/Components?
+    # nid
+    # nid_start
+    # nid_end
+    # partition
+    # group
+    # stateonly
+    # flagonly
+    # roleonly
+    # nidonly
+    # multi/most params in one
+
+  # TODO. GET /State/Components/ByNID/{nid} NodeA API response code
+  # TODO. GET /State/Components/ByNID/{nid} NodeA API response body
+  - name: hsmAPIStateComponentsByNidGETnidNodeA - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999990"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n0"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Ready"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "OK"
+              Enabled:
+                type: bool
+                required: True
+                enum:
+                  - true
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "TestStatus0"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Storage"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999990
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Sling"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "X86"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "Hill"
+
+  # TODO. GET /State/Components/ByNID/{nid} NodeB API response code
+  # TODO. GET /State/Components/ByNID/{nid} NodeB API response body
+  - name: hsmAPIStateComponentsByNidGETnidNodeB - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999998"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n8"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Unknown"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "Unknown"
+              Enabled:
+                type: bool
+                required: True
+                enum:
+                  - true
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "TestStatus8"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Master"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999998
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Sling"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "X86"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "River"
+
+#TODOTODO
+
+#  # TODO. POST /State/Components Nodes For Bulk Updates API response code
+#  # TODO. POST /State/Components Nodes For Bulk Updates API response body
+#  - name: hsmAPIStateComponentsPOSTnodesForBulkUpdates - TODO
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/State/Components"
+#      method: POST
+#      verify: !bool "{verify}"
+#      json: {"Components":[
+#            {"ID":"x9999c7s9b8n8","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus8","Role":"Compute","SubRole":"Master","NID":9999999988,"NetType":"Sling","Arch":"X86","Class":"River"},
+#            {"ID":"x9999c7s9b8n7","Type":"Node","State":"On","Flag":"Alert","Enabled":true,"SoftwareStatus":"TestStatus7","Role":"Service","SubRole":"Worker","NID":9999999987,"NetType":"Infiniband","Arch":"Other","Class":"Mountain"},
+#            {"ID":"x9999c7s9b8n6","Type":"Node","State":"Off","Flag":"Warning","Enabled":true,"SoftwareStatus":"TestStatus6","Role":"System","SubRole":"Storage","NID":9999999986,"NetType":"Ethernet","Arch":"ARM","Class":"Hill"}
+#            ],"Force":false}
+#    response:
+#      #TODO: returns 204, Swagger says it will be 200
+#      status_code: 204
+#      #TODO: returns no response body, Swagger says it will have a response body
