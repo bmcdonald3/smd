@@ -178,10 +178,6 @@
     # nid_end
     # partition
     # group
-    # stateonly
-    # flagonly
-    # roleonly
-    # nidonly
     # multi/most params in one
 
 # TODO. GET /State/Components/ByNID/{nid} Existing NodeA API response code
@@ -191,6 +187,36 @@
 
 # TODO. POST /State/Components Nodes For Bulk Updates API response code
 # TODO. POST /State/Components Nodes For Bulk Updates API response body
+
+# TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response code
+# TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response body
+# TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response code
+# TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response body
+# TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response code
+# TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response body
+# TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response code
+# TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response body
+
+# TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response code
+# TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response body
+# TODO. GET /State/Components?stateonly=True Updated Node API response code
+# TODO. GET /State/Components?stateonly=True Updated Node API response body
+# TODO. GET /State/Components?flagonly=True Updated Node API response code
+# TODO. GET /State/Components?flagonly=True Updated Node API response body
+# TODO. GET /State/Components?roleonly=True Updated Node API response code
+# TODO. GET /State/Components?roleonly=True Updated Node API response body
+# TODO. GET /State/Components?nidonly=True Updated Node API response code
+# TODO. GET /State/Components?nidonly=True Updated Node API response body
+
+# TODO. PATCH /State/Components/BulkFlagOnly Nodes API response code
+# TODO. PATCH /State/Components/BulkFlagOnly Nodes API response body
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response code
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response body
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response code
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response body
+# TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response code
+# TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response body
+
 ---
 test_name: hsmAPIStateComponents
 
@@ -2149,8 +2175,8 @@ stages:
                         type: str
                         required: False
 
-# TODO. GET /State/Components?flag={flag} OK Parameter API response code
-# TODO. GET /State/Components?flag={flag} OK Parameter API response body
+  # TODO. GET /State/Components?flag={flag} OK Parameter API response code
+  # TODO. GET /State/Components?flag={flag} OK Parameter API response body
   - name: hsmAPIStateComponentsGETflagParamOK - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=OK"
@@ -2508,8 +2534,8 @@ stages:
                         type: str
                         required: True
 
-# TODO. GET /State/Components?role={role} Service Parameter API response code
-# TODO. GET /State/Components?role={role} Service Parameter API response body
+  # TODO. GET /State/Components?role={role} Service Parameter API response code
+  # TODO. GET /State/Components?role={role} Service Parameter API response body
   - name: hsmAPIStateComponentsGETroleParamService - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Service"
@@ -3854,21 +3880,460 @@ stages:
                 enum:
                   - "River"
 
-#TODOTODO
+  # TODO. POST /State/Components Nodes For Bulk Updates API response code
+  # TODO. POST /State/Components Nodes For Bulk Updates API response body
+  - name: hsmAPIStateComponentsPOSTnodesForBulkUpdates - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b8n8","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus8","Role":"Compute","SubRole":"Master","NID":9999999988,"NetType":"Sling","Arch":"X86","Class":"River"},{"ID":"x9999c7s9b8n7","Type":"Node","State":"On","Flag":"Alert","Enabled":true,"SoftwareStatus":"TestStatus7","Role":"Service","SubRole":"Worker","NID":9999999987,"NetType":"Infiniband","Arch":"Other","Class":"Mountain"},{"ID":"x9999c7s9b8n6","Type":"Node","State":"Off","Flag":"Warning","Enabled":true,"SoftwareStatus":"TestStatus6","Role":"System","SubRole":"Storage","NID":9999999986,"NetType":"Ethernet","Arch":"ARM","Class":"Hill"}],"Force":false}
+    response:
+      #TODO: returns 204, Swagger says it will be 200
+      status_code: 204
+      #TODO: returns no response body, Swagger says it will have a response body
 
-#  # TODO. POST /State/Components Nodes For Bulk Updates API response code
-#  # TODO. POST /State/Components Nodes For Bulk Updates API response body
-#  - name: hsmAPIStateComponentsPOSTnodesForBulkUpdates - TODO
-#    request:
-#      url: "{hsm_base_url}/hsm/v2/State/Components"
-#      method: POST
-#      verify: !bool "{verify}"
-#      json: {"Components":[
-#            {"ID":"x9999c7s9b8n8","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus8","Role":"Compute","SubRole":"Master","NID":9999999988,"NetType":"Sling","Arch":"X86","Class":"River"},
-#            {"ID":"x9999c7s9b8n7","Type":"Node","State":"On","Flag":"Alert","Enabled":true,"SoftwareStatus":"TestStatus7","Role":"Service","SubRole":"Worker","NID":9999999987,"NetType":"Infiniband","Arch":"Other","Class":"Mountain"},
-#            {"ID":"x9999c7s9b8n6","Type":"Node","State":"Off","Flag":"Warning","Enabled":true,"SoftwareStatus":"TestStatus6","Role":"System","SubRole":"Storage","NID":9999999986,"NetType":"Ethernet","Arch":"ARM","Class":"Hill"}
-#            ],"Force":false}
-#    response:
-#      #TODO: returns 204, Swagger says it will be 200
-#      status_code: 204
-#      #TODO: returns no response body, Swagger says it will have a response body
+  # TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response code
+  # TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response body
+  - name: hsmAPIStateComponentsBulkStateDataPATCHnodesStateFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      #TODO: Example payload shows force option but Swagger doesn't explain what it does, Force=false seemed to only update the first node x9999c7s9b8n8
+      #json: {"ComponentIDs":["x9999c7s9b8n8","x9999c7s9b8n7"],"State":"Standby","Flag":"Alert","Force":false}
+      json: {"ComponentIDs":["x9999c7s9b8n8","x9999c7s9b8n7"],"State":"Standby","Flag":"Alert","Force":true}
+    response:
+      status_code: 204
+
+  # TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response code
+  # TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response body
+  - name: hsmAPIStateComponentsGETxnameUpdatedBulkStateDataNodeA - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b8n8"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Standby"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "Alert"
+              Enabled:
+                type: bool
+                required: True
+                enum:
+                  - true
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "TestStatus8"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Master"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999988
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Sling"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "X86"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "River"
+
+  # TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response code
+  # TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response body
+  - name: hsmAPIStateComponentsGETxnameUpdatedBulkStateDataNodeB - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b8n7"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Standby"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "Alert"
+              Enabled:
+                type: bool
+                required: True
+                enum:
+                  - true
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "TestStatus7"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Service"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Worker"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999987
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Infiniband"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "Other"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "Mountain"
+
+  # TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response code
+  # TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response body
+  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkStateDataNode - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b8n6"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Node"
+              State:
+                type: str
+                required: True
+                enum:
+                  - "Off"
+              Flag:
+                type: str
+                required: True
+                enum:
+                  - "Warning"
+              Enabled:
+                type: bool
+                required: True
+                enum:
+                  - true
+              SoftwareStatus:
+                type: str
+                required: True
+                enum:
+                  - "TestStatus6"
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "System"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Storage"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999986
+              NetType:
+                type: str
+                required: True
+                enum:
+                  - "Ethernet"
+              Arch:
+                type: str
+                required: True
+                enum:
+                  - "ARM"
+              Class:
+                type: str
+                required: True
+                enum:
+                  - "Hill"
+
+  # TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response code
+  # TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response body
+  - name: hsmAPIStateComponentsXnameStateDataPATCHnodeStateNoFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6/StateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      #TODO: Example payload shows force option but Swagger doesn't explain what it does, Force=false and Force=true seem to do the same thing here
+      #json: {"State":"Ready","Flag":"OK","Force": false}
+      json: {"State":"Ready","Force": true}
+    response:
+      status_code: 204
+
+  # TODO. GET /State/Components?stateonly=True Updated Node API response code
+  # TODO. GET /State/Components?stateonly=True Updated Node API response body
+  - name: hsmAPIStateComponentsGETstateonlyParamUpdatedNode - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&stateonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b8n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+
+  # TODO. GET /State/Components?flagonly=True Updated Node API response code
+  # TODO. GET /State/Components?flagonly=True Updated Node API response body
+  - name: hsmAPIStateComponentsGETflagonlyParamUpdatedNode - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&flagonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b8n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+
+# TODO. GET /State/Components?roleonly=True Updated Node API response code
+# TODO. GET /State/Components?roleonly=True Updated Node API response body
+  - name: hsmAPIStateComponentsGETroleonlyParamUpdatedNode - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&roleonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b8n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "System"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+
+  # TODO. GET /State/Components?nidonly=True Updated Node API response code
+  # TODO. GET /State/Components?nidonly=True Updated Node API response body
+  - name: hsmAPIStateComponentsGETnidonlyParamUpdatedNode - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&nidonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b8n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999986
+
+  # TODO. PATCH /State/Components/BulkFlagOnly Nodes API response code
+  # TODO. PATCH /State/Components/BulkFlagOnly Nodes API response body
+  - name: hsmAPIStateComponentsBulkFlagOnlyPATCHnodes - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n7","x9999c7s9b8n6"],"Flag":"Warning"}
+    response:
+      status_code: 204
+
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response code
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response body
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response code
+# TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response body
+# TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response code
+# TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response body
