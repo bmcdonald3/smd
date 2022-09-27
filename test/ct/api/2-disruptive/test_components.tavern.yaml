@@ -103,8 +103,8 @@
 # TODO. GET /State/Components?type={type} RouterModule Parameter API response code
 # TODO. GET /State/Components?type={type} RouterModule Parameter API response body
 
-# TODO. GET /State/Components?state={state} Unknown Parameter API response code
-# TODO. GET /State/Components?state={state} Unknown Parameter API response body
+# TODO. GET /State/Components?state={state} Unknown Parameter StateOnly API response code
+# TODO. GET /State/Components?state={state} Unknown Parameter StateOnly API response body
 # TODO. GET /State/Components?state={state} Empty Parameter API response code
 # TODO. GET /State/Components?state={state} Empty Parameter API response body
 # TODO. GET /State/Components?state={state} Populated Parameter API response code
@@ -120,8 +120,8 @@
 # TODO. GET /State/Components?state={state} Ready Parameter API response code
 # TODO. GET /State/Components?state={state} Ready Parameter API response body
 
-# TODO. GET /State/Components?flag={flag} OK Parameter API response code
-# TODO. GET /State/Components?flag={flag} OK Parameter API response body
+# TODO. GET /State/Components?flag={flag} OK Parameter FlagOnly API response code
+# TODO. GET /State/Components?flag={flag} OK Parameter FlagOnly API response body
 # TODO. GET /State/Components?flag={flag} Warning Parameter API response code
 # TODO. GET /State/Components?flag={flag} Warning Parameter API response body
 # TODO. GET /State/Components?flag={flag} Alert Parameter API response code
@@ -129,8 +129,8 @@
 # TODO. GET /State/Components?flag={flag} Locked Parameter API response code
 # TODO. GET /State/Components?flag={flag} Locked Parameter API response body
 
-# TODO. GET /State/Components?role={role} Compute Parameter API response code
-# TODO. GET /State/Components?role={role} Compute Parameter API response body
+# TODO. GET /State/Components?role={role} Compute Parameter RoleOnly API response code
+# TODO. GET /State/Components?role={role} Compute Parameter RoleOnly API response body
 # TODO. GET /State/Components?role={role} Service Parameter API response code
 # TODO. GET /State/Components?role={role} Service Parameter API response body
 # TODO. GET /State/Components?role={role} System Parameter API response code
@@ -171,14 +171,12 @@
 # TODO. GET /State/Components?class={class} Hill Parameter API response code
 # TODO. GET /State/Components?class={class} Hill Parameter API response body
 
-#TODO: implement these
-    # nid
-    # nid_start
-    # nid_end
-    # stateonly <--- add this to previous case
-    # flagonly <--- add this to previous case
-    # roleonly <--- add this to previous case
-    # nidonly <--- add this to previous case
+# TODO. GET /State/Components?nid={nid} NID NidOnly Parameter API response code
+# TODO. GET /State/Components?nid={nid} NID NidOnly Parameter API response body
+# TODO. GET /State/Components?nid_start={nid_start} NID_Start Parameter API response code
+# TODO. GET /State/Components?nid_start={nid_start} NID_Start Parameter API response body
+# TODO. GET /State/Components?nid_start={nid_start}&nid_end={nid_end} NID_Start NID_End Parameters API response code
+# TODO. GET /State/Components?nid_start={nid_start}&nid_end={nid_end} NID_Start NID_End Parameters API response body
 
 # TODO. GET /State/Components Many Parameters Existing Node API response code
 # TODO. GET /State/Components Many Parameters Existing Node API response body
@@ -205,13 +203,71 @@
 # TODO. POST /State/Components/Query Class River Existing Component API response body
 # TODO. POST /State/Components/Query NID NidOnly Existing Component API response code
 # TODO. POST /State/Components/Query NID NidOnly Existing Component API response body
-
-#TODO: implement these
-#  "nid_start"
-#  "nid_end"
-
+# TODO. POST /State/Components/Query NID_Start Existing Component API response code
+# TODO. POST /State/Components/Query NID_Start Existing Component API response body
+# TODO. POST /State/Components/Query NID_Start NID_End Existing Component API response code
+# TODO. POST /State/Components/Query NID_Start NID_End Existing Component API response body
 # TODO. POST /State/Components/Query Many Parameters Existing Node API response code
 # TODO. POST /State/Components/Query Many Parameters Existing Node API response body
+
+# TODO. POST /State/Components/ByNID/Query Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Type Node Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Type Node Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query State Ready StateOnly Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query State Ready StateOnly Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Flag OK FlagOnly Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Flag OK FlagOnly Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Enabled True Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Enabled True Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query SoftwareStatus Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query SoftwareStatus Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Role Compute RoleOnly Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Role Compute RoleOnly Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query SubRole Master Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query SubRole Master Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Arch X86 Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Arch X86 Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Class River Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query Class River Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query NID NidOnly Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query NID NidOnly Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query NID_Start Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query NID_Start Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query NID_Start NID_End Existing Component API response code
+# TODO. POST /State/Components/ByNID/Query NID_Start NID_End Existing Component API response body
+# TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response code
+# TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response body
+
+#TODO: implement
+# TODO. GET /State/Components/Query/{xname} Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} State Ready StateOnly Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} State Ready StateOnly Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Flag OK FlagOnly Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Flag OK FlagOnly Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Enabled True Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Enabled True Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} SoftwareStatus Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} SoftwareStatus Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Role Compute RoleOnly Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Role Compute RoleOnly Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} SubRole Master Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} SubRole Master Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Arch X86 Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Arch X86 Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Class River Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} Class River Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} NID NidOnly Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} NID NidOnly Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} NID_Start Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} NID_Start Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} NID_Start NID_End Existing Component API response code
+# TODO. GET /State/Components/Query/{xname} NID_Start NID_End Existing Component API response body
+# TODO. GET /State/Components/Query/{xname} Many Parameters Existing Node API response code
+# TODO. GET /State/Components/Query/{xname} Many Parameters Existing Node API response body
 
 # TODO. GET /State/Components/ByNID/{nid} Existing NodeA API response code
 # TODO. GET /State/Components/ByNID/{nid} Existing NodeA API response body
@@ -313,12 +369,12 @@
 # TODO. GET /State/Components/{xname} Updated NID Node API response body
 
 ---
-test_name: hsmAPIStateComponents
+test_name: hsmAPIstateComponents
 
 stages:
   #TODO. DELETE /State/Components API response code
   #TODO. DELETE /State/Components API response body
-  - name: hsmAPIStateComponentsDELETE - TODO
+  - name: hsmAPIstateComponentsDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -326,7 +382,7 @@ stages:
 
   #TODO. DELETE /State/Components No Components API response code
   #TODO. DELETE /State/Components No Components API response body
-  - name: hsmAPIStateComponentsDELETEnoComponents - TODO
+  - name: hsmAPIstateComponentsDELETEnoComponents - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -364,7 +420,7 @@ stages:
 
   # TODO. POST /State/Components Node API response code
   # TODO. POST /State/Components Node API response body
-  - name: hsmAPIStateComponentsPOSTnode - Create a Node component using POST.
+  - name: hsmAPIstateComponentsPOSTnode - Create a Node component using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -377,7 +433,7 @@ stages:
 
   # TODO. GET /State/Components API response code
   # TODO. GET /State/Components API response body
-  - name: hsmAPIStateComponentsGET - TODO
+  - name: hsmAPIstateComponentsGET - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: GET
@@ -389,7 +445,7 @@ stages:
 
   # TODO. GET /State/Components?id={id} Node Parameter API response code
   # TODO. GET /State/Components?id={id} Node Parameter API response body
-  - name: hsmAPIStateComponentsGETidParamNode - TODO
+  - name: hsmAPIstateComponentsGETidParamNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b9n9"
       method: GET
@@ -467,7 +523,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Existing Node No Force API response code
   # TODO. PUT /State/Components/{xname} Existing Node No Force API response body
-  - name: hsmAPIStateComponentsPUTnodeExistsNoForce - TODO
+  - name: hsmAPIstateComponentsPUTnodeExistsNoForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -480,7 +536,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsGETxnameNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -550,7 +606,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Existing Node Force API response code
   # TODO. PUT /State/Components/{xname} Existing Node Force API response body
-  - name: hsmAPIStateComponentsPUTnodeExistsForce - TODO
+  - name: hsmAPIstateComponentsPUTnodeExistsForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -563,7 +619,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsGETxnameNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -633,7 +689,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Node API response code
   # TODO. DELETE /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsDELETExname - TODO
+  - name: hsmAPIstateComponentsDELETExname - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -660,7 +716,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Missing Node API response code
   # TODO. DELETE /State/Components/{xname} Missing Node API response body
-  - name: hsmAPIStateComponentsDELETExnameMissing - TODO
+  - name: hsmAPIstateComponentsDELETExnameMissing - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -698,7 +754,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Missing Node API response code
   # TODO. GET /State/Components/{xname} Missing Node API response body
-  - name: hsmAPIStateComponentsGETidMissingNode - TODO
+  - name: hsmAPIstateComponentsGETidMissingNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -736,7 +792,7 @@ stages:
 
   # TODO. GET /State/Components/ByNID/{nid} Missing NID API response code
   # TODO. GET /State/Components/ByNID/{nid} Missing NID API response body
-  - name: hsmAPIStateComponentsByNidGETmissingNid - TODO
+  - name: hsmAPIstateComponentsByNidGETmissingNid - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999999"
       method: GET
@@ -774,7 +830,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Non-Existing Node API response code
   # TODO. PUT /State/Components/{xname} Non-Existing Node API response body
-  - name: hsmAPIStateComponentsPUTdoesntExistNoForce - TODO
+  - name: hsmAPIstateComponentsPUTdoesntExistNoForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -787,7 +843,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIStateComponentsGETxnameNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -857,7 +913,7 @@ stages:
 
   # TODO. DELETE /State/Components API response code
   # TODO. DELETE /State/Components API response body
-  - name: hsmAPIStateComponentsDELETE - TODO
+  - name: hsmAPIstateComponentsDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -884,7 +940,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC API response code
   # TODO. POST /State/Components NodeBMC API response body
-  - name: hsmAPIStateComponentsPOSTnodeBMC - TODO
+  - name: hsmAPIstateComponentsPOSTnodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -897,7 +953,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response code
   # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response body
-  - name: hsmAPIStateComponentsPOSTnodeBMCexistsNoForce - TODO
+  - name: hsmAPIstateComponentsPOSTnodeBMCexistsNoForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -910,7 +966,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} NodeBMC API response code
   # TODO. GET /State/Components/{xname} NodeBMC API response body
-  - name: hsmAPIStateComponentsGETxnameNodeBMC - TODO
+  - name: hsmAPIstateComponentsGETxnameNodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
       method: GET
@@ -970,7 +1026,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response code
   # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response body
-  - name: hsmAPIStateComponentsPOSTnodeBMCexistsForce - TODO
+  - name: hsmAPIstateComponentsPOSTnodeBMCexistsForce - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -983,7 +1039,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} NodeBMC API response code
   # TODO. GET /State/Components/{xname} NodeBMC API response body
-  - name: hsmAPIStateComponentsGETxnameNodeBMC - TODO
+  - name: hsmAPIstateComponentsGETxnameNodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
       method: GET
@@ -1047,7 +1103,7 @@ stages:
 
   # TODO. POST /State/Components Nodes API response code
   # TODO. POST /State/Components Nodes API response body
-  - name: hsmAPIStateComponentsPOSTnodes - TODO
+  - name: hsmAPIstateComponentsPOSTnodes - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1062,7 +1118,7 @@ stages:
 
   # TODO. POST /State/Components NodeEnclosure API response code
   # TODO. POST /State/Components NodeEnclosure API response body
-  - name: hsmAPIStateComponentsPOSTnodeEnclosure - TODO
+  - name: hsmAPIstateComponentsPOSTnodeEnclosure - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1075,7 +1131,7 @@ stages:
 
   # TODO. POST /State/Components RouterBMC and RouterModule API response code
   # TODO. POST /State/Components RouterBMC and RouterModule API response body
-  - name: hsmAPIStateComponentsPOSTrouterBMCandRouterModule - TODO
+  - name: hsmAPIstateComponentsPOSTrouterBMCandRouterModule - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1088,7 +1144,7 @@ stages:
 
   # TODO. POST /State/Components Chassis and ChassisBMC API response code
   # TODO. POST /State/Components Chassis and ChassisBMC API response body
-  - name: hsmAPIStateComponentsPOSTchassisAndChassisBMC - TODO
+  - name: hsmAPIstateComponentsPOSTchassisAndChassisBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1101,7 +1157,7 @@ stages:
 
   # TODO. POST /State/Components HSNBoard and CabinetPDUController API response code
   # TODO. POST /State/Components HSNBoard and CabinetPDUController API response body
-  - name: hsmAPIStateComponentsPOSThsnBoardandCabinetPDUController - TODO
+  - name: hsmAPIstateComponentsPOSThsnBoardandCabinetPDUController - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1114,7 +1170,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response code
   # TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamCabinetPDUController - TODO
+  - name: hsmAPIstateComponentsGETtypeParamCabinetPDUController - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=CabinetPDUController"
       method: GET
@@ -1172,7 +1228,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} ChassisBMC Parameter API response code
   # TODO. GET /State/Components?type={type} ChassisBMC Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamChassisBMC - TODO
+  - name: hsmAPIstateComponentsGETtypeParamChassisBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=ChassisBMC"
       method: GET
@@ -1235,7 +1291,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} Chassis Parameter API response code
   # TODO. GET /State/Components?type={type} Chassis Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamChassis - TODO
+  - name: hsmAPIstateComponentsGETtypeParamChassis - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Chassis"
       method: GET
@@ -1298,7 +1354,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} HSNBoard Parameter API response code
   # TODO. GET /State/Components?type={type} HSNBoard Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamHSNBoard - TODO
+  - name: hsmAPIstateComponentsGETtypeParamHSNBoard - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=HSNBoard"
       method: GET
@@ -1361,7 +1417,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} NodeBMC Parameter API response code
   # TODO. GET /State/Components?type={type} NodeBMC Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamNodeBMC - TODO
+  - name: hsmAPIstateComponentsGETtypeParamNodeBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
@@ -1429,7 +1485,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response code
   # TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamNodeEnclosure - TODO
+  - name: hsmAPIstateComponentsGETtypeParamNodeEnclosure - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeEnclosure"
       method: GET
@@ -1492,7 +1548,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} Node Parameter API response code
   # TODO. GET /State/Components?type={type} Node Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamNode - TODO
+  - name: hsmAPIstateComponentsGETtypeParamNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
@@ -1556,7 +1612,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} RouterBMC Parameter API response code
   # TODO. GET /State/Components?type={type} RouterBMC Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamRouterBMC - TODO
+  - name: hsmAPIstateComponentsGETtypeParamRouterBMC - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=RouterBMC"
       method: GET
@@ -1619,7 +1675,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} RouterModule Parameter API response code
   # TODO. GET /State/Components?type={type} RouterModule Parameter API response body
-  - name: hsmAPIStateComponentsGETtypeParamRouterModule - TODO
+  - name: hsmAPIstateComponentsGETtypeParamRouterModule - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=RouterModule"
       method: GET
@@ -1680,11 +1736,11 @@ stages:
                         enum:
                           - "Mountain"
 
-  # TODO. GET /State/Components?state={state} Unknown Parameter API response code
-  # TODO. GET /State/Components?state={state} Unknown Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamUnknown - TODO
+  # TODO. GET /State/Components?state={state} Unknown Parameter StateOnly API response code
+  # TODO. GET /State/Components?state={state} Unknown Parameter StateOnly API response body
+  - name: hsmAPIstateComponentsGETstateParamUnknownStateOnly - TODO
     request:
-      url: "{hsm_base_url}/hsm/v2/State/Components?state=Unknown"
+      url: "{hsm_base_url}/hsm/v2/State/Components?state=Unknown&stateonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -1724,50 +1780,10 @@ stages:
                         required: True
                         enum:
                           - "Unknown"
-                      Enabled:
-                        type: bool
-                        required: True
-                        enum:
-                          - true
-                      SoftwareStatus:
-                        type: str
-                        required: True
-                        enum:
-                          - "TestStatus8"
-                      Role:
-                        type: str
-                        required: True
-                        enum:
-                          - "Compute"
-                      SubRole:
-                        type: str
-                        required: True
-                        enum:
-                          - "Master"
-                      NID:
-                        type: int
-                        required: True
-                        enum:
-                          - 9999999998
-                      NetType:
-                        type: str
-                        required: True
-                        enum:
-                          - "Sling"
-                      Arch:
-                        type: str
-                        required: True
-                        enum:
-                          - "X86"
-                      Class:
-                        type: str
-                        required: True
-                        enum:
-                          - "River"
 
   # TODO. GET /State/Components?state={state} Empty Parameter API response code
   # TODO. GET /State/Components?state={state} Empty Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamEmpty - TODO
+  - name: hsmAPIstateComponentsGETstateParamEmpty - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Empty"
       method: GET
@@ -1834,7 +1850,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Populated Parameter API response code
   # TODO. GET /State/Components?state={state} Populated Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamPopulated - TODO
+  - name: hsmAPIstateComponentsGETstateParamPopulated - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Populated"
       method: GET
@@ -1917,7 +1933,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Off Parameter API response code
   # TODO. GET /State/Components?state={state} Off Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamOff - TODO
+  - name: hsmAPIstateComponentsGETstateParamOff - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Off"
       method: GET
@@ -1982,7 +1998,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} On Parameter API response code
   # TODO. GET /State/Components?state={state} On Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamOn - TODO
+  - name: hsmAPIstateComponentsGETstateParamOn - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=On"
       method: GET
@@ -2045,7 +2061,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Standby Parameter API response code
   # TODO. GET /State/Components?state={state} Standby Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamStandby - TODO
+  - name: hsmAPIstateComponentsGETstateParamStandby - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Standby"
       method: GET
@@ -2128,7 +2144,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Halt Parameter API response code
   # TODO. GET /State/Components?state={state} Halt Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamHalt - TODO
+  - name: hsmAPIstateComponentsGETstateParamHalt - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Halt"
       method: GET
@@ -2211,7 +2227,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Ready Parameter API response code
   # TODO. GET /State/Components?state={state} Ready Parameter API response body
-  - name: hsmAPIStateComponentsGETstateParamReady - TODO
+  - name: hsmAPIstateComponentsGETstateParamReady - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Ready"
       method: GET
@@ -2272,11 +2288,11 @@ stages:
                         type: str
                         required: False
 
-  # TODO. GET /State/Components?flag={flag} OK Parameter API response code
-  # TODO. GET /State/Components?flag={flag} OK Parameter API response body
-  - name: hsmAPIStateComponentsGETflagParamOK - TODO
+  # TODO. GET /State/Components?flag={flag} OK Parameter FlagOnly API response code
+  # TODO. GET /State/Components?flag={flag} OK Parameter FlagOnly API response body
+  - name: hsmAPIstateComponentsGETflagParamOKflagOnly - TODO
     request:
-      url: "{hsm_base_url}/hsm/v2/State/Components?flag=OK"
+      url: "{hsm_base_url}/hsm/v2/State/Components?flag=OK&flagonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -2302,42 +2318,15 @@ stages:
                       Type:
                         type: str
                         required: True
-                      State:
-                        type: str
-                        required: True
                       Flag:
                         type: str
                         required: True
                         enum:
                           - "OK"
-                      Enabled:
-                        type: bool
-                        required: True
-                      SoftwareStatus:
-                        type: str
-                        required: False
-                      Role:
-                        type: str
-                        required: False
-                      SubRole:
-                        type: str
-                        required: False
-                      NID:
-                        type: int
-                        required: False
-                      NetType:
-                        type: str
-                        required: True
-                      Arch:
-                        type: str
-                        required: True
-                      Class:
-                        type: str
-                        required: False
 
   # TODO. GET /State/Components?flag={flag} Warning Parameter API response code
   # TODO. GET /State/Components?flag={flag} Warning Parameter API response body
-  - name: hsmAPIStateComponentsGETflagParamWarning - TODO
+  - name: hsmAPIstateComponentsGETflagParamWarning - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=Warning"
       method: GET
@@ -2400,7 +2389,7 @@ stages:
 
   # TODO. GET /State/Components?flag={flag} Alert Parameter API response code
   # TODO. GET /State/Components?flag={flag} Alert Parameter API response body
-  - name: hsmAPIStateComponentsGETflagParamAlert - TODO
+  - name: hsmAPIstateComponentsGETflagParamAlert - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=Alert"
       method: GET
@@ -2483,7 +2472,7 @@ stages:
 
   # TODO. GET /State/Components?flag={flag} Locked Parameter API response code
   # TODO. GET /State/Components?flag={flag} Locked Parameter API response body
-  - name: hsmAPIStateComponentsGETflagParamLocked - TODO
+  - name: hsmAPIstateComponentsGETflagParamLocked - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=Locked"
       method: GET
@@ -2564,11 +2553,11 @@ stages:
                         enum:
                           - "Mountain"
 
-  # TODO. GET /State/Components?role={role} Compute Parameter API response code
-  # TODO. GET /State/Components?role={role} Compute Parameter API response body
-  - name: hsmAPIStateComponentsGETroleParamCompute - TODO
+  # TODO. GET /State/Components?role={role} Compute Parameter RoleOnly API response code
+  # TODO. GET /State/Components?role={role} Compute Parameter RoleOnly API response body
+  - name: hsmAPIstateComponentsGETroleParamComputeRoleOnly - TODO
     request:
-      url: "{hsm_base_url}/hsm/v2/State/Components?role=Compute"
+      url: "{hsm_base_url}/hsm/v2/State/Components?role=Compute&roleonly=True"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -2596,18 +2585,6 @@ stages:
                         required: True
                         enum:
                           - "Node"
-                      State:
-                        type: str
-                        required: True
-                      Flag:
-                        type: str
-                        required: True
-                      Enabled:
-                        type: bool
-                        required: True
-                      SoftwareStatus:
-                        type: str
-                        required: True
                       Role:
                         type: str
                         required: True
@@ -2616,24 +2593,10 @@ stages:
                       SubRole:
                         type: str
                         required: True
-                      NID:
-                        type: int
-                        required: True
-                      NetType:
-                        type: str
-                        required: True
-                        enum:
-                          - "Sling"
-                      Arch:
-                        type: str
-                        required: True
-                      Class:
-                        type: str
-                        required: True
 
   # TODO. GET /State/Components?role={role} Service Parameter API response code
   # TODO. GET /State/Components?role={role} Service Parameter API response body
-  - name: hsmAPIStateComponentsGETroleParamService - TODO
+  - name: hsmAPIstateComponentsGETroleParamService - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Service"
       method: GET
@@ -2716,7 +2679,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} System Parameter API response code
   # TODO. GET /State/Components?role={role} System Parameter API response body
-  - name: hsmAPIStateComponentsGETroleParamSystem - TODO
+  - name: hsmAPIstateComponentsGETroleParamSystem - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=System"
       method: GET
@@ -2799,7 +2762,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Application Parameter API response code
   # TODO. GET /State/Components?role={role} Application Parameter API response body
-  - name: hsmAPIStateComponentsGETroleParamApplication - TODO
+  - name: hsmAPIstateComponentsGETroleParamApplication - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Application"
       method: GET
@@ -2882,7 +2845,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Storage Parameter API response code
   # TODO. GET /State/Components?role={role} Storage Parameter API response body
-  - name: hsmAPIStateComponentsGETroleParamStorage - TODO
+  - name: hsmAPIstateComponentsGETroleParamStorage - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Storage"
       method: GET
@@ -2965,7 +2928,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Management Parameter API response code
   # TODO. GET /State/Components?role={role} Management Parameter API response body
-  - name: hsmAPIStateComponentsGETroleParamManagement - TODO
+  - name: hsmAPIstateComponentsGETroleParamManagement - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Management"
       method: GET
@@ -3030,7 +2993,7 @@ stages:
 
   # TODO. GET /State/Components?subrole={subrole} Master Parameter API response code
   # TODO. GET /State/Components?subrole={subrole} Master Parameter API response body
-  - name: hsmAPIStateComponentsGETsubroleParamMaster - TODO
+  - name: hsmAPIstateComponentsGETsubroleParamMaster - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?subrole=Master"
       method: GET
@@ -3095,7 +3058,7 @@ stages:
 
   # TODO. GET /State/Components?subrole={subrole} Worker Parameter API response code
   # TODO. GET /State/Components?subrole={subrole} Worker Parameter API response body
-  - name: hsmAPIStateComponentsGETsubroleParamWorker - TODO
+  - name: hsmAPIstateComponentsGETsubroleParamWorker - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?subrole=Worker"
       method: GET
@@ -3160,7 +3123,7 @@ stages:
 
   # TODO. GET /State/Components?subrole={subrole} Storage Parameter API response code
   # TODO. GET /State/Components?subrole={subrole} Storage Parameter API response body
-  - name: hsmAPIStateComponentsGETsubroleParamStorage - TODO
+  - name: hsmAPIstateComponentsGETsubroleParamStorage - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?subrole=Storage"
       method: GET
@@ -3225,7 +3188,7 @@ stages:
 
   # TODO. GET /State/Components?enabled={enabled} True Parameter API response code
   # TODO. GET /State/Components?enabled={enabled} True Parameter API response body
-  - name: hsmAPIStateComponentsGETenabledParamTrue - TODO
+  - name: hsmAPIstateComponentsGETenabledParamTrue - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?enabled=True"
       method: GET
@@ -3288,7 +3251,7 @@ stages:
 
   # TODO. GET /State/Components?enabled={enabled} False Parameter API response code
   # TODO. GET /State/Components?enabled={enabled} False Parameter API response body
-  - name: hsmAPIStateComponentsGETenabledParamFalse - TODO
+  - name: hsmAPIstateComponentsGETenabledParamFalse - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?enabled=False"
       method: GET
@@ -3351,7 +3314,7 @@ stages:
 
   # TODO. GET /State/Components?softwarestatus={softwarestatus} TestStatus Parameter API response code
   # TODO. GET /State/Components?softwarestatus={softwarestatus} TestStatus Parameter API response body
-  - name: hsmAPIStateComponentsGETsoftwarestatusParamTestStatus - TODO
+  - name: hsmAPIstateComponentsGETsoftwarestatusParamTestStatus - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?softwarestatus=TestStatus0"
       method: GET
@@ -3434,7 +3397,7 @@ stages:
 
   # TODO. GET /State/Components?arch={arch} X86 Parameter API response code
   # TODO. GET /State/Components?arch={arch} X86 Parameter API response body
-  - name: hsmAPIStateComponentsGETarchParamX86 - TODO
+  - name: hsmAPIstateComponentsGETarchParamX86 - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?arch=X86"
       method: GET
@@ -3497,7 +3460,7 @@ stages:
 
   # TODO. GET /State/Components?arch={arch} ARM Parameter API response code
   # TODO. GET /State/Components?arch={arch} ARM Parameter API response body
-  - name: hsmAPIStateComponentsGETarchParamARM - TODO
+  - name: hsmAPIstateComponentsGETarchParamARM - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?arch=ARM"
       method: GET
@@ -3560,7 +3523,7 @@ stages:
 
   # TODO. GET /State/Components?arch={arch} Other Parameter API response code
   # TODO. GET /State/Components?arch={arch} Other Parameter API response body
-  - name: hsmAPIStateComponentsGETarchParamOther - TODO
+  - name: hsmAPIstateComponentsGETarchParamOther - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?arch=Other"
       method: GET
@@ -3623,7 +3586,7 @@ stages:
 
   # TODO. GET /State/Components?class={class} River Parameter API response code
   # TODO. GET /State/Components?class={class} River Parameter API response body
-  - name: hsmAPIStateComponentsGETclassParamRiver - TODO
+  - name: hsmAPIstateComponentsGETclassParamRiver - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?class=River"
       method: GET
@@ -3686,7 +3649,7 @@ stages:
 
   # TODO. GET /State/Components?class={class} Mountain Parameter API response code
   # TODO. GET /State/Components?class={class} Mountain Parameter API response body
-  - name: hsmAPIStateComponentsGETclassParamMountain - TODO
+  - name: hsmAPIstateComponentsGETclassParamMountain - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?class=Mountain"
       method: GET
@@ -3749,7 +3712,7 @@ stages:
 
   # TODO. GET /State/Components?class={class} Hill Parameter API response code
   # TODO. GET /State/Components?class={class} Hill Parameter API response body
-  - name: hsmAPIStateComponentsGETclassParamHill - TODO
+  - name: hsmAPIstateComponentsGETclassParamHill - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?class=Hill"
       method: GET
@@ -3810,18 +3773,189 @@ stages:
                         enum:
                           - "Hill"
 
-#TODO
-    # nid
-    # nid_start
-    # nid_end
-    # stateonly
-    # flagonly
-    # roleonly
-    # nidonly
+  # TODO. GET /State/Components?nid={nid} NID NidOnly Parameter API response code
+  # TODO. GET /State/Components?nid={nid} NID NidOnly Parameter API response body
+  - name: hsmAPIstateComponentsGETnidParamNidOnly - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?nid=9999999990&nidonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n0"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999990
+
+  # TODO. GET /State/Components?nid_start={nid_start} NID_Start Parameter API response code
+  # TODO. GET /State/Components?nid_start={nid_start} NID_Start Parameter API response body
+  - name: hsmAPIstateComponentsGETnidStartParam - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?nid_start=9999999996"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. GET /State/Components?nid_start={nid_start}&nid_end={nid_end} NID_Start NID_End Parameters API response code
+  # TODO. GET /State/Components?nid_start={nid_start}&nid_end={nid_end} NID_Start NID_End Parameters API response body
+  - name: hsmAPIstateComponentsGETnidStartNidEndParams - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?nid_start=9999999996&nid_end=9999999997"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
 
   # TODO. GET /State/Components Many Parameters Existing Node API response code
   # TODO. GET /State/Components Many Parameters Existing Node API response body
-  - name: hsmAPIStateComponentsGETManyParamsExistingNode - TODO
+  - name: hsmAPIstateComponentsGETManyParamsExistingNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b9n0&type=Node&state=Ready&flag=OK&enabled=true&softwarestatus=TestStatus0&role=Compute&subrole=Storage&nid=9999999990&nettype=Sling&arch=X86&class=Hill"
       method: GET
@@ -3906,7 +4040,7 @@ stages:
 
   # TODO. POST /State/Components/Query Existing Component API response code
   # TODO. POST /State/Components/Query Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTexistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTexistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -3992,7 +4126,7 @@ stages:
 
   # TODO. POST /State/Components/Query Type Node Existing Component API response code
   # TODO. POST /State/Components/Query Type Node Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTtypeNodeExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTtypeNodeExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4078,7 +4212,7 @@ stages:
 
   # TODO. POST /State/Components/Query State Ready StateOnly Existing Component API response code
   # TODO. POST /State/Components/Query State Ready StateOnly Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTstateReadyStateOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTstateReadyStateOnlyExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4124,7 +4258,7 @@ stages:
 
   # TODO. POST /State/Components/Query Flag OK FlagOnly Existing Component API response code
   # TODO. POST /State/Components/Query Flag OK FlagOnly Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTflagOkFlagOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTflagOkFlagOnlyExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4165,7 +4299,7 @@ stages:
 
   # TODO. POST /State/Components/Query Enabled True Existing Component API response code
   # TODO. POST /State/Components/Query Enabled True Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTenabledTrueExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTenabledTrueExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4251,7 +4385,7 @@ stages:
 
   # TODO. POST /State/Components/Query SoftwareStatus Existing Component API response code
   # TODO. POST /State/Components/Query SoftwareStatus Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTsoftwareStatusExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTsoftwareStatusExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4337,7 +4471,7 @@ stages:
 
   # TODO. POST /State/Components/Query Role Compute RoleOnly Existing Component API response code
   # TODO. POST /State/Components/Query Role Compute RoleOnly Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTroleComputeExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTroleComputeExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4383,7 +4517,7 @@ stages:
 
   # TODO. POST /State/Components/Query SubRole Master Existing Component API response code
   # TODO. POST /State/Components/Query SubRole Master Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTsubRoleMasterExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTsubRoleMasterExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4469,7 +4603,7 @@ stages:
 
   # TODO. POST /State/Components/Query Arch X86 Existing Component API response code
   # TODO. POST /State/Components/Query Arch X86 Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTarchX86ExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTarchX86ExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4555,7 +4689,7 @@ stages:
 
   # TODO. POST /State/Components/Query Class River Existing Component API response code
   # TODO. POST /State/Components/Query Class River Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTclassRiverExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTclassRiverExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4641,7 +4775,7 @@ stages:
 
   # TODO. POST /State/Components/Query NID NidOnly Existing Component API response code
   # TODO. POST /State/Components/Query NID NidOnly Existing Component API response body
-  - name: hsmAPIStateComponentsQueryPOSTnidNidOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTnidNidOnlyExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4680,9 +4814,151 @@ stages:
                         enum:
                           - 9999999993
 
+  # TODO. POST /State/Components/Query NID_Start Existing Component API response code
+  # TODO. POST /State/Components/Query NID_Start Existing Component API response body
+  - name: hsmAPIstateComponentsQueryPOSTnidStartExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b9n8","x9999c7s9b9n7","x9999c7s9b9n6"],"nid_start":["9999999996"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. POST /State/Components/Query NID_Start NID_End Existing Component API response code
+  # TODO. POST /State/Components/Query NID_Start NID_End Existing Component API response body
+  - name: hsmAPIstateComponentsQueryPOSTnidStartNidEndExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b9n8","x9999c7s9b9n7","x9999c7s9b9n6"],"nid_start":["9999999996"],"nid_end":["9999999997"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
   # TODO. POST /State/Components/Query Many Parameters Existing Node API response code
   # TODO. POST /State/Components/Query Many Parameters Existing Node API response body
-  - name: hsmAPIStateComponentsQueryPOSTmanyParametersExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTmanyParametersExistingComponent - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4766,9 +5042,2007 @@ stages:
                         enum:
                           - "Mountain"
 
+  # TODO. POST /State/Components/ByNID/Query Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTexistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999998"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. POST /State/Components/ByNID/Query Type Node Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Type Node Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTtypeNodeExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999998"],"Type":["Node"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. POST /State/Components/ByNID/Query State Ready StateOnly Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query State Ready StateOnly Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTstateReadyStateOnlyExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999991"],"State":["Ready"],"stateonly":true}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n1"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+
+  # TODO. POST /State/Components/ByNID/Query Flag OK FlagOnly Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Flag OK FlagOnly Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTflagOkFlagOnlyExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999997"],"Flag":["OK"],"flagonly":true}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+
+  # TODO. POST /State/Components/ByNID/Query Enabled True Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Enabled True Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTenabledTrueExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999996"],"Enabled":["true"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Populated"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus6"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "System"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ethernet"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. POST /State/Components/ByNID/Query SoftwareStatus Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query SoftwareStatus Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTsoftwareStatusExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999995"],"SoftwareStatus":["TestStatus5"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n5"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Off"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus5"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Application"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999995
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "OEM"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. POST /State/Components/ByNID/Query Role Compute RoleOnly Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Role Compute RoleOnly Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTroleComputeExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999995"],"Role":["Compute"],"roleonly":true}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n2"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+
+  # TODO. POST /State/Components/ByNID/Query SubRole Master Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query SubRole Master Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTsubRoleMasterExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999998"],"SubRole":["Master"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. POST /State/Components/ByNID/Query Arch X86 Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Arch X86 Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTarchX86ExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999997"],"Arch":["X86"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Empty"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus7"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Service"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Worker"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999997
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Infiniband"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. POST /State/Components/ByNID/Query Class River Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query Class River Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTclassRiverExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999996"],"Class":["River"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Populated"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus6"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "System"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ethernet"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. POST /State/Components/ByNID/Query NID NidOnly Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query NID NidOnly Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTnidNidOnlyExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999993"],"NID":["9999999993"],"nidonly":true}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n3"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999993
+
+  # TODO. POST /State/Components/ByNID/Query NID_Start Existing Component API response code
+  # TODO. POST /State/Components/ByNID/Query NID_Start Existing Component API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTnidStartExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999996-9999999998"],"nid_start":["9999999996"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+#  # TODO. POST /State/Components/ByNID/Query NID_Start NID_End Existing Component API response code
+#  # TODO. POST /State/Components/ByNID/Query NID_Start NID_End Existing Component API response body
+##  - name: hsmAPIstateComponentsByNIDqueryPOSTnidStartNidEndExistingComponent - TODO
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+#      method: POST
+#      verify: !bool "{verify}"
+#      #TODO: nid_start and nid_end parameters don't seem to work here, leave comment about this in bug regarding options not being documented in Swagger
+#      json: {"NIDRanges":["9999999996-9999999998"],"nid_start":["9999999996"],"nid_end":["9999999997"]}
+#    response:
+#      status_code: 200
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              Components:
+#                type: seq
+#                matching: all
+#                required: True
+#                sequence:
+#                  - type: map
+#                    required: True
+#                    mapping:
+#                      ID:
+#                        type: str
+#                        required: True
+#                        enum:
+#                          - "x9999c7s9b9n7"
+#                          - "x9999c7s9b9n6"
+#                      Type:
+#                        type: str
+#                        required: True
+#                        enum:
+#                          - "Node"
+#                      State:
+#                        type: str
+#                        required: True
+#                      Flag:
+#                        type: str
+#                        required: True
+#                      Enabled:
+#                        type: bool
+#                        required: True
+#                      SoftwareStatus:
+#                        type: str
+#                        required: True
+#                      Role:
+#                        type: str
+#                        required: True
+#                      SubRole:
+#                        type: str
+#                        required: True
+#                      NID:
+#                        type: int
+#                        required: True
+#                        enum:
+#                          - 9999999997
+#                          - 9999999996
+#                      NetType:
+#                        type: str
+#                        required: True
+#                      Arch:
+#                        type: str
+#                        required: True
+#                      Class:
+#                        type: str
+#                        required: True
+
+  # TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response code
+  # TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTmanyParametersExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["9999999993"],"Type":["Node"],"State":["Standby"],"Flag":["Locked"],"Enabled":["false"],"SoftwareStatus":["TestStatus3"],"Role":["Management"],"SubRole":["Storage"],"Arch":["Other"],"Class":["Mountain"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n3"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Standby"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Locked"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus3"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Management"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999993
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "Other"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+#TODO: implement vvv
+  # TODO. GET /State/Components/Query/{xname} Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETexistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n8"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETtypeNodeExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n8?type=Node"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components/Query/{xname} State Ready StateOnly Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} State Ready StateOnly Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETstateReadyStateOnlyExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n1?state=Ready&stateonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n1"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ready"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+
+  # TODO. GET /State/Components/Query/{xname} Flag OK FlagOnly Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Flag OK FlagOnly Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETflagOkFlagOnlyExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n7?flag=OK&flagonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+
+  # TODO. GET /State/Components/Query/{xname} Enabled True Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Enabled True Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETenabledTrueExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?enabled=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Populated"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus6"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "System"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ethernet"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components/Query/{xname} SoftwareStatus Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} SoftwareStatus Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETsoftwareStatusExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n5?softwarestatus=TestStatus5"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n5"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Off"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus5"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Application"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999995
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "OEM"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
+  # TODO. GET /State/Components/Query/{xname} Role Compute RoleOnly Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Role Compute RoleOnly Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETroleComputeExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n2?role=Compute&roleonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n2"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+
+  # TODO. GET /State/Components/Query/{xname} SubRole Master Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} SubRole Master Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETsubRoleMasterExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n8?subrole=Master"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unknown"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus8"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Compute"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Master"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components/Query/{xname} Arch X86 Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Arch X86 Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETarchX86ExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n7?arch=X86"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Empty"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "OK"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus7"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Service"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Worker"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999997
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Infiniband"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "X86"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components/Query/{xname} Class River Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} Class River Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETclassRiverExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?class=River"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Populated"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Warning"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - true
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus6"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "System"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Ethernet"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "ARM"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "River"
+
+  # TODO. GET /State/Components/Query/{xname} NID NidOnly Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} NID NidOnly Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETnidNidOnlyExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n3?nid=9999999993&nidonly=True"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n3"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999993
+
+  # TODO. GET /State/Components/Query/{xname} NID_Start Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} NID_Start Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETnidStartExistingComponent - TODO
+    request:
+      #TODO: weird, seems like the {xname} doesn't actually matter here
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?nid_start=9999999996"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n8"
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999998
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. GET /State/Components/Query/{xname} NID_Start NID_End Existing Component API response code
+  # TODO. GET /State/Components/Query/{xname} NID_Start NID_End Existing Component API response body
+  - name: hsmAPIstateComponentsQueryXnameGETnidStartNidEndExistingComponent - TODO
+    request:
+      #TODO: weird, seems like the {xname} doesn't actually matter here
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?nid_start=9999999996&nid_end=9999999997"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n7"
+                          - "x9999c7s9b9n6"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                      Flag:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: True
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                      Role:
+                        type: str
+                        required: True
+                      SubRole:
+                        type: str
+                        required: True
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999997
+                          - 9999999996
+                      NetType:
+                        type: str
+                        required: True
+                      Arch:
+                        type: str
+                        required: True
+                      Class:
+                        type: str
+                        required: True
+
+  # TODO. GET /State/Components/Query/{xname} Many Parameters Existing Node API response code
+  # TODO. GET /State/Components/Query/{xname} Many Parameters Existing Node API response body
+  - name: hsmAPIstateComponentsQueryXnameGETmanyParametersExistingComponent - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n3?type=Node&state=Standby&flag=Locked&enabled=False&SoftwareStatus=TestStatus3&role=Management&subrole=Storage&arch=Other&class=Mountain&NID=9999999993"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n3"
+                      Type:
+                        type: str
+                        required: True
+                        enum:
+                          - "Node"
+                      State:
+                        type: str
+                        required: True
+                        enum:
+                          - "Standby"
+                      Flag:
+                        type: str
+                        required: True
+                        enum:
+                          - "Locked"
+                      Enabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+                      SoftwareStatus:
+                        type: str
+                        required: True
+                        enum:
+                          - "TestStatus3"
+                      Role:
+                        type: str
+                        required: True
+                        enum:
+                          - "Management"
+                      SubRole:
+                        type: str
+                        required: True
+                        enum:
+                          - "Storage"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999993
+                      NetType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Sling"
+                      Arch:
+                        type: str
+                        required: True
+                        enum:
+                          - "Other"
+                      Class:
+                        type: str
+                        required: True
+                        enum:
+                          - "Mountain"
+
   # TODO. GET /State/Components/ByNID/{nid} NodeA API response code
   # TODO. GET /State/Components/ByNID/{nid} NodeA API response body
-  - name: hsmAPIStateComponentsByNidGETnidNodeA - TODO
+  - name: hsmAPIstateComponentsByNidGETnidNodeA - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999990"
       method: GET
@@ -4845,7 +7119,7 @@ stages:
 
   # TODO. GET /State/Components/ByNID/{nid} NodeB API response code
   # TODO. GET /State/Components/ByNID/{nid} NodeB API response body
-  - name: hsmAPIStateComponentsByNidGETnidNodeB - TODO
+  - name: hsmAPIstateComponentsByNidGETnidNodeB - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999998"
       method: GET
@@ -4922,7 +7196,7 @@ stages:
 
   # TODO. POST /State/Components Nodes For Bulk Updates API response code
   # TODO. POST /State/Components Nodes For Bulk Updates API response body
-  - name: hsmAPIStateComponentsPOSTnodesForBulkUpdates - TODO
+  - name: hsmAPIstateComponentsPOSTnodesForBulkUpdates - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -4935,7 +7209,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response code
   # TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response body
-  - name: hsmAPIStateComponentsBulkStateDataPATCHnodesStateFlag - TODO
+  - name: hsmAPIstateComponentsBulkStateDataPATCHnodesStateFlag - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
       method: PATCH
@@ -4948,7 +7222,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkStateDataNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkStateDataNodeA - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -5025,7 +7299,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkStateDataNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkStateDataNodeB - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -5102,7 +7376,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response body
-  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkStateDataNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkStateDataNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -5179,7 +7453,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response code
   # TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response body
-  - name: hsmAPIStateComponentsXnameStateDataPATCHnodeStateNoFlag - TODO
+  - name: hsmAPIstateComponentsXnameStateDataPATCHnodeStateNoFlag - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6/StateData"
       method: PATCH
@@ -5192,7 +7466,7 @@ stages:
 
   # TODO. GET /State/Components?stateonly=True Updated Node API response code
   # TODO. GET /State/Components?stateonly=True Updated Node API response body
-  - name: hsmAPIStateComponentsGETstateonlyParamUpdatedNodeStateData - TODO
+  - name: hsmAPIstateComponentsGETstateonlyParamUpdatedNodeStateData - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&stateonly=True"
       method: GET
@@ -5237,7 +7511,7 @@ stages:
 
   # TODO. GET /State/Components?flagonly=True Updated Node API response code
   # TODO. GET /State/Components?flagonly=True Updated Node API response body
-  - name: hsmAPIStateComponentsGETflagonlyParamUpdatedNodeStateData - TODO
+  - name: hsmAPIstateComponentsGETflagonlyParamUpdatedNodeStateData - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&flagonly=True"
       method: GET
@@ -5275,9 +7549,9 @@ stages:
                         enum:
                           - "OK"
 
-# TODO. GET /State/Components?roleonly=True Updated Node API response code
-# TODO. GET /State/Components?roleonly=True Updated Node API response body
-  - name: hsmAPIStateComponentsGETroleonlyParamUpdatedNode - TODO
+  # TODO. GET /State/Components?roleonly=True Updated Node API response code
+  # TODO. GET /State/Components?roleonly=True Updated Node API response body
+  - name: hsmAPIstateComponentsGETroleonlyParamUpdatedNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&roleonly=True"
       method: GET
@@ -5322,7 +7596,7 @@ stages:
 
   # TODO. GET /State/Components?nidonly=True Updated Node API response code
   # TODO. GET /State/Components?nidonly=True Updated Node API response body
-  - name: hsmAPIStateComponentsGETnidonlyParamUpdatedNode - Retrieve the component data for the updated Node using GET with the nidonly parameter.
+  - name: hsmAPIstateComponentsGETnidonlyParamUpdatedNode - Retrieve the component data for the updated Node using GET with the nidonly parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&nidonly=True"
       method: GET
@@ -5362,7 +7636,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkFlagOnly Nodes API response code
   # TODO. PATCH /State/Components/BulkFlagOnly Nodes API response body
-  - name: hsmAPIStateComponentsBulkFlagOnlyPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnodes - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
       method: PATCH
@@ -5373,7 +7647,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkFlagOnlyNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkFlagOnlyNodeA - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -5450,7 +7724,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkFlagOnlyNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkFlagOnlyNodeB - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -5527,7 +7801,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response body
-  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkFlagOnlyNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkFlagOnlyNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -5604,7 +7878,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/FlagOnly Node API response code
   # TODO. PATCH /State/Components/{xname}/FlagOnly Node API response body
-  - name: hsmAPIStateComponentsXnameFlagOnlyPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
       method: PATCH
@@ -5615,7 +7889,7 @@ stages:
 
   # TODO. GET /State/Components?flagonly=True Updated Node API response code
   # TODO. GET /State/Components?flagonly=True Updated Node API response body
-  - name: hsmAPIStateComponentsGETflagonlyParamUpdatedNodeFlagOnly - TODO
+  - name: hsmAPIstateComponentsGETflagonlyParamUpdatedNodeFlagOnly - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n8&flagonly=True"
       method: GET
@@ -5655,7 +7929,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkEnabled Nodes API response code
   # TODO. PATCH /State/Components/BulkEnabled Nodes API response body
-  - name: hsmAPIStateComponentsBulkEnabledPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkEnabledPATCHnodes - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkEnabled"
       method: PATCH
@@ -5664,9 +7938,9 @@ stages:
     response:
       status_code: 204
 
-# TODO. GET /State/Components/{xname} Updated BulkEnabled NodeA API response code
-# TODO. GET /State/Components/{xname} Updated BulkEnabled NodeA API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkEnabledNodeA - TODO
+  # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeA API response code
+  # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeA API response body
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkEnabledNodeA - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -5743,7 +8017,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeB API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkEnabledNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkEnabledNodeB - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -5820,7 +8094,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkEnabled Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkEnabled Node API response body
-  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkEnabledNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkEnabledNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -5897,7 +8171,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/Enabled Node API response code
   # TODO. PATCH /State/Components/{xname}/Enabled Node API response body
-  - name: hsmAPIStateComponentsXnameEnabledPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameEnabledPATCHnode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Enabled"
       method: PATCH
@@ -5908,7 +8182,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated Enabled Node API response code
   # TODO. GET /State/Components/{xname} Updated Enabled Node API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedEnabledNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedEnabledNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -5985,7 +8259,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkSoftwareStatus Nodes API response code
   # TODO. PATCH /State/Components/BulkSoftwareStatus Nodes API response body
-  - name: hsmAPIStateComponentsBulkSoftwareStatusPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHnodes - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkSoftwareStatus"
       method: PATCH
@@ -5996,7 +8270,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeA API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkSoftwareStatusNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkSoftwareStatusNodeA - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -6073,7 +8347,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeB API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkSoftwareStatusNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkSoftwareStatusNodeB - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -6150,7 +8424,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkSoftwareStatus Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkSoftwareStatus Node API response body
-  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkSoftwareStatusNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkSoftwareStatusNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -6227,7 +8501,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/SoftwareStatus Node API response code
   # TODO. PATCH /State/Components/{xname}/SoftwareStatus Node API response body
-  - name: hsmAPIStateComponentsXnameSoftwareStatusPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHnode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/SoftwareStatus"
       method: PATCH
@@ -6238,7 +8512,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated SoftwareStatus Node API response code
   # TODO. GET /State/Components/{xname} Updated SoftwareStatus Node API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedSoftwareStatusNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedSoftwareStatusNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -6317,7 +8591,7 @@ stages:
 
 #  # TODO. PATCH /State/Components/BulkRole Nodes API response code
 #  # TODO. PATCH /State/Components/BulkRole Nodes API response body
-#  - name: hsmAPIStateComponentsBulkRolePATCHnodes - TODO
+#  - name: hsmAPIstateComponentsBulkRolePATCHnodes - TODO
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/BulkRole"
 #      method: PATCH
@@ -6334,7 +8608,7 @@ stages:
 #
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeA API response code
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeA API response body
-#  - name: hsmAPIStateComponentsGETxnameUpdatedBulkRoleNodeA - TODO
+#  - name: hsmAPIstateComponentsGETxnameUpdatedBulkRoleNodeA - TODO
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
 #      method: GET
@@ -6411,7 +8685,7 @@ stages:
 #
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeB API response code
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeB API response body
-#  - name: hsmAPIStateComponentsGETxnameUpdatedBulkRoleNodeB - TODO
+#  - name: hsmAPIstateComponentsGETxnameUpdatedBulkRoleNodeB - TODO
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
 #      method: GET
@@ -6488,7 +8762,7 @@ stages:
 #
 #  # TODO. GET /State/Components/{xname} Non-Updated BulkRole Node API response code
 #  # TODO. GET /State/Components/{xname} Non-Updated BulkRole Node API response body
-#  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkRoleNode - TODO
+#  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkRoleNode - TODO
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
 #      method: GET
@@ -6565,7 +8839,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/Role Node API response code
   # TODO. PATCH /State/Components/{xname}/Role Node API response body
-  - name: hsmAPIStateComponentsXnameRolePATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameRolePATCHnode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Role"
       method: PATCH
@@ -6576,7 +8850,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated Role Node API response code
   # TODO. GET /State/Components/{xname} Updated Role Node API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedSoftwareStatusNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedSoftwareStatusNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -6653,7 +8927,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkNID Nodes API response code
   # TODO. PATCH /State/Components/BulkNID Nodes API response body
-  - name: hsmAPIStateComponentsBulkNidPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkNidPATCHnodes - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkNID"
       method: PATCH
@@ -6662,9 +8936,9 @@ stages:
     response:
       status_code: 204
 
-# TODO. GET /State/Components/{xname} Updated BulkNID NodeA API response code
-# TODO. GET /State/Components/{xname} Updated BulkNID NodeA API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkNIDNodeA - TODO
+  # TODO. GET /State/Components/{xname} Updated BulkNID NodeA API response code
+  # TODO. GET /State/Components/{xname} Updated BulkNID NodeA API response body
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkNIDNodeA - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -6741,7 +9015,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkNID NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkNID NodeB API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedBulkNIDNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkNIDNodeB - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -6818,7 +9092,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkNID Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkNID Node API response body
-  - name: hsmAPIStateComponentsGETxnameNonUpdatedBulkNIDNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkNIDNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -6895,7 +9169,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/NID Node API response code
   # TODO. PATCH /State/Components/{xname}/NID Node API response body
-  - name: hsmAPIStateComponentsXnameNidPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameNidPATCHnode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/NID"
       method: PATCH
@@ -6906,7 +9180,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated NID Node API response code
   # TODO. GET /State/Components/{xname} Updated NID Node API response body
-  - name: hsmAPIStateComponentsGETxnameUpdatedNIDNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedNIDNode - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -6980,4 +9254,3 @@ stages:
                 required: True
                 enum:
                   - "River"
-
