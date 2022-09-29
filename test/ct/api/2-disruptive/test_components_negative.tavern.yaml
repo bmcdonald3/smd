@@ -1,0 +1,1333 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) components API
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: TODO
+# TODO. GET /State/Components?id={id} Invalid ID Parameter API response code
+# TODO. GET /State/Components?id={id} Invalid ID Parameter API response body
+# TODO. GET /State/Components?type={type} Invalid Type Parameter API response code
+# TODO. GET /State/Components?type={type} Invalid Type Parameter API response body
+# TODO. GET /State/Components?state={state} Invalid State Parameter API response code
+# TODO. GET /State/Components?state={state} Invalid State Parameter API response body
+# TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response code
+# TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response body
+# TODO. GET /State/Components?role={role} Invalid Role Parameter API response code
+# TODO. GET /State/Components?role={role} Invalid Role Parameter API response body
+# TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response code
+# TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response body
+# TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response code
+# TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response body
+# TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response code
+# TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response body
+# TODO. GET /State/Components?class={class} Invalid Class Parameter API response code
+# TODO. GET /State/Components?class={class} Invalid Class Parameter API response body
+# TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response code
+# TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response body
+# TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response code
+# TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response body
+# TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response code
+# TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response body
+
+# TODO. POST /State/Components Invalid CabinetPDUController API response code
+# TODO. POST /State/Components Invalid CabinetPDUController API response body
+# TODO. POST /State/Components Invalid Chassis API response code
+# TODO. POST /State/Components Invalid Chassis API response body
+#TODO TODO: Resume here
+# TODO. POST /State/Components Invalid ChassisBMC API response code
+# TODO. POST /State/Components Invalid ChassisBMC API response body
+# TODO. POST /State/Components Invalid HSNBoard API response code
+# TODO. POST /State/Components Invalid HSNBoard API response body
+# TODO. POST /State/Components Invalid Node API response code
+# TODO. POST /State/Components Invalid Node API response body
+# TODO. POST /State/Components Invalid NodeBMC API response code
+# TODO. POST /State/Components Invalid NodeBMC API response body
+# TODO. POST /State/Components Invalid NodeEnclosure API response code
+# TODO. POST /State/Components Invalid NodeEnclosure API response body
+# TODO. POST /State/Components Invalid RouterBMC API response code
+# TODO. POST /State/Components Invalid RouterBMC API response body
+# TODO. POST /State/Components Invalid RouterModule API response code
+# TODO. POST /State/Components Invalid RouterModule API response body
+
+# TODO. GET /State/Components/{xname} Invalid Xname API response code
+# TODO. GET /State/Components/{xname} Invalid Xname API response body
+
+# TODO. PUT /State/Components/{xname} Invalid Component No Force API response code
+# TODO. PUT /State/Components/{xname} Invalid Component No Force API response body
+# TODO. PUT /State/Components/{xname} Invalid Component Force API response code
+# TODO. PUT /State/Components/{xname} Invalid Component Force API response body
+
+# TODO. DELETE /State/Components/{xname} Invalid Xname API response code
+# TODO. DELETE /State/Components/{xname} Invalid Xname API response body
+
+# TODO. GET /State/Components/ByNID/{nid} Invalid NID API response code
+# TODO. GET /State/Components/ByNID/{nid} Invalid NID API response body
+
+# TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
+# TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
+# TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response code
+# TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response body
+# TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response code
+# TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response body
+
+# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
+# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
+# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
+# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
+# TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
+# TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
+
+# TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
+# TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
+# TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
+# TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
+# TODO. PATCH /State/Components/BulkFlagOnly No Flag API response code
+# TODO. PATCH /State/Components/BulkFlagOnly No Flag API response body
+
+# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
+# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
+# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
+# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
+# TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response code
+# TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response body
+
+# TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response code
+# TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response body
+
+# TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
+# TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
+
+# TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
+# TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
+
+# TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
+# TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
+
+# TODO. PATCH /State/Components/{xname}/Role Invalid Role API response code
+# TODO. PATCH /State/Components/{xname}/Role Invalid Role API response body
+
+# TODO. PATCH /State/Components/BulkNID No NID API response code
+# TODO. PATCH /State/Components/BulkNID No NID API response body
+
+# TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response code
+# TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response body
+
+# TODO. POST /State/Components/Query Invalid Xname API response code
+# TODO. POST /State/Components/Query Invalid Xname API response body
+
+# TODO. POST /State/Components/ByNID/Query Invalid NID API response code
+# TODO. POST /State/Components/ByNID/Query Invalid NID API response body
+
+# TODO. GET /State/Components/Query/{xname} Invalid Xname API response code
+# TODO. GET /State/Components/Query/{xname} Invalid Xname API response body
+---
+test_name: hsmAPIstateComponentsNegativeInvalidParams
+
+marks:
+  - parametrize:
+      key: param
+      vals:
+        # TODO. GET /State/Components?id={id} Invalid ID Parameter API response code
+        # TODO. GET /State/Components?id={id} Invalid ID Parameter API response body
+        - "id"
+        # TODO. GET /State/Components?type={type} Invalid Type Parameter API response code
+        # TODO. GET /State/Components?type={type} Invalid Type Parameter API response body
+        - "type"
+        # TODO. GET /State/Components?state={state} Invalid State Parameter API response code
+        # TODO. GET /State/Components?state={state} Invalid State Parameter API response body
+        - "state"
+        # TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response code
+        # TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response body
+        - "flag"
+        # TODO. GET /State/Components?role={role} Invalid Role Parameter API response code
+        # TODO. GET /State/Components?role={role} Invalid Role Parameter API response body
+        - "role"
+        # TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response code
+        # TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response body
+        - "subrole"
+        # TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response code
+        # TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response body
+        - "enabled"
+        # TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response code
+        # TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response body
+        - "arch"
+        # TODO. GET /State/Components?class={class} Invalid Class Parameter API response code
+        # TODO. GET /State/Components?class={class} Invalid Class Parameter API response body
+        - "class"
+        # TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response code
+        # TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response body
+        - "nid"
+        # TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response code
+        # TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response body
+        - "nid_start"
+        # TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response code
+        # TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response body
+        - "nid_end"
+
+stages:
+  - name: hsmAPIstateComponentsGETinvalidParams - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?{param}=FAKE"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                pattern: "bad query param:*"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+---
+test_name: hsmAPIstateComponentsNegative
+
+stages:
+  # TODO. POST /State/Components Invalid CabinetPDUController API response code
+  # TODO. POST /State/Components Invalid CabinetPDUController API response body
+  - name: hsmAPIstateComponentsPOSTinvalidCabinetPDUController - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9998m3","Type":"CabinetPDUController","State":"FAKE","Flag":"OK","Enabled":true,"NetType":"Infiniband","Arch":"X86"}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "couldn't validate components: state 'FAKE' is invalid"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. POST /State/Components Invalid Chassis API response code
+  # TODO. POST /State/Components Invalid Chassis API response body
+  - name: hsmAPIstateComponentsPOSTinvalidChassis - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9998c7","Type":"Chassis","State":"Off","Flag":"FAKE","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "couldn't validate components: flag 'FAKE' is invalid"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. GET /State/Components/{xname} Invalid Xname API response code
+  # TODO. GET /State/Components/{xname} Invalid Xname API response body
+  - name: hsmAPIstateComponentsGETinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # TODO. PUT /State/Components/{xname} Invalid Component No Force API response code
+  # TODO. PUT /State/Components/{xname} Invalid Component No Force API response body
+  - name: hsmAPIstateComponentsPUTinvalidComponentNoForce - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9998c7s9b9n9"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"Component":{"ID":"x9998c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":"FAKE","SoftwareStatus":"AdminStatus","Role":"Compute","NID":9998999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":false}
+    response:
+      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      status_code: 500
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Internal Server Error"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "error decoding JSON json: cannot unmarshal string into Go struct field Component.component.Enabled of type bool"
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+                  - 500
+
+  # TODO. PUT /State/Components/{xname} Invalid Component Force API response code
+  # TODO. PUT /State/Components/{xname} Invalid Component Force API response body
+  - name: hsmAPIstateComponentsPUTinvalidComponentForce - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9998c7s9b9n9"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"Component":{"ID":"x9998c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":"FAKE","SoftwareStatus":"AdminStatus","Role":"Compute","NID":9998999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":true}
+    response:
+      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      status_code: 500
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Internal Server Error"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "error decoding JSON json: cannot unmarshal string into Go struct field Component.component.Enabled of type bool"
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+                  - 500
+
+  # TODO. DELETE /State/Components/{xname} Invalid Xname API response code
+  # TODO. DELETE /State/Components/{xname} Invalid Xname API response body
+  - name: hsmAPIstateComponentsDELETEinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. GET /State/Components/ByNID/{nid} Invalid NID API response code
+  # TODO. GET /State/Components/ByNID/{nid} Invalid NID API response body
+  - name: hsmAPIstateComponentsByNidGETinvalidNid - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/FAKE"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "a required argument was not an integer"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
+  # TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
+  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidXnameStateFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n8","FAKE"],"State":"On","Flag":"Alert","Force":true}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response code
+  # TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response body
+  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n8","x9999c7s9b8n7"],"State":"FAKE","Flag":"Alert","Force":true}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Argument was not a valid HMS State"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response code
+  # TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response body
+  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateNoFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n8","x9999c7s9b8n7"],"State":"FAKE","Force":true}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Argument was not a valid HMS State"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
+  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
+  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/StateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"State":"Ready","Flag":"OK","Force":true}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
+  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
+  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateNoFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/StateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"State":"Ready","Force":true}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
+  # TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
+  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidStateFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7/StateData"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"State":"FAKE","Flag":"OK","Force":true}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Argument was not a valid HMS State"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
+  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["FAKE","x9999c7s9b8n6"],"Flag":"Warning"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
+  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n7","x9999c7s9b8n6"],"Flag":"FAKE"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "a required argument did not match any valid input"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkFlagOnly No Flag API response code
+  # TODO. PATCH /State/Components/BulkFlagOnly No Flag API response body
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnoFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n7","x9999c7s9b8n6"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Missing Flag"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
+  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/FlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"Flag":"OK"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
+  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"Flag":"FAKE"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "a required argument did not match any valid input"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response code
+  # TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response body
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnoFlag - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"foo":"bar"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Missing Flag"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response code
+  # TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response body
+  - name: hsmAPIstateComponentsBulkEnabledPATCHinvalidEnabled - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkEnabled"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["x9999c7s9b8n7","x9999c7s9b8n6"],"Enabled":"FAKE"}
+    response:
+      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      status_code: 500
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Internal Server Error"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "error decoding JSON json: cannot unmarshal string into Go struct field CompUpdate.Enabled of type bool"
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+                  - 500
+
+  # TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
+  # TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
+  - name: hsmAPIstateComponentsXnameEnabledPATCHinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/Enabled"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"Enabled":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
+  # TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
+  - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkSoftwareStatus"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["FAKE","x9999c7s9b8n6"],"SoftwareStatus":"UpdatedBulkSoftwareStatus"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
+  # TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
+  - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/SoftwareStatus"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"SoftwareStatus":"UpdatedXnameSoftwareStatus"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/{xname}/Role Invalid Role API response code
+  # TODO. PATCH /State/Components/{xname}/Role Invalid Role API response body
+  - name: hsmAPIstateComponentsXnameRolePATCHinvalidRole - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Role"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"Role":"FAKE","SubRole":"Worker"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "a required argument did not match any valid input"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. PATCH /State/Components/BulkNID No NID API response code
+  # TODO. PATCH /State/Components/BulkNID No NID API response body
+  - name: hsmAPIstateComponentsBulkNidPATCHnoNid - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/BulkNID"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b8n7","NID":9999999977},{"ID":"x9999c7s9b8n6","NID":""}]}
+    response:
+      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      status_code: 500
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Internal Server Error"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "error decoding JSON json: invalid number literal, trying to unmarshal \"\\\"\\\"\" into Number"
+              status:
+                type: int
+                required: True
+                enum:
+                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+                  - 500
+
+  # TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response code
+  # TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response body
+  - name: hsmAPIstateComponentsXnameNidPATCHinvalidXname - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/NID"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"NID":9999999978}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "invalid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+#  # TODO. POST /State/Components/Query Invalid Xname API response code
+#  # TODO. POST /State/Components/Query Invalid Xname API response body
+#  - name: hsmAPIstateComponentsQueryPOSTinvalidXname - TODO
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/State/Components/Query"
+#      method: POST
+#      verify: !bool "{verify}"
+#      #TODO: open a bug on this? FAKE is treated as a valid Xname and returns empty brackets
+#      json: {"ComponentIDs":["FAKE"]}
+#    response:
+#      status_code: 400
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              type:
+#                type: str
+#                required: True
+#                enum:
+#                  - "about:blank"
+#              title:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Bad Request"
+#              detail:
+#                type: str
+#                required: True
+#                enum:
+#                  - "invalid xname ID"
+#              status:
+#                type: int
+#                required: True
+#                enum:
+#                  - 400
+
+  # TODO. POST /State/Components/ByNID/Query Invalid NID API response code
+  # TODO. POST /State/Components/ByNID/Query Invalid NID API response body
+  - name: hsmAPIstateComponentsByNIDqueryPOSTinvalidNID - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NIDRanges":["FAKE"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "bad query param: a required argument was not an integer"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+#  # TODO. GET /State/Components/Query/{xname} Invalid Xname API response code
+#  # TODO. GET /State/Components/Query/{xname} Invalid Xname API response body
+#  - name: hsmAPIstateComponentsQueryXnameGETinvalidXname - TODO
+#    request:
+#      #TODO: open a bug on this? FAKE is treated as a valid Xname and returns empty brackets
+#      url: "{hsm_base_url}/hsm/v2/State/Components/Query/FAKE"
+#      method: GET
+#      verify: !bool "{verify}"
+#    response:
+#      status_code: 400
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              type:
+#                type: str
+#                required: True
+#                enum:
+#                  - "about:blank"
+#              title:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Bad Request"
+#              detail:
+#                type: str
+#                required: True
+#                enum:
+#                  - "invalid xname ID"
+#              status:
+#                type: int
+#                required: True
+#                enum:
+#                  - 400
