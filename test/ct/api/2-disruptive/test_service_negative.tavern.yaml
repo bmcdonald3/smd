@@ -50,12 +50,12 @@
 # 23. DELETE /service/values API response code
 # 24. DELETE /service/values API response body
 ---
-test_name: hsmAPIServiceNegative
+test_name: hsmAPIserviceNegative
 
 stages:
   # 1. POST /service/ready API response code
   # 2. POST /service/ready API response body
-  - name: hsmAPIServiceReadyPOST
+  - name: hsmAPIserviceReadyPOST - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
       method: POST
@@ -92,7 +92,7 @@ stages:
 
   # 3. PATCH /service/ready API response code
   # 4. PATCH /service/ready API response body
-  - name: hsmAPIServiceReadyPATCH
+  - name: hsmAPIserviceReadyPATCH - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
       method: PATCH
@@ -129,7 +129,7 @@ stages:
 
   # 5. PUT /service/ready API response code
   # 6. PUT /service/ready API response body
-  - name: hsmAPIServiceReadyPUT
+  - name: hsmAPIserviceReadyPUT - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
       method: PUT
@@ -166,7 +166,7 @@ stages:
 
   # 7. DELETE /service/ready API response code
   # 8. DELETE /service/ready API response body
-  - name: hsmAPIServiceReadyDELETE
+  - name: hsmAPIserviceReadyDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
       method: DELETE
@@ -202,7 +202,7 @@ stages:
 
   # 9. POST /service/liveness API response code
   # 10. POST /service/liveness API response body
-  - name: hsmAPIServiceLivenessPOST
+  - name: hsmAPIserviceLivenessPOST - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
       method: POST
@@ -239,7 +239,7 @@ stages:
 
   # 11. PATCH /service/liveness API response code
   # 12. PATCH /service/liveness API response body
-  - name: hsmAPIServiceLivenessPATCH
+  - name: hsmAPIserviceLivenessPATCH - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
       method: PATCH
@@ -276,7 +276,7 @@ stages:
 
   # 13. PUT /service/liveness API response code
   # 14. PUT /service/liveness API response body
-  - name: hsmAPIServiceLivenessPUT
+  - name: hsmAPIserviceLivenessPUT - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
       method: PUT
@@ -313,7 +313,7 @@ stages:
 
   # 15. DELETE /service/liveness API response code
   # 16. DELETE /service/liveness API response body
-  - name: hsmAPIServiceLivenessDELETE
+  - name: hsmAPIserviceLivenessDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
       method: DELETE
@@ -349,7 +349,7 @@ stages:
 
   # 17. POST /service/values API response code
   # 18. POST /service/values API response body
-  - name: hsmAPIServiceValuesPOST
+  - name: hsmAPIserviceValuesPOST - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
       method: POST
@@ -386,7 +386,7 @@ stages:
 
   # 19. PATCH /service/values API response code
   # 20. PATCH /service/values API response body
-  - name: hsmAPIServiceValuesPATCH
+  - name: hsmAPIserviceValuesPATCH - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
       method: PATCH
@@ -423,7 +423,7 @@ stages:
 
   # 21. PUT /service/values API response code
   # 22. PUT /service/values API response body
-  - name: hsmAPIServiceValuesPUT
+  - name: hsmAPIserviceValuesPUT - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
       method: PUT
@@ -460,7 +460,7 @@ stages:
 
   # 23. DELETE /service/values API response code
   # 24. DELETE /service/values API response body
-  - name: hsmAPIServiceValuesDELETE
+  - name: hsmAPIserviceValuesDELETE - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
       method: DELETE

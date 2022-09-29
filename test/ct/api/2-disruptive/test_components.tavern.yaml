@@ -29,6 +29,8 @@
 # TODO. DELETE /State/Components API response body
 # TODO. DELETE /State/Components No Components API response code
 # TODO. DELETE /State/Components No Components API response body
+# TODO. GET /State/Components No Components API response code
+# TODO. GET /State/Components No Components API response body
 
 # TODO. POST /State/Components Node API response code
 # TODO. POST /State/Components Node API response body
@@ -239,7 +241,6 @@
 # TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response code
 # TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response body
 
-#TODO: implement
 # TODO. GET /State/Components/Query/{xname} Existing Component API response code
 # TODO. GET /State/Components/Query/{xname} Existing Component API response body
 # TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response code
@@ -367,7 +368,6 @@
 # TODO. PATCH /State/Components/{xname}/NID Node API response body
 # TODO. GET /State/Components/{xname} Updated NID Node API response code
 # TODO. GET /State/Components/{xname} Updated NID Node API response body
-
 ---
 test_name: hsmAPIstateComponents
 
@@ -417,6 +417,18 @@ stages:
                 enum:
                   #TODO: Does Not Exist example in Swagger shows 400
                   - 404
+
+  # TODO. GET /State/Components No Components API response code
+  # TODO. GET /State/Components No Components API response body
+  - name: hsmAPIstateComponentsGETnoComponents - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      json:
+        Components: !anything
 
   # TODO. POST /State/Components Node API response code
   # TODO. POST /State/Components Node API response body
@@ -6047,7 +6059,6 @@ stages:
                         enum:
                           - "Mountain"
 
-#TODO: implement vvv
   # TODO. GET /State/Components/Query/{xname} Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Existing Component API response body
   - name: hsmAPIstateComponentsQueryXnameGETexistingComponent - TODO
