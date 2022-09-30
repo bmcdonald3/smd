@@ -4286,7 +4286,7 @@ paths:
           schema:
             $ref: '#/definitions/CompEthInterface.1.0.0_Patch'
       responses:
-        "204":
+        "200":
           description: Success
         "400":
           description: Bad Request
@@ -4398,7 +4398,7 @@ paths:
           schema:
             $ref: '#/definitions/CompEthInterface.1.0.0_IPAddressMapping_Patch'
       responses:
-        "204":
+        "200":
           description: Success
         "400":
           description: Bad Request
