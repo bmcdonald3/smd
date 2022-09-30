@@ -170,7 +170,7 @@ stages:
   # GET /Inventory/EthernetInterfaces
   - name: Get component ethernet interface
     request:
-      url: "{hsm_base_url}{uri}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -227,7 +227,7 @@ stages:
   # PATCH /Inventory/EthernetInterfaces
   - name: Patch component ethernet interface
     request:
-      url: "{hsm_base_url}{uri}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: PATCH
       verify: !bool "{verify}"
       json: {"Description":"Test Patch Component Interface"}
@@ -237,7 +237,7 @@ stages:
   # GET /Inventory/EthernetInterfaces
   - name: Get component ethernet interface
     request:
-      url: "{hsm_base_url}{uri}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -294,7 +294,7 @@ stages:
   # GET /Inventory/EthernetInterfaces/IPAddresses
   - name: Get component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -323,7 +323,7 @@ stages:
   # POST /Inventory/EthernetInterfaces/IPAddresses
   - name: Add component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       json: {"IPAddress":"99.9.9.8","Network":"HSMTavernTest"}
       method: POST
       verify: !bool "{verify}"
@@ -335,7 +335,7 @@ stages:
   # GET /Inventory/EthernetInterfaces/IPAddresses
   - name: Get component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -365,7 +365,7 @@ stages:
   # PATCH /Inventory/EthernetInterfaces/IPAddresses
   - name: Patch component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses/99.9.9.8"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.8"
       json: {"Network":"HSMTavernTest2"}
       method: PATCH
       verify: !bool "{verify}"
@@ -375,7 +375,7 @@ stages:
   # GET /Inventory/EthernetInterfaces/IPAddresses
   - name: Get component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -406,7 +406,7 @@ stages:
   # DELETE /Inventory/EthernetInterfaces/IPAddresses
   - name: Delete component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses/99.9.9.8"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.8"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -418,7 +418,7 @@ stages:
   # GET /Inventory/EthernetInterfaces/IPAddresses
   - name: Get component ethernet interface IPAddresses
     request:
-      url: "{hsm_base_url}{uri}/IPAddresses"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -447,7 +447,7 @@ stages:
   # DELETE /Inventory/EthernetInterfaces
   - name: Delete component ethernet interface
     request:
-      url: "{hsm_base_url}{uri}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -459,7 +459,7 @@ stages:
   # DELETE /Inventory/EthernetInterfaces
   - name: Delete component ethernet interface fail
     request:
-      url: "{hsm_base_url}{uri}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -473,7 +473,7 @@ stages:
   # GET /Inventory/EthernetInterfaces
   - name: Get component ethernet interface fail
     request:
-      url: "{hsm_base_url}{uri}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: GET
       verify: !bool "{verify}"
     response:
