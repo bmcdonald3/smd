@@ -368,13 +368,16 @@
 # TODO. PATCH /State/Components/{xname}/NID Node API response body
 # TODO. GET /State/Components/{xname} Updated NID Node API response code
 # TODO. GET /State/Components/{xname} Updated NID Node API response body
+
+#TODO. DELETE /State/Components API response code
+#TODO. DELETE /State/Components API response body
 ---
 test_name: hsmAPIstateComponents
 
 stages:
   #TODO. DELETE /State/Components API response code
   #TODO. DELETE /State/Components API response body
-  - name: hsmAPIstateComponentsDELETE - TODO
+  - name: hsmAPIstateComponentsDELETE - Remove all Components using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -382,7 +385,7 @@ stages:
 
   #TODO. DELETE /State/Components No Components API response code
   #TODO. DELETE /State/Components No Components API response body
-  - name: hsmAPIstateComponentsDELETEnoComponents - TODO
+  - name: hsmAPIstateComponentsDELETEnoComponents - Attempt to remove all Components using DELETE when none are present.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -420,7 +423,7 @@ stages:
 
   # TODO. GET /State/Components No Components API response code
   # TODO. GET /State/Components No Components API response body
-  - name: hsmAPIstateComponentsGETnoComponents - TODO
+  - name: hsmAPIstateComponentsGETnoComponents - Retrieve an empty set of Components using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: GET
@@ -432,7 +435,7 @@ stages:
 
   # TODO. POST /State/Components Node API response code
   # TODO. POST /State/Components Node API response body
-  - name: hsmAPIstateComponentsPOSTnode - Create a Node component using POST.
+  - name: hsmAPIstateComponentsPOSTnode - Create a Node Component using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -445,7 +448,7 @@ stages:
 
   # TODO. GET /State/Components API response code
   # TODO. GET /State/Components API response body
-  - name: hsmAPIstateComponentsGET - TODO
+  - name: hsmAPIstateComponentsGET - Retrieve all Components using GET after a Node Component has been created.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: GET
@@ -457,7 +460,7 @@ stages:
 
   # TODO. GET /State/Components?id={id} Node Parameter API response code
   # TODO. GET /State/Components?id={id} Node Parameter API response body
-  - name: hsmAPIstateComponentsGETidParamNode - TODO
+  - name: hsmAPIstateComponentsGETidParamNode - Retrieve a specific Node Component using the ID query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b9n9"
       method: GET
@@ -535,7 +538,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Existing Node No Force API response code
   # TODO. PUT /State/Components/{xname} Existing Node No Force API response body
-  - name: hsmAPIstateComponentsPUTnodeExistsNoForce - TODO
+  - name: hsmAPIstateComponentsPUTnodeExistsNoForce - Update an existing Node Component using PUT without the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -548,7 +551,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIstateComponentsGETxnameNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNode - Retrieve the updated Node Component using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -618,7 +621,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Existing Node Force API response code
   # TODO. PUT /State/Components/{xname} Existing Node Force API response body
-  - name: hsmAPIstateComponentsPUTnodeExistsForce - TODO
+  - name: hsmAPIstateComponentsPUTnodeExistsForce - Update an existing Node Component using PUT with the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -631,7 +634,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIstateComponentsGETxnameNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNode - Retrieve the updated Node Component using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -701,7 +704,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Node API response code
   # TODO. DELETE /State/Components/{xname} Node API response body
-  - name: hsmAPIstateComponentsDELETExname - TODO
+  - name: hsmAPIstateComponentsDELETExname - Remove a specific Node Component using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -728,7 +731,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Missing Node API response code
   # TODO. DELETE /State/Components/{xname} Missing Node API response body
-  - name: hsmAPIstateComponentsDELETExnameMissing - TODO
+  - name: hsmAPIstateComponentsDELETExnameMissing - Attempt to remove a specific Node Component that doesn't exist using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: DELETE
@@ -766,7 +769,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Missing Node API response code
   # TODO. GET /State/Components/{xname} Missing Node API response body
-  - name: hsmAPIstateComponentsGETidMissingNode - TODO
+  - name: hsmAPIstateComponentsGETidMissingNode - Attempt to retrieve a specific Node Component that doesn't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -804,7 +807,7 @@ stages:
 
   # TODO. GET /State/Components/ByNID/{nid} Missing NID API response code
   # TODO. GET /State/Components/ByNID/{nid} Missing NID API response body
-  - name: hsmAPIstateComponentsByNidGETmissingNid - TODO
+  - name: hsmAPIstateComponentsByNidGETmissingNid - Attempt to retrieve a specific Node Component by NID that doesn't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999999"
       method: GET
@@ -842,7 +845,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Non-Existing Node API response code
   # TODO. PUT /State/Components/{xname} Non-Existing Node API response body
-  - name: hsmAPIstateComponentsPUTdoesntExistNoForce - TODO
+  - name: hsmAPIstateComponentsPUTdoesntExistNoForce - Create a Component using PUT for a Node that doesn't already exist.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: PUT
@@ -855,7 +858,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Node API response code
   # TODO. GET /State/Components/{xname} Node API response body
-  - name: hsmAPIstateComponentsGETxnameNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNode - Retrieve the Node Component using GET that was created by the previous PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9n9"
       method: GET
@@ -925,7 +928,7 @@ stages:
 
   # TODO. DELETE /State/Components API response code
   # TODO. DELETE /State/Components API response body
-  - name: hsmAPIstateComponentsDELETE - TODO
+  - name: hsmAPIstateComponentsDELETE - Remove all Components again using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: DELETE
@@ -952,7 +955,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC API response code
   # TODO. POST /State/Components NodeBMC API response body
-  - name: hsmAPIstateComponentsPOSTnodeBMC - TODO
+  - name: hsmAPIstateComponentsPOSTnodeBMC - Create a NodeBMC Component using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -965,7 +968,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response code
   # TODO. POST /State/Components NodeBMC Existing NodeBMC No Force API response body
-  - name: hsmAPIstateComponentsPOSTnodeBMCexistsNoForce - TODO
+  - name: hsmAPIstateComponentsPOSTnodeBMCexistsNoForce - Attempt to create a different NodeBMC Component using POST with an existing ID without the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -978,7 +981,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} NodeBMC API response code
   # TODO. GET /State/Components/{xname} NodeBMC API response body
-  - name: hsmAPIstateComponentsGETxnameNodeBMC - TODO
+  - name: hsmAPIstateComponentsGETxnameNodeBMC - Retrieve the NodeBMC Component using GET and verify it was not overwritten by the previous POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
       method: GET
@@ -1038,7 +1041,7 @@ stages:
 
   # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response code
   # TODO. POST /State/Components NodeBMC Existing NodeBMC Force API response body
-  - name: hsmAPIstateComponentsPOSTnodeBMCexistsForce - TODO
+  - name: hsmAPIstateComponentsPOSTnodeBMCexistsForce - Create a different NodeBMC Component using POST with an existing ID and the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1051,7 +1054,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} NodeBMC API response code
   # TODO. GET /State/Components/{xname} NodeBMC API response body
-  - name: hsmAPIstateComponentsGETxnameNodeBMC - TODO
+  - name: hsmAPIstateComponentsGETxnameNodeBMC - Retrieve the NodeBMC Component using GET and verify it was overwritten by the previous POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b9"
       method: GET
@@ -1115,7 +1118,7 @@ stages:
 
   # TODO. POST /State/Components Nodes API response code
   # TODO. POST /State/Components Nodes API response body
-  - name: hsmAPIstateComponentsPOSTnodes - TODO
+  - name: hsmAPIstateComponentsPOSTnodes - Create multiple Node Components with a variety of valid field values using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1130,7 +1133,7 @@ stages:
 
   # TODO. POST /State/Components NodeEnclosure API response code
   # TODO. POST /State/Components NodeEnclosure API response body
-  - name: hsmAPIstateComponentsPOSTnodeEnclosure - TODO
+  - name: hsmAPIstateComponentsPOSTnodeEnclosure - Create a NodeEnclosure Component using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1143,7 +1146,7 @@ stages:
 
   # TODO. POST /State/Components RouterBMC and RouterModule API response code
   # TODO. POST /State/Components RouterBMC and RouterModule API response body
-  - name: hsmAPIstateComponentsPOSTrouterBMCandRouterModule - TODO
+  - name: hsmAPIstateComponentsPOSTrouterBMCandRouterModule - Create RouterBMC and RouterModule Components using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1156,7 +1159,7 @@ stages:
 
   # TODO. POST /State/Components Chassis and ChassisBMC API response code
   # TODO. POST /State/Components Chassis and ChassisBMC API response body
-  - name: hsmAPIstateComponentsPOSTchassisAndChassisBMC - TODO
+  - name: hsmAPIstateComponentsPOSTchassisAndChassisBMC - Create Chassis and ChassisBMC Components using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1169,7 +1172,7 @@ stages:
 
   # TODO. POST /State/Components HSNBoard and CabinetPDUController API response code
   # TODO. POST /State/Components HSNBoard and CabinetPDUController API response body
-  - name: hsmAPIstateComponentsPOSThsnBoardandCabinetPDUController - TODO
+  - name: hsmAPIstateComponentsPOSThsnBoardandCabinetPDUController - Create HSNBoard and CabinetPDUController Components using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -1182,7 +1185,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response code
   # TODO. GET /State/Components?type={type} CabinetPDUController Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamCabinetPDUController - TODO
+  - name: hsmAPIstateComponentsGETtypeParamCabinetPDUController - Retrieve the CabinetPDUController Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=CabinetPDUController"
       method: GET
@@ -1240,7 +1243,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} ChassisBMC Parameter API response code
   # TODO. GET /State/Components?type={type} ChassisBMC Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamChassisBMC - TODO
+  - name: hsmAPIstateComponentsGETtypeParamChassisBMC - Retrieve the ChassisBMC Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=ChassisBMC"
       method: GET
@@ -1303,7 +1306,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} Chassis Parameter API response code
   # TODO. GET /State/Components?type={type} Chassis Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamChassis - TODO
+  - name: hsmAPIstateComponentsGETtypeParamChassis - Retrieve the Chassis Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Chassis"
       method: GET
@@ -1366,7 +1369,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} HSNBoard Parameter API response code
   # TODO. GET /State/Components?type={type} HSNBoard Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamHSNBoard - TODO
+  - name: hsmAPIstateComponentsGETtypeParamHSNBoard - Retrieve the HSNBoard Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=HSNBoard"
       method: GET
@@ -1429,7 +1432,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} NodeBMC Parameter API response code
   # TODO. GET /State/Components?type={type} NodeBMC Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamNodeBMC - TODO
+  - name: hsmAPIstateComponentsGETtypeParamNodeBMC - Retrieve the NodeBMC Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
@@ -1497,7 +1500,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response code
   # TODO. GET /State/Components?type={type} NodeEnclosure Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamNodeEnclosure - TODO
+  - name: hsmAPIstateComponentsGETtypeParamNodeEnclosure - Retrieve the NodeEnclosure Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeEnclosure"
       method: GET
@@ -1560,7 +1563,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} Node Parameter API response code
   # TODO. GET /State/Components?type={type} Node Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamNode - TODO
+  - name: hsmAPIstateComponentsGETtypeParamNode - Retrieve the Node Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
       method: GET
@@ -1624,7 +1627,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} RouterBMC Parameter API response code
   # TODO. GET /State/Components?type={type} RouterBMC Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamRouterBMC - TODO
+  - name: hsmAPIstateComponentsGETtypeParamRouterBMC - Retrieve the RouterBMC Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=RouterBMC"
       method: GET
@@ -1687,7 +1690,7 @@ stages:
 
   # TODO. GET /State/Components?type={type} RouterModule Parameter API response code
   # TODO. GET /State/Components?type={type} RouterModule Parameter API response body
-  - name: hsmAPIstateComponentsGETtypeParamRouterModule - TODO
+  - name: hsmAPIstateComponentsGETtypeParamRouterModule - Retrieve the RouterModule Component using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=RouterModule"
       method: GET
@@ -1750,7 +1753,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Unknown Parameter StateOnly API response code
   # TODO. GET /State/Components?state={state} Unknown Parameter StateOnly API response body
-  - name: hsmAPIstateComponentsGETstateParamUnknownStateOnly - TODO
+  - name: hsmAPIstateComponentsGETstateParamUnknownStateOnly - Retrieve Unknown Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Unknown&stateonly=True"
       method: GET
@@ -1795,7 +1798,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Empty Parameter API response code
   # TODO. GET /State/Components?state={state} Empty Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamEmpty - TODO
+  - name: hsmAPIstateComponentsGETstateParamEmpty - Retrieve Empty Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Empty"
       method: GET
@@ -1862,7 +1865,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Populated Parameter API response code
   # TODO. GET /State/Components?state={state} Populated Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamPopulated - TODO
+  - name: hsmAPIstateComponentsGETstateParamPopulated - Retrieve Populated Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Populated"
       method: GET
@@ -1945,7 +1948,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Off Parameter API response code
   # TODO. GET /State/Components?state={state} Off Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamOff - TODO
+  - name: hsmAPIstateComponentsGETstateParamOff - Retrieve Off Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Off"
       method: GET
@@ -2010,7 +2013,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} On Parameter API response code
   # TODO. GET /State/Components?state={state} On Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamOn - TODO
+  - name: hsmAPIstateComponentsGETstateParamOn - Retrieve On Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=On"
       method: GET
@@ -2073,7 +2076,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Standby Parameter API response code
   # TODO. GET /State/Components?state={state} Standby Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamStandby - TODO
+  - name: hsmAPIstateComponentsGETstateParamStandby - Retrieve Standby Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Standby"
       method: GET
@@ -2156,7 +2159,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Halt Parameter API response code
   # TODO. GET /State/Components?state={state} Halt Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamHalt - TODO
+  - name: hsmAPIstateComponentsGETstateParamHalt - Retrieve Halt Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Halt"
       method: GET
@@ -2239,7 +2242,7 @@ stages:
 
   # TODO. GET /State/Components?state={state} Ready Parameter API response code
   # TODO. GET /State/Components?state={state} Ready Parameter API response body
-  - name: hsmAPIstateComponentsGETstateParamReady - TODO
+  - name: hsmAPIstateComponentsGETstateParamReady - Retrieve Ready Components using GET and the state query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Ready"
       method: GET
@@ -2302,7 +2305,7 @@ stages:
 
   # TODO. GET /State/Components?flag={flag} OK Parameter FlagOnly API response code
   # TODO. GET /State/Components?flag={flag} OK Parameter FlagOnly API response body
-  - name: hsmAPIstateComponentsGETflagParamOKflagOnly - TODO
+  - name: hsmAPIstateComponentsGETflagParamOKflagOnly - Retrieve OK Components using GET and the flag query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=OK&flagonly=True"
       method: GET
@@ -2338,7 +2341,7 @@ stages:
 
   # TODO. GET /State/Components?flag={flag} Warning Parameter API response code
   # TODO. GET /State/Components?flag={flag} Warning Parameter API response body
-  - name: hsmAPIstateComponentsGETflagParamWarning - TODO
+  - name: hsmAPIstateComponentsGETflagParamWarning - Retrieve Warning Components using GET and the flag query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=Warning"
       method: GET
@@ -2401,7 +2404,7 @@ stages:
 
   # TODO. GET /State/Components?flag={flag} Alert Parameter API response code
   # TODO. GET /State/Components?flag={flag} Alert Parameter API response body
-  - name: hsmAPIstateComponentsGETflagParamAlert - TODO
+  - name: hsmAPIstateComponentsGETflagParamAlert - Retrieve Alert Components using GET and the flag query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=Alert"
       method: GET
@@ -2484,7 +2487,7 @@ stages:
 
   # TODO. GET /State/Components?flag={flag} Locked Parameter API response code
   # TODO. GET /State/Components?flag={flag} Locked Parameter API response body
-  - name: hsmAPIstateComponentsGETflagParamLocked - TODO
+  - name: hsmAPIstateComponentsGETflagParamLocked - Retrieve Locked Components using GET and the flag query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flag=Locked"
       method: GET
@@ -2567,7 +2570,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Compute Parameter RoleOnly API response code
   # TODO. GET /State/Components?role={role} Compute Parameter RoleOnly API response body
-  - name: hsmAPIstateComponentsGETroleParamComputeRoleOnly - TODO
+  - name: hsmAPIstateComponentsGETroleParamComputeRoleOnly - Retrieve Compute Components using GET and the role query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Compute&roleonly=True"
       method: GET
@@ -2608,7 +2611,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Service Parameter API response code
   # TODO. GET /State/Components?role={role} Service Parameter API response body
-  - name: hsmAPIstateComponentsGETroleParamService - TODO
+  - name: hsmAPIstateComponentsGETroleParamService - Retrieve Service Components using GET and the role query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Service"
       method: GET
@@ -2691,7 +2694,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} System Parameter API response code
   # TODO. GET /State/Components?role={role} System Parameter API response body
-  - name: hsmAPIstateComponentsGETroleParamSystem - TODO
+  - name: hsmAPIstateComponentsGETroleParamSystem - Retrieve System Components using GET and the role query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=System"
       method: GET
@@ -2774,7 +2777,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Application Parameter API response code
   # TODO. GET /State/Components?role={role} Application Parameter API response body
-  - name: hsmAPIstateComponentsGETroleParamApplication - TODO
+  - name: hsmAPIstateComponentsGETroleParamApplication - Retrieve Application Components using GET and the role query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Application"
       method: GET
@@ -2857,7 +2860,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Storage Parameter API response code
   # TODO. GET /State/Components?role={role} Storage Parameter API response body
-  - name: hsmAPIstateComponentsGETroleParamStorage - TODO
+  - name: hsmAPIstateComponentsGETroleParamStorage - Retrieve Storage Components using GET and the role query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Storage"
       method: GET
@@ -2940,7 +2943,7 @@ stages:
 
   # TODO. GET /State/Components?role={role} Management Parameter API response code
   # TODO. GET /State/Components?role={role} Management Parameter API response body
-  - name: hsmAPIstateComponentsGETroleParamManagement - TODO
+  - name: hsmAPIstateComponentsGETroleParamManagement - Retrieve Management Components using GET and the role query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Management"
       method: GET
@@ -3005,7 +3008,7 @@ stages:
 
   # TODO. GET /State/Components?subrole={subrole} Master Parameter API response code
   # TODO. GET /State/Components?subrole={subrole} Master Parameter API response body
-  - name: hsmAPIstateComponentsGETsubroleParamMaster - TODO
+  - name: hsmAPIstateComponentsGETsubroleParamMaster - Retrieve Master Components using GET and the subrole query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?subrole=Master"
       method: GET
@@ -3070,7 +3073,7 @@ stages:
 
   # TODO. GET /State/Components?subrole={subrole} Worker Parameter API response code
   # TODO. GET /State/Components?subrole={subrole} Worker Parameter API response body
-  - name: hsmAPIstateComponentsGETsubroleParamWorker - TODO
+  - name: hsmAPIstateComponentsGETsubroleParamWorker - Retrieve Worker Components using GET and the subrole query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?subrole=Worker"
       method: GET
@@ -3135,7 +3138,7 @@ stages:
 
   # TODO. GET /State/Components?subrole={subrole} Storage Parameter API response code
   # TODO. GET /State/Components?subrole={subrole} Storage Parameter API response body
-  - name: hsmAPIstateComponentsGETsubroleParamStorage - TODO
+  - name: hsmAPIstateComponentsGETsubroleParamStorage - Retrieve Storage Components using GET and the subrole query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?subrole=Storage"
       method: GET
@@ -3200,7 +3203,7 @@ stages:
 
   # TODO. GET /State/Components?enabled={enabled} True Parameter API response code
   # TODO. GET /State/Components?enabled={enabled} True Parameter API response body
-  - name: hsmAPIstateComponentsGETenabledParamTrue - TODO
+  - name: hsmAPIstateComponentsGETenabledParamTrue - Retrieve Enabled Components using GET and the enabled query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?enabled=True"
       method: GET
@@ -3263,7 +3266,7 @@ stages:
 
   # TODO. GET /State/Components?enabled={enabled} False Parameter API response code
   # TODO. GET /State/Components?enabled={enabled} False Parameter API response body
-  - name: hsmAPIstateComponentsGETenabledParamFalse - TODO
+  - name: hsmAPIstateComponentsGETenabledParamFalse - Retrieve Disabled Components using GET and the enabled query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?enabled=False"
       method: GET
@@ -3326,7 +3329,7 @@ stages:
 
   # TODO. GET /State/Components?softwarestatus={softwarestatus} TestStatus Parameter API response code
   # TODO. GET /State/Components?softwarestatus={softwarestatus} TestStatus Parameter API response body
-  - name: hsmAPIstateComponentsGETsoftwarestatusParamTestStatus - TODO
+  - name: hsmAPIstateComponentsGETsoftwarestatusParamTestStatus - Retrieve Components with a specific SoftwareStatus using GET and the softwarestatus query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?softwarestatus=TestStatus0"
       method: GET
@@ -3409,7 +3412,7 @@ stages:
 
   # TODO. GET /State/Components?arch={arch} X86 Parameter API response code
   # TODO. GET /State/Components?arch={arch} X86 Parameter API response body
-  - name: hsmAPIstateComponentsGETarchParamX86 - TODO
+  - name: hsmAPIstateComponentsGETarchParamX86 - Retrieve X86 Components using GET and the arch query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?arch=X86"
       method: GET
@@ -3472,7 +3475,7 @@ stages:
 
   # TODO. GET /State/Components?arch={arch} ARM Parameter API response code
   # TODO. GET /State/Components?arch={arch} ARM Parameter API response body
-  - name: hsmAPIstateComponentsGETarchParamARM - TODO
+  - name: hsmAPIstateComponentsGETarchParamARM - Retrieve ARM Components using GET and the arch query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?arch=ARM"
       method: GET
@@ -3535,7 +3538,7 @@ stages:
 
   # TODO. GET /State/Components?arch={arch} Other Parameter API response code
   # TODO. GET /State/Components?arch={arch} Other Parameter API response body
-  - name: hsmAPIstateComponentsGETarchParamOther - TODO
+  - name: hsmAPIstateComponentsGETarchParamOther - Retrieve Other Components using GET and the arch query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?arch=Other"
       method: GET
@@ -3598,7 +3601,7 @@ stages:
 
   # TODO. GET /State/Components?class={class} River Parameter API response code
   # TODO. GET /State/Components?class={class} River Parameter API response body
-  - name: hsmAPIstateComponentsGETclassParamRiver - TODO
+  - name: hsmAPIstateComponentsGETclassParamRiver - Retrieve River Components using GET and the class query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?class=River"
       method: GET
@@ -3661,7 +3664,7 @@ stages:
 
   # TODO. GET /State/Components?class={class} Mountain Parameter API response code
   # TODO. GET /State/Components?class={class} Mountain Parameter API response body
-  - name: hsmAPIstateComponentsGETclassParamMountain - TODO
+  - name: hsmAPIstateComponentsGETclassParamMountain - Retrieve Mountain Components using GET and the class query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?class=Mountain"
       method: GET
@@ -3724,7 +3727,7 @@ stages:
 
   # TODO. GET /State/Components?class={class} Hill Parameter API response code
   # TODO. GET /State/Components?class={class} Hill Parameter API response body
-  - name: hsmAPIstateComponentsGETclassParamHill - TODO
+  - name: hsmAPIstateComponentsGETclassParamHill - Retrieve Hill Components using GET and the class query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?class=Hill"
       method: GET
@@ -3787,7 +3790,7 @@ stages:
 
   # TODO. GET /State/Components?nid={nid} NID NidOnly Parameter API response code
   # TODO. GET /State/Components?nid={nid} NID NidOnly Parameter API response body
-  - name: hsmAPIstateComponentsGETnidParamNidOnly - TODO
+  - name: hsmAPIstateComponentsGETnidParamNidOnly - Retrieve a Component with a specific NID using GET and the nid query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?nid=9999999990&nidonly=True"
       method: GET
@@ -3827,7 +3830,7 @@ stages:
 
   # TODO. GET /State/Components?nid_start={nid_start} NID_Start Parameter API response code
   # TODO. GET /State/Components?nid_start={nid_start} NID_Start Parameter API response body
-  - name: hsmAPIstateComponentsGETnidStartParam - TODO
+  - name: hsmAPIstateComponentsGETnidStartParam - Retrieve Components with NIDs starting at a specific value using GET and the nid_start query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?nid_start=9999999996"
       method: GET
@@ -3898,7 +3901,7 @@ stages:
 
   # TODO. GET /State/Components?nid_start={nid_start}&nid_end={nid_end} NID_Start NID_End Parameters API response code
   # TODO. GET /State/Components?nid_start={nid_start}&nid_end={nid_end} NID_Start NID_End Parameters API response body
-  - name: hsmAPIstateComponentsGETnidStartNidEndParams - TODO
+  - name: hsmAPIstateComponentsGETnidStartNidEndParams - Retrieve Components with NIDs starting and ending at specific values using GET with the nid_start and nid_end query parameters.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?nid_start=9999999996&nid_end=9999999997"
       method: GET
@@ -3967,7 +3970,7 @@ stages:
 
   # TODO. GET /State/Components Many Parameters Existing Node API response code
   # TODO. GET /State/Components Many Parameters Existing Node API response body
-  - name: hsmAPIstateComponentsGETManyParamsExistingNode - TODO
+  - name: hsmAPIstateComponentsGETManyParamsExistingNode - Retrieve Components with specific values of many query parameters using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b9n0&type=Node&state=Ready&flag=OK&enabled=true&softwarestatus=TestStatus0&role=Compute&subrole=Storage&nid=9999999990&nettype=Sling&arch=X86&class=Hill"
       method: GET
@@ -4052,7 +4055,7 @@ stages:
 
   # TODO. POST /State/Components/Query Existing Component API response code
   # TODO. POST /State/Components/Query Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTexistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTexistingComponent - Query for existing Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4138,7 +4141,7 @@ stages:
 
   # TODO. POST /State/Components/Query Type Node Existing Component API response code
   # TODO. POST /State/Components/Query Type Node Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTtypeNodeExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTtypeNodeExistingComponent - Query for existing Node Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4224,7 +4227,7 @@ stages:
 
   # TODO. POST /State/Components/Query State Ready StateOnly Existing Component API response code
   # TODO. POST /State/Components/Query State Ready StateOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTstateReadyStateOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTstateReadyStateOnlyExistingComponent - Query for existing Ready Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4270,7 +4273,7 @@ stages:
 
   # TODO. POST /State/Components/Query Flag OK FlagOnly Existing Component API response code
   # TODO. POST /State/Components/Query Flag OK FlagOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTflagOkFlagOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTflagOkFlagOnlyExistingComponent - Query for existing OK Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4311,7 +4314,7 @@ stages:
 
   # TODO. POST /State/Components/Query Enabled True Existing Component API response code
   # TODO. POST /State/Components/Query Enabled True Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTenabledTrueExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTenabledTrueExistingComponent - Query for existing Enabled Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4397,7 +4400,7 @@ stages:
 
   # TODO. POST /State/Components/Query SoftwareStatus Existing Component API response code
   # TODO. POST /State/Components/Query SoftwareStatus Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTsoftwareStatusExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTsoftwareStatusExistingComponent - Query for existing Components with a specific SoftwareStatus and ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4483,7 +4486,7 @@ stages:
 
   # TODO. POST /State/Components/Query Role Compute RoleOnly Existing Component API response code
   # TODO. POST /State/Components/Query Role Compute RoleOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTroleComputeExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTroleComputeExistingComponent - Query for existing Compute Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4529,7 +4532,7 @@ stages:
 
   # TODO. POST /State/Components/Query SubRole Master Existing Component API response code
   # TODO. POST /State/Components/Query SubRole Master Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTsubRoleMasterExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTsubRoleMasterExistingComponent - Query for existing Master Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4615,7 +4618,7 @@ stages:
 
   # TODO. POST /State/Components/Query Arch X86 Existing Component API response code
   # TODO. POST /State/Components/Query Arch X86 Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTarchX86ExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTarchX86ExistingComponent - Query for existing X86 Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4701,7 +4704,7 @@ stages:
 
   # TODO. POST /State/Components/Query Class River Existing Component API response code
   # TODO. POST /State/Components/Query Class River Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTclassRiverExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTclassRiverExistingComponent - Query for existing River Components with a specific ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4787,7 +4790,7 @@ stages:
 
   # TODO. POST /State/Components/Query NID NidOnly Existing Component API response code
   # TODO. POST /State/Components/Query NID NidOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTnidNidOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTnidNidOnlyExistingComponent - Query for existing Components with a specific NID and ComponentID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4828,7 +4831,7 @@ stages:
 
   # TODO. POST /State/Components/Query NID_Start Existing Component API response code
   # TODO. POST /State/Components/Query NID_Start Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTnidStartExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTnidStartExistingComponent - Query for existing Components with specific ComponentIDs and NIDs starting at a specific value using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4900,7 +4903,7 @@ stages:
 
   # TODO. POST /State/Components/Query NID_Start NID_End Existing Component API response code
   # TODO. POST /State/Components/Query NID_Start NID_End Existing Component API response body
-  - name: hsmAPIstateComponentsQueryPOSTnidStartNidEndExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTnidStartNidEndExistingComponent - Query for existing Components with specific ComponentIDs as well as NIDs starting and ending at a specific value using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -4970,7 +4973,7 @@ stages:
 
   # TODO. POST /State/Components/Query Many Parameters Existing Node API response code
   # TODO. POST /State/Components/Query Many Parameters Existing Node API response body
-  - name: hsmAPIstateComponentsQueryPOSTmanyParametersExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryPOSTmanyParametersExistingComponent - Query for existing Components with specific ComponentIDs and many specific attributes using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query"
       method: POST
@@ -5056,7 +5059,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTexistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTexistingComponent - Query for existing Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5142,7 +5145,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Type Node Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Type Node Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTtypeNodeExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTtypeNodeExistingComponent - Query for existing Node Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5228,7 +5231,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query State Ready StateOnly Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query State Ready StateOnly Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTstateReadyStateOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTstateReadyStateOnlyExistingComponent - Query for existing Ready Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5274,7 +5277,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Flag OK FlagOnly Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Flag OK FlagOnly Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTflagOkFlagOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTflagOkFlagOnlyExistingComponent - Query for existing OK Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5315,7 +5318,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Enabled True Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Enabled True Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTenabledTrueExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTenabledTrueExistingComponent - Query for existing Enabled Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5401,7 +5404,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query SoftwareStatus Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query SoftwareStatus Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTsoftwareStatusExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTsoftwareStatusExistingComponent - Query for existing Components with specific NID ranges and SoftwareStatus using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5487,7 +5490,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Role Compute RoleOnly Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Role Compute RoleOnly Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTroleComputeExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTroleComputeExistingComponent - Query for existing Compute Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5533,7 +5536,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query SubRole Master Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query SubRole Master Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTsubRoleMasterExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTsubRoleMasterExistingComponent - Query for existing Master Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5619,7 +5622,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Arch X86 Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Arch X86 Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTarchX86ExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTarchX86ExistingComponent - Query for existing X86 Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5705,7 +5708,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Class River Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query Class River Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTclassRiverExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTclassRiverExistingComponent - Query for existing River Components with specific NID ranges using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5791,7 +5794,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query NID NidOnly Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query NID NidOnly Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTnidNidOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTnidNidOnlyExistingComponent - Query for existing Components with specific NID ranges and NID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5832,7 +5835,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query NID_Start Existing Component API response code
   # TODO. POST /State/Components/ByNID/Query NID_Start Existing Component API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTnidStartExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTnidStartExistingComponent - Query for existing Components with specific NID ranges and NID start value using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -5904,7 +5907,7 @@ stages:
 
 #  # TODO. POST /State/Components/ByNID/Query NID_Start NID_End Existing Component API response code
 #  # TODO. POST /State/Components/ByNID/Query NID_Start NID_End Existing Component API response body
-##  - name: hsmAPIstateComponentsByNIDqueryPOSTnidStartNidEndExistingComponent - TODO
+##  - name: hsmAPIstateComponentsByNIDqueryPOSTnidStartNidEndExistingComponent - Query for existing Components with specific NID ranges, NID start, and NID end values using POST.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
 #      method: POST
@@ -5975,7 +5978,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response code
   # TODO. POST /State/Components/ByNID/Query Many Parameters Existing Node API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTmanyParametersExistingComponent - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTmanyParametersExistingComponent - Query for existing Components with specific NID ranges and many additional attributes using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -6061,7 +6064,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETexistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETexistingComponent - Query for existing Components by ID using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n8"
       method: GET
@@ -6146,7 +6149,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Type Node Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETtypeNodeExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETtypeNodeExistingComponent - Query for existing Node Components by ID using GET with type parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n8?type=Node"
       method: GET
@@ -6231,7 +6234,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} State Ready StateOnly Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} State Ready StateOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETstateReadyStateOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETstateReadyStateOnlyExistingComponent - Query for existing Ready Components by ID using GET with state parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n1?state=Ready&stateonly=True"
       method: GET
@@ -6276,7 +6279,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Flag OK FlagOnly Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Flag OK FlagOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETflagOkFlagOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETflagOkFlagOnlyExistingComponent - Query for existing OK Components by ID using GET with flag parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n7?flag=OK&flagonly=True"
       method: GET
@@ -6316,7 +6319,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Enabled True Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Enabled True Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETenabledTrueExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETenabledTrueExistingComponent - Query for existing Enabled Components by ID using GET with enabled parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?enabled=True"
       method: GET
@@ -6401,7 +6404,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} SoftwareStatus Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} SoftwareStatus Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETsoftwareStatusExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETsoftwareStatusExistingComponent - Query for existing Components with specific SoftwareStatus by ID using GET with softwarestatus parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n5?softwarestatus=TestStatus5"
       method: GET
@@ -6486,7 +6489,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Role Compute RoleOnly Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Role Compute RoleOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETroleComputeExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETroleComputeExistingComponent - Query for existing Compute Components by ID using GET with role parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n2?role=Compute&roleonly=True"
       method: GET
@@ -6531,7 +6534,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} SubRole Master Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} SubRole Master Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETsubRoleMasterExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETsubRoleMasterExistingComponent - Query for existing Master Components by ID using GET with subrole parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n8?subrole=Master"
       method: GET
@@ -6616,7 +6619,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Arch X86 Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Arch X86 Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETarchX86ExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETarchX86ExistingComponent - Query for existing X86 Components by ID using GET with arch parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n7?arch=X86"
       method: GET
@@ -6701,7 +6704,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Class River Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} Class River Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETclassRiverExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETclassRiverExistingComponent - Query for existing River Components by ID using GET with class parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?class=River"
       method: GET
@@ -6786,7 +6789,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} NID NidOnly Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} NID NidOnly Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETnidNidOnlyExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETnidNidOnlyExistingComponent - Query for existing Components with specific NID by ID using GET with nid parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n3?nid=9999999993&nidonly=True"
       method: GET
@@ -6826,7 +6829,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} NID_Start Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} NID_Start Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETnidStartExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETnidStartExistingComponent - Query for existing Components with specific NID start values by ID using GET with nid_start parameter.
     request:
       #TODO: weird, seems like the {xname} doesn't actually matter here
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?nid_start=9999999996"
@@ -6898,7 +6901,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} NID_Start NID_End Existing Component API response code
   # TODO. GET /State/Components/Query/{xname} NID_Start NID_End Existing Component API response body
-  - name: hsmAPIstateComponentsQueryXnameGETnidStartNidEndExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETnidStartNidEndExistingComponent - Query for existing Components with specific NID start and NID end values by ID using GET with nid_start and nid_end parameters.
     request:
       #TODO: weird, seems like the {xname} doesn't actually matter here
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n6?nid_start=9999999996&nid_end=9999999997"
@@ -6968,7 +6971,7 @@ stages:
 
   # TODO. GET /State/Components/Query/{xname} Many Parameters Existing Node API response code
   # TODO. GET /State/Components/Query/{xname} Many Parameters Existing Node API response body
-  - name: hsmAPIstateComponentsQueryXnameGETmanyParametersExistingComponent - TODO
+  - name: hsmAPIstateComponentsQueryXnameGETmanyParametersExistingComponent - Query for existing Components with multiple specific attributes by ID using GET with many parameters.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/x9999c7s9b9n3?type=Node&state=Standby&flag=Locked&enabled=False&SoftwareStatus=TestStatus3&role=Management&subrole=Storage&arch=Other&class=Mountain&NID=9999999993"
       method: GET
@@ -7053,7 +7056,7 @@ stages:
 
   # TODO. GET /State/Components/ByNID/{nid} NodeA API response code
   # TODO. GET /State/Components/ByNID/{nid} NodeA API response body
-  - name: hsmAPIstateComponentsByNidGETnidNodeA - TODO
+  - name: hsmAPIstateComponentsByNidGETnidNodeA - Retrieve an existing Component by NID using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999990"
       method: GET
@@ -7130,7 +7133,7 @@ stages:
 
   # TODO. GET /State/Components/ByNID/{nid} NodeB API response code
   # TODO. GET /State/Components/ByNID/{nid} NodeB API response body
-  - name: hsmAPIstateComponentsByNidGETnidNodeB - TODO
+  - name: hsmAPIstateComponentsByNidGETnidNodeB - Retrieve a different existing Component by NID using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/9999999998"
       method: GET
@@ -7207,7 +7210,7 @@ stages:
 
   # TODO. POST /State/Components Nodes For Bulk Updates API response code
   # TODO. POST /State/Components Nodes For Bulk Updates API response body
-  - name: hsmAPIstateComponentsPOSTnodesForBulkUpdates - TODO
+  - name: hsmAPIstateComponentsPOSTnodesForBulkUpdates - Create multiple Node Components for bulk update tests using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -7220,7 +7223,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response code
   # TODO. PATCH /State/Components/BulkStateData Nodes State Flag API response body
-  - name: hsmAPIstateComponentsBulkStateDataPATCHnodesStateFlag - TODO
+  - name: hsmAPIstateComponentsBulkStateDataPATCHnodesStateFlag - Bulk update Node Component state and flag values using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
       method: PATCH
@@ -7233,7 +7236,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeA API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkStateDataNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkStateDataNodeA - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -7310,7 +7313,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkStateData NodeB API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkStateDataNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkStateDataNodeB - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -7387,7 +7390,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkStateData Node API response body
-  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkStateDataNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkStateDataNode - Retrieve Node Component using GET that was not bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -7464,7 +7467,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response code
   # TODO. PATCH /State/Components/{xname}/StateData Node State No Flag API response body
-  - name: hsmAPIstateComponentsXnameStateDataPATCHnodeStateNoFlag - TODO
+  - name: hsmAPIstateComponentsXnameStateDataPATCHnodeStateNoFlag - Update state data for specific Node Component using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6/StateData"
       method: PATCH
@@ -7477,7 +7480,7 @@ stages:
 
   # TODO. GET /State/Components?stateonly=True Updated Node API response code
   # TODO. GET /State/Components?stateonly=True Updated Node API response body
-  - name: hsmAPIstateComponentsGETstateonlyParamUpdatedNodeStateData - TODO
+  - name: hsmAPIstateComponentsGETstateonlyParamUpdatedNodeStateData - Retrieve updated Node Component using GET and stateonly parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&stateonly=True"
       method: GET
@@ -7522,7 +7525,7 @@ stages:
 
   # TODO. GET /State/Components?flagonly=True Updated Node API response code
   # TODO. GET /State/Components?flagonly=True Updated Node API response body
-  - name: hsmAPIstateComponentsGETflagonlyParamUpdatedNodeStateData - TODO
+  - name: hsmAPIstateComponentsGETflagonlyParamUpdatedNodeStateData - Retrieve updated Node Component using GET and flagonly parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&flagonly=True"
       method: GET
@@ -7562,7 +7565,7 @@ stages:
 
   # TODO. GET /State/Components?roleonly=True Updated Node API response code
   # TODO. GET /State/Components?roleonly=True Updated Node API response body
-  - name: hsmAPIstateComponentsGETroleonlyParamUpdatedNode - TODO
+  - name: hsmAPIstateComponentsGETroleonlyParamUpdatedNode - Retrieve updated Node Component using GET and roleonly parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&roleonly=True"
       method: GET
@@ -7607,7 +7610,7 @@ stages:
 
   # TODO. GET /State/Components?nidonly=True Updated Node API response code
   # TODO. GET /State/Components?nidonly=True Updated Node API response body
-  - name: hsmAPIstateComponentsGETnidonlyParamUpdatedNode - Retrieve the component data for the updated Node using GET with the nidonly parameter.
+  - name: hsmAPIstateComponentsGETnidonlyParamUpdatedNode - Retrieve the Component data for the updated Node using GET with the nidonly parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n6&nidonly=True"
       method: GET
@@ -7647,7 +7650,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkFlagOnly Nodes API response code
   # TODO. PATCH /State/Components/BulkFlagOnly Nodes API response body
-  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnodes - Bulk update Node Component flag values using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
       method: PATCH
@@ -7658,7 +7661,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeA API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkFlagOnlyNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkFlagOnlyNodeA - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -7735,7 +7738,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkFlagOnly NodeB API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkFlagOnlyNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkFlagOnlyNodeB - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -7812,7 +7815,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkFlagOnly Node API response body
-  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkFlagOnlyNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkFlagOnlyNode - Retrieve Node Component using GET that was not bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -7889,7 +7892,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/FlagOnly Node API response code
   # TODO. PATCH /State/Components/{xname}/FlagOnly Node API response body
-  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnode - Update flag data for specific Node Component using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
       method: PATCH
@@ -7900,7 +7903,7 @@ stages:
 
   # TODO. GET /State/Components?flagonly=True Updated Node API response code
   # TODO. GET /State/Components?flagonly=True Updated Node API response body
-  - name: hsmAPIstateComponentsGETflagonlyParamUpdatedNodeFlagOnly - TODO
+  - name: hsmAPIstateComponentsGETflagonlyParamUpdatedNodeFlagOnly - Retrieve updated Node Component using GET and flagonly parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id=x9999c7s9b8n8&flagonly=True"
       method: GET
@@ -7940,7 +7943,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkEnabled Nodes API response code
   # TODO. PATCH /State/Components/BulkEnabled Nodes API response body
-  - name: hsmAPIstateComponentsBulkEnabledPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkEnabledPATCHnodes - Bulk update Node Component enabled values using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkEnabled"
       method: PATCH
@@ -7951,7 +7954,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeA API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkEnabledNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkEnabledNodeA - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -8028,7 +8031,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkEnabled NodeB API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkEnabledNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkEnabledNodeB - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -8105,7 +8108,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkEnabled Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkEnabled Node API response body
-  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkEnabledNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkEnabledNode - Retrieve Node Component using GET that was not bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -8182,7 +8185,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/Enabled Node API response code
   # TODO. PATCH /State/Components/{xname}/Enabled Node API response body
-  - name: hsmAPIstateComponentsXnameEnabledPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameEnabledPATCHnode - Update enabled data for specific Node Component using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Enabled"
       method: PATCH
@@ -8193,7 +8196,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated Enabled Node API response code
   # TODO. GET /State/Components/{xname} Updated Enabled Node API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedEnabledNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedEnabledNode - Retrieve updated Node Component using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -8270,7 +8273,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkSoftwareStatus Nodes API response code
   # TODO. PATCH /State/Components/BulkSoftwareStatus Nodes API response body
-  - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHnodes - Bulk update Node Component softwarestatus values using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkSoftwareStatus"
       method: PATCH
@@ -8281,7 +8284,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeA API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkSoftwareStatusNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkSoftwareStatusNodeA - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -8358,7 +8361,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkSoftwareStatus NodeB API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkSoftwareStatusNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkSoftwareStatusNodeB - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -8435,7 +8438,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkSoftwareStatus Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkSoftwareStatus Node API response body
-  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkSoftwareStatusNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkSoftwareStatusNode - Retrieve Node Component using GET that was not bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -8512,7 +8515,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/SoftwareStatus Node API response code
   # TODO. PATCH /State/Components/{xname}/SoftwareStatus Node API response body
-  - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHnode - Update softwarestatus data for specific Node Component using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/SoftwareStatus"
       method: PATCH
@@ -8523,7 +8526,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated SoftwareStatus Node API response code
   # TODO. GET /State/Components/{xname} Updated SoftwareStatus Node API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedSoftwareStatusNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedSoftwareStatusNode - Retrieve updated Node Component using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -8602,7 +8605,7 @@ stages:
 
 #  # TODO. PATCH /State/Components/BulkRole Nodes API response code
 #  # TODO. PATCH /State/Components/BulkRole Nodes API response body
-#  - name: hsmAPIstateComponentsBulkRolePATCHnodes - TODO
+#  - name: hsmAPIstateComponentsBulkRolePATCHnodes - Bulk update Node Component role values using PATCH.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/BulkRole"
 #      method: PATCH
@@ -8619,7 +8622,7 @@ stages:
 #
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeA API response code
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeA API response body
-#  - name: hsmAPIstateComponentsGETxnameUpdatedBulkRoleNodeA - TODO
+#  - name: hsmAPIstateComponentsGETxnameUpdatedBulkRoleNodeA - Retrieve Node Component using GET that was bulk updated.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
 #      method: GET
@@ -8696,7 +8699,7 @@ stages:
 #
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeB API response code
 #  # TODO. GET /State/Components/{xname} Updated BulkRole NodeB API response body
-#  - name: hsmAPIstateComponentsGETxnameUpdatedBulkRoleNodeB - TODO
+#  - name: hsmAPIstateComponentsGETxnameUpdatedBulkRoleNodeB - Retrieve Node Component using GET that was bulk updated.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
 #      method: GET
@@ -8773,7 +8776,7 @@ stages:
 #
 #  # TODO. GET /State/Components/{xname} Non-Updated BulkRole Node API response code
 #  # TODO. GET /State/Components/{xname} Non-Updated BulkRole Node API response body
-#  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkRoleNode - TODO
+#  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkRoleNode - Retrieve Node Component using GET that was not bulk updated.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
 #      method: GET
@@ -8850,7 +8853,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/Role Node API response code
   # TODO. PATCH /State/Components/{xname}/Role Node API response body
-  - name: hsmAPIstateComponentsXnameRolePATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameRolePATCHnode - Update role data for specific Node Component using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Role"
       method: PATCH
@@ -8861,7 +8864,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated Role Node API response code
   # TODO. GET /State/Components/{xname} Updated Role Node API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedSoftwareStatusNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedSoftwareStatusNode - Retrieve updated Node Component using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -8938,7 +8941,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkNID Nodes API response code
   # TODO. PATCH /State/Components/BulkNID Nodes API response body
-  - name: hsmAPIstateComponentsBulkNidPATCHnodes - TODO
+  - name: hsmAPIstateComponentsBulkNidPATCHnodes - Bulk update Node Component NID values using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkNID"
       method: PATCH
@@ -8949,7 +8952,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkNID NodeA API response code
   # TODO. GET /State/Components/{xname} Updated BulkNID NodeA API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkNIDNodeA - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkNIDNodeA - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7"
       method: GET
@@ -9026,7 +9029,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated BulkNID NodeB API response code
   # TODO. GET /State/Components/{xname} Updated BulkNID NodeB API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedBulkNIDNodeB - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedBulkNIDNodeB - Retrieve Node Component using GET that was bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n6"
       method: GET
@@ -9103,7 +9106,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Non-Updated BulkNID Node API response code
   # TODO. GET /State/Components/{xname} Non-Updated BulkNID Node API response body
-  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkNIDNode - TODO
+  - name: hsmAPIstateComponentsGETxnameNonUpdatedBulkNIDNode - Retrieve Node Component using GET that was not bulk updated.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -9180,7 +9183,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/NID Node API response code
   # TODO. PATCH /State/Components/{xname}/NID Node API response body
-  - name: hsmAPIstateComponentsXnameNidPATCHnode - TODO
+  - name: hsmAPIstateComponentsXnameNidPATCHnode - Update NID data for specific Node Component using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/NID"
       method: PATCH
@@ -9191,7 +9194,7 @@ stages:
 
   # TODO. GET /State/Components/{xname} Updated NID Node API response code
   # TODO. GET /State/Components/{xname} Updated NID Node API response body
-  - name: hsmAPIstateComponentsGETxnameUpdatedNIDNode - TODO
+  - name: hsmAPIstateComponentsGETxnameUpdatedNIDNode - Retrieve updated Node Component using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8"
       method: GET
@@ -9265,3 +9268,11 @@ stages:
                 required: True
                 enum:
                   - "River"
+
+  #TODO. DELETE /State/Components API response code
+  #TODO. DELETE /State/Components API response body
+  - name: hsmAPIstateComponentsDELETE - Remove all Components using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: DELETE
+      verify: !bool "{verify}"

@@ -54,7 +54,6 @@
 # TODO. POST /State/Components Invalid CabinetPDUController API response body
 # TODO. POST /State/Components Invalid Chassis API response code
 # TODO. POST /State/Components Invalid Chassis API response body
-#TODO TODO: Resume here
 # TODO. POST /State/Components Invalid ChassisBMC API response code
 # TODO. POST /State/Components Invalid ChassisBMC API response body
 # TODO. POST /State/Components Invalid HSNBoard API response code
@@ -186,7 +185,7 @@ marks:
         - "nid_end"
 
 stages:
-  - name: hsmAPIstateComponentsGETinvalidParams - TODO
+  - name: hsmAPIstateComponentsGETinvalidParams - Attempt to retrieve Components with various invalid parameters using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?{param}=FAKE"
       method: GET
@@ -226,7 +225,7 @@ test_name: hsmAPIstateComponentsNegative
 stages:
   # TODO. POST /State/Components Invalid CabinetPDUController API response code
   # TODO. POST /State/Components Invalid CabinetPDUController API response body
-  - name: hsmAPIstateComponentsPOSTinvalidCabinetPDUController - TODO
+  - name: hsmAPIstateComponentsPOSTinvalidCabinetPDUController - Attempt to create a CabinetPDUController Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -264,7 +263,7 @@ stages:
 
   # TODO. POST /State/Components Invalid Chassis API response code
   # TODO. POST /State/Components Invalid Chassis API response body
-  - name: hsmAPIstateComponentsPOSTinvalidChassis - TODO
+  - name: hsmAPIstateComponentsPOSTinvalidChassis - Attempt to create a Chassis Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
@@ -300,9 +299,275 @@ stages:
                 enum:
                   - 400
 
+  # TODO. POST /State/Components Invalid ChassisBMC API response code
+  # TODO. POST /State/Components Invalid ChassisBMC API response body
+  - name: hsmAPIstateComponentsPOSTinvalidChassisBMC - Attempt to create a ChassisBMC Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7b0","Type":"ChassisBMC","State":"Ready","Flag":"OK","Enabled":"fake","NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      status_code: 500
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Internal Server Error"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "error decoding JSON json: cannot unmarshal string into Go struct field Component.Components.Enabled of type bool"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 500
+
+  # TODO. POST /State/Components Invalid HSNBoard API response code
+  # TODO. POST /State/Components Invalid HSNBoard API response body
+  - name: hsmAPIstateComponentsPOSTinvalidHSNBoard - Attempt to create an HSNBoard Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7r9e9","Type":"HSNBoard","State":"On","Flag":"Warning","Enabled":false,"NetType":"FAKE","Arch":"X86","Class":"River"}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "couldn't validate components: netType 'FAKE' is invalid"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. POST /State/Components Invalid Node API response code
+  # TODO. POST /State/Components Invalid Node API response body
+  - name: hsmAPIstateComponentsPOSTinvalidNode - Attempt to create a Node Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b9n9","Type":"Node","State":"On","Flag":"OK","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Sling","Arch":"FAKE","Class":"River"}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "couldn't validate components: arch 'FAKE' is invalid"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. POST /State/Components Invalid NodeBMC API response code
+  # TODO. POST /State/Components Invalid NodeBMC API response body
+  - name: hsmAPIstateComponentsPOSTinvalidNodeBMC - Attempt to create a NodeBMC Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Ready","Flag":"OK","Enabled":true,"Role":"Management","NetType":"Sling","Arch":"X86","Class":"FAKE","Locked":false}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "couldn't validate components: class 'FAKE' is invalid"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. POST /State/Components Invalid NodeEnclosure API response code
+  # TODO. POST /State/Components Invalid NodeEnclosure API response body
+  - name: hsmAPIstateComponentsPOSTinvalidNodeEnclosure - Attempt to create a NodeEnclosure Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7s9e9","Type":"NodeEnclosure","State":"On","Flag":"OK","Enabled":false,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":FAKE}
+    response:
+      status_code: 500
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Internal Server Error"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "error decoding JSON json: cannot unmarshal string into Go struct field ComponentsPost.force of type bool"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 500
+
+  # TODO. POST /State/Components Invalid RouterBMC API response code
+  # TODO. POST /State/Components Invalid RouterBMC API response body
+  - name: hsmAPIstateComponentsPOSTinvalidRouterBMC - Attempt to create a RouterBMC Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"ID":"x9999c7r9FAKE9","Type":"RouterBMC","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "couldn't validate components: xname ID 'x9999c7r9FAKE9' is invalid"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # TODO. POST /State/Components Invalid RouterModule API response code
+  # TODO. POST /State/Components Invalid RouterModule API response body
+  - name: hsmAPIstateComponentsPOSTinvalidRouterModule - Attempt to create a RouterModule Component with an invalid payload using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Components":[{"FAKE":"x9999c7r9","Type":"RouterModule","State":"Empty","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Missing Components"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
   # TODO. GET /State/Components/{xname} Invalid Xname API response code
   # TODO. GET /State/Components/{xname} Invalid Xname API response body
-  - name: hsmAPIstateComponentsGETinvalidXname - TODO
+  - name: hsmAPIstateComponentsGETinvalidXname - Attempt to retrieve a Component with an invalid xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE"
       method: GET
@@ -339,7 +604,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Invalid Component No Force API response code
   # TODO. PUT /State/Components/{xname} Invalid Component No Force API response body
-  - name: hsmAPIstateComponentsPUTinvalidComponentNoForce - TODO
+  - name: hsmAPIstateComponentsPUTinvalidComponentNoForce - Attempt to create a Component with an invalid payload using PUT without the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9998c7s9b9n9"
       method: PUT
@@ -379,7 +644,7 @@ stages:
 
   # TODO. PUT /State/Components/{xname} Invalid Component Force API response code
   # TODO. PUT /State/Components/{xname} Invalid Component Force API response body
-  - name: hsmAPIstateComponentsPUTinvalidComponentForce - TODO
+  - name: hsmAPIstateComponentsPUTinvalidComponentForce - Attempt to create a Component with an invalid payload using PUT with the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9998c7s9b9n9"
       method: PUT
@@ -419,7 +684,7 @@ stages:
 
   # TODO. DELETE /State/Components/{xname} Invalid Xname API response code
   # TODO. DELETE /State/Components/{xname} Invalid Xname API response body
-  - name: hsmAPIstateComponentsDELETEinvalidXname - TODO
+  - name: hsmAPIstateComponentsDELETEinvalidXname - Attempt to remove a Component with an invalid xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE"
       method: DELETE
@@ -456,7 +721,7 @@ stages:
 
   # TODO. GET /State/Components/ByNID/{nid} Invalid NID API response code
   # TODO. GET /State/Components/ByNID/{nid} Invalid NID API response body
-  - name: hsmAPIstateComponentsByNidGETinvalidNid - TODO
+  - name: hsmAPIstateComponentsByNidGETinvalidNid - Attempt to retrieve a Component with an invalid NID using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/FAKE"
       method: GET
@@ -493,7 +758,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
   # TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
-  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidXnameStateFlag - TODO
+  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidXnameStateFlag - Attempt to bulk update Components with new state data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
       method: PATCH
@@ -531,7 +796,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response code
   # TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response body
-  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateFlag - TODO
+  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateFlag - Attempt to bulk update Components with new state data and an invalid state using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
       method: PATCH
@@ -569,7 +834,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response code
   # TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response body
-  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateNoFlag - TODO
+  - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateNoFlag - Attempt to bulk update Components with new state data, an invalid state, and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
       method: PATCH
@@ -607,7 +872,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
   # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
-  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateFlag - TODO
+  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateFlag - Attempt to update a Component with new state data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/StateData"
       method: PATCH
@@ -645,7 +910,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
   # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
-  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateNoFlag - TODO
+  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateNoFlag - Attempt to update a Component with new state data, an invalid xname, and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/StateData"
       method: PATCH
@@ -683,7 +948,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
   # TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
-  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidStateFlag - TODO
+  - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidStateFlag - Attempt to update a Component with new state data and an invalid state using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7/StateData"
       method: PATCH
@@ -721,7 +986,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
   # TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
-  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidXname - TODO
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidXname - Attempt to bulk update Components with new flag data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
       method: PATCH
@@ -759,7 +1024,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
   # TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
-  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidFlag - TODO
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidFlag - Attempt to bulk update Components with new flag data and an invalid flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
       method: PATCH
@@ -797,7 +1062,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkFlagOnly No Flag API response code
   # TODO. PATCH /State/Components/BulkFlagOnly No Flag API response body
-  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnoFlag - TODO
+  - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnoFlag - Attempt to bulk update Components with new flag data and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
       method: PATCH
@@ -835,7 +1100,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
   # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
-  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidXname - TODO
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidXname - Attempt to update a Component with new flag data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/FlagOnly"
       method: PATCH
@@ -873,7 +1138,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
   # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
-  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidFlag - TODO
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidFlag - Attempt to update a Component with new flag data and an invalid flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
       method: PATCH
@@ -911,7 +1176,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response code
   # TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response body
-  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnoFlag - TODO
+  - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnoFlag - Attempt to update a Component with new flag data and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
       method: PATCH
@@ -949,7 +1214,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response code
   # TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response body
-  - name: hsmAPIstateComponentsBulkEnabledPATCHinvalidEnabled - TODO
+  - name: hsmAPIstateComponentsBulkEnabledPATCHinvalidEnabled - Attempt to bulk update Components with new enabled data and an invalid enabled field using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkEnabled"
       method: PATCH
@@ -989,7 +1254,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
   # TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
-  - name: hsmAPIstateComponentsXnameEnabledPATCHinvalidXname - TODO
+  - name: hsmAPIstateComponentsXnameEnabledPATCHinvalidXname - Attempt to update a Component with new enabled data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/Enabled"
       method: PATCH
@@ -1027,7 +1292,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
   # TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
-  - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHinvalidXname - TODO
+  - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHinvalidXname - Attempt to bulk update Components with new softwarestatus data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkSoftwareStatus"
       method: PATCH
@@ -1065,7 +1330,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
   # TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
-  - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHinvalidXname - TODO
+  - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHinvalidXname - Attempt to update a Component with new softwarestatus data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/SoftwareStatus"
       method: PATCH
@@ -1103,7 +1368,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/Role Invalid Role API response code
   # TODO. PATCH /State/Components/{xname}/Role Invalid Role API response body
-  - name: hsmAPIstateComponentsXnameRolePATCHinvalidRole - TODO
+  - name: hsmAPIstateComponentsXnameRolePATCHinvalidRole - Attempt to update a Component with new role data and an invalid role using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Role"
       method: PATCH
@@ -1141,7 +1406,7 @@ stages:
 
   # TODO. PATCH /State/Components/BulkNID No NID API response code
   # TODO. PATCH /State/Components/BulkNID No NID API response body
-  - name: hsmAPIstateComponentsBulkNidPATCHnoNid - TODO
+  - name: hsmAPIstateComponentsBulkNidPATCHnoNid - Attempt to bulk update Components with new NID data and no NID using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkNID"
       method: PATCH
@@ -1181,7 +1446,7 @@ stages:
 
   # TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response code
   # TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response body
-  - name: hsmAPIstateComponentsXnameNidPATCHinvalidXname - TODO
+  - name: hsmAPIstateComponentsXnameNidPATCHinvalidXname - Attempt to update a Component with new NID data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/NID"
       method: PATCH
@@ -1219,7 +1484,7 @@ stages:
 
 #  # TODO. POST /State/Components/Query Invalid Xname API response code
 #  # TODO. POST /State/Components/Query Invalid Xname API response body
-#  - name: hsmAPIstateComponentsQueryPOSTinvalidXname - TODO
+#  - name: hsmAPIstateComponentsQueryPOSTinvalidXname - Attempt a query for Components with an invalid xname using POST.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/Query"
 #      method: POST
@@ -1258,7 +1523,7 @@ stages:
 
   # TODO. POST /State/Components/ByNID/Query Invalid NID API response code
   # TODO. POST /State/Components/ByNID/Query Invalid NID API response body
-  - name: hsmAPIstateComponentsByNIDqueryPOSTinvalidNID - TODO
+  - name: hsmAPIstateComponentsByNIDqueryPOSTinvalidNID - Attempt a query for Components with an invalid NID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
       method: POST
@@ -1296,7 +1561,7 @@ stages:
 
 #  # TODO. GET /State/Components/Query/{xname} Invalid Xname API response code
 #  # TODO. GET /State/Components/Query/{xname} Invalid Xname API response body
-#  - name: hsmAPIstateComponentsQueryXnameGETinvalidXname - TODO
+#  - name: hsmAPIstateComponentsQueryXnameGETinvalidXname - Attempt a query for Components with a specific xname and invalid xname using POST.
 #    request:
 #      #TODO: open a bug on this? FAKE is treated as a valid Xname and returns empty brackets
 #      url: "{hsm_base_url}/hsm/v2/State/Components/Query/FAKE"
