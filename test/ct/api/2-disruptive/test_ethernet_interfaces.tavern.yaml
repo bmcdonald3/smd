@@ -1,0 +1,485 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) service API
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+---
+test_name: HSM Etherenet Interfaces Collection
+
+stages:
+  # DELETE /Inventory/EthernetInterfaces
+  # Note this will delete test interface if it existed
+  - name: Delete component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: DELETE
+
+  # GET /Inventory/EthernetInterfaces
+  - name: Get Ethernet Interfaces Inventory
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+              - type: map
+                required: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Description:
+                    type: str
+                    required: True
+                  LastUpdate:
+                    type: str
+                    required: True
+                  ComponentID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  MACAddress:
+                    type: str
+                    required: True
+                  IPAddresses:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: map
+                        required: False
+                        mapping:
+                          IPAddress:
+                            type: str
+                            required: False
+                          Network:
+                            type: str
+                            required: False
+      save:
+        json:
+          id: "[0].ComponentID"
+
+  # GET /Inventory/EthernetInterfaces
+  - name: Get Ethernet Interfaces Inventory query
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces?ComponentID={id}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+              - type: map
+                required: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Description:
+                    type: str
+                    required: True
+                  LastUpdate:
+                    type: str
+                    required: True
+                  ComponentID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  MACAddress:
+                    type: str
+                    required: True
+                  IPAddresses:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: map
+                        required: False
+                        mapping:
+                          IPAddress:
+                            type: str
+                            required: False
+                          Network:
+                            type: str
+                            required: False
+
+  # GET /Inventory/EthernetInterfaces
+  - name: Get Ethernet Interfaces Inventory query BAD REQEST
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces?ComponentID=BADID"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      json:
+        type: "about:blank"
+        title: "Bad Request"
+        detail: "Invalid CompID."
+        status: 400
+
+  # POST /Inventory/EthernetInterfaces
+  - name: Create new component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces"
+      json: {"Description":"Test Component Interface","MACAddress":"9A:99:99:99:99:99","IPAddresses":[{"IPAddress":"99.9.9.9","Network":"HSMTavernTest"}]}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+      json:
+        URI: "/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      save:
+        json:
+          uri: URI
+
+  # GET /Inventory/EthernetInterfaces
+  - name: Get component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "9a9999999999"
+              Description:
+                type: str
+                required: True
+                enum:
+                  - "Test Component Interface"
+              LastUpdate:
+                type: str
+                required: True
+              ComponentID:
+                type: str
+                required: True
+              Type:
+                type: str
+                required: True
+              MACAddress:
+                type: str
+                required: True
+                enum:
+                  - "9a:99:99:99:99:99"
+              IPAddresses:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      IPAddress:
+                        type: str
+                        required: False
+                        enum:
+                          - "99.9.9.9"
+                      Network:
+                        type: str
+                        required: False
+                        enum:
+                          - "HSMTavernTest"
+
+  # PATCH /Inventory/EthernetInterfaces
+  - name: Patch component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"Description":"Test Patch Component Interface"}
+    response:
+      status_code: 200
+
+  # GET /Inventory/EthernetInterfaces
+  - name: Get component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "9a9999999999"
+              Description:
+                type: str
+                required: True
+                enum:
+                  - "Test Patch Component Interface"
+              LastUpdate:
+                type: str
+                required: True
+              ComponentID:
+                type: str
+                required: True
+              Type:
+                type: str
+                required: True
+              MACAddress:
+                type: str
+                required: True
+                enum:
+                  - "9a:99:99:99:99:99"
+              IPAddresses:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      IPAddress:
+                        type: str
+                        required: False
+                        enum:
+                          - "99.9.9.9"
+                      Network:
+                        type: str
+                        required: False
+                        enum:
+                          - "HSMTavernTest"
+
+  # GET /Inventory/EthernetInterfaces/IPAddresses
+  - name: Get component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+              - type: map
+                required: False
+                mapping:
+                  IPAddress:
+                    type: str
+                    required: False
+                    enum:
+                      - "99.9.9.9"
+                  Network:
+                    type: str
+                    required: False
+                    enum:
+                      - "HSMTavernTest"
+
+  # POST /Inventory/EthernetInterfaces/IPAddresses
+  - name: Add component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
+      json: {"IPAddress":"99.9.9.8","Network":"HSMTavernTest"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+      json:
+        URI: !anystr
+
+  # GET /Inventory/EthernetInterfaces/IPAddresses
+  - name: Get component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+              - type: map
+                required: False
+                mapping:
+                  IPAddress:
+                    type: str
+                    required: False
+                    enum:
+                      - "99.9.9.9"
+                      - "99.9.9.8"
+                  Network:
+                    type: str
+                    required: False
+                    enum:
+                      - "HSMTavernTest"
+
+  # PATCH /Inventory/EthernetInterfaces/IPAddresses
+  - name: Patch component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.8"
+      json: {"Network":"HSMTavernTest2"}
+      method: PATCH
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+
+  # GET /Inventory/EthernetInterfaces/IPAddresses
+  - name: Get component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+              - type: map
+                required: False
+                mapping:
+                  IPAddress:
+                    type: str
+                    required: False
+                    enum:
+                      - "99.9.9.9"
+                      - "99.9.9.8"
+                  Network:
+                    type: str
+                    required: False
+                    enum:
+                      - "HSMTavernTest"
+                      - "HSMTavernTest2"
+
+  # DELETE /Inventory/EthernetInterfaces/IPAddresses
+  - name: Delete component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.8"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      json:
+        code: 0
+        message: "deleted 1 entry"
+
+  # GET /Inventory/EthernetInterfaces/IPAddresses
+  - name: Get component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            sequence:
+              - type: map
+                required: False
+                mapping:
+                  IPAddress:
+                    type: str
+                    required: False
+                    enum:
+                      - "99.9.9.9"
+                  Network:
+                    type: str
+                    required: False
+                    enum:
+                      - "HSMTavernTest"
+
+  # DELETE /Inventory/EthernetInterfaces
+  - name: Delete component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      json:
+        code: 0
+        message: "deleted 1 entry"
+
+  # DELETE /Inventory/EthernetInterfaces
+  - name: Delete component ethernet interface fail
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      json:
+        type: "about:blank"
+        title: "Not Found"
+        detail: "no such component ethernet interface."
+        status: 404
+
+  # GET /Inventory/EthernetInterfaces
+  - name: Get component ethernet interface fail
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      json:
+        type: "about:blank"
+        title: "Not Found"
+        detail: "No such component ethernet interface: 9a9999999999"
+        status: 404
