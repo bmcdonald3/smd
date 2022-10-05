@@ -20,7 +20,7 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) discovery status API.
+# Tavern test cases for the Hardware State Manager (HSM) DiscoveryStatus API.
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 

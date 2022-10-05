@@ -20,7 +20,7 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) state change notifications (SCN) API.
+# Tavern test cases for the Hardware State Manager (HSM) State Change Notifications (SCN) API.
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 

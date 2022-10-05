@@ -372,7 +372,7 @@
 #TODO. DELETE /State/Components API response code
 #TODO. DELETE /State/Components API response body
 ---
-test_name: hsmAPIstateComponents
+test_name: hsmAPIstateComponentsDestructive
 
 stages:
   #TODO. DELETE /State/Components API response code
