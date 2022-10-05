@@ -103,7 +103,7 @@ stages:
 
   # TODO. POST /Defaults/NodeMaps Non Existing Nodes API response code
   # TODO. POST /Defaults/NodeMaps Non Existing Nodes API response body
-  - name: hsmAPIdefaultsNodeMapsPOSTnonExisting - TODO
+  - name: hsmAPIdefaultsNodeMapsPOSTnonExistingNodes - TODO
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
       method: POST
