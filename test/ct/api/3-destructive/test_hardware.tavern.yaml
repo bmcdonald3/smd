@@ -20,26 +20,26 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) NodeMaps API
+# Tavern test cases for the Hardware State Manager (HSM) Hardware API
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 6
-# 1. DELETE /Defaults/NodeMaps API response code
-# 2. DELETE /Defaults/NodeMaps API response body
-# 3. DELETE /Defaults/NodeMaps No NodeMaps API response code
-# 4. DELETE /Defaults/NodeMaps No NodeMaps API response body
-# 5. GET /Defaults/NodeMaps No NodeMaps API response code
-# 6. GET /Defaults/NodeMaps No NodeMaps API response body
+# 1. DELETE /Inventory/Hardware API response code
+# 2. DELETE /Inventory/Hardware API response body
+# 3. DELETE /Inventory/Hardware No Hardware API response code
+# 4. DELETE /Inventory/Hardware No Hardware API response body
+# 5. GET /Inventory/Hardware No Hardware API response code
+# 6. GET /Inventory/Hardware No Hardware API response body
 ---
-test_name: hsmAPIdefaultsNodeMapsDestructive
+test_name: hsmAPIinventoryHardwareDestructive
 
 stages:
-  # 1. DELETE /Defaults/NodeMaps API response code
-  # 2. DELETE /Defaults/NodeMaps API response body
-  - name: hsmAPIdefaultsNodeMapsDELETE - Remove all NodeMaps using DELETE.
+  # 1. DELETE /Inventory/Hardware API response code
+  # 2. DELETE /Inventory/Hardware API response body
+  - name: hsmAPIinventoryHardwareDELETE - Remove all Hardware using DELETE.
     request:
-      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -47,11 +47,11 @@ stages:
         - 200
         - 404
 
-  # 3. DELETE /Defaults/NodeMaps No NodeMaps API response code
-  # 4. DELETE /Defaults/NodeMaps No NodeMaps API response body
-  - name: hsmAPIdefaultsNodeMapsDELETEnoNodeMaps - Attempt to remove all NodeMaps using DELETE when none are present.
+  # 3. DELETE /Inventory/Hardware No Hardware API response code
+  # 4. DELETE /Inventory/Hardware No Hardware API response body
+  - name: hsmAPIinventoryHardwareDELETEnoHardware - Attempt to remove all Hardware using DELETE when none are present.
     request:
-      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: DELETE
       verify: !bool "{verify}"
     response:
@@ -85,14 +85,26 @@ stages:
                   #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
-  # 5. GET /Defaults/NodeMaps No NodeMaps API response code
-  # 6. GET /Defaults/NodeMaps No NodeMaps API response body
-  - name: hsmAPIdefaultsNodeMapsGETnoNodeMaps - Retrieve an empty set of NodeMaps using GET.
+  # 5. GET /Inventory/Hardware No Hardware API response code
+  # 6. GET /Inventory/Hardware No Hardware API response body
+  - name: hsmAPIinventoryHardwareGETnoHardware - Retrieve an empty set of Hardware using GET.
     request:
-      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: GET
       verify: !bool "{verify}"
     response:
       status_code: 200
-      json:
-        NodeMaps: !anything
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: False
+                mapping:
+                  ID:
+                    type: str
+                    required: True

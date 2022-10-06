@@ -84,6 +84,10 @@ stages:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: DELETE
       verify: !bool "{verify}"
+    response:
+      status_code:
+        - 200
+        - 404
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB API response body
@@ -92,6 +96,10 @@ stages:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: DELETE
       verify: !bool "{verify}"
+    response:
+      status_code:
+        - 200
+        - 404
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeC API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeC API response body
@@ -100,6 +108,10 @@ stages:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
       method: DELETE
       verify: !bool "{verify}"
+    response:
+      status_code:
+        - 200
+        - 404
 
   # TODO. POST /Defaults/NodeMaps Non Existing Nodes API response code
   # TODO. POST /Defaults/NodeMaps Non Existing Nodes API response body
