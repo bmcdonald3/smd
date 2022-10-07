@@ -25,24 +25,16 @@
 #
 set -x
 
-# Add .exe if running in a WSL environment
-if $(uname -r | grep -q "Microsoft"); then
-    shopt -s expand_aliases
-    alias docker-compose=docker-compose.exe
-fi
-
 # Configure docker compose
 export COMPOSE_PROJECT_NAME=$RANDOM
 export COMPOSE_FILE=docker-compose.test.ct.yaml
-args="-f $COMPOSE_FILE -p $COMPOSE_PROJECT_NAME"
 
 echo "COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}"
 echo "COMPOSE_FILE: $COMPOSE_FILE"
 
-
 function cleanup() {
   echo "Cleaning up containers..."
-  docker-compose $args down
+  docker-compose down
   if ! [[ $? -eq 0 ]]; then
     echo "Failed to decompose environment!"
     exit 1
@@ -50,22 +42,18 @@ function cleanup() {
   exit $1
 }
 
-
 # Get the base containers running
 echo "Starting containers..."
-docker-compose $args build --no-cache
-# docker-compose up -d cray-smd #this will stand up everything except for the integration test container
-docker-compose $args up -d wait-for-smd
-docker wait ${COMPOSE_PROJECT_NAME}_wait-for-smd_1
-docker logs ${COMPOSE_PROJECT_NAME}_wait-for-smd_1
-docker-compose $args up --exit-code-from smoke-tests smoke-tests
+docker-compose build --no-cache
+docker-compose up --exit-code-from wait-for-smd wait-for-smd
+docker-compose up --exit-code-from smoke-tests smoke-tests
 test_result=$?
 if [[ $test_result -ne 0 ]]; then
   echo "CT smoke tests FAILED!"
   cleanup 1
 fi
 
-docker-compose $args up --exit-code-from tavern-tests tavern-tests
+docker-compose up --exit-code-from tavern-tests tavern-tests
 test_result=$?
 if [[ $test_result -ne 0 ]]; then
   echo "CT tavern tests FAILED!"

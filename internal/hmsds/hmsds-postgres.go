@@ -4553,8 +4553,8 @@ func (d *hmsdbPg) UpdateCompReservations(f sm.CompLockV2ReservationFilter) (sm.C
 
 // Retrieve component lock information.
 func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error) {
-	var result []sm.CompLockV2
 	var keys []sm.CompLockV2Key
+	result := make([]sm.CompLockV2, 0)
 
 	t, err := d.Begin()
 	if err != nil {
@@ -4565,10 +4565,12 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 	cf := compLockFilterToCompFilter(f)
 	affectedComps, err := t.GetComponentsFilterTx(&cf, FLTR_DEFAULT)
 	if err != nil {
+		t.Rollback()
 		return result, err
 	}
 	if len(affectedComps) == 0 {
-		return result, sm.ErrCompLockV2NotFound
+		t.Rollback()
+		return result, nil
 	}
 
 	for _, comp := range affectedComps {
@@ -4582,6 +4584,8 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 		t.Rollback()
 		return result, err
 	}
+	t.Commit()
+
 	reservationMap := make(map[string]sm.CompLockV2Success)
 	for _, reservation := range reservations {
 		reservationMap[reservation.ID] = reservation
@@ -4614,11 +4618,6 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 		}
 	}
 
-	if len(result) == 0 {
-		return result, sm.ErrCompLockV2NotFound
-	}
-
-	t.Commit()
 	return result, nil
 }
 
@@ -4646,9 +4645,11 @@ func (d *hmsdbPg) UpdateCompLocksV2(f sm.CompLockV2Filter, action string) (sm.Co
 	cf := compLockFilterToCompFilter(f)
 	affectedComps, err := t.GetComponentsFilterTx(&cf, FLTR_DEFAULT)
 	if err != nil {
+		t.Rollback()
 		return result, err
 	}
 	if len(affectedComps) == 0 {
+		t.Rollback()
 		return result, sm.ErrCompLockV2NotFound
 	}
 
@@ -4810,6 +4811,7 @@ func (d *hmsdbPg) UpdateCompLocksV2(f sm.CompLockV2Filter, action string) (sm.Co
 		}
 	default:
 		// Invalid action
+		t.Rollback()
 		return result, ErrHMSDSInvalidCompLockAction
 	}
 
