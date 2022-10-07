@@ -25,10 +25,6 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases:
-# DELETE /State/Components API response code
-# DELETE /State/Components API response body
-# DELETE /State/Components No Components API response code
-# DELETE /State/Components No Components API response body
 
 # POST /locks/status No Components
 # GET /locks/status?type=partition No Components
@@ -113,10 +109,34 @@ stages:
       verify: !bool "{verify}"
       json: {"ComponentIDs":["p9999.9996","p9999.9997","p9999.9998","p9999.9999"]}
     response:
-      status_code: 200
-      json:
-        Components: []
-        NotFound: !anything
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
 
   # GET /lock/status No Components
   - name: hsmAPILocksStatusGETNoComponents - Try to get status our non-existent test components
@@ -125,9 +145,34 @@ stages:
       method: GET
       verify: !bool "{verify}"
     response:
-      status_code: 200
-      json:
-        Components: []
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
 
   # POST /State/Components Node API response code
   # This will create 4 lockable/reservable partition type components.

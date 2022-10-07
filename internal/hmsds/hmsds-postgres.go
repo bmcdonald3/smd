@@ -4553,8 +4553,8 @@ func (d *hmsdbPg) UpdateCompReservations(f sm.CompLockV2ReservationFilter) (sm.C
 
 // Retrieve component lock information.
 func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error) {
+	var result []sm.CompLockV2
 	var keys []sm.CompLockV2Key
-	result := make([]sm.CompLockV2, 0)
 
 	t, err := d.Begin()
 	if err != nil {
@@ -4570,7 +4570,7 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 	}
 	if len(affectedComps) == 0 {
 		t.Rollback()
-		return result, nil
+		return result, sm.ErrCompLockV2NotFound
 	}
 
 	for _, comp := range affectedComps {
@@ -4616,6 +4616,10 @@ func (d *hmsdbPg) GetCompLocksV2(f sm.CompLockV2Filter) ([]sm.CompLockV2, error)
 		} else {
 			result = append(result, lock)
 		}
+	}
+
+	if len(result) == 0 {
+		return result, sm.ErrCompLockV2NotFound
 	}
 
 	return result, nil
