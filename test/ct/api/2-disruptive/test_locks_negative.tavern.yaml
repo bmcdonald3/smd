@@ -1,0 +1,715 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) locks API
+# Author: Manny Alvarez
+# Service: Hardware State Manager
+
+# HMS test metrics test cases:
+# POST /locks/reservations/remove Invalid processing model
+# POST /locks/reservations/release Invalid processing model
+# POST /locks/reservations/release Missing ReservationKeys
+# POST /locks/reservations Invalid processing model
+# POST /locks/service/reservations/release Invalid processing model
+# POST /locks/service/reservations/release Missing ReservationKeys
+# POST /locks/service/reservations Invalid processing model
+# POST /locks/service/reservations Invalid reservation duration
+# POST /locks/service/reservations/renew Invalid processing model
+# POST /locks/service/reservations/renew Invalid reservation duration
+# POST /locks/service/reservations/renew Missing ReservationKeys
+# POST /locks/service/reservations/check Missing DeputyKeys
+# POST /locks/status Invalid xnames
+# GET /locks/status Invalid filter
+# POST /locks/lock Invalid processing model
+# POST /locks/unlock Invalid processing model
+# POST /locks/disable Invalid processing model
+# POST /locks/repair Invalid processing model
+
+---
+test_name: hsmAPILocksNegative
+
+stages:
+
+  # POST /locks/reservations/remove Invalid processing model
+  - name: hsmAPILocksReservationsRemovePOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/remove"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/reservations/release Invalid processing model
+  - name: hsmAPILocksReservationsReleasePOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/reservations/release Missing ReservationKeys
+  - name: hsmAPILocksReservationsReleasePOSTInvalidParams - Missing ReservationKeys
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Reservation Key required for operation"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/reservations Invalid processing model
+  - name: hsmAPILocksReservationsPOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/release Invalid processing model
+  - name: hsmAPILocksServiceReservationsReleasePOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/release Missing ReservationKeys
+  - name: hsmAPILocksServiceReservationsReleasePOSTInvalidParams - Missing ReservationKeys
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Reservation Key required for operation"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations Invalid processing model
+  - name: hsmAPILocksServiceReservationsPOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations Invalid reservation duration
+  - name: hsmAPILocksServiceReservationsPOSTInvalidParams - Invalid reservation duration
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationDuration":16}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Reservation Duration"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/renew Invalid processing model
+  - name: hsmAPILocksServiceReservationsRenewPOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/renew"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/renew Invalid reservation duration
+  - name: hsmAPILocksServiceReservationsRenewPOSTInvalidParams - Invalid reservation duration
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/renew"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationDuration":16}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Reservation Duration"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/renew Missing ReservationKeys
+  - name: hsmAPILocksServiceReservationsRenewPOSTInvalidParams - Missing ReservationKeys
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/renew"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationDuration":1}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Reservation Key required for operation"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/check Missing DeputyKeys
+  - name: hsmAPILocksServiceReservationsCheckPOSTInvalidParams - Missing DeputyKeys
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/check"
+      method: POST
+      verify: !bool "{verify}"
+      json: {}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Deputy Key required for operation"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/status Invalid xnames
+  - name: hsmAPILocksStatusPOSTInvalidParams - Invalid xnames
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/status"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["foo","bar"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Argument was not a valid xname ID"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # GET /locks/status Invalid filter
+  - name: hsmAPILocksStatusGETInvalidParams - Invalid filter
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/status?role=foo"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Argument was not a valid HMS Role"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/lock Invalid processing model
+  - name: hsmAPILocksLockPOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/lock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/unlock Invalid processing model
+  - name: hsmAPILocksUnlockPOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/unlock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/disable Invalid processing model
+  - name: hsmAPILocksDisablePOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/disable"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/repair Invalid processing model
+  - name: hsmAPILocksRepairPOSTInvalidParams - Invalid processing model
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/repair"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ProcessingModel":"fail"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid Processing Model"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
