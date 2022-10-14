@@ -30,11 +30,18 @@
 # TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response code
 # TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response body
 
+# TODO. POST /Inventory/Hardware Chassis API response code
+# TODO. POST /Inventory/Hardware Chassis API response body
+# TODO. GET /Inventory/Hardware/{xname} Chassis API response code
+# TODO. GET /Inventory/Hardware/{xname} Chassis API response body
+
+# TODO. POST /Inventory/Hardware ComputeModule API response code
+# TODO. POST /Inventory/Hardware ComputeModule API response body
+# TODO. GET /Inventory/Hardware/{xname} ComputeModule API response code
+# TODO. GET /Inventory/Hardware/{xname} ComputeModule API response body
+
 # /Inventory/Hardware POST, then
 # /Inventory/Hardware/{xname} GET
-    # CMMRectifier
-    # Chassis
-    # ComputeModule
     # HSNBoard
     # Memory
     # NodeBMC
@@ -202,6 +209,320 @@ stages:
                         enum:
                           - 0
                       PowerSupplyType:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+
+  # TODO. POST /Inventory/Hardware Chassis API response code
+  # TODO. POST /Inventory/Hardware Chassis API response body
+  - name: hsmAPIinventoryHardwarePOSTchassis - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7","Type":"Chassis","Ordinal":7,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocChassis","ChassisLocationInfo":{"Id":"Enclosure","Name":"Enclosure","Description":"CMM","HostName":""},"PopulatedFRU":{"FRUID":"Chassis.HPE.101426404D.IMZ2409069079","Type":"Chassis","Subtype":"","HWInventoryByFRUType":"HWInvByFRUChassis","ChassisFRUInfo":{"AssetTag":"","ChassisType":"Enclosure","Model":"CMM","Manufacturer":"HPE","PartNumber":"101426404.D","SerialNumber":"IMZ2409069079","SKU":""}}}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created 1 entries"
+
+  # TODO. GET /Inventory/Hardware/{xname} Chassis API response code
+  # TODO. GET /Inventory/Hardware/{xname} Chassis API response body
+  - name: hsmAPIinventoryHardwareXnameGETchassis - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Chassis"
+              Ordinal:
+                type: int
+                required: True
+                enum:
+                  - 7
+              Status:
+                type: str
+                required: True
+                enum:
+                  - "Populated"
+              HWInventoryByLocationType:
+                type: str
+                required: True
+                enum:
+                  - "HWInvByLocChassis"
+              ChassisLocationInfo:
+                type: map
+                required: True
+                mapping:
+                  Id:
+                    type: str
+                    required: True
+                    enum:
+                      - "Enclosure"
+                  Name:
+                    type: str
+                    required: True
+                    enum:
+                      - "Enclosure"
+                  Description:
+                    type: str
+                    required: True
+                    enum:
+                      - "CMM"
+                  HostName:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+              PopulatedFRU:
+                type: map
+                required: True
+                mapping:
+                  FRUID:
+                    type: str
+                    required: True
+                    enum:
+                      - "Chassis.HPE.101426404D.IMZ2409069079"
+                  Type:
+                    type: str
+                    required: True
+                    enum:
+                      - "Chassis"
+                  Subtype:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HWInventoryByFRUType:
+                    type: str
+                    required: True
+                    enum:
+                      - "HWInvByFRUChassis"
+                  ChassisFRUInfo:
+                    type: map
+                    required: True
+                    mapping:
+                      AssetTag:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      ChassisType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Enclosure"
+                      Model:
+                        type: str
+                        required: True
+                        enum:
+                          - "CMM"
+                      Manufacturer:
+                        type: str
+                        required: True
+                        enum:
+                          - "HPE"
+                      PartNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - "101426404.D"
+                      SerialNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - "IMZ2409069079"
+                      SKU:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+
+  # TODO. POST /Inventory/Hardware ComputeModule API response code
+  # TODO. POST /Inventory/Hardware ComputeModule API response body
+  - name: hsmAPIinventoryHardwarePOSTcomputeModule - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7s9","Type":"ComputeModule","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocComputeModule","ComputeModuleLocationInfo":{"Id":"Blade9","Name":"Blade9","Description":"","HostName":""},"PopulatedFRU":{"FRUID":"FRUIDforx9999c7s9","Type":"ComputeModule","Subtype":"","HWInventoryByFRUType":"HWInvByFRUComputeModule","ComputeModuleFRUInfo":{"AssetTag":"","ChassisType":"Blade","Model":"Blade9","Manufacturer":"HPE","PartNumber":"","SerialNumber":"","SKU":""}}}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created 1 entries"
+
+  # TODO. GET /Inventory/Hardware/{xname} ComputeModule API response code
+  # TODO. GET /Inventory/Hardware/{xname} ComputeModule API response body
+  - name: hsmAPIinventoryHardwareXnameGETcomputeModule - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "ComputeModule"
+              Ordinal:
+                type: int
+                required: True
+                enum:
+                  - 9
+              Status:
+                type: str
+                required: True
+                enum:
+                  - "Populated"
+              HWInventoryByLocationType:
+                type: str
+                required: True
+                enum:
+                  - "HWInvByLocComputeModule"
+              ComputeModuleLocationInfo:
+                type: map
+                required: True
+                mapping:
+                  Id:
+                    type: str
+                    required: True
+                    enum:
+                      - "Blade9"
+                  Name:
+                    type: str
+                    required: True
+                    enum:
+                      - "Blade9"
+                  Description:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HostName:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+              PopulatedFRU:
+                type: map
+                required: True
+                mapping:
+                  FRUID:
+                    type: str
+                    required: True
+                    enum:
+                      - "FRUIDforx9999c7s9"
+                  Type:
+                    type: str
+                    required: True
+                    enum:
+                      - "ComputeModule"
+                  Subtype:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HWInventoryByFRUType:
+                    type: str
+                    required: True
+                    enum:
+                      - "HWInvByFRUComputeModule"
+                  ComputeModuleFRUInfo:
+                    type: map
+                    required: True
+                    mapping:
+                      AssetTag:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      ChassisType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Blade"
+                      Model:
+                        type: str
+                        required: True
+                        enum:
+                          - "Blade9"
+                      Manufacturer:
+                        type: str
+                        required: True
+                        enum:
+                          - "HPE"
+                      PartNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      SerialNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      SKU:
                         type: str
                         required: True
                         enum:
