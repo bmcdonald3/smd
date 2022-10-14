@@ -1,0 +1,208 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) Hardware API
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: TODO
+# TODO. POST /Inventory/Hardware CMMRectifier API response code
+# TODO. POST /Inventory/Hardware CMMRectifier API response body
+# TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response code
+# TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response body
+
+# /Inventory/Hardware POST, then
+# /Inventory/Hardware/{xname} GET
+    # CMMRectifier
+    # Chassis
+    # ComputeModule
+    # HSNBoard
+    # Memory
+    # NodeBMC
+    # NodeEnclosure
+    # NodeHsnNic
+    # Node Create
+    # Node Update
+    # Processor
+    # RouterBMC
+    # RouterModule
+
+# /Inventory/Hardware GET
+# /Inventory/Hardware/Query/{xname} GET
+
+# /Inventory/Hardware/{xname} DELETE
+---
+test_name: hsmAPIinventoryHardwareDisruptive
+
+stages:
+  # TODO. POST /Inventory/Hardware CMMRectifier API response code
+  # TODO. POST /Inventory/Hardware CMMRectifier API response body
+  - name: hsmAPIinventoryHardwarePOSTcmmrectifier - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      #TODO: open bug on HSM since it accepts an empty "Hardware" list and treats it as valid when it is completely missing
+      json: {"Hardware":[{"ID":"x9999c7t9","Type":"CMMRectifier","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocCMMRectifier","CMMRectifierLocationInfo":{"Name":"Rectifier9","FirmwareVersion":""},"PopulatedFRU":{"FRUID":"CMMRectifier.ABB.LBGEPE20KZ46051725","Type":"CMMRectifier","Subtype":"","HWInventoryByFRUType":"HWInvByFRUCMMRectifier","CMMRectifierFRUInfo":{"Manufacturer":"ABB","SerialNumber":"LBGEPE20KZ46051725","Model":"CC15000H3C380T","PartNumber":"","PowerCapacityWatts":0,"PowerInputWatts":0,"PowerOutputWatts":0,"PowerSupplyType":""}}}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created 1 entries"
+
+  # TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response code
+  # TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response body
+  - name: hsmAPIinventoryHardwareXnameGETcmmrectifier - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7t9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7t9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "CMMRectifier"
+              Ordinal:
+                type: int
+                required: True
+                enum:
+                  - 9
+              Status:
+                type: str
+                required: True
+                enum:
+                  - "Populated"
+              HWInventoryByLocationType:
+                type: str
+                required: True
+                enum:
+                  - "HWInvByLocCMMRectifier"
+              CMMRectifierLocationInfo:
+                type: map
+                required: True
+                mapping:
+                  Name:
+                    type: str
+                    required: True
+                    enum:
+                      - "Rectifier9"
+                  FirmwareVersion:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+              PopulatedFRU:
+                type: map
+                required: True
+                mapping:
+                  FRUID:
+                    type: str
+                    required: True
+                    enum:
+                      - "CMMRectifier.ABB.LBGEPE20KZ46051725"
+                  Type:
+                    type: str
+                    required: True
+                    enum:
+                      - "CMMRectifier"
+                  Subtype:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HWInventoryByFRUType:
+                    type: str
+                    required: True
+                    enum:
+                      - "HWInvByFRUCMMRectifier"
+                  CMMRectifierFRUInfo:
+                    type: map
+                    required: True
+                    mapping:
+                      Manufacturer:
+                        type: str
+                        required: True
+                        enum:
+                          - "ABB"
+                      SerialNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - "LBGEPE20KZ46051725"
+                      Model:
+                        type: str
+                        required: True
+                        enum:
+                          - "CC15000H3C380T"
+                      PartNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      PowerCapacityWatts:
+                        type: int
+                        required: True
+                        enum:
+                          - 0
+                      PowerInputWatts:
+                        type: int
+                        required: True
+                        enum:
+                          - 0
+                      PowerOutputWatts:
+                        type: int
+                        required: True
+                        enum:
+                          - 0
+                      PowerSupplyType:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
