@@ -90,10 +90,80 @@
 # TODO. GET /Inventory/Hardware/{xname} RouterModule API response code
 # TODO. GET /Inventory/Hardware/{xname} RouterModule API response body
 
-# /Inventory/Hardware GET
-# /Inventory/Hardware/Query/{xname} GET
+# TODO. GET /Inventory/Hardware API response code
+# TODO. GET /Inventory/Hardware API response body
 
-# /Inventory/Hardware/{xname} DELETE
+#TODO: Resume here
+# TODO. GET /Inventory/Hardware?id={id} Parameter API response code
+# TODO. GET /Inventory/Hardware?id={id} Parameter API response body
+# TODO. GET /Inventory/Hardware?type={type} Parameter API response code
+# TODO. GET /Inventory/Hardware?type={type} Parameter API response body
+# TODO. GET /Inventory/Hardware?manufacturer={manufacturer} Parameter API response code
+# TODO. GET /Inventory/Hardware?manufacturer={manufacturer} Parameter API response body
+# TODO. GET /Inventory/Hardware?partnumber={partnumber} Parameter API response code
+# TODO. GET /Inventory/Hardware?partnumber={partnumber} Parameter API response body
+# TODO. GET /Inventory/Hardware?serialnumber={serialnumber} Parameter API response code
+# TODO. GET /Inventory/Hardware?serialnumber={serialnumber} Parameter API response body
+# TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response code
+# TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response body
+
+# TODO. GET /Inventory/Hardware/Query/{xname} CMMRectifier API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} CMMRectifier API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} Chassis API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} Chassis API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} ComputeModule API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} ComputeModule API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} HSNBoard API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} HSNBoard API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} Memory API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} Memory API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} NodeBMC API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} NodeBMC API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} NodeEnclosure API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} NodeEnclosure API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} NodeHsnNic API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} NodeHsnNic API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} Node API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} Node API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} Processor API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} Processor API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} RouterBMC API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} RouterBMC API response body
+# TODO. GET /Inventory/Hardware/Query/{xname} RouterModule API response code
+# TODO. GET /Inventory/Hardware/Query/{xname} RouterModule API response body
+
+# Params:
+#   xname
+#   type
+#   children
+#   parents
+#   partition
+#   format
+
+# TODO. DELETE /Inventory/Hardware/{xname} CMMRectifier API response code
+# TODO. DELETE /Inventory/Hardware/{xname} CMMRectifier API response body
+# TODO. DELETE /Inventory/Hardware/{xname} Chassis API response code
+# TODO. DELETE /Inventory/Hardware/{xname} Chassis API response body
+# TODO. DELETE /Inventory/Hardware/{xname} ComputeModule API response code
+# TODO. DELETE /Inventory/Hardware/{xname} ComputeModule API response body
+# TODO. DELETE /Inventory/Hardware/{xname} HSNBoard API response code
+# TODO. DELETE /Inventory/Hardware/{xname} HSNBoard API response body
+# TODO. DELETE /Inventory/Hardware/{xname} Memory API response code
+# TODO. DELETE /Inventory/Hardware/{xname} Memory API response body
+# TODO. DELETE /Inventory/Hardware/{xname} NodeBMC API response code
+# TODO. DELETE /Inventory/Hardware/{xname} NodeBMC API response body
+# TODO. DELETE /Inventory/Hardware/{xname} NodeEnclosure API response code
+# TODO. DELETE /Inventory/Hardware/{xname} NodeEnclosure API response body
+# TODO. DELETE /Inventory/Hardware/{xname} NodeHsnNic API response code
+# TODO. DELETE /Inventory/Hardware/{xname} NodeHsnNic API response body
+# TODO. DELETE /Inventory/Hardware/{xname} Node API response code
+# TODO. DELETE /Inventory/Hardware/{xname} Node API response body
+# TODO. DELETE /Inventory/Hardware/{xname} Processor API response code
+# TODO. DELETE /Inventory/Hardware/{xname} Processor API response body
+# TODO. DELETE /Inventory/Hardware/{xname} RouterBMC API response code
+# TODO. DELETE /Inventory/Hardware/{xname} RouterBMC API response body
+# TODO. DELETE /Inventory/Hardware/{xname} RouterModule API response code
+# TODO. DELETE /Inventory/Hardware/{xname} RouterModule API response body
 ---
 test_name: hsmAPIinventoryHardwareDisruptive
 
@@ -2158,3 +2228,56 @@ stages:
                         required: True
                         enum:
                           - ""
+
+  # TODO. GET /Inventory/Hardware API response code
+  # TODO. GET /Inventory/Hardware API response body
+  - name: hsmAPIinventoryHardwareGET - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
