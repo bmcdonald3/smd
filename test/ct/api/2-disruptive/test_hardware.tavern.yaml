@@ -75,11 +75,20 @@
 # TODO. GET /Inventory/Hardware/{xname} Node Update API response code
 # TODO. GET /Inventory/Hardware/{xname} Node Update API response body
 
-# /Inventory/Hardware POST, then
-# /Inventory/Hardware/{xname} GET
-    # Processor
-    # RouterBMC
-    # RouterModule
+# TODO. POST /Inventory/Hardware Processor API response code
+# TODO. POST /Inventory/Hardware Processor API response body
+# TODO. GET /Inventory/Hardware/{xname} Processor API response code
+# TODO. GET /Inventory/Hardware/{xname} Processor API response body
+
+# TODO. POST /Inventory/Hardware RouterBMC API response code
+# TODO. POST /Inventory/Hardware RouterBMC API response body
+# TODO. GET /Inventory/Hardware/{xname} RouterBMC API response code
+# TODO. GET /Inventory/Hardware/{xname} RouterBMC API response body
+
+# TODO. POST /Inventory/Hardware RouterModule API response code
+# TODO. POST /Inventory/Hardware RouterModule API response body
+# TODO. GET /Inventory/Hardware/{xname} RouterModule API response code
+# TODO. GET /Inventory/Hardware/{xname} RouterModule API response body
 
 # /Inventory/Hardware GET
 # /Inventory/Hardware/Query/{xname} GET
@@ -1744,3 +1753,408 @@ stages:
                         required: True
                         enum:
                           - "Updated-UUID"
+
+  # TODO. POST /Inventory/Hardware Processor API response code
+  # TODO. POST /Inventory/Hardware Processor API response body
+  - name: hsmAPIinventoryHardwarePOSTprocessor - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7s9b9n9p3","Type":"Processor","Ordinal":3,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocProcessor","ProcessorLocationInfo":{"Id":"CPU3","Name":"Processor","Description":"","Socket":"CPU3"},"PopulatedFRU":{"FRUID":"Processor.AdvancedMicroDevicesInc.EWN8203534712","Type":"Processor","Subtype":"","HWInventoryByFRUType":"HWInvByFRUProcessor","ProcessorFRUInfo":{"InstructionSet":"","Manufacturer":"AdvancedMicroDevices,Inc.","MaxSpeedMHz":3525,"Model":"AMDEPYC776364-CoreProcessor","SerialNumber":"EWN8203534712","PartNumber":"","ProcessorArchitecture":"","ProcessorId":{"EffectiveFamily":"0x19","EffectiveModel":"0x01","IdentificationRegisters":"","MicrocodeInfo":"","Step":"0x1","VendorID":"AuthenticAMD"},"ProcessorType":"CPU","TotalCores":64,"TotalThreads":128,"Oem":null}}}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created 1 entries"
+
+  # TODO. GET /Inventory/Hardware/{xname} Processor API response code
+  # TODO. GET /Inventory/Hardware/{xname} Processor API response body
+  - name: hsmAPIinventoryHardwareXnameGETprocessor - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9p3"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9p3"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "Processor"
+              Ordinal:
+                type: int
+                required: True
+                enum:
+                  - 3
+              Status:
+                type: str
+                required: True
+                enum:
+                  - "Populated"
+              HWInventoryByLocationType:
+                type: str
+                required: True
+                enum:
+                  - "HWInvByLocProcessor"
+              ProcessorLocationInfo:
+                type: map
+                required: True
+                mapping:
+                  Id:
+                    type: str
+                    required: True
+                    enum:
+                      - "CPU3"
+                  Name:
+                    type: str
+                    required: True
+                    enum:
+                      - "Processor"
+                  Description:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  Socket:
+                    type: str
+                    required: True
+                    enum:
+                      - "CPU3"
+              PopulatedFRU:
+                type: map
+                required: True
+                mapping:
+                  FRUID:
+                    type: str
+                    required: True
+                    enum:
+                      - "Processor.AdvancedMicroDevicesInc.EWN8203534712"
+                  Type:
+                    type: str
+                    required: True
+                    enum:
+                      - "Processor"
+                  Subtype:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HWInventoryByFRUType:
+                    type: str
+                    required: True
+                    enum:
+                      - "HWInvByFRUProcessor"
+                  ProcessorFRUInfo:
+                    type: map
+                    required: True
+                    # Allows the Oem key to be present as a map or a string
+                    allowempty: True
+                    mapping:
+                      InstructionSet:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      Manufacturer:
+                        type: str
+                        required: True
+                        enum:
+                          - "AdvancedMicroDevices,Inc."
+                      MaxSpeedMHz:
+                        type: int
+                        required: True
+                        enum:
+                          - 3525
+                      Model:
+                        type: str
+                        required: True
+                        enum:
+                          - "AMDEPYC776364-CoreProcessor"
+                      SerialNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - "EWN8203534712"
+                      PartNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      ProcessorArchitecture:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      ProcessorId:
+                        type: map
+                        required: True
+                        mapping:
+                          EffectiveFamily:
+                            type: str
+                            required: True
+                            enum:
+                              - "0x19"
+                          EffectiveModel:
+                            type: str
+                            required: True
+                            enum:
+                              - "0x01"
+                          IdentificationRegisters:
+                            type: str
+                            required: True
+                            enum:
+                              - ""
+                          MicrocodeInfo:
+                            type: str
+                            required: True
+                            enum:
+                              - ""
+                          Step:
+                            type: str
+                            required: True
+                            enum:
+                              - "0x1"
+                          VendorID:
+                            type: str
+                            required: True
+                            enum:
+                              - "AuthenticAMD"
+                      ProcessorType:
+                        type: str
+                        required: True
+                        enum:
+                          - "CPU"
+                      TotalCores:
+                        type: int
+                        required: True
+                        enum:
+                          - 64
+                      TotalThreads:
+                        type: int
+                        required: True
+                        enum:
+                          - 128
+
+#  # TODO. POST /Inventory/Hardware RouterBMC API response code
+#  # TODO. POST /Inventory/Hardware RouterBMC API response body
+#  - name: hsmAPIinventoryHardwarePOSTrouterBMC - TODO
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+#      method: POST
+#      verify: !bool "{verify}"
+#      #TODO: causing HSM to panic, enable this test case when bug is fixed
+#      json: {"Hardware":[{"ID":"x9999c7r9b9","Type":"RouterBMC","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocRouterBMC","RouterBMCLocationInfo":{"DateTime":"2022-10-18T15:36:06Z","DateTimeLocalOffset":"0","Description":"ShastaManager","FirmwareVersion":"","Id":"BMC","Name":"BMC"},"PopulatedFRU":{"FRUID":"FRUIDforx9999c7r9b9","Type":"RouterBMC","Subtype":"","HWInventoryByFRUType":"HWInvByFRURouterBMC","RouterBMCFRUInfo":{"ManagerType":"EnclosureManager","Model":"","Manufacturer":"","PartNumber":"","SerialNumber":""}}}]}
+#    response:
+#      status_code: 200
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              code:
+#                type: int
+#                required: True
+#                enum:
+#                  - 0
+#              message:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Created 1 entries"
+#
+#  # TODO. GET /Inventory/Hardware/{xname} RouterBMC API response code
+#  # TODO. GET /Inventory/Hardware/{xname} RouterBMC API response body
+#  - name: hsmAPIinventoryHardwareXnameGETrouterBMC - TODO
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9b9"
+#      method: GET
+#      verify: !bool "{verify}"
+#    response:
+#      status_code: 200
+#      #TODO: add this after panic above is resolved
+
+  # TODO. POST /Inventory/Hardware RouterModule API response code
+  # TODO. POST /Inventory/Hardware RouterModule API response body
+  - name: hsmAPIinventoryHardwarePOSTrouterModule - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7r9","Type":"RouterModule","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocRouterModule","RouterModuleLocationInfo":{"Id":"Perif9","Name":"Perif9","Description":"","HostName":""},"PopulatedFRU":{"FRUID":"FRUIDforx9999c7r9","Type":"RouterModule","Subtype":"","HWInventoryByFRUType":"HWInvByFRURouterModule","RouterModuleFRUInfo":{"AssetTag":"","ChassisType":"Blade","Model":"Perif9","Manufacturer":"HPE","PartNumber":"","SerialNumber":"","SKU":""}}}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created 1 entries"
+
+  # TODO. GET /Inventory/Hardware/{xname} RouterModule API response code
+  # TODO. GET /Inventory/Hardware/{xname} RouterModule API response body
+  - name: hsmAPIinventoryHardwareXnameGETrouterModule - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7r9"
+              Type:
+                type: str
+                required: True
+                enum:
+                  - "RouterModule"
+              Ordinal:
+                type: int
+                required: True
+                enum:
+                  - 9
+              Status:
+                type: str
+                required: True
+                enum:
+                  - "Populated"
+              HWInventoryByLocationType:
+                type: str
+                required: True
+                enum:
+                  - "HWInvByLocRouterModule"
+              RouterModuleLocationInfo:
+                type: map
+                required: True
+                mapping:
+                  Id:
+                    type: str
+                    required: True
+                    enum:
+                      - "Perif9"
+                  Name:
+                    type: str
+                    required: True
+                    enum:
+                      - "Perif9"
+                  Description:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HostName:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+              PopulatedFRU:
+                type: map
+                required: True
+                mapping:
+                  FRUID:
+                    type: str
+                    required: True
+                    enum:
+                      - "FRUIDforx9999c7r9"
+                  Type:
+                    type: str
+                    required: True
+                    enum:
+                      - "RouterModule"
+                  Subtype:
+                    type: str
+                    required: True
+                    enum:
+                      - ""
+                  HWInventoryByFRUType:
+                    type: str
+                    required: True
+                    enum:
+                      - "HWInvByFRURouterModule"
+                  RouterModuleFRUInfo:
+                    type: map
+                    required: True
+                    mapping:
+                      AssetTag:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      ChassisType:
+                        type: str
+                        required: True
+                        enum:
+                          - "Blade"
+                      Model:
+                        type: str
+                        required: True
+                        enum:
+                          - "Perif9"
+                      Manufacturer:
+                        type: str
+                        required: True
+                        enum:
+                          - "HPE"
+                      PartNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      SerialNumber:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
+                      SKU:
+                        type: str
+                        required: True
+                        enum:
+                          - ""
