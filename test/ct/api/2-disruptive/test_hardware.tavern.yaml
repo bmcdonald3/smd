@@ -93,7 +93,6 @@
 # TODO. GET /Inventory/Hardware API response code
 # TODO. GET /Inventory/Hardware API response body
 
-#TODO: Resume here
 # TODO. GET /Inventory/Hardware?id={id} Parameter API response code
 # TODO. GET /Inventory/Hardware?id={id} Parameter API response body
 # TODO. GET /Inventory/Hardware?type={type} Parameter API response code
@@ -107,6 +106,7 @@
 # TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response code
 # TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response body
 
+#TODO: Resume here
 # TODO. GET /Inventory/Hardware/Query/{xname} CMMRectifier API response code
 # TODO. GET /Inventory/Hardware/Query/{xname} CMMRectifier API response body
 # TODO. GET /Inventory/Hardware/Query/{xname} Chassis API response code
@@ -2275,6 +2275,364 @@ stages:
                       FRUID:
                         type: str
                         required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
+
+  # TODO. GET /Inventory/Hardware?id={id} Parameter API response code
+  # TODO. GET /Inventory/Hardware?id={id} Parameter API response body
+  - name: hsmAPIinventoryHardwareGETidParam - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?id=x9999c7t9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                    enum:
+                      - "x9999c7t9"
+                  Type:
+                    type: str
+                    required: True
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
+
+  # TODO. GET /Inventory/Hardware?type={type} Parameter API response code
+  # TODO. GET /Inventory/Hardware?type={type} Parameter API response body
+  - name: hsmAPIinventoryHardwareGETtypeParam - TODO
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?type=Chassis"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                    enum:
+                      - "Chassis"
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
+
+  # TODO. GET /Inventory/Hardware?manufacturer={manufacturer} Parameter API response code
+  # TODO. GET /Inventory/Hardware?manufacturer={manufacturer} Parameter API response body
+  - name: hsmAPIinventoryHardwareGETmanufacturerParam - TODO
+    request:
+      #TODO: Verify this works with a freshly spun up hms-simulation-environment
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?manufacturer=AdvancedMicroDevices,Inc."
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
+                      ProcessorFRUInfo:
+                        type: map
+                        required: False
+                        allowempty: True
+                        mapping:
+                          Manufacturer:
+                            type: str
+                            required: True
+                            enum:
+                              - "AdvancedMicroDevices,Inc."
+
+  # TODO. GET /Inventory/Hardware?partnumber={partnumber} Parameter API response code
+  # TODO. GET /Inventory/Hardware?partnumber={partnumber} Parameter API response body
+  - name: hsmAPIinventoryHardwareGETpartnumberParam - TODO
+    request:
+      #TODO: Verify this works with a freshly spun up hms-simulation-environment
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?partnumber=HMA82GR7CJR8N-XN"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
+                      MemoryFRUInfo:
+                        type: map
+                        required: False
+                        allowempty: True
+                        mapping:
+                          PartNumber:
+                            type: str
+                            required: True
+                            enum:
+                              - "HMA82GR7CJR8N-XN"
+
+  # TODO. GET /Inventory/Hardware?serialnumber={serialnumber} Parameter API response code
+  # TODO. GET /Inventory/Hardware?serialnumber={serialnumber} Parameter API response body
+  - name: hsmAPIinventoryHardwareGETserialnumberParam - TODO
+    request:
+      #TODO: Verify this works with a freshly spun up hms-simulation-environment
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?serialnumber=HER1920112770"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                      Type:
+                        type: str
+                        required: True
+                      Subtype:
+                        type: str
+                        required: True
+                      HSNBoardFRUInfo:
+                        type: map
+                        required: False
+                        allowempty: True
+                        mapping:
+                          SerialNumber:
+                            type: str
+                            required: True
+                            enum:
+                              - "HER1920112770"
+
+  # TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response code
+  # TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response body
+  - name: hsmAPIinventoryHardwareGETfruidParam - TODO
+    request:
+      #TODO: Verify this works with a freshly spun up hms-simulation-environment
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?fruid=Memory.SKHynix.HMA82GR7CJR8NXN.YBZ0215997182"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various ModuleLocationInfo maps
+                allowempty: True
+                mapping:
+                  ID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  Ordinal:
+                    type: int
+                    required: True
+                  Status:
+                    type: str
+                    required: True
+                  HWInventoryByLocationType:
+                    type: str
+                    required: True
+                  PopulatedFRU:
+                    type: map
+                    required: True
+                    # Allows the various ByFRUType fields and FRUInfo maps
+                    allowempty: True
+                    mapping:
+                      FRUID:
+                        type: str
+                        required: True
+                        enum:
+                          - "Memory.SKHynix.HMA82GR7CJR8NXN.YBZ0215997182"
                       Type:
                         type: str
                         required: True
