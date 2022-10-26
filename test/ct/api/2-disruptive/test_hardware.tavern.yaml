@@ -149,7 +149,7 @@ test_name: hsmAPIinventoryHardwareDisruptive
 stages:
   # TODO. POST /Inventory/Hardware CMMRectifier API response code
   # TODO. POST /Inventory/Hardware CMMRectifier API response body
-  - name: hsmAPIinventoryHardwarePOSTcmmRectifier - TODO
+  - name: hsmAPIinventoryHardwarePOSTcmmRectifier - Create a CMMRectifier Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -178,7 +178,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response code
   # TODO. GET /Inventory/Hardware/{xname} CMMRectifier API response body
-  - name: hsmAPIinventoryHardwareXnameGETcmmRectifier - TODO
+  - name: hsmAPIinventoryHardwareXnameGETcmmRectifier - Retrieve a CMMRectifier Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7t9"
       method: GET
@@ -302,7 +302,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware Chassis API response code
   # TODO. POST /Inventory/Hardware Chassis API response body
-  - name: hsmAPIinventoryHardwarePOSTchassis - TODO
+  - name: hsmAPIinventoryHardwarePOSTchassis - Create a Chassis Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -330,7 +330,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} Chassis API response code
   # TODO. GET /Inventory/Hardware/{xname} Chassis API response body
-  - name: hsmAPIinventoryHardwareXnameGETchassis - TODO
+  - name: hsmAPIinventoryHardwareXnameGETchassis - Retrieve a Chassis Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7"
       method: GET
@@ -459,7 +459,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware ComputeModule API response code
   # TODO. POST /Inventory/Hardware ComputeModule API response body
-  - name: hsmAPIinventoryHardwarePOSTcomputeModule - TODO
+  - name: hsmAPIinventoryHardwarePOSTcomputeModule - Create a ComputeModule Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -487,7 +487,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} ComputeModule API response code
   # TODO. GET /Inventory/Hardware/{xname} ComputeModule API response body
-  - name: hsmAPIinventoryHardwareXnameGETcomputeModule - TODO
+  - name: hsmAPIinventoryHardwareXnameGETcomputeModule - Retrieve a ComputeModule Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9"
       method: GET
@@ -616,7 +616,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware HSNBoard API response code
   # TODO. POST /Inventory/Hardware HSNBoard API response body
-  - name: hsmAPIinventoryHardwarePOSThsnBoard - TODO
+  - name: hsmAPIinventoryHardwarePOSThsnBoard - Create an HSNBoard Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -644,7 +644,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} HSNBoard API response code
   # TODO. GET /Inventory/Hardware/{xname} HSNBoard API response body
-  - name: hsmAPIinventoryHardwareXnameGEThsnBoard - TODO
+  - name: hsmAPIinventoryHardwareXnameGEThsnBoard - Retrieve an HSNBoard Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9e9"
       method: GET
@@ -773,7 +773,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware Memory API response code
   # TODO. POST /Inventory/Hardware Memory API response body
-  - name: hsmAPIinventoryHardwarePOSTmemory - TODO
+  - name: hsmAPIinventoryHardwarePOSTmemory - Create a Memory Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -801,7 +801,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} Memory API response code
   # TODO. GET /Inventory/Hardware/{xname} Memory API response body
-  - name: hsmAPIinventoryHardwareXnameGETmemory - TODO
+  - name: hsmAPIinventoryHardwareXnameGETmemory - Retrieve a Memory Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9d9"
       method: GET
@@ -974,7 +974,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware NodeBMC API response code
   # TODO. POST /Inventory/Hardware NodeBMC API response body
-  - name: hsmAPIinventoryHardwarePOSTnodeBMC - TODO
+  - name: hsmAPIinventoryHardwarePOSTnodeBMC - Create a NodeBMC Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -1002,7 +1002,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} NodeBMC API response code
   # TODO. GET /Inventory/Hardware/{xname} NodeBMC API response body
-  - name: hsmAPIinventoryHardwareXnameGETnodeBMC - TODO
+  - name: hsmAPIinventoryHardwareXnameGETnodeBMC - Retrieve a NodeBMC Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9"
       method: GET
@@ -1131,7 +1131,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware NodeEnclosure API response code
   # TODO. POST /Inventory/Hardware NodeEnclosure API response body
-  - name: hsmAPIinventoryHardwarePOSTnodeEnclosure - TODO
+  - name: hsmAPIinventoryHardwarePOSTnodeEnclosure - Create a NodeEnclosure Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -1159,7 +1159,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} NodeEnclosure API response code
   # TODO. GET /Inventory/Hardware/{xname} NodeEnclosure API response body
-  - name: hsmAPIinventoryHardwareXnameGETnodeEnclosure - TODO
+  - name: hsmAPIinventoryHardwareXnameGETnodeEnclosure - Retrieve a NodeEnclosure Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9e9"
       method: GET
@@ -1288,7 +1288,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware NodeHsnNic API response code
   # TODO. POST /Inventory/Hardware NodeHsnNic API response body
-  - name: hsmAPIinventoryHardwarePOSTnodeHsnNic - TODO
+  - name: hsmAPIinventoryHardwarePOSTnodeHsnNic - Create a NodeHsnNic Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -1316,7 +1316,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} NodeHsnNic API response code
   # TODO. GET /Inventory/Hardware/{xname} NodeHsnNic API response body
-  - name: hsmAPIinventoryHardwareXnameGETnodeHsnNic - TODO
+  - name: hsmAPIinventoryHardwareXnameGETnodeHsnNic - Retrieve a NodeHsnNic Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9h3"
       method: GET
@@ -1425,7 +1425,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware Node Create API response code
   # TODO. POST /Inventory/Hardware Node Create API response body
-  - name: hsmAPIinventoryHardwarePOSTnodeCreate - TODO
+  - name: hsmAPIinventoryHardwarePOSTnodeCreate - Create a Node Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -1453,7 +1453,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} Node Create API response code
   # TODO. GET /Inventory/Hardware/{xname} Node Create API response body
-  - name: hsmAPIinventoryHardwareXnameGETnodeCreate - TODO
+  - name: hsmAPIinventoryHardwareXnameGETnodeCreate - Retrieve a Node Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
       method: GET
@@ -1615,7 +1615,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware Node Update API response code
   # TODO. POST /Inventory/Hardware Node Update API response body
-  - name: hsmAPIinventoryHardwarePOSTnodeUpdate - TODO
+  - name: hsmAPIinventoryHardwarePOSTnodeUpdate - Update a Node Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -1643,7 +1643,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} Node Update API response code
   # TODO. GET /Inventory/Hardware/{xname} Node Update API response body
-  - name: hsmAPIinventoryHardwareXnameGETnodeUpdate - TODO
+  - name: hsmAPIinventoryHardwareXnameGETnodeUpdate - Retrieve an updated Node Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
       method: GET
@@ -1805,7 +1805,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware Processor API response code
   # TODO. POST /Inventory/Hardware Processor API response body
-  - name: hsmAPIinventoryHardwarePOSTprocessor - TODO
+  - name: hsmAPIinventoryHardwarePOSTprocessor - Create a Processor Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -1833,7 +1833,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} Processor API response code
   # TODO. GET /Inventory/Hardware/{xname} Processor API response body
-  - name: hsmAPIinventoryHardwareXnameGETprocessor - TODO
+  - name: hsmAPIinventoryHardwareXnameGETprocessor - Retrieve a Processor Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9p3"
       method: GET
@@ -2013,7 +2013,7 @@ stages:
 
 #  # TODO. POST /Inventory/Hardware RouterBMC API response code
 #  # TODO. POST /Inventory/Hardware RouterBMC API response body
-#  - name: hsmAPIinventoryHardwarePOSTrouterBMC - TODO
+#  - name: hsmAPIinventoryHardwarePOSTrouterBMC - Create a RouterBMC Hardware Inventory entry using POST.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
 #      method: POST
@@ -2042,7 +2042,7 @@ stages:
 #
 #  # TODO. GET /Inventory/Hardware/{xname} RouterBMC API response code
 #  # TODO. GET /Inventory/Hardware/{xname} RouterBMC API response body
-#  - name: hsmAPIinventoryHardwareXnameGETrouterBMC - TODO
+#  - name: hsmAPIinventoryHardwareXnameGETrouterBMC - Retrieve a RouterBMC Hardware Inventory entry by xname using GET.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9b9"
 #      method: GET
@@ -2053,7 +2053,7 @@ stages:
 
   # TODO. POST /Inventory/Hardware RouterModule API response code
   # TODO. POST /Inventory/Hardware RouterModule API response body
-  - name: hsmAPIinventoryHardwarePOSTrouterModule - TODO
+  - name: hsmAPIinventoryHardwarePOSTrouterModule - Create a RouterModule Hardware Inventory entry using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: POST
@@ -2081,7 +2081,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/{xname} RouterModule API response code
   # TODO. GET /Inventory/Hardware/{xname} RouterModule API response body
-  - name: hsmAPIinventoryHardwareXnameGETrouterModule - TODO
+  - name: hsmAPIinventoryHardwareXnameGETrouterModule - Retrieve a RouterModule Hardware Inventory entry by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9"
       method: GET
@@ -2210,7 +2210,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware API response code
   # TODO. GET /Inventory/Hardware API response body
-  - name: hsmAPIinventoryHardwareGET - TODO
+  - name: hsmAPIinventoryHardwareGET - Retrieve multiple Hardware Inventory entries using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: GET
@@ -2263,7 +2263,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware?id={id} Parameter API response code
   # TODO. GET /Inventory/Hardware?id={id} Parameter API response body
-  - name: hsmAPIinventoryHardwareGETidParam - TODO
+  - name: hsmAPIinventoryHardwareGETidParam - Retrieve Hardware Inventory entries using GET and the id query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?id=x9999c7t9"
       method: GET
@@ -2318,7 +2318,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware?type={type} Parameter API response code
   # TODO. GET /Inventory/Hardware?type={type} Parameter API response body
-  - name: hsmAPIinventoryHardwareGETtypeParam - TODO
+  - name: hsmAPIinventoryHardwareGETtypeParam - Retrieve Hardware Inventory entries using GET and the type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?type=Chassis"
       method: GET
@@ -2373,7 +2373,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware?manufacturer={manufacturer} Parameter API response code
   # TODO. GET /Inventory/Hardware?manufacturer={manufacturer} Parameter API response body
-  - name: hsmAPIinventoryHardwareGETmanufacturerParam - TODO
+  - name: hsmAPIinventoryHardwareGETmanufacturerParam - Retrieve Hardware Inventory entries using GET and the manufacturer query parameter.
     request:
       #TODO: Verify this works with a freshly spun up hms-simulation-environment
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?manufacturer=AdvancedMicroDevices,Inc."
@@ -2437,7 +2437,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware?partnumber={partnumber} Parameter API response code
   # TODO. GET /Inventory/Hardware?partnumber={partnumber} Parameter API response body
-  - name: hsmAPIinventoryHardwareGETpartnumberParam - TODO
+  - name: hsmAPIinventoryHardwareGETpartnumberParam - Retrieve Hardware Inventory entries using GET and the partnumber query parameter.
     request:
       #TODO: Verify this works with a freshly spun up hms-simulation-environment
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?partnumber=HMA82GR7CJR8N-XN"
@@ -2501,7 +2501,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware?serialnumber={serialnumber} Parameter API response code
   # TODO. GET /Inventory/Hardware?serialnumber={serialnumber} Parameter API response body
-  - name: hsmAPIinventoryHardwareGETserialnumberParam - TODO
+  - name: hsmAPIinventoryHardwareGETserialnumberParam - Retrieve Hardware Inventory entries using GET and the serialnumber query parameter.
     request:
       #TODO: Verify this works with a freshly spun up hms-simulation-environment
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?serialnumber=HER1920112770"
@@ -2565,7 +2565,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response code
   # TODO. GET /Inventory/Hardware?fruid={fruid} Parameter API response body
-  - name: hsmAPIinventoryHardwareGETfruidParam - TODO
+  - name: hsmAPIinventoryHardwareGETfruidParam - Retrieve Hardware Inventory entries using GET and the fruid query parameter.
     request:
       #TODO: Verify this works with a freshly spun up hms-simulation-environment
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?fruid=Memory.SKHynix.HMA82GR7CJR8NXN.YBZ0215997182"
@@ -2621,7 +2621,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} CMMRectifier API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} CMMRectifier API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETcmmRectifier - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETcmmRectifier - Query for CMMRectifier Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7t9?children=True"
       method: GET
@@ -2763,7 +2763,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} Chassis API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} Chassis API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETchassis - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETchassis - Query for Chassis Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7?children=False&parents=True"
       method: GET
@@ -2910,7 +2910,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} ComputeModule API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} ComputeModule API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETcomputeModule - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETcomputeModule - Query for ComputeModule Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9?xname=x9999c7s9&children=False"
       method: GET
@@ -3057,7 +3057,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} HSNBoard API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} HSNBoard API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGEThsnBoard - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGEThsnBoard - Query for HSNBoard Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7r9e9?type=HSNBoard"
       method: GET
@@ -3204,7 +3204,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} Memory API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} Memory API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETmemory - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETmemory - Query for Memory Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9n9d9?format=FullyFlat"
       method: GET
@@ -3395,7 +3395,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} NodeBMC API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} NodeBMC API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETnodeBMC - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETnodeBMC - Query for NodeBMC Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9?format=NestNodesOnly&children=False"
       method: GET
@@ -3542,7 +3542,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} NodeEnclosure API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} NodeEnclosure API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETnodeEnclosure - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETnodeEnclosure - Query for NodeEnclosure Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9e9"
       method: GET
@@ -3689,7 +3689,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} NodeHsnNic API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} NodeHsnNic API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETnodeHsnNic - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETnodeHsnNic - Query for NodeHsnNic Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9n9h3"
       method: GET
@@ -3816,7 +3816,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} Node API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} Node API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETnode - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETnode - Query for Node Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9n9?children=True"
       method: GET
@@ -4056,7 +4056,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} Processor API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} Processor API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETprocessor - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETprocessor - Query for Processor Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9n9p3"
       method: GET
@@ -4254,7 +4254,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} RouterBMC API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} RouterBMC API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETrouterBMC - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETrouterBMC - Query for RouterBMC Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7r9b9"
       method: GET
@@ -4282,7 +4282,7 @@ stages:
 
   # TODO. GET /Inventory/Hardware/Query/{xname} RouterModule API response code
   # TODO. GET /Inventory/Hardware/Query/{xname} RouterModule API response body
-  - name: hsmAPIinventoryHardwareQueryXnameGETrouterModule - TODO
+  - name: hsmAPIinventoryHardwareQueryXnameGETrouterModule - Query for RouterModule Hardware Inventory entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7r9?children=False"
       method: GET
@@ -4429,7 +4429,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} CMMRectifier API response code
   # TODO. DELETE /Inventory/Hardware/{xname} CMMRectifier API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEcmmRectifier - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEcmmRectifier - Remove a CMMRectifier Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7t9"
       method: DELETE
@@ -4456,7 +4456,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} Chassis API response code
   # TODO. DELETE /Inventory/Hardware/{xname} Chassis API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEchassis - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEchassis - Remove a Chassis Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7"
       method: DELETE
@@ -4483,7 +4483,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} ComputeModule API response code
   # TODO. DELETE /Inventory/Hardware/{xname} ComputeModule API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEcomputeModule - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEcomputeModule - Remove a ComputeModule Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9"
       method: DELETE
@@ -4510,7 +4510,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} HSNBoard API response code
   # TODO. DELETE /Inventory/Hardware/{xname} HSNBoard API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEhsnBoard - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEhsnBoard - Remove an HSNBoard Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9e9"
       method: DELETE
@@ -4537,7 +4537,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} Memory API response code
   # TODO. DELETE /Inventory/Hardware/{xname} Memory API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEmemory - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEmemory - Remove a Memory Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9d9"
       method: DELETE
@@ -4564,7 +4564,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} NodeBMC API response code
   # TODO. DELETE /Inventory/Hardware/{xname} NodeBMC API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEnodeBMC - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEnodeBMC - Remove a NodeBMC Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9"
       method: DELETE
@@ -4591,7 +4591,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} NodeEnclosure API response code
   # TODO. DELETE /Inventory/Hardware/{xname} NodeEnclosure API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEnodeEnclosure - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEnodeEnclosure - Remove a NodeEnclosure Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9e9"
       method: DELETE
@@ -4618,7 +4618,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} NodeHsnNic API response code
   # TODO. DELETE /Inventory/Hardware/{xname} NodeHsnNic API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEnodeHsnNic - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEnodeHsnNic - Remove a NodeHsnNic Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9h3"
       method: DELETE
@@ -4645,7 +4645,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} Node API response code
   # TODO. DELETE /Inventory/Hardware/{xname} Node API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEnode - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEnode - Remove a Node Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
       method: DELETE
@@ -4672,7 +4672,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} Processor API response code
   # TODO. DELETE /Inventory/Hardware/{xname} Processor API response body
-  - name: hsmAPIinventoryHardwareXnameDELETEprocessor - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETEprocessor - Remove a Processor Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9p3"
       method: DELETE
@@ -4699,7 +4699,7 @@ stages:
 
 #  # TODO. DELETE /Inventory/Hardware/{xname} RouterBMC API response code
 #  # TODO. DELETE /Inventory/Hardware/{xname} RouterBMC API response body
-#  - name: hsmAPIinventoryHardwareXnameDELETErouterBMC - TODO
+#  - name: hsmAPIinventoryHardwareXnameDELETErouterBMC - Remove a RouterBMC Hardware Inventory entry by xname using DELETE.
 #    request:
 #      #TODO: previous RouterBMC test case causing HSM to panic, finish this test case when bug is fixed
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9b9"
@@ -4727,7 +4727,7 @@ stages:
 
   # TODO. DELETE /Inventory/Hardware/{xname} RouterModule API response code
   # TODO. DELETE /Inventory/Hardware/{xname} RouterModule API response body
-  - name: hsmAPIinventoryHardwareXnameDELETErouterModule - TODO
+  - name: hsmAPIinventoryHardwareXnameDELETErouterModule - Remove a RouterModule Hardware Inventory entry by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7r9"
       method: DELETE
