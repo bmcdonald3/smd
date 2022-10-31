@@ -24,6 +24,10 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
+#######################################
+# THIS TEST WILL DELETE ALL ENDPOINTS!!
+#######################################
+
 ---
 test_name: HSM Service Endpoint Collection
 
