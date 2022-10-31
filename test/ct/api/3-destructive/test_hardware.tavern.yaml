@@ -20,19 +20,37 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) Hardware API
+# Tavern test cases for the Hardware State Manager (HSM) Hardware[ByFRU] APIs
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 6
+# HMS test metrics test cases: 20
+
+# /Inventory/Hardware
 # 1. DELETE /Inventory/Hardware API response code
 # 2. DELETE /Inventory/Hardware API response body
 # 3. DELETE /Inventory/Hardware No Hardware API response code
 # 4. DELETE /Inventory/Hardware No Hardware API response body
 # 5. GET /Inventory/Hardware No Hardware API response code
 # 6. GET /Inventory/Hardware No Hardware API response body
+
+# /Inventory/HardwareByFRU
+# 7. GET /Inventory/HardwareByFRU API response code
+# 8. GET /Inventory/HardwareByFRU API response body
+# 9. GET /Inventory/HardwareByFRU/{fruid} API response code
+# 10. GET /Inventory/HardwareByFRU/{fruid} API response body
+# 11. DELETE /Inventory/HardwareByFRU/{fruid} API response code
+# 12. DELETE /Inventory/HardwareByFRU/{fruid} API response body
+# 13. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+# 14. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+# 15. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+# 16. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+# 17. DELETE /Inventory/HardwareByFRU API response code
+# 18. DELETE /Inventory/HardwareByFRU API response body
+# 19. DELETE /Inventory/HardwareByFRU No Data API response code
+# 20. DELETE /Inventory/HardwareByFRU No Data API response body
 ---
-test_name: hsmAPIinventoryHardwareDestructive
+test_name: hsmAPIinventoryHardware[ByFRU]destructive
 
 stages:
   # 1. DELETE /Inventory/Hardware API response code
@@ -108,3 +126,236 @@ stages:
                   ID:
                     type: str
                     required: True
+
+  # 7. GET /Inventory/HardwareByFRU API response code
+  # 8. GET /Inventory/HardwareByFRU API response body
+  - name: hsmAPIinventoryHardwareByFRUget - Retrieve all Hardware Inventory entries by FRU using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: all
+            sequence:
+              - type: map
+                required: True
+                # Allows the various types of FRUInfo maps
+                allowempty: True
+                mapping:
+                  FRUID:
+                    type: str
+                    required: True
+                  Type:
+                    type: str
+                    required: True
+                  Subtype:
+                    type: str
+                    required: True
+                  HWInventoryByFRUType:
+                    type: str
+                    required: True
+      save:
+        json:
+          fruid: "[0].FRUID"
+
+  # 9. GET /Inventory/HardwareByFRU/{fruid} API response code
+  # 10. GET /Inventory/HardwareByFRU/{fruid} API response body
+  - name: hsmAPIinventoryHardwareByFRUfruidGET - Retrieve a Hardware Inventory entry by FRUID using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            # Allows the various types of FRUInfo maps
+            allowempty: True
+            mapping:
+              FRUID:
+                type: str
+                required: True
+              Type:
+                type: str
+                required: True
+              Subtype:
+                type: str
+                required: True
+              HWInventoryByFRUType:
+                type: str
+                required: True
+
+  # 11. DELETE /Inventory/HardwareByFRU/{fruid} API response code
+  # 12. DELETE /Inventory/HardwareByFRU/{fruid} API response body
+  - name: hsmAPIinventoryHardwareByFRUfruidDELETE - Remove a Hardware Inventory entry by FRUID using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # 13. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+  # 14. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+  - name: hsmAPIinventoryHardwareByFRUfruidDELETEnonExistentFRUID - Attempt to remove a Hardware Inventory entry by FRUID that doesn't exist using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such FRU ID."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # 15. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+  # 16. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+  - name: hsmAPIinventoryHardwareByFRUfruidGETnonExistentFRUID - Attempt to retrieve a Hardware Inventory entry by FRUID that doesn't exist using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such FRU ID."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # 17. DELETE /Inventory/HardwareByFRU API response code
+  # 18. DELETE /Inventory/HardwareByFRU API response body
+  - name: hsmAPIinventoryHardwareByFRUdelete - Remove all Hardware Inventory entries by FRUID using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                pattern: "deleted [0-9]+ entries"
+
+  # 19. DELETE /Inventory/HardwareByFRU No Data API response code
+  # 20. DELETE /Inventory/HardwareByFRU No Data API response body
+  - name: hsmAPIinventoryHardwareByFRUdeleteNoData - Attempt to remove all Hardware Inventory entries by FRUID with no data present using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no entries to delete"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
