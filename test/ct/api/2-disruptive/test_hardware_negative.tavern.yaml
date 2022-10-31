@@ -1,0 +1,621 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) Hardware API
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: 30
+# 1. POST /Inventory/Hardware CMMRectifier Missing ID API response code
+# 2. POST /Inventory/Hardware CMMRectifier Missing ID API response body
+# 3. POST /Inventory/Hardware Chassis Empty ID API response code
+# 4. POST /Inventory/Hardware Chassis Empty ID API response body
+# 5. POST /Inventory/Hardware ComputeModule Mismatched Type API response code
+# 6. POST /Inventory/Hardware ComputeModule Mismatched Type API response body
+# 7. POST /Inventory/Hardware HSNBoard Empty Type API response code
+# 8. POST /Inventory/Hardware HSNBoard Empty Type API response body
+# 9. POST /Inventory/Hardware Memory Missing PopulatedFRU API response code
+# 10. POST /Inventory/Hardware Memory Missing PopulatedFRU API response body
+# 11. POST /Inventory/Hardware NodeBMC Missing Location API response code
+# 12. POST /Inventory/Hardware NodeBMC Missing Location API response body
+# 13. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response code
+# 14. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response body
+# 15. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response code
+# 16. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response body
+# 17. GET /Inventory/Hardware/{xname} Non Existent Node API response code
+# 18. GET /Inventory/Hardware/{xname} Non Existent Node API response body
+# 19. GET /Inventory/Hardware?id={id} Invalid Parameter API response code
+# 20. GET /Inventory/Hardware?id={id} Invalid Parameter API response body
+# 21. GET /Inventory/Hardware?type={type} Invalid Parameter API response code
+# 22. GET /Inventory/Hardware?type={type} Invalid Parameter API response body
+# 23. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response code
+# 24. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response body
+# 25. GET /Inventory/Hardware/Query/{xname} Invalid Node API response code
+# 26. GET /Inventory/Hardware/Query/{xname} Invalid Node API response body
+# 27. DELETE /Inventory/Hardware/{xname} Non Existent Node API response code
+# 28. DELETE /Inventory/Hardware/{xname} Non Existent Node API response body
+# 29. DELETE /Inventory/Hardware/{xname} Invalid Node API response code
+# 30. DELETE /Inventory/Hardware/{xname} Invalid Node API response body
+---
+test_name: hsmAPIinventoryHardwareNegative
+
+stages:
+  # 1. POST /Inventory/Hardware CMMRectifier Missing ID API response code
+  # 2. POST /Inventory/Hardware CMMRectifier Missing ID API response body
+  - name: hsmAPIinventoryHardwarePOSTcmmRectifierMissingID - Attempt to create a CMMRectifier Hardware Inventory entry with a missing ID using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"Type":"CMMRectifier","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocCMMRectifier","CMMRectifierLocationInfo":{"Name":"Rectifier9","FirmwareVersion":""},"PopulatedFRU":{"FRUID":"CMMRectifier.ABB.LBGEPE20KZ46051725","Type":"CMMRectifier","Subtype":"","HWInventoryByFRUType":"HWInvByFRUCMMRectifier","CMMRectifierFRUInfo":{"Manufacturer":"ABB","SerialNumber":"LBGEPE20KZ46051725","Model":"CC15000H3C380T","PartNumber":"","PowerCapacityWatts":0,"PowerInputWatts":0,"PowerOutputWatts":0,"PowerSupplyType":""}}}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "ID is empty or not a valid xname"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 3. POST /Inventory/Hardware Chassis Empty ID API response code
+  # 4. POST /Inventory/Hardware Chassis Empty ID API response body
+  - name: hsmAPIinventoryHardwarePOSTchassisEmptyID - Attempt to create a Chassis Hardware Inventory entry with an empty ID using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"","Type":"Chassis","Ordinal":7,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocChassis","ChassisLocationInfo":{"Id":"Enclosure","Name":"Enclosure","Description":"CMM","HostName":""},"PopulatedFRU":{"FRUID":"Chassis.HPE.101426404D.IMZ2409069079","Type":"Chassis","Subtype":"","HWInventoryByFRUType":"HWInvByFRUChassis","ChassisFRUInfo":{"AssetTag":"","ChassisType":"Enclosure","Model":"CMM","Manufacturer":"HPE","PartNumber":"101426404.D","SerialNumber":"IMZ2409069079","SKU":""}}}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "ID is empty or not a valid xname"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+#  # 5. POST /Inventory/Hardware ComputeModule Mismatched Type API response code
+#  # 6. POST /Inventory/Hardware ComputeModule Mismatched Type API response body
+#  - name: hsmAPIinventoryHardwarePOSTcomputeModuleMismatchedType - Attempt to create a ComputeModule Hardware Inventory entry with a type that doesn't match its ID's type using POST.
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+#      method: POST
+#      verify: !bool "{verify}"
+#      #TODO: HSM ignores the mismatched MgmtSwitchConnector type and accepts this payload. It creates the ComputeModule anyways (seemingly based on the type of the xname ID). Open a bug on this.
+#      #TODO: Continuing above, it seems that Ordinal is also not required and derived from the xname ID, Status is also ignored and filled as Populated, HWInventoryByLocationType is ignored and derived
+#      #TODO: Continuing above, LocationInfo is required but can be empty. Missing it completely causes an error (correct behavior) but supplying it empty does not cause an error.
+#      #TODO: Continuing above, the PopulatedFRU type is also ignored and seemingly derived
+#      json: {"Hardware":[{"ID":"x9999c7s9","Type":"MgmtSwitchConnector","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocComputeModule","ComputeModuleLocationInfo":{"Id":"Blade9","Name":"Blade9","Description":"","HostName":""},"PopulatedFRU":{"FRUID":"FRUIDforx9999c7s9","Type":"ComputeModule","Subtype":"","HWInventoryByFRUType":"HWInvByFRUComputeModule","ComputeModuleFRUInfo":{"AssetTag":"","ChassisType":"Blade","Model":"Blade9","Manufacturer":"HPE","PartNumber":"","SerialNumber":"","SKU":""}}}]}
+#    response:
+#      status_code: 400
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              type:
+#                type: str
+#                required: True
+#                enum:
+#                  - "about:blank"
+#              title:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Bad Request"
+#              detail:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Supplied type does not match type of xname ID"
+#              status:
+#                type: int
+#                required: True
+#                enum:
+#                  - 400
+
+#  # 7. POST /Inventory/Hardware HSNBoard Empty Type API response code
+#  # 8. POST /Inventory/Hardware HSNBoard Empty Type API response body
+#  - name: hsmAPIinventoryHardwarePOSThsnBoardEmptyType - Attempt to create an HSNBoard Hardware Inventory entry with an empty type using POST.
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+#      method: POST
+#      verify: !bool "{verify}"
+#      #TODO: HSM ignores the empty type and accepts this payload. It creates the HSNBoard anyways (seemingly based on the type of the xname ID). Open a bug on this.
+#      #TODO: Continuing above, it seems that Ordinal is also not required and derived from the xname ID, Status is also ignored and filled as Populated, HWInventoryByLocationType is ignored and derived
+#      #TODO: Continuing above, LocationInfo is required but can be empty. Missing it completely causes an error (correct behavior) but supplying it empty does not cause an error.
+#      #TODO: Continuing above, the PopulatedFRU type is also ignored and seemingly derived
+#      json: {"Hardware":[{"ID":"x9999c7r9e9","Type":"","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocHSNBoard","HSNBoardLocationInfo":{"Id":"Enclosure","Name":"Enclosure","Description":"HPE_Slingshot_1_Switch_Blade","HostName":""},"PopulatedFRU":{"FRUID":"HSNBoard.HPE.102000002A.HER1920112770","Type":"HSNBoard","Subtype":"","HWInventoryByFRUType":"HWInvByFRUHSNBoard","HSNBoardFRUInfo":{"AssetTag":"","ChassisType":"Enclosure","Model":"HPE_Slingshot_1_Switch_Blade","Manufacturer":"HPE","PartNumber":"102000002.A","SerialNumber":"HER1920112770","SKU":""}}}]}
+#    response:
+#      status_code: 400
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              type:
+#                type: str
+#                required: True
+#                enum:
+#                  - "about:blank"
+#              title:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Bad Request"
+#              detail:
+#                type: str
+#                required: True
+#                enum:
+#                  - "Empty type field supplied."
+#              status:
+#                type: int
+#                required: True
+#                enum:
+#                  - 400
+
+  # 9. POST /Inventory/Hardware Memory Missing PopulatedFRU API response code
+  # 10. POST /Inventory/Hardware Memory Missing PopulatedFRU API response body
+  - name: hsmAPIinventoryHardwarePOSTmemoryMissingPopulatedFRU - Attempt to create a Memory Hardware Inventory entry with missing PopulatedFRU data using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7s9b9n9d9"}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "PopulatedFRU must be populated"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 11. POST /Inventory/Hardware NodeBMC Missing Location API response code
+  # 12. POST /Inventory/Hardware NodeBMC Missing Location API response body
+  - name: hsmAPIinventoryHardwarePOSTnodeBMCmissingLocation - Attempt to create a NodeBMC Hardware Inventory entry with missing location data using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7s9b9","PopulatedFRU":{"FRUID":"FRUIDforx9999c7s9b9","Type":"NodeBMC","Subtype":"","HWInventoryByFRUType":"HWInvByFRUNodeBMC","NodeBMCFRUInfo":{"ManagerType":"EnclosureManager","Model":"","Manufacturer":"","PartNumber":"","SerialNumber":""}}}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component location info is empty"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 13. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response code
+  # 14. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response body
+  - name: hsmAPIinventoryHardwarePOSTnodeEnclosureEmptyPopulatedFRU - Attempt to create a NodeEnclosure Hardware Inventory entry with empty PopulatedFRU data using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"x9999c7s9e9","Type":"NodeEnclosure","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocNodeEnclosure","NodeEnclosureLocationInfo":{},"PopulatedFRU":{}}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "FRU info is empty"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 15. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response code
+  # 16. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response body
+  - name: hsmAPIinventoryHardwarePOSTnodeHsnNicInvalidXname - Attempt to create a NodeHsnNic Hardware Inventory entry with an invalid xname using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Hardware":[{"ID":"FAKE","Type":"NodeHsnNic","Ordinal":3,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocNodeHsnNic","NodeHsnNicLocationInfo":{"Id":"HPCNet0","Name":"","Description":"SS11200Gb2PNICMezzREV02(HSN)"},"PopulatedFRU":{"FRUID":"NodeHsnNic.HPEPRM.P43012001.OTI6996696413","Type":"NodeHsnNic","Subtype":"","HWInventoryByFRUType":"HWInvByFRUNodeHsnNic","NodeHsnNicFRUInfo":{"Manufacturer":"HPE-PRM","Model":"R4K44A","PartNumber":"P43012-001","SerialNumber":"OTI6996696413"}}}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "ID is empty or not a valid xname"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 17. GET /Inventory/Hardware/{xname} Non Existent Node API response code
+  # 18. GET /Inventory/Hardware/{xname} Non Existent Node API response body
+  - name: hsmAPIinventoryHardwareXnameGETnonExistentNode - Attempt to retrieve a Hardware Inventory entry for a node that doesn't exist using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # 19. GET /Inventory/Hardware?id={id} Invalid Parameter API response code
+  # 20. GET /Inventory/Hardware?id={id} Invalid Parameter API response body
+  - name: hsmAPIinventoryHardwareGETidParamInvalid - Attempt to retrieve Hardware Inventory entries using GET with an invalid id query parameter.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?id=FAKE"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid xname"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 21. GET /Inventory/Hardware?type={type} Invalid Parameter API response code
+  # 22. GET /Inventory/Hardware?type={type} Invalid Parameter API response body
+  - name: hsmAPIinventoryHardwareGETtypeParamInvalid - Attempt to retrieve Hardware Inventory entries using GET with an invalid type query parameter.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?type=FAKE"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid HMS type"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 23. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response code
+  # 24. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response body
+  - name: hsmAPIinventoryHardwareQueryXnameGETnonExistentNode - Attempt to query for Node Hardware Inventory entries with an xname that doesn't exist using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9n9?children=False"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              XName:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              Format:
+                type: str
+                required: True
+                enum:
+                  - "NestNodesOnly"
+
+  # 25. GET /Inventory/Hardware/Query/{xname} Invalid Node API response code
+  # 26. GET /Inventory/Hardware/Query/{xname} Invalid Node API response body
+  - name: hsmAPIinventoryHardwareQueryXnameGETinvalidNode - Attempt to query for Node Hardware Inventory entries with an invalid xname using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/FAKE"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Invalid xname"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # 27. DELETE /Inventory/Hardware/{xname} Non Existent Node API response code
+  # 28. DELETE /Inventory/Hardware/{xname} Non Existent Node API response body
+  - name: hsmAPIinventoryHardwareXnameDELETEnonExistentNode - Attempt to remove a Node Hardware Inventory entry for an xname that doesn't exist using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # 29. DELETE /Inventory/Hardware/{xname} Invalid Node API response code
+  # 30. DELETE /Inventory/Hardware/{xname} Invalid Node API response body
+  - name: hsmAPIinventoryHardwareXnameDELETEinvalidNode - Attempt to remove a Node Hardware Inventory entry for an invalid xname using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/FAKE"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no such xname."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
