@@ -53,8 +53,8 @@
 # TODO. GET /Inventory/Hardware/History No Data API response code
 # TODO. GET /Inventory/Hardware/History No Data API response body
 
-# TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
-# TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
+# TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
+# TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
 # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
 # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
 # TODO. GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
@@ -357,34 +357,6 @@ stages:
                         type: str
                         required: True
 
-##TODO TODO TODO Test/remove this, I suspect it will fail since the HardwareByLoc data for the entry is not deleted yet
-#  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
-#  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
-#  - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETE - Remove HardwareByFRU Inventory History entries by fruid using DELETE.
-#    request:
-#      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
-#      method: DELETE
-#      verify: !bool "{verify}"
-#    response:
-#      status_code: 200
-#      verify_response_with:
-#        function: tavern.testutils.helpers:validate_pykwalify
-#        extra_kwargs:
-#          schema:
-#            type: map
-#            required: True
-#            mapping:
-#              code:
-#                type: int
-#                required: True
-#                enum:
-#                  - 0
-#              message:
-#                type: str
-#                required: True
-#                pattern: "deleted [0-9]+ entries"
-#TODO TODO TODO Remove this ^^^
-
   # TODO. DELETE /Inventory/Hardware/History/{xname} API response code
   # TODO. DELETE /Inventory/Hardware/History/{xname} API response body
   - name: hsmAPIinventoryHardwareHistoryXnameDELETE - Remove Hardware Inventory History entries by xname using DELETE.
@@ -607,9 +579,10 @@ stages:
                                 type: str
                                 required: True
 
-# TODO TODO: this isn't working because the previous DELETE /Inventory/Hardware test case also removes this data
-#  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
-#  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
+#  # TODO: This test is disabled since the previous DELETE /Inventory/Hardware test also removes this data.
+#  # TODO: There is no simple way to generate new HardwareByFRU History data without a rediscovery.
+#  # TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
+#  # TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
 #  - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETE - Remove HardwareByFRU Inventory History entries by fruid using DELETE.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
