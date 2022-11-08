@@ -53,7 +53,7 @@ test_name: hsmAPIservice
 stages:
   # 1. GET /service/ready API response code
   # 2. GET /service/ready API response body
-  - name: hsmAPIserviceReadyGET - TODO
+  - name: hsmAPIserviceReadyGET - Retrieve the HSM readiness status using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
       method: GET
@@ -79,7 +79,7 @@ stages:
 
   # 3. GET /service/liveness API response code
   # 4. GET /service/liveness API response body
-  - name: hsmAPIserviceLivenessGET - TODO
+  - name: hsmAPIserviceLivenessGET - Retrieve the HSM liveness status using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
       method: GET
@@ -89,7 +89,7 @@ stages:
 
   # 5. GET /service/values API response code
   # 6. GET /service/values API response body
-  - name: hsmAPIserviceValuesGET - TODO
+  - name: hsmAPIserviceValuesGET - Retrieve the valid HSM service values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
       method: GET
@@ -257,7 +257,7 @@ stages:
 
   # 7. GET /service/values/arch API response code
   # 8. GET /service/values/arch API response body
-  - name: hsmAPIserviceValuesArchGET - TODO
+  - name: hsmAPIserviceValuesArchGET - Retrieve the valid HSM service arch values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/arch"
       method: GET
@@ -285,7 +285,7 @@ stages:
 
   # 9. GET /service/values/class API response code
   # 10. GET /service/values/class API response body
-  - name: hsmAPIserviceValuesClassGET - TODO
+  - name: hsmAPIserviceValuesClassGET - Retrieve the valid HSM service class values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/class"
       method: GET
@@ -312,7 +312,7 @@ stages:
 
   # 11. GET /service/values/flag API response code
   # 12. GET /service/values/flag API response body
-  - name: hsmAPIserviceValuesFlagGET - TODO
+  - name: hsmAPIserviceValuesFlagGET - Retrieve the valid HSM service flag values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/flag"
       method: GET
@@ -342,7 +342,7 @@ stages:
 
   # 13. GET /service/values/nettype API response code
   # 14. GET /service/values/nettype API response body
-  - name: hsmAPIserviceValuesNetTypeGET - TODO
+  - name: hsmAPIserviceValuesNetTypeGET - Retrieve the valid HSM service nettype values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/nettype"
       method: GET
@@ -371,7 +371,7 @@ stages:
 
   # 15. GET /service/values/role API response code
   # 16. GET /service/values/role API response body
-  - name: hsmAPIserviceValuesRoleGET - TODO
+  - name: hsmAPIserviceValuesRoleGET - Retrieve the valid HSM service role values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/role"
       method: GET
@@ -401,7 +401,7 @@ stages:
 
   # 17. GET /service/values/subrole API response code
   # 18. GET /service/values/subrole API response body
-  - name: hsmAPIserviceValuesSubRoleGET - TODO
+  - name: hsmAPIserviceValuesSubRoleGET - Retrieve the valid HSM service subrole values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/subrole"
       method: GET
@@ -428,7 +428,7 @@ stages:
 
   # 19. GET /service/values/state API response code
   # 20. GET /service/values/state API response body
-  - name: hsmAPIserviceValuesStateGET - TODO
+  - name: hsmAPIserviceValuesStateGET - Retrieve the valid HSM service state values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/state"
       method: GET
@@ -460,7 +460,7 @@ stages:
 
   # 21. GET /service/values/type API response code
   # 22. GET /service/values/type API response body
-  - name: hsmAPIserviceValuesTypeGET - TODO
+  - name: hsmAPIserviceValuesTypeGET - Retrieve the valid HSM service type values using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values/type"
       method: GET
