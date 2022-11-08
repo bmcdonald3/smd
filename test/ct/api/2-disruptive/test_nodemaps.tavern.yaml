@@ -79,7 +79,7 @@ test_name: hsmAPIdefaultsNodeMapsDisruptive
 stages:
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeA API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeA API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeA - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeA - DELETE any previously leftover test NodeMap for NodeA.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: DELETE
@@ -91,7 +91,7 @@ stages:
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeB - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeB - DELETE any previously leftover test NodeMap for NodeB.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: DELETE
@@ -103,7 +103,7 @@ stages:
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeC API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeC API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeC - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeC - DELETE any previously leftover test NodeMap for NodeC.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
       method: DELETE
@@ -115,7 +115,7 @@ stages:
 
   # TODO. POST /Defaults/NodeMaps Non Existing Nodes API response code
   # TODO. POST /Defaults/NodeMaps Non Existing Nodes API response body
-  - name: hsmAPIdefaultsNodeMapsPOSTnonExistingNodes - TODO
+  - name: hsmAPIdefaultsNodeMapsPOSTnonExistingNodes - Create a NodeMap for nodes that doesn't yet exist using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
       method: POST
@@ -143,7 +143,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps API response code
   # TODO. GET /Defaults/NodeMaps API response body
-  - name: hsmAPIdefaultsNodeMapsGET - TODO
+  - name: hsmAPIdefaultsNodeMapsGET - Retrieve an existing NodeMap using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
       method: GET
@@ -188,7 +188,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeA API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeA API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeA - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeA - Retrieve the data for NodeA from an existing NodeMap using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: GET
@@ -225,7 +225,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeB API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeB API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeB - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeB - Retrieve the data for NodeB from an existing NodeMap using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: GET
@@ -262,7 +262,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeC API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeC API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeC - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeC - Retrieve the data for NodeC from an existing NodeMap using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
       method: GET
@@ -299,7 +299,7 @@ stages:
 
   # TODO. POST /Defaults/NodeMaps Existing Nodes API response code
   # TODO. POST /Defaults/NodeMaps Existing Nodes API response body
-  - name: hsmAPIdefaultsNodeMapsPOSTexistingNodes - TODO
+  - name: hsmAPIdefaultsNodeMapsPOSTexistingNodes - Update a NodeMap for nodes that already exists using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
       method: POST
@@ -327,7 +327,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps Changed API response code
   # TODO. GET /Defaults/NodeMaps Changed API response body
-  - name: hsmAPIdefaultsNodeMapsGETchanged - TODO
+  - name: hsmAPIdefaultsNodeMapsGETchanged - Retrieve an existing NodeMap that has been updated using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
       method: GET
@@ -372,7 +372,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeA Changed API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeA Changed API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeAchanged - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeAchanged - Retrieve the data for NodeA from an existing NodeMap that has been updated using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: GET
@@ -409,7 +409,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeB Changed API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeB Changed API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeBchanged - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeBchanged - Retrieve the data for NodeB from an existing NodeMap that has been updated using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: GET
@@ -446,7 +446,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeC Changed API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeC Changed API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeCchanged - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeCchanged - Retrieve the data for NodeC from an existing NodeMap that has been updated using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
       method: GET
@@ -481,10 +481,9 @@ stages:
                 enum:
                   - "Worker"
 
-
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBexists - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBexists - Remove an existing NodeMap for NodeB using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: DELETE
@@ -511,7 +510,7 @@ stages:
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeC Exists API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeC Exists API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeCexists - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeCexists - Remove an existing NodeMap for NodeC using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
       method: DELETE
@@ -538,7 +537,7 @@ stages:
 
   # TODO. PUT /Defaults/NodeMaps/{xname} NodeA Exists API response code
   # TODO. PUT /Defaults/NodeMaps/{xname} NodeA Exists API response body
-  - name: hsmAPIdefaultsNodeMapsXnamePUTexists - TODO
+  - name: hsmAPIdefaultsNodeMapsXnamePUTexists - Update the data for NodeA from an existing NodeMap that has data for NodeA using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: PUT
@@ -577,7 +576,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeA Updated API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeA Updated API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeAupdated - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeAupdated - Retrieve the data for NodeA from an existing NodeMap that has been updated multiple times using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: GET
@@ -614,7 +613,7 @@ stages:
 
   # TODO. PUT /Defaults/NodeMaps/{xname} NodeB Non Existing Node API response code
   # TODO. PUT /Defaults/NodeMaps/{xname} NodeB Non Existing Node API response body
-  - name: hsmAPIdefaultsNodeMapsXnamePUTnonExistingNode - TODO
+  - name: hsmAPIdefaultsNodeMapsXnamePUTnonExistingNode - Create data for NodeB in an existing NodeMap that has no data for NodeB using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: PUT
@@ -653,7 +652,7 @@ stages:
 
   # TODO. GET /Defaults/NodeMaps/{xname} NodeB Created API response code
   # TODO. GET /Defaults/NodeMaps/{xname} NodeB Created API response body
-  - name: hsmAPIdefaultsNodeMapsXnameGETnodeBcreated - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeBcreated - Retrieve the created data for NodeB from an existing NodeMap using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: GET
@@ -690,7 +689,7 @@ stages:
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeA Exists API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeA Exists API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeAexists - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeAexists - Remove an existing NodeMap for NodeA using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
       method: DELETE
@@ -717,7 +716,7 @@ stages:
 
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response code
   # TODO. DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response body
-  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBexists - TODO
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBexists - Remove an existing NodeMap for NodeB using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
       method: DELETE
