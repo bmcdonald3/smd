@@ -375,7 +375,7 @@ stages:
   # 18. GET /Inventory/Hardware/{xname} Non Existent Node API response body
   - name: hsmAPIinventoryHardwareXnameGETnonExistentNode - Attempt to retrieve a Hardware Inventory entry for a node that doesn't exist using GET.
     request:
-      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9989c7s9b9n9"
       method: GET
       verify: !bool "{verify}"
     response:
