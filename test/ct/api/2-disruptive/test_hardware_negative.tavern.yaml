@@ -25,42 +25,42 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 30
-# 1. POST /Inventory/Hardware CMMRectifier Missing ID API response code
-# 2. POST /Inventory/Hardware CMMRectifier Missing ID API response body
-# 3. POST /Inventory/Hardware Chassis Empty ID API response code
-# 4. POST /Inventory/Hardware Chassis Empty ID API response body
-# 5. POST /Inventory/Hardware ComputeModule Mismatched Type API response code
-# 6. POST /Inventory/Hardware ComputeModule Mismatched Type API response body
-# 7. POST /Inventory/Hardware HSNBoard Empty Type API response code
-# 8. POST /Inventory/Hardware HSNBoard Empty Type API response body
-# 9. POST /Inventory/Hardware Memory Missing PopulatedFRU API response code
-# 10. POST /Inventory/Hardware Memory Missing PopulatedFRU API response body
-# 11. POST /Inventory/Hardware NodeBMC Missing Location API response code
-# 12. POST /Inventory/Hardware NodeBMC Missing Location API response body
-# 13. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response code
-# 14. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response body
-# 15. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response code
-# 16. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response body
-# 17. GET /Inventory/Hardware/{xname} Non Existent Node API response code
-# 18. GET /Inventory/Hardware/{xname} Non Existent Node API response body
-# 19. GET /Inventory/Hardware?id={id} Invalid Parameter API response code
-# 20. GET /Inventory/Hardware?id={id} Invalid Parameter API response body
-# 21. GET /Inventory/Hardware?type={type} Invalid Parameter API response code
-# 22. GET /Inventory/Hardware?type={type} Invalid Parameter API response body
-# 23. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response code
-# 24. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response body
-# 25. GET /Inventory/Hardware/Query/{xname} Invalid Node API response code
-# 26. GET /Inventory/Hardware/Query/{xname} Invalid Node API response body
-# 27. DELETE /Inventory/Hardware/{xname} Non Existent Node API response code
-# 28. DELETE /Inventory/Hardware/{xname} Non Existent Node API response body
-# 29. DELETE /Inventory/Hardware/{xname} Invalid Node API response code
-# 30. DELETE /Inventory/Hardware/{xname} Invalid Node API response body
+# POST /Inventory/Hardware CMMRectifier Missing ID API response code
+# POST /Inventory/Hardware CMMRectifier Missing ID API response body
+# POST /Inventory/Hardware Chassis Empty ID API response code
+# POST /Inventory/Hardware Chassis Empty ID API response body
+# POST /Inventory/Hardware ComputeModule Mismatched Type API response code
+# POST /Inventory/Hardware ComputeModule Mismatched Type API response body
+# POST /Inventory/Hardware HSNBoard Empty Type API response code
+# POST /Inventory/Hardware HSNBoard Empty Type API response body
+# POST /Inventory/Hardware Memory Missing PopulatedFRU API response code
+# POST /Inventory/Hardware Memory Missing PopulatedFRU API response body
+# POST /Inventory/Hardware NodeBMC Missing Location API response code
+# POST /Inventory/Hardware NodeBMC Missing Location API response body
+# POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response code
+# POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response body
+# POST /Inventory/Hardware NodeHsnNic Invalid Xname API response code
+# POST /Inventory/Hardware NodeHsnNic Invalid Xname API response body
+# GET /Inventory/Hardware/{xname} Non Existent Node API response code
+# GET /Inventory/Hardware/{xname} Non Existent Node API response body
+# GET /Inventory/Hardware?id={id} Invalid Parameter API response code
+# GET /Inventory/Hardware?id={id} Invalid Parameter API response body
+# GET /Inventory/Hardware?type={type} Invalid Parameter API response code
+# GET /Inventory/Hardware?type={type} Invalid Parameter API response body
+# GET /Inventory/Hardware/Query/{xname} Non Existent Node API response code
+# GET /Inventory/Hardware/Query/{xname} Non Existent Node API response body
+# GET /Inventory/Hardware/Query/{xname} Invalid Node API response code
+# GET /Inventory/Hardware/Query/{xname} Invalid Node API response body
+# DELETE /Inventory/Hardware/{xname} Non Existent Node API response code
+# DELETE /Inventory/Hardware/{xname} Non Existent Node API response body
+# DELETE /Inventory/Hardware/{xname} Invalid Node API response code
+# DELETE /Inventory/Hardware/{xname} Invalid Node API response body
 ---
 test_name: hsmAPIinventoryHardwareNegative
 
 stages:
-  # 1. POST /Inventory/Hardware CMMRectifier Missing ID API response code
-  # 2. POST /Inventory/Hardware CMMRectifier Missing ID API response body
+  # POST /Inventory/Hardware CMMRectifier Missing ID API response code
+  # POST /Inventory/Hardware CMMRectifier Missing ID API response body
   - name: hsmAPIinventoryHardwarePOSTcmmRectifierMissingID - Attempt to create a CMMRectifier Hardware Inventory entry with a missing ID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -97,8 +97,8 @@ stages:
                 enum:
                   - 400
 
-  # 3. POST /Inventory/Hardware Chassis Empty ID API response code
-  # 4. POST /Inventory/Hardware Chassis Empty ID API response body
+  # POST /Inventory/Hardware Chassis Empty ID API response code
+  # POST /Inventory/Hardware Chassis Empty ID API response body
   - name: hsmAPIinventoryHardwarePOSTchassisEmptyID - Attempt to create a Chassis Hardware Inventory entry with an empty ID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -135,8 +135,8 @@ stages:
                 enum:
                   - 400
 
-#  # 5. POST /Inventory/Hardware ComputeModule Mismatched Type API response code
-#  # 6. POST /Inventory/Hardware ComputeModule Mismatched Type API response body
+#  # POST /Inventory/Hardware ComputeModule Mismatched Type API response code
+#  # POST /Inventory/Hardware ComputeModule Mismatched Type API response body
 #  - name: hsmAPIinventoryHardwarePOSTcomputeModuleMismatchedType - Attempt to create a ComputeModule Hardware Inventory entry with a type that doesn't match its ID's type using POST.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -177,8 +177,8 @@ stages:
 #                enum:
 #                  - 400
 
-#  # 7. POST /Inventory/Hardware HSNBoard Empty Type API response code
-#  # 8. POST /Inventory/Hardware HSNBoard Empty Type API response body
+#  # POST /Inventory/Hardware HSNBoard Empty Type API response code
+#  # POST /Inventory/Hardware HSNBoard Empty Type API response body
 #  - name: hsmAPIinventoryHardwarePOSThsnBoardEmptyType - Attempt to create an HSNBoard Hardware Inventory entry with an empty type using POST.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -219,8 +219,8 @@ stages:
 #                enum:
 #                  - 400
 
-  # 9. POST /Inventory/Hardware Memory Missing PopulatedFRU API response code
-  # 10. POST /Inventory/Hardware Memory Missing PopulatedFRU API response body
+  # POST /Inventory/Hardware Memory Missing PopulatedFRU API response code
+  # POST /Inventory/Hardware Memory Missing PopulatedFRU API response body
   - name: hsmAPIinventoryHardwarePOSTmemoryMissingPopulatedFRU - Attempt to create a Memory Hardware Inventory entry with missing PopulatedFRU data using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -257,8 +257,8 @@ stages:
                 enum:
                   - 400
 
-  # 11. POST /Inventory/Hardware NodeBMC Missing Location API response code
-  # 12. POST /Inventory/Hardware NodeBMC Missing Location API response body
+  # POST /Inventory/Hardware NodeBMC Missing Location API response code
+  # POST /Inventory/Hardware NodeBMC Missing Location API response body
   - name: hsmAPIinventoryHardwarePOSTnodeBMCmissingLocation - Attempt to create a NodeBMC Hardware Inventory entry with missing location data using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -295,8 +295,8 @@ stages:
                 enum:
                   - 400
 
-  # 13. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response code
-  # 14. POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response body
+  # POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response code
+  # POST /Inventory/Hardware NodeEnclosure Empty PopulatedFRU API response body
   - name: hsmAPIinventoryHardwarePOSTnodeEnclosureEmptyPopulatedFRU - Attempt to create a NodeEnclosure Hardware Inventory entry with empty PopulatedFRU data using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -333,8 +333,8 @@ stages:
                 enum:
                   - 400
 
-  # 15. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response code
-  # 16. POST /Inventory/Hardware NodeHsnNic Invalid Xname API response body
+  # POST /Inventory/Hardware NodeHsnNic Invalid Xname API response code
+  # POST /Inventory/Hardware NodeHsnNic Invalid Xname API response body
   - name: hsmAPIinventoryHardwarePOSTnodeHsnNicInvalidXname - Attempt to create a NodeHsnNic Hardware Inventory entry with an invalid xname using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -371,8 +371,8 @@ stages:
                 enum:
                   - 400
 
-  # 17. GET /Inventory/Hardware/{xname} Non Existent Node API response code
-  # 18. GET /Inventory/Hardware/{xname} Non Existent Node API response body
+  # GET /Inventory/Hardware/{xname} Non Existent Node API response code
+  # GET /Inventory/Hardware/{xname} Non Existent Node API response body
   - name: hsmAPIinventoryHardwareXnameGETnonExistentNode - Attempt to retrieve a Hardware Inventory entry for a node that doesn't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9989c7s9b9n9"
@@ -408,8 +408,8 @@ stages:
                 enum:
                   - 404
 
-  # 19. GET /Inventory/Hardware?id={id} Invalid Parameter API response code
-  # 20. GET /Inventory/Hardware?id={id} Invalid Parameter API response body
+  # GET /Inventory/Hardware?id={id} Invalid Parameter API response code
+  # GET /Inventory/Hardware?id={id} Invalid Parameter API response body
   - name: hsmAPIinventoryHardwareGETidParamInvalid - Attempt to retrieve Hardware Inventory entries using GET with an invalid id query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?id=FAKE"
@@ -445,8 +445,8 @@ stages:
                 enum:
                   - 400
 
-  # 21. GET /Inventory/Hardware?type={type} Invalid Parameter API response code
-  # 22. GET /Inventory/Hardware?type={type} Invalid Parameter API response body
+  # GET /Inventory/Hardware?type={type} Invalid Parameter API response code
+  # GET /Inventory/Hardware?type={type} Invalid Parameter API response body
   - name: hsmAPIinventoryHardwareGETtypeParamInvalid - Attempt to retrieve Hardware Inventory entries using GET with an invalid type query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware?type=FAKE"
@@ -482,8 +482,8 @@ stages:
                 enum:
                   - 400
 
-  # 23. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response code
-  # 24. GET /Inventory/Hardware/Query/{xname} Non Existent Node API response body
+  # GET /Inventory/Hardware/Query/{xname} Non Existent Node API response code
+  # GET /Inventory/Hardware/Query/{xname} Non Existent Node API response body
   - name: hsmAPIinventoryHardwareQueryXnameGETnonExistentNode - Attempt to query for Node Hardware Inventory entries with an xname that doesn't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/x9999c7s9b9n9?children=False"
@@ -509,8 +509,8 @@ stages:
                 enum:
                   - "NestNodesOnly"
 
-  # 25. GET /Inventory/Hardware/Query/{xname} Invalid Node API response code
-  # 26. GET /Inventory/Hardware/Query/{xname} Invalid Node API response body
+  # GET /Inventory/Hardware/Query/{xname} Invalid Node API response code
+  # GET /Inventory/Hardware/Query/{xname} Invalid Node API response body
   - name: hsmAPIinventoryHardwareQueryXnameGETinvalidNode - Attempt to query for Node Hardware Inventory entries with an invalid xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/FAKE"
@@ -546,8 +546,8 @@ stages:
                 enum:
                   - 400
 
-  # 27. DELETE /Inventory/Hardware/{xname} Non Existent Node API response code
-  # 28. DELETE /Inventory/Hardware/{xname} Non Existent Node API response body
+  # DELETE /Inventory/Hardware/{xname} Non Existent Node API response code
+  # DELETE /Inventory/Hardware/{xname} Non Existent Node API response body
   - name: hsmAPIinventoryHardwareXnameDELETEnonExistentNode - Attempt to remove a Node Hardware Inventory entry for an xname that doesn't exist using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/x9999c7s9b9n9"
@@ -583,8 +583,8 @@ stages:
                 enum:
                   - 404
 
-  # 29. DELETE /Inventory/Hardware/{xname} Invalid Node API response code
-  # 30. DELETE /Inventory/Hardware/{xname} Invalid Node API response body
+  # DELETE /Inventory/Hardware/{xname} Invalid Node API response code
+  # DELETE /Inventory/Hardware/{xname} Invalid Node API response body
   - name: hsmAPIinventoryHardwareXnameDELETEinvalidNode - Attempt to remove a Node Hardware Inventory entry for an invalid xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/FAKE"

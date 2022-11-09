@@ -24,7 +24,7 @@
 # Author: Manny Alvarez
 # Service: Hardware State Manager
 
-# HMS test metrics test cases:
+# HMS test metrics test cases: 17
 # GET /Inventory/RedfishEndpoints Invalid xname
 # GET /Inventory/RedfishEndpoints Invalid type
 # POST /Inventory/RedfishEndpoints Invalid xname
@@ -42,7 +42,6 @@
 # PATCH /Inventory/RedfishEndpoints/{xname} non-existent
 # DELETE /Inventory/RedfishEndpoints/{xname} Invalid xname
 # DELETE /Inventory/RedfishEndpoints/{xname} non-existent
-
 ---
 test_name: hsmAPIRedfishEndpointsNegative
 

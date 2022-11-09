@@ -25,36 +25,36 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 24
-# 1. POST /service/ready API response code
-# 2. POST /service/ready API response body
-# 3. PATCH /service/ready API response code
-# 4. PATCH /service/ready API response body
-# 5. PUT /service/ready API response code
-# 6. PUT /service/ready API response body
-# 7. DELETE /service/ready API response code
-# 8. DELETE /service/ready API response body
-# 9. POST /service/liveness API response code
-# 10. POST /service/liveness API response body
-# 11. PATCH /service/liveness API response code
-# 12. PATCH /service/liveness API response body
-# 13. PUT /service/liveness API response code
-# 14. PUT /service/liveness API response body
-# 15. DELETE /service/liveness API response code
-# 16. DELETE /service/liveness API response body
-# 17. POST /service/values API response code
-# 18. POST /service/values API response body
-# 19. PATCH /service/values API response code
-# 20. PATCH /service/values API response body
-# 21. PUT /service/values API response code
-# 22. PUT /service/values API response body
-# 23. DELETE /service/values API response code
-# 24. DELETE /service/values API response body
+# POST /service/ready API response code
+# POST /service/ready API response body
+# PATCH /service/ready API response code
+# PATCH /service/ready API response body
+# PUT /service/ready API response code
+# PUT /service/ready API response body
+# DELETE /service/ready API response code
+# DELETE /service/ready API response body
+# POST /service/liveness API response code
+# POST /service/liveness API response body
+# PATCH /service/liveness API response code
+# PATCH /service/liveness API response body
+# PUT /service/liveness API response code
+# PUT /service/liveness API response body
+# DELETE /service/liveness API response code
+# DELETE /service/liveness API response body
+# POST /service/values API response code
+# POST /service/values API response body
+# PATCH /service/values API response code
+# PATCH /service/values API response body
+# PUT /service/values API response code
+# PUT /service/values API response body
+# DELETE /service/values API response code
+# DELETE /service/values API response body
 ---
 test_name: hsmAPIserviceNegative
 
 stages:
-  # 1. POST /service/ready API response code
-  # 2. POST /service/ready API response body
+  # POST /service/ready API response code
+  # POST /service/ready API response body
   - name: hsmAPIserviceReadyPOST - Attempt an unsupported POST operation on the service readiness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
@@ -90,8 +90,8 @@ stages:
                 enum:
                   - 405
 
-  # 3. PATCH /service/ready API response code
-  # 4. PATCH /service/ready API response body
+  # PATCH /service/ready API response code
+  # PATCH /service/ready API response body
   - name: hsmAPIserviceReadyPATCH - Attempt an unsupported PATCH operation on the service readiness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
@@ -127,8 +127,8 @@ stages:
                 enum:
                   - 405
 
-  # 5. PUT /service/ready API response code
-  # 6. PUT /service/ready API response body
+  # PUT /service/ready API response code
+  # PUT /service/ready API response body
   - name: hsmAPIserviceReadyPUT - Attempt an unsupported PUT operation on the service readiness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
@@ -164,8 +164,8 @@ stages:
                 enum:
                   - 405
 
-  # 7. DELETE /service/ready API response code
-  # 8. DELETE /service/ready API response body
+  # DELETE /service/ready API response code
+  # DELETE /service/ready API response body
   - name: hsmAPIserviceReadyDELETE - Attempt an unsupported DELETE operation on the service readiness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/ready"
@@ -200,8 +200,8 @@ stages:
                 enum:
                   - 405
 
-  # 9. POST /service/liveness API response code
-  # 10. POST /service/liveness API response body
+  # POST /service/liveness API response code
+  # POST /service/liveness API response body
   - name: hsmAPIserviceLivenessPOST - Attempt an unsupported POST operation on the service liveness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
@@ -237,8 +237,8 @@ stages:
                 enum:
                   - 405
 
-  # 11. PATCH /service/liveness API response code
-  # 12. PATCH /service/liveness API response body
+  # PATCH /service/liveness API response code
+  # PATCH /service/liveness API response body
   - name: hsmAPIserviceLivenessPATCH - Attempt an unsupported PATCH operation on the service liveness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
@@ -274,8 +274,8 @@ stages:
                 enum:
                   - 405
 
-  # 13. PUT /service/liveness API response code
-  # 14. PUT /service/liveness API response body
+  # PUT /service/liveness API response code
+  # PUT /service/liveness API response body
   - name: hsmAPIserviceLivenessPUT - Attempt an unsupported PUT operation on the service liveness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
@@ -311,8 +311,8 @@ stages:
                 enum:
                   - 405
 
-  # 15. DELETE /service/liveness API response code
-  # 16. DELETE /service/liveness API response body
+  # DELETE /service/liveness API response code
+  # DELETE /service/liveness API response body
   - name: hsmAPIserviceLivenessDELETE - Attempt an unsupported DELETE operation on the service liveness endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/liveness"
@@ -347,8 +347,8 @@ stages:
                 enum:
                   - 405
 
-  # 17. POST /service/values API response code
-  # 18. POST /service/values API response body
+  # POST /service/values API response code
+  # POST /service/values API response body
   - name: hsmAPIserviceValuesPOST - Attempt an unsupported POST operation on the service values endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
@@ -384,8 +384,8 @@ stages:
                 enum:
                   - 405
 
-  # 19. PATCH /service/values API response code
-  # 20. PATCH /service/values API response body
+  # PATCH /service/values API response code
+  # PATCH /service/values API response body
   - name: hsmAPIserviceValuesPATCH - Attempt an unsupported PATCH operation on the service values endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
@@ -421,8 +421,8 @@ stages:
                 enum:
                   - 405
 
-  # 21. PUT /service/values API response code
-  # 22. PUT /service/values API response body
+  # PUT /service/values API response code
+  # PUT /service/values API response body
   - name: hsmAPIserviceValuesPUT - Attempt an unsupported PUT operation on the service values endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"
@@ -458,8 +458,8 @@ stages:
                 enum:
                   - 405
 
-  # 23. DELETE /service/values API response code
-  # 24. DELETE /service/values API response body
+  # DELETE /service/values API response code
+  # DELETE /service/values API response body
   - name: hsmAPIserviceValuesDELETE - Attempt an unsupported DELETE operation on the service values endpoint.
     request:
       url: "{hsm_base_url}/hsm/v2/service/values"

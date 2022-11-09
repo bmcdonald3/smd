@@ -25,48 +25,48 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 36
-# 1. POST /Defaults/NodeMaps Missing ID API response code
-# 2. POST /Defaults/NodeMaps Missing ID API response body
-# 3. POST /Defaults/NodeMaps Missing NID API response code
-# 4. POST /Defaults/NodeMaps Missing NID API response body
-# 5. POST /Defaults/NodeMaps Conflicting NID API response code
-# 6. POST /Defaults/NodeMaps Conflicting NID API response body
-# 7. POST /Defaults/NodeMaps Invalid Role API response code
-# 8. POST /Defaults/NodeMaps Invalid Role API response body
-# 9. POST /Defaults/NodeMaps Invalid SubRole API response code
-# 10. POST /Defaults/NodeMaps Invalid SubRole API response body
-# 11. GET /Defaults/NodeMaps/{xname} Non Existent Node API response code
-# 12. GET /Defaults/NodeMaps/{xname} Non Existent Node API response body
-# 13. GET /Defaults/NodeMaps/{xname} NodeBMC API response code
-# 14. GET /Defaults/NodeMaps/{xname} NodeBMC Node API response body
-# 15. GET /Defaults/NodeMaps/{xname} Invalid Xname API response code
-# 16. GET /Defaults/NodeMaps/{xname} Invalid Xname API response body
-# 17. DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response code
-# 18. DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response body
-# 19. DELETE /Defaults/NodeMaps/{xname} NodeBMC API response code
-# 20. DELETE /Defaults/NodeMaps/{xname} NodeBMC API response body
-# 21. DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response code
-# 22. DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response body
-# 23. PUT /Defaults/NodeMaps/{xname} Invalid Xname API response code
-# 24. PUT /Defaults/NodeMaps/{xname} Invalid Xname API response body
-# 25. PUT /Defaults/NodeMaps/{xname} Missing NID API response code
-# 26. PUT /Defaults/NodeMaps/{xname} Missing NID API response body
-# 27. PUT /Defaults/NodeMaps/{xname} Invalid Role API response code
-# 28. PUT /Defaults/NodeMaps/{xname} Invalid Role API response body
-# 29. PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response code
-# 30. PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response body
-# 31. POST /Defaults/NodeMaps Node API response code
-# 32. POST /Defaults/NodeMaps Node API response body
-# 33. PUT /Defaults/NodeMaps/{xname} Conflicting NID API response code
-# 34. PUT /Defaults/NodeMaps/{xname} Conflicting NID API response body
-# 35. DELETE /Defaults/NodeMaps/{xname} Existing Node API response code
-# 36. DELETE /Defaults/NodeMaps/{xname} Existing Node API response body
+# POST /Defaults/NodeMaps Missing ID API response code
+# POST /Defaults/NodeMaps Missing ID API response body
+# POST /Defaults/NodeMaps Missing NID API response code
+# POST /Defaults/NodeMaps Missing NID API response body
+# POST /Defaults/NodeMaps Conflicting NID API response code
+# POST /Defaults/NodeMaps Conflicting NID API response body
+# POST /Defaults/NodeMaps Invalid Role API response code
+# POST /Defaults/NodeMaps Invalid Role API response body
+# POST /Defaults/NodeMaps Invalid SubRole API response code
+# POST /Defaults/NodeMaps Invalid SubRole API response body
+# GET /Defaults/NodeMaps/{xname} Non Existent Node API response code
+# GET /Defaults/NodeMaps/{xname} Non Existent Node API response body
+# GET /Defaults/NodeMaps/{xname} NodeBMC API response code
+# GET /Defaults/NodeMaps/{xname} NodeBMC Node API response body
+# GET /Defaults/NodeMaps/{xname} Invalid Xname API response code
+# GET /Defaults/NodeMaps/{xname} Invalid Xname API response body
+# DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response code
+# DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeBMC API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeBMC API response body
+# DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response code
+# DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response body
+# PUT /Defaults/NodeMaps/{xname} Invalid Xname API response code
+# PUT /Defaults/NodeMaps/{xname} Invalid Xname API response body
+# PUT /Defaults/NodeMaps/{xname} Missing NID API response code
+# PUT /Defaults/NodeMaps/{xname} Missing NID API response body
+# PUT /Defaults/NodeMaps/{xname} Invalid Role API response code
+# PUT /Defaults/NodeMaps/{xname} Invalid Role API response body
+# PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response code
+# PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response body
+# POST /Defaults/NodeMaps Node API response code
+# POST /Defaults/NodeMaps Node API response body
+# PUT /Defaults/NodeMaps/{xname} Conflicting NID API response code
+# PUT /Defaults/NodeMaps/{xname} Conflicting NID API response body
+# DELETE /Defaults/NodeMaps/{xname} Existing Node API response code
+# DELETE /Defaults/NodeMaps/{xname} Existing Node API response body
 ---
 test_name: hsmAPIdefaultsNodeMapsNegative
 
 stages:
-  # 1. POST /Defaults/NodeMaps Missing ID API response code
-  # 2. POST /Defaults/NodeMaps Missing ID API response body
+  # POST /Defaults/NodeMaps Missing ID API response code
+  # POST /Defaults/NodeMaps Missing ID API response body
   - name: hsmAPIdefaultsNodeMapsPOSTmissingID - Attempt to create a NodeMap with a payload that is missing its ID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -103,8 +103,8 @@ stages:
                 enum:
                   - 400
 
-  # 3. POST /Defaults/NodeMaps Missing NID API response code
-  # 4. POST /Defaults/NodeMaps Missing NID API response body
+  # POST /Defaults/NodeMaps Missing NID API response code
+  # POST /Defaults/NodeMaps Missing NID API response body
   - name: hsmAPIdefaultsNodeMapsPOSTmissingNID - Attempt to create a NodeMap with a payload that is missing its NID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -141,8 +141,8 @@ stages:
                 enum:
                   - 400
 
-  # 5. POST /Defaults/NodeMaps Conflicting NID API response code
-  # 6. POST /Defaults/NodeMaps Conflicting NID API response body
+  # POST /Defaults/NodeMaps Conflicting NID API response code
+  # POST /Defaults/NodeMaps Conflicting NID API response body
   - name: hsmAPIdefaultsNodeMapsPOSTconflictingNID - Attempt to create multiple NodeMaps that both use the same NID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -179,8 +179,8 @@ stages:
                 enum:
                   - 409
 
-  # 7. POST /Defaults/NodeMaps Invalid Role API response code
-  # 8. POST /Defaults/NodeMaps Invalid Role API response body
+  # POST /Defaults/NodeMaps Invalid Role API response code
+  # POST /Defaults/NodeMaps Invalid Role API response body
   - name: hsmAPIdefaultsNodeMapsPOSTinvalidRole - Attempt to create a NodeMap with an invalid Role using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -217,8 +217,8 @@ stages:
                 enum:
                   - 400
 
-  # 9. POST /Defaults/NodeMaps Invalid SubRole API response code
-  # 10. POST /Defaults/NodeMaps Invalid SubRole API response body
+  # POST /Defaults/NodeMaps Invalid SubRole API response code
+  # POST /Defaults/NodeMaps Invalid SubRole API response body
   - name: hsmAPIdefaultsNodeMapsPOSTinvalidSubRole - Attempt to create a NodeMap with an invalid SubRole using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -255,8 +255,8 @@ stages:
                 enum:
                   - 400
 
-  # 11. GET /Defaults/NodeMaps/{xname} Non Existent Node API response code
-  # 12. GET /Defaults/NodeMaps/{xname} Non Existent Node API response body
+  # GET /Defaults/NodeMaps/{xname} Non Existent Node API response code
+  # GET /Defaults/NodeMaps/{xname} Non Existent Node API response body
   - name: hsmAPIdefaultsNodeMapsXnameGETnonExistentNode - Attempt to retrieve a NodeMap for a Node that doesn't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b8n9"
@@ -292,8 +292,8 @@ stages:
                 enum:
                   - 404
 
-  # 13. GET /Defaults/NodeMaps/{xname} NodeBMC API response code
-  # 14. GET /Defaults/NodeMaps/{xname} NodeBMC Node API response body
+  # GET /Defaults/NodeMaps/{xname} NodeBMC API response code
+  # GET /Defaults/NodeMaps/{xname} NodeBMC Node API response body
   - name: hsmAPIdefaultsNodeMapsXnameGETnodeBMC - Attempt to retrieve a NodeMap for a NodeBMC which is invalid using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b8"
@@ -329,8 +329,8 @@ stages:
                 enum:
                   - 404
 
-  # 15. GET /Defaults/NodeMaps/{xname} Invalid Xname API response code
-  # 16. GET /Defaults/NodeMaps/{xname} Invalid Xname API response body
+  # GET /Defaults/NodeMaps/{xname} Invalid Xname API response code
+  # GET /Defaults/NodeMaps/{xname} Invalid Xname API response body
   - name: hsmAPIdefaultsNodeMapsXnameGETinvalidXname - Attempt to retrieve a NodeMap for an invalid xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/FAKE"
@@ -367,8 +367,8 @@ stages:
                 enum:
                   - 404
 
-  # 17. DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response code
-  # 18. DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response body
+  # DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response code
+  # DELETE /Defaults/NodeMaps/{xname} Non Existent Node API response body
   - name: hsmAPIdefaultsNodeMapsXnameDELETEnonExistentNode - Attempt to remove a NodeMap for a Node that doesn't exist using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b8n9"
@@ -404,8 +404,8 @@ stages:
                 enum:
                   - 404
 
-  # 19. DELETE /Defaults/NodeMaps/{xname} NodeBMC API response code
-  # 20. DELETE /Defaults/NodeMaps/{xname} NodeBMC API response body
+  # DELETE /Defaults/NodeMaps/{xname} NodeBMC API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeBMC API response body
   - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBMC - Attempt to remove a NodeMap for a NodeBMC which is invalid using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b8"
@@ -441,8 +441,8 @@ stages:
                 enum:
                   - 404
 
-  # 21. DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response code
-  # 22. DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response body
+  # DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response code
+  # DELETE /Defaults/NodeMaps/{xname} Invalid Xname API response body
   - name: hsmAPIdefaultsNodeMapsXnameDELETEinvalidXname - Attempt to remove a NodeMap for a Node with an invalid xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/FAKE"
@@ -478,8 +478,8 @@ stages:
                 enum:
                   - 400
 
-  # 23. PUT /Defaults/NodeMaps/{xname} Invalid Xname API response code
-  # 24. PUT /Defaults/NodeMaps/{xname} Invalid Xname API response body
+  # PUT /Defaults/NodeMaps/{xname} Invalid Xname API response code
+  # PUT /Defaults/NodeMaps/{xname} Invalid Xname API response body
   - name: hsmAPIdefaultsNodeMapsXnamePUTinvalidXname - Attempt to create a NodeMap for a Node with an invalid xname using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/FAKE"
@@ -516,8 +516,8 @@ stages:
                 enum:
                   - 400
 
-  # 25. PUT /Defaults/NodeMaps/{xname} Missing NID API response code
-  # 26. PUT /Defaults/NodeMaps/{xname} Missing NID API response body
+  # PUT /Defaults/NodeMaps/{xname} Missing NID API response code
+  # PUT /Defaults/NodeMaps/{xname} Missing NID API response body
   - name: hsmAPIdefaultsNodeMapsXnamePUTmissingNID - Attempt to create a NodeMap for a Node with a payload that is missing its NID using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b7n9"
@@ -554,8 +554,8 @@ stages:
                 enum:
                   - 400
 
-  # 27. PUT /Defaults/NodeMaps/{xname} Invalid Role API response code
-  # 28. PUT /Defaults/NodeMaps/{xname} Invalid Role API response body
+  # PUT /Defaults/NodeMaps/{xname} Invalid Role API response code
+  # PUT /Defaults/NodeMaps/{xname} Invalid Role API response body
   - name: hsmAPIdefaultsNodeMapsXnamePUTinvalidRole - Attempt to create a NodeMap with an invalid Role using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
@@ -592,8 +592,8 @@ stages:
                 enum:
                   - 400
 
-  # 29. PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response code
-  # 30. PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response body
+  # PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response code
+  # PUT /Defaults/NodeMaps/{xname} Invalid SubRole API response body
   - name: hsmAPIdefaultsNodeMapsXnamePUTinvalidSubRole - Attempt to create a NodeMap with an invalid SubRole using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
@@ -630,8 +630,8 @@ stages:
                 enum:
                   - 400
 
-  # 31. POST /Defaults/NodeMaps Node API response code
-  # 32. POST /Defaults/NodeMaps Node API response body
+  # POST /Defaults/NodeMaps Node API response code
+  # POST /Defaults/NodeMaps Node API response body
   - name: hsmAPIdefaultsNodeMapsPOSTnode - Create a NodeMap for the following conflicting NID test case using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -658,8 +658,8 @@ stages:
                 enum:
                   - "Created or modified 1 entries"
 
-  # 33. PUT /Defaults/NodeMaps/{xname} Conflicting NID API response code
-  # 34. PUT /Defaults/NodeMaps/{xname} Conflicting NID API response body
+  # PUT /Defaults/NodeMaps/{xname} Conflicting NID API response code
+  # PUT /Defaults/NodeMaps/{xname} Conflicting NID API response body
   - name: hsmAPIdefaultsNodeMapsXnamePUTconflictingNID - Attempt to create a NodeMap with a NID that conflicts with an existing NodeMap using PUT.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
@@ -696,8 +696,8 @@ stages:
                 enum:
                   - 409
 
-  # 35. DELETE /Defaults/NodeMaps/{xname} Node API response code
-  # 36. DELETE /Defaults/NodeMaps/{xname} Node API response body
+  # DELETE /Defaults/NodeMaps/{xname} Node API response code
+  # DELETE /Defaults/NodeMaps/{xname} Node API response body
   - name: hsmAPIdefaultsNodeMapsXnameDELETEnode - Remove the NodeMap for the previous conflicting NID test case using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"

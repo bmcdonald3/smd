@@ -24,7 +24,7 @@
 # Author: Manny Alvarez
 # Service: Hardware State Manager
 
-# HMS test metrics test cases:
+# HMS test metrics test cases: 18
 # POST /locks/reservations/remove Invalid processing model
 # POST /locks/reservations/release Invalid processing model
 # POST /locks/reservations/release Missing ReservationKeys
@@ -43,7 +43,6 @@
 # POST /locks/unlock Invalid processing model
 # POST /locks/disable Invalid processing model
 # POST /locks/repair Invalid processing model
-
 ---
 test_name: hsmAPILocksNegative
 

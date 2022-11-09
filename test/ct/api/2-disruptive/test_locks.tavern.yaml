@@ -24,13 +24,10 @@
 # Author: Manny Alvarez
 # Service: Hardware State Manager
 
-# HMS test metrics test cases:
-
+# HMS test metrics test cases: 35
 # POST /locks/status No Components
 # GET /locks/status?type=partition No Components
-
 # POST /State/Components Add test components
-
 # POST /locks/status \w Components
 # GET /locks/status?type=partition \w Components
 # POST /locks/lock Lock components of one type
@@ -62,10 +59,7 @@
 # POST /locks/repair Repair reservations on 4 components
 # POST /locks/unlock Unlock 4 components rigid
 # POST /locks/unlock Unlock 4 components flexible (unlock 2/4)
-
 # DELETE /State/Components/{xname} Remove test components
-
-
 ---
 test_name: hsmAPILocks
 

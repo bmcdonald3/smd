@@ -24,20 +24,17 @@
 # Author: Manny Alvarez
 # Service: Hardware State Manager
 
-# HMS test metrics test cases:
-
+# HMS test metrics test cases: 31
 # DELETE /Inventory/RedfishEndpoints/{xname1} Clean up leftovers 1
 # DELETE /Inventory/RedfishEndpoints/{xname2} Clean up leftovers 2
 # DELETE /Inventory/RedfishEndpoints/{xname3} Clean up leftovers 3
 # DELETE /Inventory/RedfishEndpoints/{xname4} Clean up leftovers 4
-
 # POST /Inventory/RedfishEndpoints Create 1 RFEndpoint (xname1)
 # POST /Inventory/RedfishEndpoints Create already existent RFEndpoint
 # GET /Inventory/RedfishEndpoints/{xname1} Check discovery status
 # DELETE /Inventory/RedfishEndpoints/{xname1} Delete RFEndpoint
 # DELETE /Inventory/RedfishEndpoints/{xname1} Delete on non-existent RFEndpoint
 # POST /Inventory/RedfishEndpoints Create 3 RFEndpoints (2 disabled) (xname2, xname3, xname4)
-
 # GET /Inventory/RedfishEndpoints Check discovery status (on enabled)
 # GET /Inventory/RedfishEndpoints Check discovery status (on disabled)
 # PATCH /Inventory/RedfishEndpoints/{xname3} Patch Hostname (hostname FQDN mismatch)
@@ -50,18 +47,15 @@
 # GET /Inventory/RedfishEndpoints/{xname3} Check discovery not triggered
 # PATCH /Inventory/RedfishEndpoints/{xname3} Patch RediscoverOnUpdate true
 # GET /Inventory/RedfishEndpoints/{xname3} Check discovery triggered
-
 # PUT /Inventory/RedfishEndpoints/{xname4} Replace all attributes
 # GET /Inventory/RedfishEndpoints/{xname4} Check discovery triggered
 # DELETE /Inventory/RedfishEndpoints/{xname3} Delete 1 RFEndpoint
 # PUT /Inventory/RedfishEndpoints/{xname3} PUT on non-existent RFEndpoint
 # PATCH /Inventory/RedfishEndpoints/{xname3} Patch on non-existent RFEndpoint
-
 # DELETE /Inventory/RedfishEndpoints/{xname1} Clean up leftovers 1
 # DELETE /Inventory/RedfishEndpoints/{xname2} Clean up leftovers 2
 # DELETE /Inventory/RedfishEndpoints/{xname3} Clean up leftovers 3
 # DELETE /Inventory/RedfishEndpoints/{xname4} Clean up leftovers 4
-
 ---
 test_name: hsmAPIRedfishEndpoints
 

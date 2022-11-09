@@ -25,30 +25,30 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 18
-# 1. GET /memberships API response code
-# 2. GET /memberships API response body
-# 3. GET /memberships/{xname} node API response code
-# 4. GET /memberships/{xname} node API response body
-# 5. GET /memberships?arch={arch} API response code
-# 6. GET /memberships?arch={arch} API response body
-# 7. GET /memberships?flag={flag} API response code
-# 8. GET /memberships?flag={flag} API response body
-# 9. GET /memberships?id={xname} node API response code
-# 10. GET /memberships?id={xname} node API response body
-# 11. GET /memberships?nid={nid} API response code
-# 12. GET /memberships?nid={nid} API response body
-# 13. GET /memberships?role={role} API response code
-# 14. GET /memberships?role={role} API response body
-# 15. GET /memberships?state={state} API response code
-# 16. GET /memberships?state={state} API response body
-# 17. GET /memberships?type={type} API response code
-# 18. GET /memberships?type={type} API response body
+# GET /memberships API response code
+# GET /memberships API response body
+# GET /memberships/{xname} node API response code
+# GET /memberships/{xname} node API response body
+# GET /memberships?arch={arch} API response code
+# GET /memberships?arch={arch} API response body
+# GET /memberships?flag={flag} API response code
+# GET /memberships?flag={flag} API response body
+# GET /memberships?id={xname} node API response code
+# GET /memberships?id={xname} node API response body
+# GET /memberships?nid={nid} API response code
+# GET /memberships?nid={nid} API response body
+# GET /memberships?role={role} API response code
+# GET /memberships?role={role} API response body
+# GET /memberships?state={state} API response code
+# GET /memberships?state={state} API response body
+# GET /memberships?type={type} API response code
+# GET /memberships?type={type} API response body
 ---
 test_name: Ensure that we can gather information from the memberships collection
 
 stages:
-  # 1. GET /memberships API response code
-  # 2. GET /memberships API response body
+  # GET /memberships API response code
+  # GET /memberships API response body
   - name: Ensure that we can conduct a query on the memberships collection
     request:
       url: "{hsm_base_url}/hsm/v2/memberships"
@@ -93,8 +93,8 @@ stages:
           state: Components[0].State
           type: Components[0].Type
 
-  # 3. GET /memberships/{xname} node API response code
-  # 4. GET /memberships/{xname} node API response body
+  # GET /memberships/{xname} node API response code
+  # GET /memberships/{xname} node API response body
   - name: Get membership data for a given node using API endpoint
     request:
       url: "{hsm_base_url}/hsm/v2/memberships/{id}"
@@ -118,8 +118,8 @@ stages:
               partitionName:
                 type: str
 
-  # 5. GET /memberships?arch={arch} API response code
-  # 6. GET /memberships?arch={arch} API response body
+  # GET /memberships?arch={arch} API response code
+  # GET /memberships?arch={arch} API response body
   - name: Get membership data for a given node using arch query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?arch={arch}"
@@ -146,8 +146,8 @@ stages:
                   partitionName:
                     type: str
 
-  # 7. GET /memberships?flag={flag} API response code
-  # 8. GET /memberships?flag={flag} API response body
+  # GET /memberships?flag={flag} API response code
+  # GET /memberships?flag={flag} API response body
   - name: Get membership data for a given node using flag query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?flag={flag}"
@@ -174,8 +174,8 @@ stages:
                   partitionName:
                     type: str
 
-  # 9. GET /memberships?id={xname} node API response code
-  # 10. GET /memberships?id={xname} node API response body
+  # GET /memberships?id={xname} node API response code
+  # GET /memberships?id={xname} node API response body
   - name: Get membership data for a given node using id query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?id={id}"
@@ -202,8 +202,8 @@ stages:
                   partitionName:
                     type: str
 
-  # 11. GET /memberships?nid={nid} API response code
-  # 12. GET /memberships?nid={nid} API response body
+  # GET /memberships?nid={nid} API response code
+  # GET /memberships?nid={nid} API response body
   - name: Get membership data for a given node using nid query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?nid={nid}"
@@ -230,8 +230,8 @@ stages:
                   partitionName:
                     type: str
 
-  # 13. GET /memberships?role={role} API response code
-  # 14. GET /memberships?role={role} API response body
+  # GET /memberships?role={role} API response code
+  # GET /memberships?role={role} API response body
   - name: Get membership data for a given node using role query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?role={role}"
@@ -258,8 +258,8 @@ stages:
                   partitionName:
                     type: str
 
-  # 15. GET /memberships?state={state} API response code
-  # 16. GET /memberships?state={state} API response body
+  # GET /memberships?state={state} API response code
+  # GET /memberships?state={state} API response body
   - name: Get membership data for a given node using state query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?state={state}"
@@ -286,8 +286,8 @@ stages:
                   partitionName:
                     type: str
 
-  # 17. GET /memberships?type={type} API response code
-  # 18. GET /memberships?type={type} API response body
+  # GET /memberships?type={type} API response code
+  # GET /memberships?type={type} API response body
   - name: Get membership data for a given node using type query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?type={type}"

@@ -25,31 +25,31 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 12
-# 1. GET /Hardware API response code
-# 2. GET /HardwareByFRU API response code
-# 3. GET /Hardware/{xname} node API response code
-# 4. GET /Hardware/{xname} node API response body
-# 5. GET /HardwareByFRU/{fruid} node API response code
-# 6. GET /HardwareByFRU/{fruid} node API response body
-# 7. GET /Hardware/{xname} node enclosure API response code
-# 8. GET /Hardware/{xname} node enclosure API response body
-# 9. GET /HardwareByFRU/{fruid} node enclosure API response code
-# 10. GET /HardwareByFRU/{fruid} node enclosure API response body
-# 11. Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response code
-# 12. Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response body
-# 13. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response code
-# 14. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response body
-# 15. Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response code
-# 16. Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response body
-# 17. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response code
-# 18. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response body
-# 19. GET /Hardware/Query/{xname} node API response code
-# 20. GET /Hardware/Query/{xname} node API response body
+# GET /Hardware API response code
+# GET /HardwareByFRU API response code
+# GET /Hardware/{xname} node API response code
+# GET /Hardware/{xname} node API response body
+# GET /HardwareByFRU/{fruid} node API response code
+# GET /HardwareByFRU/{fruid} node API response body
+# GET /Hardware/{xname} node enclosure API response code
+# GET /Hardware/{xname} node enclosure API response body
+# GET /HardwareByFRU/{fruid} node enclosure API response code
+# GET /HardwareByFRU/{fruid} node enclosure API response body
+# TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response code
+# TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response body
+# TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response code
+# TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response body
+# TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response code
+# TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response body
+# TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response code
+# TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response body
+# GET /Hardware/Query/{xname} node API response code
+# GET /Hardware/Query/{xname} node API response body
 ---
 test_name: Query the Hardware collection
 
 stages:
-  # 1. GET /Hardware API response code
+  # GET /Hardware API response code
   - name: Retrieve the hardware information from the Hardware collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -62,7 +62,7 @@ stages:
 test_name: Query the HardwareByFRU collection
 
 stages:
-  # 2. GET /HardwareByFRU API response code
+  # GET /HardwareByFRU API response code
   - name: Retrieve the hardware information from the HardwareByFRU collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
@@ -88,8 +88,8 @@ stages:
         json:
           node_xname: Components[0].ID
 
-  # 3. GET /Hardware/{xname} node API response code
-  # 4. GET /Hardware/{xname} node API response body
+  # GET /Hardware/{xname} node API response code
+  # GET /Hardware/{xname} node API response body
   - name: Retrieve the hardware information for a given node xname from the Hardware collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_xname}"
@@ -132,8 +132,8 @@ stages:
         json:
           FRUID: PopulatedFRU.FRUID
 
-  # 5. GET /HardwareByFRU/{fruid} node API response code
-  # 6. GET /HardwareByFRU/{fruid} node API response body
+  # GET /HardwareByFRU/{fruid} node API response code
+  # GET /HardwareByFRU/{fruid} node API response body
   - name: Retrieve the FRU information for a given node FRUID from the HardwareByFRU collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
@@ -172,8 +172,8 @@ stages:
         json:
           node_enclosure_xname: Components[0].ID
 
-  # 7. GET /Hardware/{xname} node enclosure API response code
-  # 8. GET /Hardware/{xname} node enclosure API response body
+  # GET /Hardware/{xname} node enclosure API response code
+  # GET /Hardware/{xname} node enclosure API response body
   - name: Retrieve the hardware information for a given node enclosure xname from the Hardware collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_enclosure_xname}"
@@ -209,8 +209,8 @@ stages:
         json:
           FRUID: PopulatedFRU.FRUID
 
-  # 9. GET /HardwareByFRU/{fruid} node enclosure API response code
-  # 10. GET /HardwareByFRU/{fruid} node enclosure API response body
+  # GET /HardwareByFRU/{fruid} node enclosure API response code
+  # GET /HardwareByFRU/{fruid} node enclosure API response body
   - name: Retrieve the FRU information for a given node enclosure FRUID from the HardwareByFRU collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
@@ -252,8 +252,8 @@ stages:
 #        json:
 #          node_xname: Components[0].ID
 #
-#  # 11. Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response code
-#  # 12. Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response body
+#  # TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response code
+#  # TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}p0 processor API response body
 #  - name: Retrieve the hardware information for a given node processor xname from the Hardware collection
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_xname}p0"
@@ -299,8 +299,8 @@ stages:
 #        json:
 #          FRUID: PopulatedFRU.FRUID
 #
-#  # 13. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response code
-#  # 14. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response body
+#  # TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response code
+#  # TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} processor API response body
 #  - name: Retrieve the FRU information for a given node processor FRUID from the HardwareByFRU collection
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
@@ -352,8 +352,8 @@ stages:
 #        json:
 #          node_xname: Components[0].ID
 #
-#  # 15. Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response code
-#  # 16. Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response body
+#  # TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response code
+#  # TODO: Disabled (CASMHMS-2809) - GET /Hardware/{xname}d0 dimm API response body
 #  - name: Retrieve the hardware information for a given node memory dimm xname from the Hardware collection
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/{node_xname}d0"
@@ -400,8 +400,8 @@ stages:
 #        json:
 #          FRUID: PopulatedFRU.FRUID
 #
-#  # 17. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response code
-#  # 18. Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response body
+#  # TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response code
+#  # TODO: Disabled (CASMHMS-2809) - GET /HardwareByFRU/{fruid} dimm API response body
 #  - name: Retrieve the FRU information for a given node memory dimm FRUID from the HardwareByFRU collection
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{FRUID}"
@@ -445,8 +445,8 @@ stages:
         json:
           node_xname: Components[0].ID
 
-  # 19. GET /Hardware/Query/{xname} node API response code
-  # 20. GET /Hardware/Query/{xname} node API response body
+  # GET /Hardware/Query/{xname} node API response code
+  # GET /Hardware/Query/{xname} node API response body
   - name: Retrieve the hardware information for a given node xname from the Hardware Query collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/Query/{node_xname}"
