@@ -20,9 +20,18 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) service API
-# Author: Mitch Schooler
+# Tavern test cases for the Hardware State Manager (HSM) ServiceEndpoints API
+# Author: Mike Buchmann
 # Service: Hardware State Manager
+
+# HMS test metrics test cases: 7
+# GET /Inventory/ServiceEndpoints
+# GET /Inventory/ServiceEndpoints/{service}
+# GET /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}
+# DELETE /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}
+# GET /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname} Not Found
+# DELETE /Inventory/ServiceEndpoints
+# DELETE /Inventory/ServiceEndpoints No Data
 
 #######################################
 # THIS TEST WILL DELETE ALL ENDPOINTS!!
@@ -32,6 +41,7 @@
 test_name: HSM Service Endpoint Collection
 
 stages:
+  # GET /Inventory/ServiceEndpoints
   - name: Get Service Endpoints
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints"
@@ -96,6 +106,7 @@ stages:
         json:
           service: ServiceEndpoints[0].RedfishType
 
+  # GET /Inventory/ServiceEndpoints/{service}
   - name: Get Service Endpoints for service
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/{service}"
@@ -160,6 +171,7 @@ stages:
         json:
           xname: ServiceEndpoints[0].RedfishEndpointID
 
+  # GET /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}
   - name: Get Service Endpoints for xname
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}"
@@ -214,6 +226,7 @@ stages:
                 required: True
                 allowempty: True
 
+  # DELETE /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}
   - name: Delete Service Endpoints for xname
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}"
@@ -225,6 +238,7 @@ stages:
         code: 0
         message: deleted 1 entry
 
+  # GET /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname} Not Found
   - name: Get Service Endpoints for xname NOT FOUND
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname}"
@@ -238,6 +252,7 @@ stages:
         detail: no such service under redfish endpoint.
         status: 404
 
+  # DELETE /Inventory/ServiceEndpoints
   - name: Delete ALL Service Endpoints
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints"
@@ -249,6 +264,7 @@ stages:
         code: 0
         message: !anystr
 
+  # DELETE /Inventory/ServiceEndpoints No Data
   - name: Delete ALL Service Endpoints - None to delete
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints"

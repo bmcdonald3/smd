@@ -25,36 +25,32 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 20
-
-# /Inventory/Hardware
-# 1. DELETE /Inventory/Hardware API response code
-# 2. DELETE /Inventory/Hardware API response body
-# 3. DELETE /Inventory/Hardware No Hardware API response code
-# 4. DELETE /Inventory/Hardware No Hardware API response body
-# 5. GET /Inventory/Hardware No Hardware API response code
-# 6. GET /Inventory/Hardware No Hardware API response body
-
-# /Inventory/HardwareByFRU
-# 7. GET /Inventory/HardwareByFRU API response code
-# 8. GET /Inventory/HardwareByFRU API response body
-# 9. GET /Inventory/HardwareByFRU/{fruid} API response code
-# 10. GET /Inventory/HardwareByFRU/{fruid} API response body
-# 11. DELETE /Inventory/HardwareByFRU/{fruid} API response code
-# 12. DELETE /Inventory/HardwareByFRU/{fruid} API response body
-# 13. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
-# 14. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
-# 15. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
-# 16. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
-# 17. DELETE /Inventory/HardwareByFRU API response code
-# 18. DELETE /Inventory/HardwareByFRU API response body
-# 19. DELETE /Inventory/HardwareByFRU No Data API response code
-# 20. DELETE /Inventory/HardwareByFRU No Data API response body
+# DELETE /Inventory/Hardware API response code
+# DELETE /Inventory/Hardware API response body
+# DELETE /Inventory/Hardware No Hardware API response code
+# DELETE /Inventory/Hardware No Hardware API response body
+# GET /Inventory/Hardware No Hardware API response code
+# GET /Inventory/Hardware No Hardware API response body
+# GET /Inventory/HardwareByFRU API response code
+# GET /Inventory/HardwareByFRU API response body
+# GET /Inventory/HardwareByFRU/{fruid} API response code
+# GET /Inventory/HardwareByFRU/{fruid} API response body
+# DELETE /Inventory/HardwareByFRU/{fruid} API response code
+# DELETE /Inventory/HardwareByFRU/{fruid} API response body
+# DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+# DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+# GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+# GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+# DELETE /Inventory/HardwareByFRU API response code
+# DELETE /Inventory/HardwareByFRU API response body
+# DELETE /Inventory/HardwareByFRU No Data API response code
+# DELETE /Inventory/HardwareByFRU No Data API response body
 ---
 test_name: hsmAPIinventoryHardware[ByFRU]destructive
 
 stages:
-  # 1. DELETE /Inventory/Hardware API response code
-  # 2. DELETE /Inventory/Hardware API response body
+  # DELETE /Inventory/Hardware API response code
+  # DELETE /Inventory/Hardware API response body
   - name: hsmAPIinventoryHardwareDELETE - Remove all Hardware using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -65,8 +61,8 @@ stages:
         - 200
         - 404
 
-  # 3. DELETE /Inventory/Hardware No Hardware API response code
-  # 4. DELETE /Inventory/Hardware No Hardware API response body
+  # DELETE /Inventory/Hardware No Hardware API response code
+  # DELETE /Inventory/Hardware No Hardware API response body
   - name: hsmAPIinventoryHardwareDELETEnoHardware - Attempt to remove all Hardware using DELETE when none are present.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -103,8 +99,8 @@ stages:
                   #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
-  # 5. GET /Inventory/Hardware No Hardware API response code
-  # 6. GET /Inventory/Hardware No Hardware API response body
+  # GET /Inventory/Hardware No Hardware API response code
+  # GET /Inventory/Hardware No Hardware API response body
   - name: hsmAPIinventoryHardwareGETnoHardware - Retrieve an empty set of Hardware using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
@@ -127,8 +123,8 @@ stages:
                     type: str
                     required: True
 
-  # 7. GET /Inventory/HardwareByFRU API response code
-  # 8. GET /Inventory/HardwareByFRU API response body
+  # GET /Inventory/HardwareByFRU API response code
+  # GET /Inventory/HardwareByFRU API response body
   - name: hsmAPIinventoryHardwareByFRUget - Retrieve all Hardware Inventory entries by FRU using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
@@ -165,8 +161,8 @@ stages:
         json:
           fruid: "[0].FRUID"
 
-  # 9. GET /Inventory/HardwareByFRU/{fruid} API response code
-  # 10. GET /Inventory/HardwareByFRU/{fruid} API response body
+  # GET /Inventory/HardwareByFRU/{fruid} API response code
+  # GET /Inventory/HardwareByFRU/{fruid} API response body
   - name: hsmAPIinventoryHardwareByFRUfruidGET - Retrieve a Hardware Inventory entry by FRUID using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
@@ -196,8 +192,8 @@ stages:
                 type: str
                 required: True
 
-  # 11. DELETE /Inventory/HardwareByFRU/{fruid} API response code
-  # 12. DELETE /Inventory/HardwareByFRU/{fruid} API response body
+  # DELETE /Inventory/HardwareByFRU/{fruid} API response code
+  # DELETE /Inventory/HardwareByFRU/{fruid} API response body
   - name: hsmAPIinventoryHardwareByFRUfruidDELETE - Remove a Hardware Inventory entry by FRUID using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
@@ -223,8 +219,8 @@ stages:
                 enum:
                   - "deleted 1 entry"
 
-  # 13. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
-  # 14. DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+  # DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+  # DELETE /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
   - name: hsmAPIinventoryHardwareByFRUfruidDELETEnonExistentFRUID - Attempt to remove a Hardware Inventory entry by FRUID that doesn't exist using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
@@ -260,8 +256,8 @@ stages:
                 enum:
                   - 404
 
-  # 15. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
-  # 16. GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
+  # GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response code
+  # GET /Inventory/HardwareByFRU/{fruid} Non Existent FRUID API response body
   - name: hsmAPIinventoryHardwareByFRUfruidGETnonExistentFRUID - Attempt to retrieve a Hardware Inventory entry by FRUID that doesn't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/{fruid}"
@@ -297,8 +293,8 @@ stages:
                 enum:
                   - 404
 
-  # 17. DELETE /Inventory/HardwareByFRU API response code
-  # 18. DELETE /Inventory/HardwareByFRU API response body
+  # DELETE /Inventory/HardwareByFRU API response code
+  # DELETE /Inventory/HardwareByFRU API response body
   - name: hsmAPIinventoryHardwareByFRUdelete - Remove all Hardware Inventory entries by FRUID using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"
@@ -323,8 +319,8 @@ stages:
                 required: True
                 pattern: "deleted [0-9]+ entries"
 
-  # 19. DELETE /Inventory/HardwareByFRU No Data API response code
-  # 20. DELETE /Inventory/HardwareByFRU No Data API response body
+  # DELETE /Inventory/HardwareByFRU No Data API response code
+  # DELETE /Inventory/HardwareByFRU No Data API response body
   - name: hsmAPIinventoryHardwareByFRUdeleteNoData - Attempt to remove all Hardware Inventory entries by FRUID with no data present using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU"

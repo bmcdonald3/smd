@@ -24,49 +24,45 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: TODO
-# TODO. GET /Inventory/Hardware/History API response code
-# TODO. GET /Inventory/Hardware/History API response body
-# TODO. GET /Inventory/Hardware/History?id={id} Node Parameter API response code
-# TODO. GET /Inventory/Hardware/History?id={id} Node Parameter API response body
-# TODO. GET /Inventory/Hardware/History/{xname} API response code
-# TODO. GET /Inventory/Hardware/History/{xname} API response body
-
-# TODO. GET /Inventory/HardwareByFRU/History API response code
-# TODO. GET /Inventory/HardwareByFRU/History API response body
-# TODO. GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response code
-# TODO. GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response body
-# TODO. GET /Inventory/HardwareByFRU/History/{fruid} API response code
-# TODO. GET /Inventory/HardwareByFRU/History/{fruid} API response body
-
-# TODO. DELETE /Inventory/Hardware/History/{xname} API response code
-# TODO. DELETE /Inventory/Hardware/History/{xname} API response body
-# TODO. DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response code
-# TODO. DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response body
-# TODO. GET /Inventory/Hardware/History/{xname} Non Existent Node API response code
-# TODO. GET /Inventory/Hardware/History/{xname} Non Existent Node API response body
-
-# TODO. DELETE /Inventory/Hardware/History API response code
-# TODO. DELETE /Inventory/Hardware/History API response body
-# TODO. DELETE /Inventory/Hardware/History No Data API response code
-# TODO. DELETE /Inventory/Hardware/History No Data API response body
-# TODO. GET /Inventory/Hardware/History No Data API response code
-# TODO. GET /Inventory/Hardware/History No Data API response body
-
-# TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
-# TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
-# TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
-# TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
-# TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response code
-# TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response body
-# TODO. GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
-# TODO. GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+# HMS test metrics test cases: 32
+# GET /Inventory/Hardware/History API response code
+# GET /Inventory/Hardware/History API response body
+# GET /Inventory/Hardware/History?id={id} Node Parameter API response code
+# GET /Inventory/Hardware/History?id={id} Node Parameter API response body
+# GET /Inventory/Hardware/History/{xname} API response code
+# GET /Inventory/Hardware/History/{xname} API response body
+# GET /Inventory/HardwareByFRU/History API response code
+# GET /Inventory/HardwareByFRU/History API response body
+# GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response code
+# GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response body
+# GET /Inventory/HardwareByFRU/History/{fruid} API response code
+# GET /Inventory/HardwareByFRU/History/{fruid} API response body
+# DELETE /Inventory/Hardware/History/{xname} API response code
+# DELETE /Inventory/Hardware/History/{xname} API response body
+# DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response code
+# DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response body
+# GET /Inventory/Hardware/History/{xname} Non Existent Node API response code
+# GET /Inventory/Hardware/History/{xname} Non Existent Node API response body
+# DELETE /Inventory/Hardware/History API response code
+# DELETE /Inventory/Hardware/History API response body
+# DELETE /Inventory/Hardware/History No Data API response code
+# DELETE /Inventory/Hardware/History No Data API response body
+# GET /Inventory/Hardware/History No Data API response code
+# GET /Inventory/Hardware/History No Data API response body
+# TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
+# TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response code
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response body
+# GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+# GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
 ---
 test_name: hsmAPIinventoryHardware[ByFRU]historyDestructive
 
 stages:
-  # TODO. GET /Inventory/Hardware/History API response code
-  # TODO. GET /Inventory/Hardware/History API response body
+  # GET /Inventory/Hardware/History API response code
+  # GET /Inventory/Hardware/History API response body
   - name: hsmAPIinventoryHardwareHistoryGET - Retrieve all Hardware Inventory History entries using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
@@ -116,8 +112,8 @@ stages:
         json:
           xname: "Components[0].ID"
 
-  # TODO. GET /Inventory/Hardware/History?id={id} Node Parameter API response code
-  # TODO. GET /Inventory/Hardware/History?id={id} Node Parameter API response body
+  # GET /Inventory/Hardware/History?id={id} Node Parameter API response code
+  # GET /Inventory/Hardware/History?id={id} Node Parameter API response body
   - name: hsmAPIinventoryHardwareHistoryGETidParameter - Retrieve Hardware Inventory History entries using GET with the id query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History?id={xname}"
@@ -168,8 +164,8 @@ stages:
                                 type: str
                                 required: True
 
-  # TODO. GET /Inventory/Hardware/History/{xname} API response code
-  # TODO. GET /Inventory/Hardware/History/{xname} API response body
+  # GET /Inventory/Hardware/History/{xname} API response code
+  # GET /Inventory/Hardware/History/{xname} API response body
   - name: hsmAPIinventoryHardwareHistoryXnameGET - Retrieve Hardware Inventory History entries by xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
@@ -212,8 +208,8 @@ stages:
                         type: str
                         required: True
 
-  # TODO. GET /Inventory/HardwareByFRU/History API response code
-  # TODO. GET /Inventory/HardwareByFRU/History API response body
+  # GET /Inventory/HardwareByFRU/History API response code
+  # GET /Inventory/HardwareByFRU/History API response body
   - name: hsmAPIinventoryHardwareByFRUhistoryGET - Retrieve all HardwareByFRU Inventory History entries using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History"
@@ -263,8 +259,8 @@ stages:
         json:
           fruid: "Components[0].ID"
 
-  # TODO. GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response code
-  # TODO. GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response body
+  # GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response code
+  # GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response body
   - name: hsmAPIinventoryHardwareByFRUhistoryGETfruidParameter - Retrieve HardwareByFRU Inventory History entries using GET with the fruid query parameter.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History?fruid={fruid}"
@@ -315,8 +311,8 @@ stages:
                                 type: str
                                 required: True
 
-  # TODO. GET /Inventory/HardwareByFRU/History/{fruid} API response code
-  # TODO. GET /Inventory/HardwareByFRU/History/{fruid} API response body
+  # GET /Inventory/HardwareByFRU/History/{fruid} API response code
+  # GET /Inventory/HardwareByFRU/History/{fruid} API response body
   - name: hsmAPIinventoryHardwareByFRUhistoryFruidGET - Retrieve HardwareByFRU Inventory History entries by fruid using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
@@ -359,8 +355,8 @@ stages:
                         type: str
                         required: True
 
-  # TODO. DELETE /Inventory/Hardware/History/{xname} API response code
-  # TODO. DELETE /Inventory/Hardware/History/{xname} API response body
+  # DELETE /Inventory/Hardware/History/{xname} API response code
+  # DELETE /Inventory/Hardware/History/{xname} API response body
   - name: hsmAPIinventoryHardwareHistoryXnameDELETE - Remove Hardware Inventory History entries by xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
@@ -385,8 +381,8 @@ stages:
                 required: True
                 pattern: "deleted [0-9]+ entries"
 
-  # TODO. DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response code
-  # TODO. DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response body
+  # DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response code
+  # DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response body
   - name: hsmAPIinventoryHardwareHistoryXnameDELETEnonExistentNode - Attempt to remove Hardware Inventory History entries by xname that don't exist using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
@@ -422,8 +418,8 @@ stages:
                 enum:
                   - 404
 
-  # TODO. GET /Inventory/Hardware/History/{xname} Non Existent Node API response code
-  # TODO. GET /Inventory/Hardware/History/{xname} Non Existent Node API response body
+  # GET /Inventory/Hardware/History/{xname} Non Existent Node API response code
+  # GET /Inventory/Hardware/History/{xname} Non Existent Node API response body
   - name: hsmAPIinventoryHardwareHistoryXnameGETnonExistentNode - Attempt to retrieve Hardware Inventory History entries by xname that don't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
@@ -469,8 +465,8 @@ stages:
                         type: str
                         required: True
 
-  # TODO. DELETE /Inventory/Hardware/History API response code
-  # TODO. DELETE /Inventory/Hardware/History API response body
+  # DELETE /Inventory/Hardware/History API response code
+  # DELETE /Inventory/Hardware/History API response body
   - name: hsmAPIinventoryHardwareHistoryDELETE - Remove all Hardware Inventory History entries using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
@@ -495,8 +491,8 @@ stages:
                 required: True
                 pattern: "deleted [0-9]+ entries"
 
-  # TODO. DELETE /Inventory/Hardware/History No Data API response code
-  # TODO. DELETE /Inventory/Hardware/History No Data API response body
+  # DELETE /Inventory/Hardware/History No Data API response code
+  # DELETE /Inventory/Hardware/History No Data API response body
   - name: hsmAPIinventoryHardwareHistoryDELETEnoData - Attempt to remove all Hardware Inventory History entries when none are present using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
@@ -532,8 +528,8 @@ stages:
                 enum:
                   - 404
 
-  # TODO. GET /Inventory/Hardware/History No Data API response code
-  # TODO. GET /Inventory/Hardware/History No Data API response body
+  # GET /Inventory/Hardware/History No Data API response code
+  # GET /Inventory/Hardware/History No Data API response body
   - name: hsmAPIinventoryHardwareHistoryGETnoData - Attempt to retrieve all Hardware Inventory History entries when none are present using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
@@ -583,8 +579,8 @@ stages:
 
 #  # TODO: This test is disabled since the previous DELETE /Inventory/Hardware test also removes this data.
 #  # TODO: There is no simple way to generate new HardwareByFRU History data without a rediscovery.
-#  # TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
-#  # TODO. (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
+#  # TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
+#  # TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
 #  - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETE - Remove HardwareByFRU Inventory History entries by fruid using DELETE.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
@@ -609,8 +605,8 @@ stages:
 #                required: True
 #                pattern: "deleted [0-9]+ entries"
 
-  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
-  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
   - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETEnonExistentFruid - Attempt to remove HardwareByFRU Inventory History entries by fruid that don't exist using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
@@ -646,8 +642,8 @@ stages:
                 enum:
                   - 404
 
-  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response code
-  # TODO. DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response body
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response code
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response body
   - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETEinvalidFruid - Attempt to remove HardwareByFRU Inventory History entries for an invalid fruid using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/#"
@@ -656,8 +652,8 @@ stages:
     response:
       status_code: 301
 
-  # TODO. GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
-  # TODO. GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+  # GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+  # GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
   - name: hsmAPIinventoryHardwareByFRUhistoryFruidGETnonExistentFruid - Attempt to retrieve HardwareByFRU Inventory History entries by fruid that don't exist using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"

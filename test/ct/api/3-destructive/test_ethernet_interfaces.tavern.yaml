@@ -24,6 +24,11 @@
 # Author: Mike Buchmann
 # Service: Hardware State Manager
 
+# HMS test metrics test cases: 4
+# POST /Inventory/EthernetInterfaces
+# DELETE /Inventory/EthernetInterfaces
+# DELETE /Inventory/EthernetInterfaces No Data
+# GET /Inventory/EthernetInterfaces No Data
 ---
 test_name: HSM Ethernet Interfaces Collection
 
@@ -36,16 +41,16 @@ stages:
       method: POST
 
   # DELETE /Inventory/EthernetInterfaces
-  # Note this will delete ALL ENTRIES
-  - name: Delete Ethernet Interfaces Interfaces
+  # Warning: this will delete ALL ENTRIES
+  - name: Delete all ethernet interfaces
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces"
       method: DELETE
     response:
       status_code: 200
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Delete Ethernet Interfaces Interfaces BAD REQEST
+  # DELETE /Inventory/EthernetInterfaces No Data
+  - name: Attempt to delete ethernet interfaces with none present
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces"
       method: DELETE
@@ -58,8 +63,8 @@ stages:
         detail: "no entries to delete"
         status: 404
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Get component ethernet interface
+  # GET /Inventory/EthernetInterfaces No Data
+  - name: Get component ethernet interfaces
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces"
       method: GET

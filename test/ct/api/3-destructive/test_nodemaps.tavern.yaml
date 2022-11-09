@@ -25,18 +25,18 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 6
-# 1. DELETE /Defaults/NodeMaps API response code
-# 2. DELETE /Defaults/NodeMaps API response body
-# 3. DELETE /Defaults/NodeMaps No NodeMaps API response code
-# 4. DELETE /Defaults/NodeMaps No NodeMaps API response body
-# 5. GET /Defaults/NodeMaps No NodeMaps API response code
-# 6. GET /Defaults/NodeMaps No NodeMaps API response body
+# DELETE /Defaults/NodeMaps API response code
+# DELETE /Defaults/NodeMaps API response body
+# DELETE /Defaults/NodeMaps No NodeMaps API response code
+# DELETE /Defaults/NodeMaps No NodeMaps API response body
+# GET /Defaults/NodeMaps No NodeMaps API response code
+# GET /Defaults/NodeMaps No NodeMaps API response body
 ---
 test_name: hsmAPIdefaultsNodeMapsDestructive
 
 stages:
-  # 1. DELETE /Defaults/NodeMaps API response code
-  # 2. DELETE /Defaults/NodeMaps API response body
+  # DELETE /Defaults/NodeMaps API response code
+  # DELETE /Defaults/NodeMaps API response body
   - name: hsmAPIdefaultsNodeMapsDELETE - Remove all NodeMaps using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -47,8 +47,8 @@ stages:
         - 200
         - 404
 
-  # 3. DELETE /Defaults/NodeMaps No NodeMaps API response code
-  # 4. DELETE /Defaults/NodeMaps No NodeMaps API response body
+  # DELETE /Defaults/NodeMaps No NodeMaps API response code
+  # DELETE /Defaults/NodeMaps No NodeMaps API response body
   - name: hsmAPIdefaultsNodeMapsDELETEnoNodeMaps - Attempt to remove all NodeMaps using DELETE when none are present.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
@@ -85,8 +85,8 @@ stages:
                   #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
-  # 5. GET /Defaults/NodeMaps No NodeMaps API response code
-  # 6. GET /Defaults/NodeMaps No NodeMaps API response body
+  # GET /Defaults/NodeMaps No NodeMaps API response code
+  # GET /Defaults/NodeMaps No NodeMaps API response body
   - name: hsmAPIdefaultsNodeMapsGETnoNodeMaps - Retrieve an empty set of NodeMaps using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
