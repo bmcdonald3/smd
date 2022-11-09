@@ -24,122 +24,103 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: TODO
-# TODO. GET /State/Components?id={id} Invalid ID Parameter API response code
-# TODO. GET /State/Components?id={id} Invalid ID Parameter API response body
-# TODO. GET /State/Components?type={type} Invalid Type Parameter API response code
-# TODO. GET /State/Components?type={type} Invalid Type Parameter API response body
-# TODO. GET /State/Components?state={state} Invalid State Parameter API response code
-# TODO. GET /State/Components?state={state} Invalid State Parameter API response body
-# TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response code
-# TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response body
-# TODO. GET /State/Components?role={role} Invalid Role Parameter API response code
-# TODO. GET /State/Components?role={role} Invalid Role Parameter API response body
-# TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response code
-# TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response body
-# TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response code
-# TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response body
-# TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response code
-# TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response body
-# TODO. GET /State/Components?class={class} Invalid Class Parameter API response code
-# TODO. GET /State/Components?class={class} Invalid Class Parameter API response body
-# TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response code
-# TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response body
-# TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response code
-# TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response body
-# TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response code
-# TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response body
-
-# TODO. POST /State/Components Invalid CabinetPDUController API response code
-# TODO. POST /State/Components Invalid CabinetPDUController API response body
-# TODO. POST /State/Components Invalid Chassis API response code
-# TODO. POST /State/Components Invalid Chassis API response body
-# TODO. POST /State/Components Invalid ChassisBMC API response code
-# TODO. POST /State/Components Invalid ChassisBMC API response body
-# TODO. POST /State/Components Invalid HSNBoard API response code
-# TODO. POST /State/Components Invalid HSNBoard API response body
-# TODO. POST /State/Components Invalid Node API response code
-# TODO. POST /State/Components Invalid Node API response body
-# TODO. POST /State/Components Invalid NodeBMC API response code
-# TODO. POST /State/Components Invalid NodeBMC API response body
-# TODO. POST /State/Components Invalid NodeEnclosure API response code
-# TODO. POST /State/Components Invalid NodeEnclosure API response body
-# TODO. POST /State/Components Invalid RouterBMC API response code
-# TODO. POST /State/Components Invalid RouterBMC API response body
-# TODO. POST /State/Components Invalid RouterModule API response code
-# TODO. POST /State/Components Invalid RouterModule API response body
-
-# TODO. GET /State/Components/{xname} Invalid Xname API response code
-# TODO. GET /State/Components/{xname} Invalid Xname API response body
-
-# TODO. PUT /State/Components/{xname} Invalid Component No Force API response code
-# TODO. PUT /State/Components/{xname} Invalid Component No Force API response body
-# TODO. PUT /State/Components/{xname} Invalid Component Force API response code
-# TODO. PUT /State/Components/{xname} Invalid Component Force API response body
-
-# TODO. DELETE /State/Components/{xname} Invalid Xname API response code
-# TODO. DELETE /State/Components/{xname} Invalid Xname API response body
-
-# TODO. GET /State/Components/ByNID/{nid} Invalid NID API response code
-# TODO. GET /State/Components/ByNID/{nid} Invalid NID API response body
-
-# TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
-# TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
-# TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response code
-# TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response body
-# TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response code
-# TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response body
-
-# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
-# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
-# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
-# TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
-# TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
-# TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
-
-# TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
-# TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
-# TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
-# TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
-# TODO. PATCH /State/Components/BulkFlagOnly No Flag API response code
-# TODO. PATCH /State/Components/BulkFlagOnly No Flag API response body
-
-# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
-# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
-# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
-# TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
-# TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response code
-# TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response body
-
-# TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response code
-# TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response body
-
-# TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
-# TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
-
-# TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
-# TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
-
-# TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
-# TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
-
-# TODO. PATCH /State/Components/{xname}/Role Invalid Role API response code
-# TODO. PATCH /State/Components/{xname}/Role Invalid Role API response body
-
-# TODO. PATCH /State/Components/BulkNID No NID API response code
-# TODO. PATCH /State/Components/BulkNID No NID API response body
-
-# TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response code
-# TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response body
-
-# TODO. POST /State/Components/Query Invalid Xname API response code
-# TODO. POST /State/Components/Query Invalid Xname API response body
-
-# TODO. POST /State/Components/ByNID/Query Invalid NID API response code
-# TODO. POST /State/Components/ByNID/Query Invalid NID API response body
-
-# TODO. GET /State/Components/Query/{xname} Invalid Xname API response code
-# TODO. GET /State/Components/Query/{xname} Invalid Xname API response body
+# HMS test metrics test cases: 96
+# GET /State/Components?id={id} Invalid ID Parameter API response code
+# GET /State/Components?id={id} Invalid ID Parameter API response body
+# GET /State/Components?type={type} Invalid Type Parameter API response code
+# GET /State/Components?type={type} Invalid Type Parameter API response body
+# GET /State/Components?state={state} Invalid State Parameter API response code
+# GET /State/Components?state={state} Invalid State Parameter API response body
+# GET /State/Components?flag={flag} Invalid Flag Parameter API response code
+# GET /State/Components?flag={flag} Invalid Flag Parameter API response body
+# GET /State/Components?role={role} Invalid Role Parameter API response code
+# GET /State/Components?role={role} Invalid Role Parameter API response body
+# GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response code
+# GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response body
+# GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response code
+# GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response body
+# GET /State/Components?arch={arch} Invalid Arch Parameter API response code
+# GET /State/Components?arch={arch} Invalid Arch Parameter API response body
+# GET /State/Components?class={class} Invalid Class Parameter API response code
+# GET /State/Components?class={class} Invalid Class Parameter API response body
+# GET /State/Components?nid={nid} Invalid NID Parameter API response code
+# GET /State/Components?nid={nid} Invalid NID Parameter API response body
+# GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response code
+# GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response body
+# GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response code
+# GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response body
+# POST /State/Components Invalid CabinetPDUController API response code
+# POST /State/Components Invalid CabinetPDUController API response body
+# POST /State/Components Invalid Chassis API response code
+# POST /State/Components Invalid Chassis API response body
+# POST /State/Components Invalid ChassisBMC API response code
+# POST /State/Components Invalid ChassisBMC API response body
+# POST /State/Components Invalid HSNBoard API response code
+# POST /State/Components Invalid HSNBoard API response body
+# POST /State/Components Invalid Node API response code
+# POST /State/Components Invalid Node API response body
+# POST /State/Components Invalid NodeBMC API response code
+# POST /State/Components Invalid NodeBMC API response body
+# POST /State/Components Invalid NodeEnclosure API response code
+# POST /State/Components Invalid NodeEnclosure API response body
+# POST /State/Components Invalid RouterBMC API response code
+# POST /State/Components Invalid RouterBMC API response body
+# POST /State/Components Invalid RouterModule API response code
+# POST /State/Components Invalid RouterModule API response body
+# GET /State/Components/{xname} Invalid Xname API response code
+# GET /State/Components/{xname} Invalid Xname API response body
+# PUT /State/Components/{xname} Invalid Component No Force API response code
+# PUT /State/Components/{xname} Invalid Component No Force API response body
+# PUT /State/Components/{xname} Invalid Component Force API response code
+# PUT /State/Components/{xname} Invalid Component Force API response body
+# DELETE /State/Components/{xname} Invalid Xname API response code
+# DELETE /State/Components/{xname} Invalid Xname API response body
+# GET /State/Components/ByNID/{nid} Invalid NID API response code
+# GET /State/Components/ByNID/{nid} Invalid NID API response body
+# PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
+# PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
+# PATCH /State/Components/BulkStateData Invalid State Flag API response code
+# PATCH /State/Components/BulkStateData Invalid State Flag API response body
+# PATCH /State/Components/BulkStateData Invalid State No Flag API response code
+# PATCH /State/Components/BulkStateData Invalid State No Flag API response body
+# PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
+# PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
+# PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
+# PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
+# PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
+# PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
+# PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
+# PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
+# PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
+# PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
+# PATCH /State/Components/BulkFlagOnly No Flag API response code
+# PATCH /State/Components/BulkFlagOnly No Flag API response body
+# PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
+# PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
+# PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
+# PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
+# PATCH /State/Components/{xname}/FlagOnly No Flag API response code
+# PATCH /State/Components/{xname}/FlagOnly No Flag API response body
+# PATCH /State/Components/BulkEnabled Invalid Enabled API response code
+# PATCH /State/Components/BulkEnabled Invalid Enabled API response body
+# PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
+# PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
+# PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
+# PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
+# PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
+# PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
+# PATCH /State/Components/{xname}/Role Invalid Role API response code
+# PATCH /State/Components/{xname}/Role Invalid Role API response body
+# PATCH /State/Components/BulkNID No NID API response code
+# PATCH /State/Components/BulkNID No NID API response body
+# PATCH /State/Components/{xname}/NID Invalid Xname API response code
+# PATCH /State/Components/{xname}/NID Invalid Xname API response body
+# POST /State/Components/Query Invalid Xname API response code
+# POST /State/Components/Query Invalid Xname API response body
+# POST /State/Components/ByNID/Query Invalid NID API response code
+# POST /State/Components/ByNID/Query Invalid NID API response body
+# GET /State/Components/Query/{xname} Invalid Xname API response code
+# GET /State/Components/Query/{xname} Invalid Xname API response body
 ---
 test_name: hsmAPIstateComponentsNegativeInvalidParams
 
@@ -147,41 +128,41 @@ marks:
   - parametrize:
       key: param
       vals:
-        # TODO. GET /State/Components?id={id} Invalid ID Parameter API response code
-        # TODO. GET /State/Components?id={id} Invalid ID Parameter API response body
+        # GET /State/Components?id={id} Invalid ID Parameter API response code
+        # GET /State/Components?id={id} Invalid ID Parameter API response body
         - "id"
-        # TODO. GET /State/Components?type={type} Invalid Type Parameter API response code
-        # TODO. GET /State/Components?type={type} Invalid Type Parameter API response body
+        # GET /State/Components?type={type} Invalid Type Parameter API response code
+        # GET /State/Components?type={type} Invalid Type Parameter API response body
         - "type"
-        # TODO. GET /State/Components?state={state} Invalid State Parameter API response code
-        # TODO. GET /State/Components?state={state} Invalid State Parameter API response body
+        # GET /State/Components?state={state} Invalid State Parameter API response code
+        # GET /State/Components?state={state} Invalid State Parameter API response body
         - "state"
-        # TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response code
-        # TODO. GET /State/Components?flag={flag} Invalid Flag Parameter API response body
+        # GET /State/Components?flag={flag} Invalid Flag Parameter API response code
+        # GET /State/Components?flag={flag} Invalid Flag Parameter API response body
         - "flag"
-        # TODO. GET /State/Components?role={role} Invalid Role Parameter API response code
-        # TODO. GET /State/Components?role={role} Invalid Role Parameter API response body
+        # GET /State/Components?role={role} Invalid Role Parameter API response code
+        # GET /State/Components?role={role} Invalid Role Parameter API response body
         - "role"
-        # TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response code
-        # TODO. GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response body
+        # GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response code
+        # GET /State/Components?subrole={subrole} Invalid SubRole Parameter API response body
         - "subrole"
-        # TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response code
-        # TODO. GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response body
+        # GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response code
+        # GET /State/Components?enabled={enabled} Invalid Enabled Parameter API response body
         - "enabled"
-        # TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response code
-        # TODO. GET /State/Components?arch={arch} Invalid Arch Parameter API response body
+        # GET /State/Components?arch={arch} Invalid Arch Parameter API response code
+        # GET /State/Components?arch={arch} Invalid Arch Parameter API response body
         - "arch"
-        # TODO. GET /State/Components?class={class} Invalid Class Parameter API response code
-        # TODO. GET /State/Components?class={class} Invalid Class Parameter API response body
+        # GET /State/Components?class={class} Invalid Class Parameter API response code
+        # GET /State/Components?class={class} Invalid Class Parameter API response body
         - "class"
-        # TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response code
-        # TODO. GET /State/Components?nid={nid} Invalid NID Parameter API response body
+        # GET /State/Components?nid={nid} Invalid NID Parameter API response code
+        # GET /State/Components?nid={nid} Invalid NID Parameter API response body
         - "nid"
-        # TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response code
-        # TODO. GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response body
+        # GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response code
+        # GET /State/Components?nid_start={nid_start} Invalid NID_Start Parameter API response body
         - "nid_start"
-        # TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response code
-        # TODO. GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response body
+        # GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response code
+        # GET /State/Components?nid_end={nid_end} Invalid NID_End Parameter API response body
         - "nid_end"
 
 stages:
@@ -223,8 +204,8 @@ stages:
 test_name: hsmAPIstateComponentsNegative
 
 stages:
-  # TODO. POST /State/Components Invalid CabinetPDUController API response code
-  # TODO. POST /State/Components Invalid CabinetPDUController API response body
+  # POST /State/Components Invalid CabinetPDUController API response code
+  # POST /State/Components Invalid CabinetPDUController API response body
   - name: hsmAPIstateComponentsPOSTinvalidCabinetPDUController - Attempt to create a CabinetPDUController Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -261,8 +242,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. POST /State/Components Invalid Chassis API response code
-  # TODO. POST /State/Components Invalid Chassis API response body
+  # POST /State/Components Invalid Chassis API response code
+  # POST /State/Components Invalid Chassis API response body
   - name: hsmAPIstateComponentsPOSTinvalidChassis - Attempt to create a Chassis Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -299,8 +280,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. POST /State/Components Invalid ChassisBMC API response code
-  # TODO. POST /State/Components Invalid ChassisBMC API response body
+  # POST /State/Components Invalid ChassisBMC API response code
+  # POST /State/Components Invalid ChassisBMC API response body
   - name: hsmAPIstateComponentsPOSTinvalidChassisBMC - Attempt to create a ChassisBMC Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -337,8 +318,8 @@ stages:
                 enum:
                   - 500
 
-  # TODO. POST /State/Components Invalid HSNBoard API response code
-  # TODO. POST /State/Components Invalid HSNBoard API response body
+  # POST /State/Components Invalid HSNBoard API response code
+  # POST /State/Components Invalid HSNBoard API response body
   - name: hsmAPIstateComponentsPOSTinvalidHSNBoard - Attempt to create an HSNBoard Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -375,8 +356,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. POST /State/Components Invalid Node API response code
-  # TODO. POST /State/Components Invalid Node API response body
+  # POST /State/Components Invalid Node API response code
+  # POST /State/Components Invalid Node API response body
   - name: hsmAPIstateComponentsPOSTinvalidNode - Attempt to create a Node Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -413,8 +394,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. POST /State/Components Invalid NodeBMC API response code
-  # TODO. POST /State/Components Invalid NodeBMC API response body
+  # POST /State/Components Invalid NodeBMC API response code
+  # POST /State/Components Invalid NodeBMC API response body
   - name: hsmAPIstateComponentsPOSTinvalidNodeBMC - Attempt to create a NodeBMC Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -451,8 +432,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. POST /State/Components Invalid NodeEnclosure API response code
-  # TODO. POST /State/Components Invalid NodeEnclosure API response body
+  # POST /State/Components Invalid NodeEnclosure API response code
+  # POST /State/Components Invalid NodeEnclosure API response body
   - name: hsmAPIstateComponentsPOSTinvalidNodeEnclosure - Attempt to create a NodeEnclosure Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -489,8 +470,8 @@ stages:
                 enum:
                   - 500
 
-  # TODO. POST /State/Components Invalid RouterBMC API response code
-  # TODO. POST /State/Components Invalid RouterBMC API response body
+  # POST /State/Components Invalid RouterBMC API response code
+  # POST /State/Components Invalid RouterBMC API response body
   - name: hsmAPIstateComponentsPOSTinvalidRouterBMC - Attempt to create a RouterBMC Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -527,8 +508,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. POST /State/Components Invalid RouterModule API response code
-  # TODO. POST /State/Components Invalid RouterModule API response body
+  # POST /State/Components Invalid RouterModule API response code
+  # POST /State/Components Invalid RouterModule API response body
   - name: hsmAPIstateComponentsPOSTinvalidRouterModule - Attempt to create a RouterModule Component with an invalid payload using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -565,8 +546,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. GET /State/Components/{xname} Invalid Xname API response code
-  # TODO. GET /State/Components/{xname} Invalid Xname API response body
+  # GET /State/Components/{xname} Invalid Xname API response code
+  # GET /State/Components/{xname} Invalid Xname API response body
   - name: hsmAPIstateComponentsGETinvalidXname - Attempt to retrieve a Component with an invalid xname using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE"
@@ -602,8 +583,8 @@ stages:
                 enum:
                   - 404
 
-  # TODO. PUT /State/Components/{xname} Invalid Component No Force API response code
-  # TODO. PUT /State/Components/{xname} Invalid Component No Force API response body
+  # PUT /State/Components/{xname} Invalid Component No Force API response code
+  # PUT /State/Components/{xname} Invalid Component No Force API response body
   - name: hsmAPIstateComponentsPUTinvalidComponentNoForce - Attempt to create a Component with an invalid payload using PUT without the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9998c7s9b9n9"
@@ -642,8 +623,8 @@ stages:
                   #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
-  # TODO. PUT /State/Components/{xname} Invalid Component Force API response code
-  # TODO. PUT /State/Components/{xname} Invalid Component Force API response body
+  # PUT /State/Components/{xname} Invalid Component Force API response code
+  # PUT /State/Components/{xname} Invalid Component Force API response body
   - name: hsmAPIstateComponentsPUTinvalidComponentForce - Attempt to create a Component with an invalid payload using PUT with the force option.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9998c7s9b9n9"
@@ -682,8 +663,8 @@ stages:
                   #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
-  # TODO. DELETE /State/Components/{xname} Invalid Xname API response code
-  # TODO. DELETE /State/Components/{xname} Invalid Xname API response body
+  # DELETE /State/Components/{xname} Invalid Xname API response code
+  # DELETE /State/Components/{xname} Invalid Xname API response body
   - name: hsmAPIstateComponentsDELETEinvalidXname - Attempt to remove a Component with an invalid xname using DELETE.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE"
@@ -719,8 +700,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. GET /State/Components/ByNID/{nid} Invalid NID API response code
-  # TODO. GET /State/Components/ByNID/{nid} Invalid NID API response body
+  # GET /State/Components/ByNID/{nid} Invalid NID API response code
+  # GET /State/Components/ByNID/{nid} Invalid NID API response body
   - name: hsmAPIstateComponentsByNidGETinvalidNid - Attempt to retrieve a Component with an invalid NID using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/FAKE"
@@ -756,8 +737,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
-  # TODO. PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
+  # PATCH /State/Components/BulkStateData Invalid Xname State Flag API response code
+  # PATCH /State/Components/BulkStateData Invalid Xname State Flag API response body
   - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidXnameStateFlag - Attempt to bulk update Components with new state data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
@@ -794,8 +775,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response code
-  # TODO. PATCH /State/Components/BulkStateData Invalid State Flag API response body
+  # PATCH /State/Components/BulkStateData Invalid State Flag API response code
+  # PATCH /State/Components/BulkStateData Invalid State Flag API response body
   - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateFlag - Attempt to bulk update Components with new state data and an invalid state using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
@@ -832,8 +813,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response code
-  # TODO. PATCH /State/Components/BulkStateData Invalid State No Flag API response body
+  # PATCH /State/Components/BulkStateData Invalid State No Flag API response code
+  # PATCH /State/Components/BulkStateData Invalid State No Flag API response body
   - name: hsmAPIstateComponentsBulkStateDataPATCHinvalidStateNoFlag - Attempt to bulk update Components with new state data, an invalid state, and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkStateData"
@@ -870,8 +851,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
-  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
+  # PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response code
+  # PATCH /State/Components/{xname}/StateData Invalid Xname State Flag API response body
   - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateFlag - Attempt to update a Component with new state data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/StateData"
@@ -908,8 +889,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
-  # TODO. PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
+  # PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response code
+  # PATCH /State/Components/{xname}/StateData Invalid Xname State No Flag API response body
   - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidXnameStateNoFlag - Attempt to update a Component with new state data, an invalid xname, and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/StateData"
@@ -946,8 +927,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
-  # TODO. PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
+  # PATCH /State/Components/{xname}/StateData Invalid State Flag API response code
+  # PATCH /State/Components/{xname}/StateData Invalid State Flag API response body
   - name: hsmAPIstateComponentsXnameStateDataPATCHinvalidStateFlag - Attempt to update a Component with new state data and an invalid state using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n7/StateData"
@@ -984,8 +965,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
-  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
+  # PATCH /State/Components/BulkFlagOnly Invalid Xname API response code
+  # PATCH /State/Components/BulkFlagOnly Invalid Xname API response body
   - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidXname - Attempt to bulk update Components with new flag data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
@@ -1022,8 +1003,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
-  # TODO. PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
+  # PATCH /State/Components/BulkFlagOnly Invalid Flag API response code
+  # PATCH /State/Components/BulkFlagOnly Invalid Flag API response body
   - name: hsmAPIstateComponentsBulkFlagOnlyPATCHinvalidFlag - Attempt to bulk update Components with new flag data and an invalid flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
@@ -1060,8 +1041,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkFlagOnly No Flag API response code
-  # TODO. PATCH /State/Components/BulkFlagOnly No Flag API response body
+  # PATCH /State/Components/BulkFlagOnly No Flag API response code
+  # PATCH /State/Components/BulkFlagOnly No Flag API response body
   - name: hsmAPIstateComponentsBulkFlagOnlyPATCHnoFlag - Attempt to bulk update Components with new flag data and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkFlagOnly"
@@ -1098,8 +1079,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
-  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
+  # PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response code
+  # PATCH /State/Components/{xname}/FlagOnly Invalid Xname API response body
   - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidXname - Attempt to update a Component with new flag data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/FlagOnly"
@@ -1136,8 +1117,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
-  # TODO. PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
+  # PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response code
+  # PATCH /State/Components/{xname}/FlagOnly Invalid Flag API response body
   - name: hsmAPIstateComponentsXnameFlagOnlyPATCHinvalidFlag - Attempt to update a Component with new flag data and an invalid flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
@@ -1174,8 +1155,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response code
-  # TODO. PATCH /State/Components/{xname}/FlagOnly No Flag API response body
+  # PATCH /State/Components/{xname}/FlagOnly No Flag API response code
+  # PATCH /State/Components/{xname}/FlagOnly No Flag API response body
   - name: hsmAPIstateComponentsXnameFlagOnlyPATCHnoFlag - Attempt to update a Component with new flag data and no flag using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/FlagOnly"
@@ -1212,8 +1193,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response code
-  # TODO. PATCH /State/Components/BulkEnabled Invalid Enabled API response body
+  # PATCH /State/Components/BulkEnabled Invalid Enabled API response code
+  # PATCH /State/Components/BulkEnabled Invalid Enabled API response body
   - name: hsmAPIstateComponentsBulkEnabledPATCHinvalidEnabled - Attempt to bulk update Components with new enabled data and an invalid enabled field using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkEnabled"
@@ -1252,8 +1233,8 @@ stages:
                   #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
-  # TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
-  # TODO. PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
+  # PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
+  # PATCH /State/Components/{xname}/Enabled Invalid Xname API response body
   - name: hsmAPIstateComponentsXnameEnabledPATCHinvalidXname - Attempt to update a Component with new enabled data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/Enabled"
@@ -1290,8 +1271,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
-  # TODO. PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
+  # PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response code
+  # PATCH /State/Components/BulkSoftwareStatus Invalid Xname API response body
   - name: hsmAPIstateComponentsBulkSoftwareStatusPATCHinvalidXname - Attempt to bulk update Components with new softwarestatus data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkSoftwareStatus"
@@ -1328,8 +1309,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
-  # TODO. PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
+  # PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response code
+  # PATCH /State/Components/{xname}/SoftwareStatus Invalid Xname API response body
   - name: hsmAPIstateComponentsXnameSoftwareStatusPATCHinvalidXname - Attempt to update a Component with new softwarestatus data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/SoftwareStatus"
@@ -1366,8 +1347,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/{xname}/Role Invalid Role API response code
-  # TODO. PATCH /State/Components/{xname}/Role Invalid Role API response body
+  # PATCH /State/Components/{xname}/Role Invalid Role API response code
+  # PATCH /State/Components/{xname}/Role Invalid Role API response body
   - name: hsmAPIstateComponentsXnameRolePATCHinvalidRole - Attempt to update a Component with new role data and an invalid role using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/x9999c7s9b8n8/Role"
@@ -1404,8 +1385,8 @@ stages:
                 enum:
                   - 400
 
-  # TODO. PATCH /State/Components/BulkNID No NID API response code
-  # TODO. PATCH /State/Components/BulkNID No NID API response body
+  # PATCH /State/Components/BulkNID No NID API response code
+  # PATCH /State/Components/BulkNID No NID API response body
   - name: hsmAPIstateComponentsBulkNidPATCHnoNid - Attempt to bulk update Components with new NID data and no NID using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/BulkNID"
@@ -1444,8 +1425,8 @@ stages:
                   #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
-  # TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response code
-  # TODO. PATCH /State/Components/{xname}/NID Invalid Xname API response body
+  # PATCH /State/Components/{xname}/NID Invalid Xname API response code
+  # PATCH /State/Components/{xname}/NID Invalid Xname API response body
   - name: hsmAPIstateComponentsXnameNidPATCHinvalidXname - Attempt to update a Component with new NID data and an invalid xname using PATCH.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/FAKE/NID"
@@ -1482,8 +1463,8 @@ stages:
                 enum:
                   - 400
 
-#  # TODO. POST /State/Components/Query Invalid Xname API response code
-#  # TODO. POST /State/Components/Query Invalid Xname API response body
+#  # POST /State/Components/Query Invalid Xname API response code
+#  # POST /State/Components/Query Invalid Xname API response body
 #  - name: hsmAPIstateComponentsQueryPOSTinvalidXname - Attempt a query for Components with an invalid xname using POST.
 #    request:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/Query"
@@ -1521,8 +1502,8 @@ stages:
 #                enum:
 #                  - 400
 
-  # TODO. POST /State/Components/ByNID/Query Invalid NID API response code
-  # TODO. POST /State/Components/ByNID/Query Invalid NID API response body
+  # POST /State/Components/ByNID/Query Invalid NID API response code
+  # POST /State/Components/ByNID/Query Invalid NID API response body
   - name: hsmAPIstateComponentsByNIDqueryPOSTinvalidNID - Attempt a query for Components with an invalid NID using POST.
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/Query"
@@ -1559,8 +1540,8 @@ stages:
                 enum:
                   - 400
 
-#  # TODO. GET /State/Components/Query/{xname} Invalid Xname API response code
-#  # TODO. GET /State/Components/Query/{xname} Invalid Xname API response body
+#  # GET /State/Components/Query/{xname} Invalid Xname API response code
+#  # GET /State/Components/Query/{xname} Invalid Xname API response body
 #  - name: hsmAPIstateComponentsQueryXnameGETinvalidXname - Attempt a query for Components with a specific xname and invalid xname using POST.
 #    request:
 #      #TODO: open a bug on this? FAKE is treated as a valid Xname and returns empty brackets
