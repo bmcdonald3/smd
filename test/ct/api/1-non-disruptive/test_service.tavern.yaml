@@ -109,6 +109,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "ARM"
                       - "Other"
@@ -121,6 +122,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Hill"
                       - "Mountain"
@@ -132,12 +134,14 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    #TODO: Warning being returned twice by API CASMHMS-5827
+                    #unique: True
+                    unique: False
                     enum:
                       - "Alert"
                       - "Locked"
                       - "OK"
                       - "Unknown"
-                      #TODO: Warning being returned twice by API, open minor bug on this
                       - "Warning"
               NetType:
                 type: seq
@@ -146,6 +150,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Ethernet"
                       - "Infiniband"
@@ -159,6 +164,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Application"
                       - "Compute"
@@ -173,6 +179,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Master"
                       - "Storage"
@@ -184,6 +191,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Empty"
                       - "Halt"
@@ -200,6 +208,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "All"
                       - "AllComp"
@@ -277,6 +286,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "ARM"
                       - "Other"
@@ -305,6 +315,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Hill"
                       - "Mountain"
@@ -332,12 +343,14 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    #TODO: Warning being returned twice by API CASMHMS-5827
+                    #unique: True
+                    unique: False
                     enum:
                       - "Alert"
                       - "Locked"
                       - "OK"
                       - "Unknown"
-                      #TODO: Warning being returned twice by API, open minor bug on this
                       - "Warning"
 
   # GET /service/values/nettype API response code
@@ -362,6 +375,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Ethernet"
                       - "Infiniband"
@@ -391,6 +405,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Application"
                       - "Compute"
@@ -421,6 +436,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Master"
                       - "Storage"
@@ -448,6 +464,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "Empty"
                       - "Halt"
@@ -480,6 +497,7 @@ stages:
                 sequence:
                   - type: str
                     required: True
+                    unique: True
                     enum:
                       - "All"
                       - "AllComp"

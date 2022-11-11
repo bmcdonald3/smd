@@ -592,7 +592,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Component":{"ID":"x9998c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":"FAKE","SoftwareStatus":"AdminStatus","Role":"Compute","NID":9998999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":false}
     response:
-      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      #TODO: this should be a "Bad Request" status code 400 instead, or the Swagger needs to be updated with "Internal Server Error" code 500 CASMHMS-5828
       status_code: 500
       verify_response_with:
         function: tavern.testutils.helpers:validate_pykwalify
@@ -620,7 +620,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
   # PUT /State/Components/{xname} Invalid Component Force API response code
@@ -632,7 +631,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Component":{"ID":"x9998c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":"FAKE","SoftwareStatus":"AdminStatus","Role":"Compute","NID":9998999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":true}
     response:
-      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      #TODO: this should be a "Bad Request" status code 400 instead, or the Swagger needs to be updated with "Internal Server Error" code 500 CASMHMS-5828
       status_code: 500
       verify_response_with:
         function: tavern.testutils.helpers:validate_pykwalify
@@ -660,7 +659,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
   # DELETE /State/Components/{xname} Invalid Xname API response code
@@ -1202,7 +1200,7 @@ stages:
       verify: !bool "{verify}"
       json: {"ComponentIDs":["x9999c7s9b8n7","x9999c7s9b8n6"],"Enabled":"FAKE"}
     response:
-      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      #TODO: this should be a "Bad Request" status code 400 instead, or the Swagger needs to be updated with "Internal Server Error" code 500 CASMHMS-5828
       status_code: 500
       verify_response_with:
         function: tavern.testutils.helpers:validate_pykwalify
@@ -1230,7 +1228,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
   # PATCH /State/Components/{xname}/Enabled Invalid Xname API response code
@@ -1394,7 +1391,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9b8n7","NID":9999999977},{"ID":"x9999c7s9b8n6","NID":""}]}
     response:
-      #TODO: open a bug on this, 500 is not shown in Swagger for this operation
+      #TODO: this should be a "Bad Request" status code 400 instead, or the Swagger needs to be updated with "Internal Server Error" code 500 CASMHMS-5828
       status_code: 500
       verify_response_with:
         function: tavern.testutils.helpers:validate_pykwalify
@@ -1422,7 +1419,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: open a bug on this, 500 is not shown in Swagger for this operation
                   - 500
 
   # PATCH /State/Components/{xname}/NID Invalid Xname API response code
@@ -1470,7 +1466,7 @@ stages:
 #      url: "{hsm_base_url}/hsm/v2/State/Components/Query"
 #      method: POST
 #      verify: !bool "{verify}"
-#      #TODO: open a bug on this? FAKE is treated as a valid Xname and returns empty brackets
+#      #TODO: this should be a "Bad Request" with "invalid xname" returned, instead it attempts to use the invalid xname CASMHMS-5829
 #      json: {"ComponentIDs":["FAKE"]}
 #    response:
 #      status_code: 400
@@ -1544,7 +1540,7 @@ stages:
 #  # GET /State/Components/Query/{xname} Invalid Xname API response body
 #  - name: hsmAPIstateComponentsQueryXnameGETinvalidXname - Attempt a query for Components with a specific xname and invalid xname using POST.
 #    request:
-#      #TODO: open a bug on this? FAKE is treated as a valid Xname and returns empty brackets
+#      #TODO: this should be a "Bad Request" with "invalid xname" returned, instead it attempts to use the invalid xname CASMHMS-5829
 #      url: "{hsm_base_url}/hsm/v2/State/Components/Query/FAKE"
 #      method: GET
 #      verify: !bool "{verify}"

@@ -337,7 +337,7 @@ stages:
       method: GET
       verify: !bool "{verify}"
     response:
-      #TODO: this seems to treat FAKE as a valid xname and attempts to look it up rather than sending a bad request error
+      #TODO: this should be a "Bad Request" with "invalid xname" returned, instead it attempts to use the invalid xname CASMHMS-5829
       status_code: 404
       verify_response_with:
         function: tavern.testutils.helpers:validate_pykwalify

@@ -2175,9 +2175,9 @@ paths:
             $ref: '#/definitions/NodeMap.1.0.0_NodeMap'
       responses:
         "200":
-          description: Zero (success) error code - NodeMap was created/updated.
+          description: NodeMap entry was successfully created/updated.
           schema:
-            $ref: '#/definitions/Response_1.0.0'
+            $ref: '#/definitions/NodeMap.1.0.0_PostNodeMap'
         "400":
           description: Bad Request
           schema:

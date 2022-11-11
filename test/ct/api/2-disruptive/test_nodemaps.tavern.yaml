@@ -546,7 +546,6 @@ stages:
             type: map
             required: True
             mapping:
-              #TODO: Swagger is wrong here, it says the body should be of the form "code", "message", not like this
               ID:
                 type: str
                 required: True
@@ -622,7 +621,6 @@ stages:
             type: map
             required: True
             mapping:
-              #TODO: Swagger is wrong here, it says the body should be of the form "code", "message", not like this
               ID:
                 type: str
                 required: True

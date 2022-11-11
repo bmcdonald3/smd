@@ -82,7 +82,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
   # GET /Defaults/NodeMaps No NodeMaps API response code

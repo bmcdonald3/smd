@@ -368,7 +368,7 @@ stages:
               ids:
                 type: seq
                 required: True
-                uniq: True
+                unique: True
                 matching: all
                 sequence:
                   - type: str
