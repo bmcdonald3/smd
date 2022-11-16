@@ -142,10 +142,7 @@ stages:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
 #      method: POST
 #      verify: !bool "{verify}"
-#      #TODO: HSM ignores the mismatched MgmtSwitchConnector type and accepts this payload. It creates the ComputeModule anyways (seemingly based on the type of the xname ID). Open a bug on this.
-#      #TODO: Continuing above, it seems that Ordinal is also not required and derived from the xname ID, Status is also ignored and filled as Populated, HWInventoryByLocationType is ignored and derived
-#      #TODO: Continuing above, LocationInfo is required but can be empty. Missing it completely causes an error (correct behavior) but supplying it empty does not cause an error.
-#      #TODO: Continuing above, the PopulatedFRU type is also ignored and seemingly derived
+#      #TODO: Improve handling of bad or conflicting data for /Inventory/Hardware POST CASMHMS-5834
 #      json: {"Hardware":[{"ID":"x9999c7s9","Type":"MgmtSwitchConnector","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocComputeModule","ComputeModuleLocationInfo":{"Id":"Blade9","Name":"Blade9","Description":"","HostName":""},"PopulatedFRU":{"FRUID":"FRUIDforx9999c7s9","Type":"ComputeModule","Subtype":"","HWInventoryByFRUType":"HWInvByFRUComputeModule","ComputeModuleFRUInfo":{"AssetTag":"","ChassisType":"Blade","Model":"Blade9","Manufacturer":"HPE","PartNumber":"","SerialNumber":"","SKU":""}}}]}
 #    response:
 #      status_code: 400
@@ -184,10 +181,7 @@ stages:
 #      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
 #      method: POST
 #      verify: !bool "{verify}"
-#      #TODO: HSM ignores the empty type and accepts this payload. It creates the HSNBoard anyways (seemingly based on the type of the xname ID). Open a bug on this.
-#      #TODO: Continuing above, it seems that Ordinal is also not required and derived from the xname ID, Status is also ignored and filled as Populated, HWInventoryByLocationType is ignored and derived
-#      #TODO: Continuing above, LocationInfo is required but can be empty. Missing it completely causes an error (correct behavior) but supplying it empty does not cause an error.
-#      #TODO: Continuing above, the PopulatedFRU type is also ignored and seemingly derived
+#      #TODO: Improve handling of bad or conflicting data for /Inventory/Hardware POST CASMHMS-5834
 #      json: {"Hardware":[{"ID":"x9999c7r9e9","Type":"","Ordinal":9,"Status":"Populated","HWInventoryByLocationType":"HWInvByLocHSNBoard","HSNBoardLocationInfo":{"Id":"Enclosure","Name":"Enclosure","Description":"HPE_Slingshot_1_Switch_Blade","HostName":""},"PopulatedFRU":{"FRUID":"HSNBoard.HPE.102000002A.HER1920112770","Type":"HSNBoard","Subtype":"","HWInventoryByFRUType":"HWInvByFRUHSNBoard","HSNBoardFRUInfo":{"AssetTag":"","ChassisType":"Enclosure","Model":"HPE_Slingshot_1_Switch_Blade","Manufacturer":"HPE","PartNumber":"102000002.A","SerialNumber":"HER1920112770","SKU":""}}}]}
 #    response:
 #      status_code: 400

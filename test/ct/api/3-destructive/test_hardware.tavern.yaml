@@ -96,7 +96,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
   # GET /Inventory/Hardware No Hardware API response code

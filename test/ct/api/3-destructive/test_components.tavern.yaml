@@ -386,7 +386,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
   # GET /State/Components No Components API response code
@@ -732,7 +731,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
   # GET /State/Components/{xname} Missing Node API response code
@@ -770,7 +768,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
   # GET /State/Components/ByNID/{nid} Missing NID API response code
@@ -808,7 +805,6 @@ stages:
                 type: int
                 required: True
                 enum:
-                  #TODO: Does Not Exist example in Swagger shows 400
                   - 404
 
   # PUT /State/Components/{xname} Non-Existing Node API response code

@@ -696,7 +696,7 @@ paths:
       description: >-
         Create/Update a collection of state/components. If the component
         already exists it will not be overwritten unless force=true in which
-        case State, Flag, Subtype, NetType, and Arch will get overwritten.
+        case State, Flag, Subtype, NetType, Arch, and Class will get overwritten.
       operationId: doComponentsPost
       parameters:
         - name: payload
@@ -705,12 +705,10 @@ paths:
           schema:
             $ref: '#/definitions/ComponentArray_PostArray'
       responses:
-        "200":
+        "204":
           description: >-
-            Zero (success) error code - one or more entries created or
-            updated. Message contains count of new/modified items.
-          schema:
-            $ref: '#/definitions/Response_1.0.0'
+            [No Content](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5)
+            One or more Component entries were successfully created/updated.
         "400":
           description: Bad Request such as invalid argument for a component field
           schema:
@@ -824,7 +822,7 @@ paths:
       description: >-
         Create/Update a state/component. If the component already exists it
         will not be overwritten unless force=true in which case State, Flag,
-        Subtype, NetType, and Arch will get overwritten.
+        Subtype, NetType, Arch, and Class will get overwritten.
       operationId: doComponentPut
       parameters:
         - name: xname
@@ -839,10 +837,10 @@ paths:
           schema:
             $ref: '#/definitions/Component.1.0.0_Put'
       responses:
-        "200":
+        "204":
           description: >-
-            Zero (success) error code - one entry created or
-            updated. Message contains count of new/modified items.
+            [No Content](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5)
+            Component entry was successfully created/updated.
           schema:
             $ref: '#/definitions/Response_1.0.0'
         "400":
@@ -12015,6 +12013,7 @@ parameters:
       - Warning
       - Alert
       - Locked
+      - Unknown
   compRoleParam:
     name: role
     in: query
@@ -12087,6 +12086,7 @@ parameters:
       - X86
       - ARM
       - Other
+      - Unknown
   compClassParam:
     name: class
     in: query
