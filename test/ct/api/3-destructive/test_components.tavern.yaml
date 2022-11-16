@@ -409,9 +409,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9b9n9","Type":"Node","State":"On","Flag":"OK","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Sling","Arch":"X86","Class":"River"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components API response code
   # GET /State/Components API response body
@@ -512,9 +510,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Component":{"ID":"x9999c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components/{xname} Node API response code
   # GET /State/Components/{xname} Node API response body
@@ -595,9 +591,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Component":{"ID":"x9999c7s9b9n9","Type":"Node","State":"Standby","Flag":"Alert","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Infiniband","Arch":"ARM","Class":"River"},"Force":true}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components/{xname} Node API response code
   # GET /State/Components/{xname} Node API response body
@@ -816,9 +810,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Component":{"ID":"x9999c7s9b9n9","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"AdminStatus","Role":"Compute","NID":9999999999,"NetType":"Ethernet","Arch":"Other","Class":"River"},"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components/{xname} Node API response code
   # GET /State/Components/{xname} Node API response body
@@ -926,9 +918,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Ready","Flag":"OK","Enabled":true,"Role":"Management","NetType":"Sling","Arch":"X86","Class":"River","Locked":false}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # POST /State/Components NodeBMC Existing NodeBMC No Force API response code
   # POST /State/Components NodeBMC Existing NodeBMC No Force API response body
@@ -939,9 +929,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Off","Flag":"Warning","Enabled":false,"Role":"Management","NetType":"Infiniband","Arch":"ARM","Class":"Mountain","Locked":true}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components/{xname} NodeBMC API response code
   # GET /State/Components/{xname} NodeBMC API response body
@@ -1012,9 +1000,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9b9","Type":"NodeBMC","State":"Off","Flag":"Warning","Enabled":false,"Role":"Management","NetType":"Infiniband","Arch":"ARM","Class":"Mountain","Locked":true}],"Force":true}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components/{xname} NodeBMC API response code
   # GET /State/Components/{xname} NodeBMC API response body
@@ -1074,10 +1060,6 @@ stages:
                 type: str
                 required: True
                 enum:
-                  #TODO: Swagger says "If the component already exists it will not be overwritten unless force=true
-                  # in which case State, Flag, Subtype, NetType, and Arch will get overwritten." This test case shows
-                  # that Class also gets overwritten.
-                  #- "River"
                   - "Mountain"
 
   # POST /State/Components Nodes API response code
@@ -1087,13 +1069,9 @@ stages:
       url: "{hsm_base_url}/hsm/v2/State/Components"
       method: POST
       verify: !bool "{verify}"
-      #TODO: Enum for Flag missing Unknown in Swagger
-      #TODO: Enum for Arch missing Unknown in Swagger
       json: {"Components":[{"ID":"x9999c7s9b9n8","Type":"Node","State":"Unknown","Flag":"Unknown","Enabled":true,"SoftwareStatus":"TestStatus8","Role":"Compute","SubRole":"Master","NID":9999999998,"NetType":"Sling","Arch":"X86","Class":"River"},{"ID":"x9999c7s9b9n7","Type":"Node","State":"Empty","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus7","Role":"Service","SubRole":"Worker","NID":9999999997,"NetType":"Infiniband","Arch":"X86","Class":"River"},{"ID":"x9999c7s9b9n6","Type":"Node","State":"Populated","Flag":"Warning","Enabled":true,"SoftwareStatus":"TestStatus6","Role":"System","SubRole":"Storage","NID":9999999996,"NetType":"Ethernet","Arch":"ARM","Class":"River"},{"ID":"x9999c7s9b9n5","Type":"Node","State":"Off","Flag":"Warn","Enabled":true,"SoftwareStatus":"TestStatus5","Role":"Application","SubRole":"Master","NID":9999999995,"NetType":"OEM","Arch":"ARM","Class":"Mountain"},{"ID":"x9999c7s9b9n4","Type":"Node","State":"On","Flag":"Alert","Enabled":false,"SoftwareStatus":"TestStatus4","Role":"Storage","SubRole":"Worker","NID":9999999994,"NetType":"None","Arch":"Other","Class":"Mountain"},{"ID":"x9999c7s9b9n3","Type":"Node","State":"Standby","Flag":"Locked","Enabled":false,"SoftwareStatus":"TestStatus3","Role":"Management","SubRole":"Storage","NID":9999999993,"NetType":"Sling","Arch":"Other","Class":"Mountain"},{"ID":"x9999c7s9b9n2","Type":"Node","State":"Halt","Flag":"OK","Enabled":false,"SoftwareStatus":"TestStatus2","Role":"Compute","SubRole":"Master","NID":9999999992,"NetType":"Sling","Arch":"Unknown","Class":"Hill"},{"ID":"x9999c7s9b9n1","Type":"Node","State":"Ready","Flag":"OK","Enabled":false,"SoftwareStatus":"TestStatus1","Role":"Compute","SubRole":"Worker","NID":9999999991,"NetType":"Sling","Arch":"Unknown","Class":"Hill"},{"ID":"x9999c7s9b9n0","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus0","Role":"Compute","SubRole":"Storage","NID":9999999990,"NetType":"Sling","Arch":"X86","Class":"Hill"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # POST /State/Components NodeEnclosure API response code
   # POST /State/Components NodeEnclosure API response body
@@ -1104,9 +1082,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9e9","Type":"NodeEnclosure","State":"On","Flag":"OK","Enabled":false,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # POST /State/Components RouterBMC and RouterModule API response code
   # POST /State/Components RouterBMC and RouterModule API response body
@@ -1117,9 +1093,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7r9b9","Type":"RouterBMC","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"},{"ID":"x9999c7r9","Type":"RouterModule","State":"Empty","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # POST /State/Components Chassis and ChassisBMC API response code
   # POST /State/Components Chassis and ChassisBMC API response body
@@ -1130,9 +1104,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7","Type":"Chassis","State":"Off","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"},{"ID":"x9999c7b0","Type":"ChassisBMC","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Sling","Arch":"X86","Class":"Mountain"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # POST /State/Components HSNBoard and CabinetPDUController API response code
   # POST /State/Components HSNBoard and CabinetPDUController API response body
@@ -1143,9 +1115,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7r9e9","Type":"HSNBoard","State":"On","Flag":"Warning","Enabled":false,"NetType":"Sling","Arch":"X86","Class":"River"},{"ID":"x9999m3","Type":"CabinetPDUController","State":"Ready","Flag":"OK","Enabled":true,"NetType":"Infiniband","Arch":"X86"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # GET /State/Components?type={type} CabinetPDUController Parameter API response code
   # GET /State/Components?type={type} CabinetPDUController Parameter API response body
@@ -7181,9 +7151,7 @@ stages:
       verify: !bool "{verify}"
       json: {"Components":[{"ID":"x9999c7s9b8n8","Type":"Node","State":"Ready","Flag":"OK","Enabled":true,"SoftwareStatus":"TestStatus8","Role":"Compute","SubRole":"Master","NID":9999999988,"NetType":"Sling","Arch":"X86","Class":"River"},{"ID":"x9999c7s9b8n7","Type":"Node","State":"On","Flag":"Alert","Enabled":true,"SoftwareStatus":"TestStatus7","Role":"Service","SubRole":"Worker","NID":9999999987,"NetType":"Infiniband","Arch":"Other","Class":"Mountain"},{"ID":"x9999c7s9b8n6","Type":"Node","State":"Off","Flag":"Warning","Enabled":true,"SoftwareStatus":"TestStatus6","Role":"System","SubRole":"Storage","NID":9999999986,"NetType":"Ethernet","Arch":"ARM","Class":"Hill"}],"Force":false}
     response:
-      #TODO: returns 204, Swagger says it will be 200
       status_code: 204
-      #TODO: returns no response body, Swagger says it will have a response body
 
   # PATCH /State/Components/BulkStateData Nodes State Flag API response code
   # PATCH /State/Components/BulkStateData Nodes State Flag API response body

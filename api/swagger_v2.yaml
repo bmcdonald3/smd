@@ -841,8 +841,6 @@ paths:
           description: >-
             [No Content](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.2.5)
             Component entry was successfully created/updated.
-          schema:
-            $ref: '#/definitions/Response_1.0.0'
         "400":
           description: Bad Request such as invalid argument for a component field
           schema:
