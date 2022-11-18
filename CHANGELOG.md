@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.59.0] - 2022-11-16
+
+### Changed
+
+CASMHMS-5747 - Refactored HSM CT tests for HMTH, including:
+- Update HSM CT tests to use latest hms-test:4.0.0 image
+- Break out HSM CT tests into non-disruptive, disruptive, and destructive test buckets
+- Add many new API tests that execute in the runCT environment in the build pipeline
+- Fixes to Swagger specification to reflect actual API behavior
+
 ## [1.58.1] - 2022-08-31
 
 ### Fixed

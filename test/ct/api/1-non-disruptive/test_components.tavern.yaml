@@ -20,67 +20,67 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) components API.
+# Tavern test cases for the Hardware State Manager (HSM) Components API.
 # Author: Mitch Schooler, Isa Wazirzada
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 50
-# 1. GET /Components?type=Node API response code all Nodes
-# 2. GET /Components?type=Node API response body all Nodes
-# 3. GET /Components API response code
-# 4. GET /Components API response body
-# 5. GET /Components?id={xname} any API response code
-# 6. GET /Components?id={xname} any API response body
-# 7. GET /Components?type=NodeBMC API response code all NodeBMCs
-# 8. GET /Components?type=NodeBMC API response body all NodeBMCs
-# 9. GET /Components?type=NodeBMC API response code
-# 10. GET /Components?type=NodeBMC API response body
-# 11. GET /Components/{xname} nodeBMC API response code
-# 12. GET /Components/{xname} nodeBMC API response body
-# 13. GET /Components?type=Node API response code
-# 14. GET /Components?type=Node API response code
-# 15. GET /Components/{xname} node API response code
-# 16. GET /Components/{xname} node API response body
-# 17. GET /Components/ByNID/{nid} node API response code
-# 18. GET /Components/ByNID/{nid} node API response body
-# 19. GET /Components/{xname} node API response code
-# 20. GET /Components/{xname} node API response body
-# 21. GET /Components?type=Node API response code
-# 22. GET /Components?type=Node API response body
-# 23. GET /Components?type=Node&Flag={flag} API response code
-# 24. GET /Components?type=Node&Flag={flag} API response body
-# 25. GET /Components?type=Node&Arch=X86 API response code
-# 26. GET /Components?type=Node&Arch=X86 API response body
-# 27. GET /Components?type=Node&nid={nid} API response code
-# 28. GET /Components?type=Node&nid={nid} API response body
-# 29. GET /Components?role=Compute API response code
-# 30. GET /Components?role=Compute API response body
-# 31. GET /Components?type=Booster invalid API response code
-# 32. GET /Components?type=Booster invalid API response body
-# 33. GET /Components?state=Ready API response code
-# 34. GET /Components?state=Ready API response body
-# 35. GET /Components?stateonly=True API response code
-# 36. GET /Components?stateonly=True API response body
-# 37. GET /Components?flagonly=True API response code
-# 38. GET /Components?flagonly=True API response body
-# 39. GET /Components?roleonly=True API response code
-# 40. GET /Components?roleonly=True API response body
-# 41. GET /Components?nidonly=True API response code
-# 42. GET /Components?nidonly=True API response body
-# 43. GET /Components?type=Node API response code
-# 44. GET /Components?type=Node API response body
-# 45. GET /Components/Query/{xname} node API response code
-# 46. GET /Components/Query/{xname} node API response body
-# 47. GET /Components?type=NodeBMC API response code
-# 48. GET /Components?type=NodeBMC API response body
-# 49. GET /Components/Query/{xname} nodeBMC API response code
-# 50. GET /Components/Query/{xname} nodeBMC API response body
+# GET /Components?type=Node API response code all Nodes
+# GET /Components?type=Node API response body all Nodes
+# GET /Components API response code
+# GET /Components API response body
+# GET /Components?id={xname} any API response code
+# GET /Components?id={xname} any API response body
+# GET /Components?type=NodeBMC API response code all NodeBMCs
+# GET /Components?type=NodeBMC API response body all NodeBMCs
+# GET /Components?type=NodeBMC API response code
+# GET /Components?type=NodeBMC API response body
+# GET /Components/{xname} nodeBMC API response code
+# GET /Components/{xname} nodeBMC API response body
+# GET /Components?type=Node API response code
+# GET /Components?type=Node API response code
+# GET /Components/{xname} node API response code
+# GET /Components/{xname} node API response body
+# GET /Components/ByNID/{nid} node API response code
+# GET /Components/ByNID/{nid} node API response body
+# GET /Components/{xname} node API response code
+# GET /Components/{xname} node API response body
+# GET /Components?type=Node API response code
+# GET /Components?type=Node API response body
+# GET /Components?type=Node&Flag={flag} API response code
+# GET /Components?type=Node&Flag={flag} API response body
+# GET /Components?type=Node&Arch=X86 API response code
+# GET /Components?type=Node&Arch=X86 API response body
+# GET /Components?type=Node&nid={nid} API response code
+# GET /Components?type=Node&nid={nid} API response body
+# GET /Components?role=Compute API response code
+# GET /Components?role=Compute API response body
+# GET /Components?type=Booster invalid API response code
+# GET /Components?type=Booster invalid API response body
+# GET /Components?state=Ready API response code
+# GET /Components?state=Ready API response body
+# GET /Components?stateonly=True API response code
+# GET /Components?stateonly=True API response body
+# GET /Components?flagonly=True API response code
+# GET /Components?flagonly=True API response body
+# GET /Components?roleonly=True API response code
+# GET /Components?roleonly=True API response body
+# GET /Components?nidonly=True API response code
+# GET /Components?nidonly=True API response body
+# GET /Components?type=Node API response code
+# GET /Components?type=Node API response body
+# GET /Components/Query/{xname} node API response code
+# GET /Components/Query/{xname} node API response body
+# GET /Components?type=NodeBMC API response code
+# GET /Components?type=NodeBMC API response body
+# GET /Components/Query/{xname} nodeBMC API response code
+# GET /Components/Query/{xname} nodeBMC API response body
 ---
 test_name: Ensure that we can conduct a query for all Nodes in the Component collection
 
 stages:
-  # 1. GET /Components?type=Node API response code all Nodes
-  # 2. GET /Components?type=Node API response body all Nodes
+  # GET /Components?type=Node API response code all Nodes
+  # GET /Components?type=Node API response body all Nodes
   - name: Verify the expected response fields for all Nodes
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
@@ -164,8 +164,8 @@ stages:
 test_name: Verify the Components collection
 
 stages:
-  # 3. GET /Components API response code
-  # 4. GET /Components API response body
+  # GET /Components API response code
+  # GET /Components API response body
   - name: Make sure that a list of Components is returned
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components"
@@ -179,8 +179,8 @@ stages:
         json:
           ID: Components[0].ID
 
-  # 5. GET /Components?id={xname} any API response code
-  # 6. GET /Components?id={xname} any API response body
+  # GET /Components?id={xname} any API response code
+  # GET /Components?id={xname} any API response body
   - name: Make sure that the Component is returned
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?id={ID}"
@@ -198,8 +198,8 @@ stages:
 test_name: Ensure that we can conduct a query for all Node BMCs in the Component collection
 
 stages:
-  # 7. GET /Components?type=NodeBMC API response code all NodeBMCs
-  # 8. GET /Components?type=NodeBMC API response body all NodeBMCs
+  # GET /Components?type=NodeBMC API response code all NodeBMCs
+  # GET /Components?type=NodeBMC API response body all NodeBMCs
   - name: Verify the expected response fields for all NodeBMCs
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
@@ -270,8 +270,8 @@ stages:
 test_name: Ensure that we can conduct a query on the Node BMCs in the Component collection
 
 stages:
-  # 9. GET /Components?type=NodeBMC API response code
-  # 10. GET /Components?type=NodeBMC API response body
+  # GET /Components?type=NodeBMC API response code
+  # GET /Components?type=NodeBMC API response body
   - name: Verify successfully querying for NodeBMCs and get an xname for a particular NodeBMC from the response
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
@@ -285,8 +285,8 @@ stages:
         json:
           xname: Components[0].ID
 
-  # 11. GET /Components/{xname} nodeBMC API response code
-  # 12. GET /Components/{xname} nodeBMC API response body
+  # GET /Components/{xname} nodeBMC API response code
+  # GET /Components/{xname} nodeBMC API response body
   - name: Ensure that we can conduct a query on a specific xname in the Component collection by looking for Node BMCs
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
@@ -349,8 +349,8 @@ strict:
   - json:off
 
 stages:
-  # 13. GET /Components?type=Node API response code
-  # 14. GET /Components?type=Node API response code
+  # GET /Components?type=Node API response code
+  # GET /Components?type=Node API response code
   - name: Ensure that we can conduct a query on the Component collection by looking for Compute nodes
     request:
       # also query with role=Compute since not all of the same node data is expected
@@ -375,8 +375,8 @@ stages:
           State: Components[0].State
           Type: Components[0].Type
 
-  # 15. GET /Components/{xname} node API response code
-  # 16. GET /Components/{xname} node API response body
+  # GET /Components/{xname} node API response code
+  # GET /Components/{xname} node API response body
   - name: Ensure that we can conduct a query on a specific compute node xname in the Component collection
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
@@ -396,8 +396,8 @@ stages:
         State: !anything
         Type: !anything
 
-  # 17. GET /Components/ByNID/{nid} node API response code
-  # 18. GET /Components/ByNID/{nid} node API response body
+  # GET /Components/ByNID/{nid} node API response code
+  # GET /Components/ByNID/{nid} node API response body
   - name: Ensure that we can conduct a query on a specific NID in the Components collection
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/{NID}"
@@ -456,8 +456,8 @@ stages:
               Type:
                 type: str
 
-  # 19. GET /Components/{xname} node API response code
-  # 20. GET /Components/{xname} node API response body
+  # GET /Components/{xname} node API response code
+  # GET /Components/{xname} node API response body
   - name: GET the State for a given xname
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
@@ -516,8 +516,8 @@ stages:
               Type:
                 type: str
 
-  # 21. GET /Components?type=Node API response code
-  # 22. GET /Components?type=Node API response body
+  # GET /Components?type=Node API response code
+  # GET /Components?type=Node API response body
   - name: Conduct a query using the type parameter to look for hardware of the Node type
     request:
       # also query with role=Compute since not all of the same node data is expected
@@ -587,8 +587,8 @@ stages:
                         enum:
                           - "Node"
 
-  # 23. GET /Components?type=Node&Flag={flag} API response code
-  # 24. GET /Components?type=Node&Flag={flag} API response body
+  # GET /Components?type=Node&Flag={flag} API response code
+  # GET /Components?type=Node&Flag={flag} API response body
   - name: Conduct a query using the type and flag parameters to look for hardware of the Node type with a certain Flag
     request:
       # also query with role=Compute since not all of the same node data is expected
@@ -660,8 +660,8 @@ stages:
                         enum:
                           - "Node"
 
-  # 25. GET /Components?type=Node&Arch=X86 API response code
-  # 26. GET /Components?type=Node&Arch=X86 API response body
+  # GET /Components?type=Node&Arch=X86 API response code
+  # GET /Components?type=Node&Arch=X86 API response body
   - name: Conduct a query using the type and flag parameters to look for hardware of the X86 Arch type
     request:
       # also query with role=Compute since not all of the same node data is expected
@@ -733,8 +733,8 @@ stages:
                         enum:
                           - "Node"
 
-  # 27. GET /Components?type=Node&nid={nid} API response code
-  # 28. GET /Components?type=Node&nid={nid} API response body
+  # GET /Components?type=Node&nid={nid} API response code
+  # GET /Components?type=Node&nid={nid} API response body
   - name: Conduct a query using the type and nid query parameters
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&nid={NID}"
@@ -806,8 +806,8 @@ stages:
                         enum:
                           - "Node"
 
-  # 29. GET /Components?role=Compute API response code
-  # 30. GET /Components?role=Compute API response body
+  # GET /Components?role=Compute API response code
+  # GET /Components?role=Compute API response body
   - name: Conduct a query using the role query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Compute"
@@ -875,8 +875,8 @@ stages:
                       Type:
                         type: str
 
-  # 31. GET /Components?type=Booster invalid API response code
-  # 32. GET /Components?type=Booster invalid API response body
+  # GET /Components?type=Booster invalid API response code
+  # GET /Components?type=Booster invalid API response body
   - name: Verify failure when conducting a query on the Component collection by looking for a fictitious type of hardware (Booster)
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Booster"
@@ -890,8 +890,8 @@ stages:
         title: "Bad Request"
         type: "about:blank"
 
-  # 33. GET /Components?state=Ready API response code
-  # 34. GET /Components?state=Ready API response body
+  # GET /Components?state=Ready API response code
+  # GET /Components?state=Ready API response body
   - name: Conduct a query on the Components collection using the State query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Ready"
@@ -905,8 +905,8 @@ stages:
         json:
           ID: Components[0].ID
 
-  # 35. GET /Components?stateonly=True API response code
-  # 36. GET /Components?stateonly=True API response body
+  # GET /Components?stateonly=True API response code
+  # GET /Components?stateonly=True API response body
   - name: Conduct a query on the Components collection using the StateOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?stateonly=True"
@@ -939,8 +939,8 @@ stages:
                         type: str
                         required: True
 
-  # 37. GET /Components?flagonly=True API response code
-  # 38. GET /Components?flagonly=True API response body
+  # GET /Components?flagonly=True API response code
+  # GET /Components?flagonly=True API response body
   - name: Conduct a query on the Components collection using the FlagOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flagonly=True"
@@ -970,8 +970,8 @@ stages:
                         type: str
                         required: True
 
-  # 39. GET /Components?roleonly=True API response code
-  # 40. GET /Components?roleonly=True API response body
+  # GET /Components?roleonly=True API response code
+  # GET /Components?roleonly=True API response body
   - name: Conduct a query on the Components collection using the RoleOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?roleonly=True"
@@ -1004,8 +1004,8 @@ stages:
                         type: str
                         required: True
 
-  # 41. GET /Components?nidonly=True API response code
-  # 42. GET /Components?nidonly=True API response body
+  # GET /Components?nidonly=True API response code
+  # GET /Components?nidonly=True API response body
   - name: Conduct a query on the Components collection using the NidOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?nidonly=True"
@@ -1039,8 +1039,8 @@ stages:
 test_name: Ensure that we can call the Component Query API with node xnames
 
 stages:
-  # 43. GET /Components?type=Node API response code
-  # 44. GET /Components?type=Node API response body
+  # GET /Components?type=Node API response code
+  # GET /Components?type=Node API response body
   - name: Verify successfully querying for Nodes and get an xname for a particular Node from the response
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
@@ -1054,8 +1054,8 @@ stages:
         json:
           xname: Components[0].ID
 
-  # 45. GET /Components/Query/{xname} node API response code
-  # 46. GET /Components/Query/{xname} node API response body
+  # GET /Components/Query/{xname} node API response code
+  # GET /Components/Query/{xname} node API response body
   - name: Ensure that we can conduct a query for a specific Node xname using the Component Query API
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/{xname}"
@@ -1130,8 +1130,8 @@ stages:
 test_name: Ensure that we can call the Component Query API with node BMC xnames
 
 stages:
-  # 47. GET /Components?type=NodeBMC API response code
-  # 48. GET /Components?type=NodeBMC API response body
+  # GET /Components?type=NodeBMC API response code
+  # GET /Components?type=NodeBMC API response body
   - name: Verify successfully querying for NodeBMCs and get an xname for a particular NodeBMC from the response
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
@@ -1145,8 +1145,8 @@ stages:
         json:
           xname: Components[0].ID
 
-  # 49. GET /Components/Query/{xname} nodeBMC API response code
-  # 50. GET /Components/Query/{xname} nodeBMC API response body
+  # GET /Components/Query/{xname} nodeBMC API response code
+  # GET /Components/Query/{xname} nodeBMC API response body
   - name: Ensure that we can conduct a query for a specific NodeBMC xname using the Component Query API
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/{xname}"

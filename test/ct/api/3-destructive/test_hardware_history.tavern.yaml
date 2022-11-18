@@ -1,0 +1,696 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) Hardware[ByFRU] History APIs
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: 32
+# GET /Inventory/Hardware/History API response code
+# GET /Inventory/Hardware/History API response body
+# GET /Inventory/Hardware/History?id={id} Node Parameter API response code
+# GET /Inventory/Hardware/History?id={id} Node Parameter API response body
+# GET /Inventory/Hardware/History/{xname} API response code
+# GET /Inventory/Hardware/History/{xname} API response body
+# GET /Inventory/HardwareByFRU/History API response code
+# GET /Inventory/HardwareByFRU/History API response body
+# GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response code
+# GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response body
+# GET /Inventory/HardwareByFRU/History/{fruid} API response code
+# GET /Inventory/HardwareByFRU/History/{fruid} API response body
+# DELETE /Inventory/Hardware/History/{xname} API response code
+# DELETE /Inventory/Hardware/History/{xname} API response body
+# DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response code
+# DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response body
+# GET /Inventory/Hardware/History/{xname} Non Existent Node API response code
+# GET /Inventory/Hardware/History/{xname} Non Existent Node API response body
+# DELETE /Inventory/Hardware/History API response code
+# DELETE /Inventory/Hardware/History API response body
+# DELETE /Inventory/Hardware/History No Data API response code
+# DELETE /Inventory/Hardware/History No Data API response body
+# GET /Inventory/Hardware/History No Data API response code
+# GET /Inventory/Hardware/History No Data API response body
+# TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
+# TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response code
+# DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response body
+# GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+# GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+---
+test_name: hsmAPIinventoryHardware[ByFRU]historyDestructive
+
+stages:
+  # GET /Inventory/Hardware/History API response code
+  # GET /Inventory/Hardware/History API response body
+  - name: hsmAPIinventoryHardwareHistoryGET - Retrieve all Hardware Inventory History entries using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      History:
+                        type: seq
+                        required: True
+                        matching: all
+                        sequence:
+                          - type: map
+                            required: True
+                            mapping:
+                              ID:
+                                type: str
+                                required: True
+                              FRUID:
+                                type: str
+                                required: True
+                              Timestamp:
+                                type: timestamp
+                                required: True
+                              EventType:
+                                type: str
+                                required: True
+      save:
+        json:
+          xname: "Components[0].ID"
+
+  # GET /Inventory/Hardware/History?id={id} Node Parameter API response code
+  # GET /Inventory/Hardware/History?id={id} Node Parameter API response body
+  - name: hsmAPIinventoryHardwareHistoryGETidParameter - Retrieve Hardware Inventory History entries using GET with the id query parameter.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History?id={xname}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{xname}"
+                      History:
+                        type: seq
+                        required: True
+                        matching: all
+                        sequence:
+                          - type: map
+                            required: True
+                            mapping:
+                              ID:
+                                type: str
+                                required: True
+                                enum:
+                                  - "{xname}"
+                              FRUID:
+                                type: str
+                                required: True
+                              Timestamp:
+                                type: timestamp
+                                required: True
+                              EventType:
+                                type: str
+                                required: True
+
+  # GET /Inventory/Hardware/History/{xname} API response code
+  # GET /Inventory/Hardware/History/{xname} API response body
+  - name: hsmAPIinventoryHardwareHistoryXnameGET - Retrieve Hardware Inventory History entries by xname using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "{xname}"
+              History:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{xname}"
+                      FRUID:
+                        type: str
+                        required: True
+                      Timestamp:
+                        type: timestamp
+                        required: True
+                      EventType:
+                        type: str
+                        required: True
+
+  # GET /Inventory/HardwareByFRU/History API response code
+  # GET /Inventory/HardwareByFRU/History API response body
+  - name: hsmAPIinventoryHardwareByFRUhistoryGET - Retrieve all HardwareByFRU Inventory History entries using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      History:
+                        type: seq
+                        required: True
+                        matching: all
+                        sequence:
+                          - type: map
+                            required: True
+                            mapping:
+                              ID:
+                                type: str
+                                required: True
+                              FRUID:
+                                type: str
+                                required: True
+                              Timestamp:
+                                type: timestamp
+                                required: True
+                              EventType:
+                                type: str
+                                required: True
+      save:
+        json:
+          fruid: "Components[0].ID"
+
+  # GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response code
+  # GET /Inventory/HardwareByFRU/History?fruid={fruid} Node Parameter API response body
+  - name: hsmAPIinventoryHardwareByFRUhistoryGETfruidParameter - Retrieve HardwareByFRU Inventory History entries using GET with the fruid query parameter.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History?fruid={fruid}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{fruid}"
+                      History:
+                        type: seq
+                        required: True
+                        matching: all
+                        sequence:
+                          - type: map
+                            required: True
+                            mapping:
+                              ID:
+                                type: str
+                                required: True
+                              FRUID:
+                                type: str
+                                required: True
+                                enum:
+                                  - "{fruid}"
+                              Timestamp:
+                                type: timestamp
+                                required: True
+                              EventType:
+                                type: str
+                                required: True
+
+  # GET /Inventory/HardwareByFRU/History/{fruid} API response code
+  # GET /Inventory/HardwareByFRU/History/{fruid} API response body
+  - name: hsmAPIinventoryHardwareByFRUhistoryFruidGET - Retrieve HardwareByFRU Inventory History entries by fruid using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "{fruid}"
+              History:
+                type: seq
+                required: True
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      FRUID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{fruid}"
+                      Timestamp:
+                        type: timestamp
+                        required: True
+                      EventType:
+                        type: str
+                        required: True
+
+  # DELETE /Inventory/Hardware/History/{xname} API response code
+  # DELETE /Inventory/Hardware/History/{xname} API response body
+  - name: hsmAPIinventoryHardwareHistoryXnameDELETE - Remove Hardware Inventory History entries by xname using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                pattern: "deleted [0-9]+ entries"
+
+  # DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response code
+  # DELETE /Inventory/Hardware/History/{xname} Non Existent Node API response body
+  - name: hsmAPIinventoryHardwareHistoryXnameDELETEnonExistentNode - Attempt to remove Hardware Inventory History entries by xname that don't exist using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no entries to delete"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # GET /Inventory/Hardware/History/{xname} Non Existent Node API response code
+  # GET /Inventory/Hardware/History/{xname} Non Existent Node API response body
+  - name: hsmAPIinventoryHardwareHistoryXnameGETnonExistentNode - Attempt to retrieve Hardware Inventory History entries by xname that don't exist using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History/{xname}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "{xname}"
+              History:
+                type: seq
+                required: True
+                matching: all
+                range:
+                  min: 0
+                  max: 0
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{xname}"
+                      FRUID:
+                        type: str
+                        required: True
+                      Timestamp:
+                        type: timestamp
+                        required: True
+                      EventType:
+                        type: str
+                        required: True
+
+  # DELETE /Inventory/Hardware/History API response code
+  # DELETE /Inventory/Hardware/History API response body
+  - name: hsmAPIinventoryHardwareHistoryDELETE - Remove all Hardware Inventory History entries using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                pattern: "deleted [0-9]+ entries"
+
+  # DELETE /Inventory/Hardware/History No Data API response code
+  # DELETE /Inventory/Hardware/History No Data API response body
+  - name: hsmAPIinventoryHardwareHistoryDELETEnoData - Attempt to remove all Hardware Inventory History entries when none are present using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no entries to delete"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # GET /Inventory/Hardware/History No Data API response code
+  # GET /Inventory/Hardware/History No Data API response body
+  - name: hsmAPIinventoryHardwareHistoryGETnoData - Attempt to retrieve all Hardware Inventory History entries when none are present using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/Hardware/History"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                # This looks like: {"Components": null}
+                required: False
+                matching: all
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      History:
+                        type: seq
+                        required: True
+                        matching: all
+                        sequence:
+                          - type: map
+                            required: True
+                            mapping:
+                              ID:
+                                type: str
+                                required: True
+                              FRUID:
+                                type: str
+                                required: True
+                              Timestamp:
+                                type: timestamp
+                                required: True
+                              EventType:
+                                type: str
+                                required: True
+
+#  # TODO: This test is disabled since the previous DELETE /Inventory/Hardware test also removes this data.
+#  # TODO: There is no simple way to generate new HardwareByFRU History data without a rediscovery.
+#  # TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response code
+#  # TODO: (Disabled) DELETE /Inventory/HardwareByFRU/History/{fruid} API response body
+#  - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETE - Remove HardwareByFRU Inventory History entries by fruid using DELETE.
+#    request:
+#      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
+#      method: DELETE
+#      verify: !bool "{verify}"
+#    response:
+#      status_code: 200
+#      verify_response_with:
+#        function: tavern.testutils.helpers:validate_pykwalify
+#        extra_kwargs:
+#          schema:
+#            type: map
+#            required: True
+#            mapping:
+#              code:
+#                type: int
+#                required: True
+#                enum:
+#                  - 0
+#              message:
+#                type: str
+#                required: True
+#                pattern: "deleted [0-9]+ entries"
+
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+  - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETEnonExistentFruid - Attempt to remove HardwareByFRU Inventory History entries by fruid that don't exist using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 404
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "no entries to delete"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 404
+
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response code
+  # DELETE /Inventory/HardwareByFRU/History/{fruid} Invalid FRUID API response body
+  - name: hsmAPIinventoryHardwareByFRUhistoryFruidDELETEinvalidFruid - Attempt to remove HardwareByFRU Inventory History entries for an invalid fruid using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/#"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 301
+
+  # GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response code
+  # GET /Inventory/HardwareByFRU/History/{fruid} Non Existent FRUID API response body
+  - name: hsmAPIinventoryHardwareByFRUhistoryFruidGETnonExistentFruid - Attempt to retrieve HardwareByFRU Inventory History entries by fruid that don't exist using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/HardwareByFRU/History/{fruid}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+              History:
+                type: seq
+                required: True
+                matching: all
+                range:
+                  min: 0
+                  max: 0
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                      FRUID:
+                        type: str
+                        required: True
+                      Timestamp:
+                        type: timestamp
+                        required: True
+                      EventType:
+                        type: str
+                        required: True

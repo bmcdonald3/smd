@@ -1,0 +1,734 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) NodeMaps API
+# Author: Mitch Schooler
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: 42
+# DELETE /Defaults/NodeMaps/{xname} NodeA API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeA API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeB API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeB API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeC API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeC API response body
+# POST /Defaults/NodeMaps Non Existing Nodes API response code
+# POST /Defaults/NodeMaps Non Existing Nodes API response body
+# GET /Defaults/NodeMaps API response code
+# GET /Defaults/NodeMaps API response body
+# GET /Defaults/NodeMaps/{xname} NodeA API response code
+# GET /Defaults/NodeMaps/{xname} NodeA API response body
+# GET /Defaults/NodeMaps/{xname} NodeB API response code
+# GET /Defaults/NodeMaps/{xname} NodeB API response body
+# GET /Defaults/NodeMaps/{xname} NodeC API response code
+# GET /Defaults/NodeMaps/{xname} NodeC API response body
+# POST /Defaults/NodeMaps Existing Nodes API response code
+# POST /Defaults/NodeMaps Existing Nodes API response body
+# GET /Defaults/NodeMaps Changed API response code
+# GET /Defaults/NodeMaps Changed API response body
+# GET /Defaults/NodeMaps/{xname} NodeA Changed API response code
+# GET /Defaults/NodeMaps/{xname} NodeA Changed API response body
+# GET /Defaults/NodeMaps/{xname} NodeB Changed API response code
+# GET /Defaults/NodeMaps/{xname} NodeB Changed API response body
+# GET /Defaults/NodeMaps/{xname} NodeC Changed API response code
+# GET /Defaults/NodeMaps/{xname} NodeC Changed API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeC Exists API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeC Exists API response body
+# PUT /Defaults/NodeMaps/{xname} NodeA Exists API response code
+# PUT /Defaults/NodeMaps/{xname} NodeA Exists API response body
+# GET /Defaults/NodeMaps/{xname} NodeA Updated API response code
+# GET /Defaults/NodeMaps/{xname} NodeA Updated API response body
+# PUT /Defaults/NodeMaps/{xname} NodeB Non Existing Node API response code
+# PUT /Defaults/NodeMaps/{xname} NodeB Non Existing Node API response body
+# GET /Defaults/NodeMaps/{xname} NodeB Created API response code
+# GET /Defaults/NodeMaps/{xname} NodeB Created API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeA Exists API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeA Exists API response body
+# DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response code
+# DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response body
+---
+test_name: hsmAPIdefaultsNodeMapsDisruptive
+
+stages:
+  # DELETE /Defaults/NodeMaps/{xname} NodeA API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeA API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeA - DELETE any previously leftover test NodeMap for NodeA.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code:
+        - 200
+        - 404
+
+  # DELETE /Defaults/NodeMaps/{xname} NodeB API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeB API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeB - DELETE any previously leftover test NodeMap for NodeB.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code:
+        - 200
+        - 404
+
+  # DELETE /Defaults/NodeMaps/{xname} NodeC API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeC API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeC - DELETE any previously leftover test NodeMap for NodeC.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code:
+        - 200
+        - 404
+
+  # POST /Defaults/NodeMaps Non Existing Nodes API response code
+  # POST /Defaults/NodeMaps Non Existing Nodes API response body
+  - name: hsmAPIdefaultsNodeMapsPOSTnonExistingNodes - Create a NodeMap for nodes that doesn't yet exist using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NodeMaps":[{"ID":"x9999c7s9b9n9","NID":9999999999,"Role":"Compute","SubRole":"Worker"},{"ID":"x9999c7s9b9n8","NID":9999999998,"Role":"Compute","SubRole":"Worker"},{"ID":"x9999c7s9b9n7","NID":9999999997,"Role":"Compute","SubRole":"Worker"}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created or modified 3 entries"
+
+  # GET /Defaults/NodeMaps API response code
+  # GET /Defaults/NodeMaps API response body
+  - name: hsmAPIdefaultsNodeMapsGET - Retrieve an existing NodeMap using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              NodeMaps:
+                type: seq
+                matching: "*"
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n9"
+                          - "x9999c7s9b9n8"
+                          - "x9999c7s9b9n7"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999999
+                          - 9999999998
+                          - 9999999997
+                      Role:
+                        type: str
+                        required: False
+                      SubRole:
+                        type: str
+                        required: False
+
+  # GET /Defaults/NodeMaps/{xname} NodeA API response code
+  # GET /Defaults/NodeMaps/{xname} NodeA API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeA - Retrieve the data for NodeA from an existing NodeMap using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999999
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Worker"
+
+  # GET /Defaults/NodeMaps/{xname} NodeB API response code
+  # GET /Defaults/NodeMaps/{xname} NodeB API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeB - Retrieve the data for NodeB from an existing NodeMap using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n8"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999998
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Worker"
+
+  # GET /Defaults/NodeMaps/{xname} NodeC API response code
+  # GET /Defaults/NodeMaps/{xname} NodeC API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeC - Retrieve the data for NodeC from an existing NodeMap using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n7"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999997
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Worker"
+
+  # POST /Defaults/NodeMaps Existing Nodes API response code
+  # POST /Defaults/NodeMaps Existing Nodes API response body
+  - name: hsmAPIdefaultsNodeMapsPOSTexistingNodes - Update a NodeMap for nodes that already exists using POST.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"NodeMaps":[{"ID":"x9999c7s9b9n9","NID":9999999999,"Role":"Compute","SubRole":"Worker"},{"ID":"x9999c7s9b9n8","NID":9999999988,"Role":"Service","SubRole":"Master"},{"ID":"x9999c7s9b9n7","NID":9999999987,"Role":"Service","SubRole":"Worker"}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "Created or modified 3 entries"
+
+  # GET /Defaults/NodeMaps Changed API response code
+  # GET /Defaults/NodeMaps Changed API response body
+  - name: hsmAPIdefaultsNodeMapsGETchanged - Retrieve an existing NodeMap that has been updated using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              NodeMaps:
+                type: seq
+                matching: "*"
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "x9999c7s9b9n9"
+                          - "x9999c7s9b9n8"
+                          - "x9999c7s9b9n7"
+                      NID:
+                        type: int
+                        required: True
+                        enum:
+                          - 9999999999
+                          - 9999999988
+                          - 9999999987
+                      Role:
+                        type: str
+                        required: False
+                      SubRole:
+                        type: str
+                        required: False
+
+  # GET /Defaults/NodeMaps/{xname} NodeA Changed API response code
+  # GET /Defaults/NodeMaps/{xname} NodeA Changed API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeAchanged - Retrieve the data for NodeA from an existing NodeMap that has been updated using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999999
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Compute"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Worker"
+
+  # GET /Defaults/NodeMaps/{xname} NodeB Changed API response code
+  # GET /Defaults/NodeMaps/{xname} NodeB Changed API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeBchanged - Retrieve the data for NodeB from an existing NodeMap that has been updated using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n8"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999988
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Service"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Master"
+
+  # GET /Defaults/NodeMaps/{xname} NodeC Changed API response code
+  # GET /Defaults/NodeMaps/{xname} NodeC Changed API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeCchanged - Retrieve the data for NodeC from an existing NodeMap that has been updated using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n7"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999987
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Service"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Worker"
+
+  # DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBexists - Remove an existing NodeMap for NodeB using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # DELETE /Defaults/NodeMaps/{xname} NodeC Exists API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeC Exists API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeCexists - Remove an existing NodeMap for NodeC using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n7"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # PUT /Defaults/NodeMaps/{xname} NodeA Exists API response code
+  # PUT /Defaults/NodeMaps/{xname} NodeA Exists API response body
+  - name: hsmAPIdefaultsNodeMapsXnamePUTexists - Update the data for NodeA from an existing NodeMap that has data for NodeA using PUT.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"NID":9999999979,"Role":"Storage","SubRole":"Storage"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999979
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Storage"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Storage"
+
+  # GET /Defaults/NodeMaps/{xname} NodeA Updated API response code
+  # GET /Defaults/NodeMaps/{xname} NodeA Updated API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeAupdated - Retrieve the data for NodeA from an existing NodeMap that has been updated multiple times using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n9"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999979
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Storage"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Storage"
+
+  # PUT /Defaults/NodeMaps/{xname} NodeB Non Existing Node API response code
+  # PUT /Defaults/NodeMaps/{xname} NodeB Non Existing Node API response body
+  - name: hsmAPIdefaultsNodeMapsXnamePUTnonExistingNode - Create data for NodeB in an existing NodeMap that has no data for NodeB using PUT.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: PUT
+      verify: !bool "{verify}"
+      json: {"NID":9999999978,"Role":"Management","SubRole":"Master"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n8"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999978
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Management"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Master"
+
+  # GET /Defaults/NodeMaps/{xname} NodeB Created API response code
+  # GET /Defaults/NodeMaps/{xname} NodeB Created API response body
+  - name: hsmAPIdefaultsNodeMapsXnameGETnodeBcreated - Retrieve the created data for NodeB from an existing NodeMap using GET.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              ID:
+                type: str
+                required: True
+                enum:
+                  - "x9999c7s9b9n8"
+              NID:
+                type: int
+                required: True
+                enum:
+                  - 9999999978
+              Role:
+                type: str
+                required: True
+                enum:
+                  - "Management"
+              SubRole:
+                type: str
+                required: True
+                enum:
+                  - "Master"
+
+  # DELETE /Defaults/NodeMaps/{xname} NodeA Exists API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeA Exists API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeAexists - Remove an existing NodeMap for NodeA using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n9"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response code
+  # DELETE /Defaults/NodeMaps/{xname} NodeB Exists API response body
+  - name: hsmAPIdefaultsNodeMapsXnameDELETEnodeBexists - Remove an existing NodeMap for NodeB using DELETE.
+    request:
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/x9999c7s9b9n8"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"

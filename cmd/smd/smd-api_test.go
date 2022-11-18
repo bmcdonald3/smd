@@ -861,7 +861,7 @@ func TestDoComponentGet(t *testing.T) {
 		"GET",
 		"https://localhost/hsm/v2/State/Components/x0c0s27",
 		nil,
-		hmsds.ErrHMSDSArgMissing, // COuld be any HMSError
+		hmsds.ErrHMSDSArgMissing, // Could be any HMSError
 		"x0c0s27",
 		jsonErrHMSDSArgMissing,
 	}, {
@@ -6874,6 +6874,13 @@ func TestDoCompEthInterfaceDeleteAll(t *testing.T) {
 	}, {
 		reqType:      "DELETE",
 		reqURI:       "https://localhost/hsm/v2/Inventory/EthernetInterfaces",
+		hmsdsResp:    7,
+		hmsdsRespErr: nil,
+		expectedResp: json.RawMessage(`{"code":0,"message":"deleted 7 entries"}` + "\n"),
+		expectError:  false,
+	}, {
+		reqType:      "DELETE",
+		reqURI:       "https://localhost/hsm/v2/Inventory/EthernetInterfaces",
 		hmsdsResp:    0,
 		hmsdsRespErr: nil,
 		expectedResp: json.RawMessage(`{"type":"about:blank","title":"Not Found","detail":"no entries to delete","status":404}` + "\n"),
@@ -7178,6 +7185,13 @@ func TestDoCompEthInterfaceDeleteAllV2(t *testing.T) {
 		hmsdsResp:    1,
 		hmsdsRespErr: nil,
 		expectedResp: json.RawMessage(`{"code":0,"message":"deleted 1 entries"}` + "\n"),
+		expectError:  false,
+	}, {
+		reqType:      "DELETE",
+		reqURI:       "https://localhost/hsm/v2/Inventory/EthernetInterfaces",
+		hmsdsResp:    8,
+		hmsdsRespErr: nil,
+		expectedResp: json.RawMessage(`{"code":0,"message":"deleted 8 entries"}` + "\n"),
 		expectError:  false,
 	}, {
 		reqType:      "DELETE",
@@ -7618,7 +7632,6 @@ func TestDoCompEthInterfaceIPAddressPostV2(t *testing.T) {
 		expectedResp: json.RawMessage(`{"type":"about:blank","title":"Conflict","detail":"operation would conflict with an existing IP Address on the same ethernet interface.","status":409}` + "\n"),
 		expectError:  true,
 	}, { // Test 3 POST to a non-existant MAC address (404)
-
 		reqType:            "POST",
 		reqURI:             "https://localhost/hsm/v2/Inventory/EthernetInterfaces/a4bf0138ee65/IPAddresses",
 		reqBody:            json.RawMessage(`{"IPAddress": "10.254.2.14", "Network": "HMN" }`),

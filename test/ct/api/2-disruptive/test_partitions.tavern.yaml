@@ -25,36 +25,36 @@
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 30
-# 1. POST /partitions partition1 API response code
-# 2. GET /partitions/{partition1} API response code
-# 3. GET /partitions/{partition1} API response body
-# 4. GET /partitions?partition=<partition1> API response code
-# 5. GET /partitions?partition=<partition1> API response body
-# 6. GET /partitions?tag=<tag1> API response code
-# 7. GET /partitions?tag=<tag1> API response body
-# 8. GET /partitions?tag=<tag2> API response code
-# 9. GET /partitions?tag=<tag2> API response body
-# 10. PATCH /partitions/{partition1} API response code
-# 11. GET /partitions/{partition1} updated description tag API response code
-# 12. GET /partitions/{partition1} updated description tag API response body
-# 13. POST /partitions partition2 API response code
-# 14. GET /partitions/{partition2} API response code
-# 15. GET /partitions/{partition2} API response body
-# 16. GET /partitions/names API response code
-# 17. GET /partitions/names API response body
-# 18. GET /partitions/{partition1}/members API response code
-# 19. GET /partitions/{partition1}/members API response body
-# 20. POST /partitions/{partition1}/members API response code
-# 21. GET /partitions/{partition1}/members new member API response code
-# 22. GET /partitions/{partition1}/members new member API response body
-# 23. DELETE /partitions/{partition1}/members/{xname} API response code
-# 24. DELETE /partitions/{partition1}/members/{xname} API response body
-# 25. GET /partitions/{partition1}/members deleted member API response code
-# 26. GET /partitions/{partition1}/members deleted member API response body
-# 27. DELETE /partitions/{partition1} API response code
-# 28. DELETE /partitions/{partition1} API response body
-# 29. DELETE /partitions/{partition2} API response code
-# 30. DELETE /partitions/{partition2} API response body
+# POST /partitions partition1 API response code
+# GET /partitions/{partition1} API response code
+# GET /partitions/{partition1} API response body
+# GET /partitions?partition=<partition1> API response code
+# GET /partitions?partition=<partition1> API response body
+# GET /partitions?tag=<tag1> API response code
+# GET /partitions?tag=<tag1> API response body
+# GET /partitions?tag=<tag2> API response code
+# GET /partitions?tag=<tag2> API response body
+# PATCH /partitions/{partition1} API response code
+# GET /partitions/{partition1} updated description tag API response code
+# GET /partitions/{partition1} updated description tag API response body
+# POST /partitions partition2 API response code
+# GET /partitions/{partition2} API response code
+# GET /partitions/{partition2} API response body
+# GET /partitions/names API response code
+# GET /partitions/names API response body
+# GET /partitions/{partition1}/members API response code
+# GET /partitions/{partition1}/members API response body
+# POST /partitions/{partition1}/members API response code
+# GET /partitions/{partition1}/members new member API response code
+# GET /partitions/{partition1}/members new member API response body
+# DELETE /partitions/{partition1}/members/{xname} API response code
+# DELETE /partitions/{partition1}/members/{xname} API response body
+# GET /partitions/{partition1}/members deleted member API response code
+# GET /partitions/{partition1}/members deleted member API response body
+# DELETE /partitions/{partition1} API response code
+# DELETE /partitions/{partition1} API response body
+# DELETE /partitions/{partition2} API response code
+# DELETE /partitions/{partition2} API response body
 ---
 test_name: Verify POST, GET, PATCH, and DELETE methods for various /partitions APIs
 
@@ -79,7 +79,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
 
-  # 1. POST /partitions partition1 API response code
+  # POST /partitions partition1 API response code
   - name: Verify /partitions POST method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions"
@@ -89,8 +89,8 @@ stages:
     response:
       status_code: 201
 
-  # 2. GET /partitions/{partition1} API response code
-  # 3. GET /partitions/{partition1} API response body
+  # GET /partitions/{partition1} API response code
+  # GET /partitions/{partition1} API response body
   - name: Verify /partitions/partition GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
@@ -140,8 +140,8 @@ stages:
                           - "{xname1}"
                           - "{xname2}"
 
-  # 4. GET /partitions?partition=<partition1> API response code
-  # 5. GET /partitions?partition=<partition1> API response body
+  # GET /partitions?partition=<partition1> API response code
+  # GET /partitions?partition=<partition1> API response body
   - name: Verify /partitions GET method with partition parameter
     request:
       url: "{hsm_base_url}/hsm/v2/partitions?partition=p98"
@@ -158,8 +158,8 @@ stages:
           member1: "[0].members.ids[0]"
           member2: "[0].members.ids[1]"
 
-  # 6. GET /partitions?tag=<tag1> API response code
-  # 7. GET /partitions?tag=<tag1> API response body
+  # GET /partitions?tag=<tag1> API response code
+  # GET /partitions?tag=<tag1> API response body
   - name: Verify /partitions GET method with tag parameter (1)
     request:
       url: "{hsm_base_url}/hsm/v2/partitions?tag=p98_tag1"
@@ -176,8 +176,8 @@ stages:
           member1: "[0].members.ids[0]"
           member2: "[0].members.ids[1]"
 
-  # 8. GET /partitions?tag=<tag2> API response code
-  # 9. GET /partitions?tag=<tag2> API response body
+  # GET /partitions?tag=<tag2> API response code
+  # GET /partitions?tag=<tag2> API response body
   - name: Verify /partitions GET method with tag parameter (2)
     request:
       url: "{hsm_base_url}/hsm/v2/partitions?tag=p98_tag2"
@@ -194,7 +194,7 @@ stages:
           member1: "[0].members.ids[0]"
           member2: "[0].members.ids[1]"
 
-  # 10. PATCH /partitions/{partition1} API response code
+  # PATCH /partitions/{partition1} API response code
   - name: Verify /partitions/partition PATCH method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
@@ -204,8 +204,8 @@ stages:
     response:
       status_code: 204
 
-  # 11. GET /partitions/{partition1} updated description tag API response code
-  # 12. GET /partitions/{partition1} updated description tag API response body
+  # GET /partitions/{partition1} updated description tag API response code
+  # GET /partitions/{partition1} updated description tag API response body
   - name: Verify /partitions/partition GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
@@ -261,7 +261,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
 
-  # 13. POST /partitions partition2 API response code
+  # POST /partitions partition2 API response code
   - name: Verify /partitions POST method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions"
@@ -271,8 +271,8 @@ stages:
     response:
       status_code: 201
 
-  # 14. GET /partitions/{partition2} API response code
-  # 15. GET /partitions/{partition2} API response body
+  # GET /partitions/{partition2} API response code
+  # GET /partitions/{partition2} API response body
   - name: Verify /partitions/partition GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p99"
@@ -321,8 +321,8 @@ stages:
                         enum:
                           - "{xname3}"
 
-  # 16. GET /partitions/names API response code
-  # 17. GET /partitions/names API response body
+  # GET /partitions/names API response code
+  # GET /partitions/names API response body
   - name: Verify /partitions/names GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/names"
@@ -349,8 +349,8 @@ stages:
               operator: "gt"
               expected: 1
 
-  # 18. GET /partitions/{partition1}/members API response code
-  # 19. GET /partitions/{partition1}/members API response body
+  # GET /partitions/{partition1}/members API response code
+  # GET /partitions/{partition1}/members API response body
   - name: Verify /partitions/partition/members GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
@@ -368,7 +368,7 @@ stages:
               ids:
                 type: seq
                 required: True
-                uniq: True
+                unique: True
                 matching: all
                 sequence:
                   - type: str
@@ -388,7 +388,7 @@ stages:
               operator: "eq"
               expected: True
 
-  # 20. POST /partitions/{partition1}/members API response code
+  # POST /partitions/{partition1}/members API response code
   - name: Verify /partitions/partition/members POST method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
@@ -398,8 +398,8 @@ stages:
     response:
       status_code: 201
 
-  # 21. GET /partitions/{partition1}/members new member API response code
-  # 22. GET /partitions/{partition1}/members new member API response body
+  # GET /partitions/{partition1}/members new member API response code
+  # GET /partitions/{partition1}/members new member API response body
   - name: Verify /partitions/partition/members GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
@@ -441,8 +441,8 @@ stages:
               operator: "eq"
               expected: True
 
-  # 23. DELETE /partitions/{partition1}/members/{xname} API response code
-  # 24. DELETE /partitions/{partition1}/members/{xname} API response body
+  # DELETE /partitions/{partition1}/members/{xname} API response code
+  # DELETE /partitions/{partition1}/members/{xname} API response body
   - name: Verify /partitions/partition/members/xname DELETE method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members/{xname1}"
@@ -468,8 +468,8 @@ stages:
                 enum:
                   - "deleted 1 entry"
 
-  # 25. GET /partitions/{partition1}/members deleted member API response code
-  # 26. GET /partitions/{partition1}/members deleted member API response body
+  # GET /partitions/{partition1}/members deleted member API response code
+  # GET /partitions/{partition1}/members deleted member API response body
   - name: Verify /partitions/partition/members GET method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98/members"
@@ -510,8 +510,8 @@ stages:
               operator: "eq"
               expected: True
 
-  # 27. DELETE /partitions/{partition1} API response code
-  # 28. DELETE /partitions/{partition1} API response body
+  # DELETE /partitions/{partition1} API response code
+  # DELETE /partitions/{partition1} API response body
   - name: Verify /partitions/partition DELETE method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p98"
@@ -537,8 +537,8 @@ stages:
                 enum:
                   - "deleted 1 entry"
 
-  # 29. DELETE /partitions/{partition2} API response code
-  # 30. DELETE /partitions/{partition2} API response body
+  # DELETE /partitions/{partition2} API response code
+  # DELETE /partitions/{partition2} API response body
   - name: Verify /partitions/<partition> DELETE method
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/p99"

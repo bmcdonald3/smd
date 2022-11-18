@@ -20,43 +20,43 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) service endpoints API.
+# Tavern test cases for the Hardware State Manager (HSM) ServiceEndpoints API.
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 26
-# 1. GET /ServiceEndpoints API response code
-# 2. GET /ServiceEndpoints API response body
-# 3. GET /ServiceEndpoints/AccountService API response code
-# 4. GET /ServiceEndpoints/AccountService API response body
-# 5. GET /ServiceEndpoints?service=AccountService API response code
-# 6. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} nodeBMC API response code
-# 7. GET /ServiceEndpoints/EventService API response code
-# 8. GET /ServiceEndpoints/EventService API response body
-# 9. GET /ServiceEndpoints?service=EventService API response code
-# 10. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} nodeBMC API response code
-# 11. GET /ServiceEndpoints/SessionService API response code
-# 12. GET /ServiceEndpoints/SessionService API response body
-# 13. GET /ServiceEndpoints?service=SessionService API response code
-# 14. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} nodeBMC API response code
-# 15. GET /ServiceEndpoints/UpdateService API response code
-# 16. GET /ServiceEndpoints/UpdateService API response body
-# 17. GET /ServiceEndpoints?service=UpdateService API response code
-# 18. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} nodeBMC API response code
-# 19. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
-# 20. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
-# 21. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
-# 22. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
-# 23. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} invalid nodeBMC API response code
-# 24. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} invalid nodeBMC API response code
-# 25. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} invalid nodeBMC API response code
-# 26. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+# GET /ServiceEndpoints API response code
+# GET /ServiceEndpoints API response body
+# GET /ServiceEndpoints/AccountService API response code
+# GET /ServiceEndpoints/AccountService API response body
+# GET /ServiceEndpoints?service=AccountService API response code
+# GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} nodeBMC API response code
+# GET /ServiceEndpoints/EventService API response code
+# GET /ServiceEndpoints/EventService API response body
+# GET /ServiceEndpoints?service=EventService API response code
+# GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} nodeBMC API response code
+# GET /ServiceEndpoints/SessionService API response code
+# GET /ServiceEndpoints/SessionService API response body
+# GET /ServiceEndpoints?service=SessionService API response code
+# GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} nodeBMC API response code
+# GET /ServiceEndpoints/UpdateService API response code
+# GET /ServiceEndpoints/UpdateService API response body
+# GET /ServiceEndpoints?service=UpdateService API response code
+# GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} nodeBMC API response code
+# GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+# GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+# GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+# GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+# GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+# GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+# GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+# GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} invalid nodeBMC API response code
 ---
 test_name: Query the ServiceEndpoints collection
 
 stages:
-  # 1. GET /ServiceEndpoints API response code
-  # 2. GET /ServiceEndpoints API response body
+  # GET /ServiceEndpoints API response code
+  # GET /ServiceEndpoints API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints"
@@ -74,8 +74,8 @@ stages:
 test_name: Query the ServiceEndpoints collection for the AccountService
 
 stages:
-  # 3. GET /ServiceEndpoints/AccountService API response code
-  # 4. GET /ServiceEndpoints/AccountService API response body
+  # GET /ServiceEndpoints/AccountService API response code
+  # GET /ServiceEndpoints/AccountService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the AccountService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService"
@@ -87,7 +87,7 @@ stages:
         json:
           id: ServiceEndpoints[0].RedfishEndpointID
 
-  # 5. GET /ServiceEndpoints?service=AccountService API response code
+  # GET /ServiceEndpoints?service=AccountService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the AccountService using the service query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=AccountService"
@@ -96,7 +96,7 @@ stages:
     response:
       status_code: 200
 
-  # 6. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} nodeBMC API response code
+  # GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the AccountService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/{id}"
@@ -109,8 +109,8 @@ stages:
 test_name: Query the ServiceEndpoints collection for the EventService
 
 stages:
-  # 7. GET /ServiceEndpoints/EventService API response code
-  # 8. GET /ServiceEndpoints/EventService API response body
+  # GET /ServiceEndpoints/EventService API response code
+  # GET /ServiceEndpoints/EventService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the EventService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService"
@@ -122,7 +122,7 @@ stages:
         json:
           id: ServiceEndpoints[0].RedfishEndpointID
 
-  # 9. GET /ServiceEndpoints?service=EventService API response code
+  # GET /ServiceEndpoints?service=EventService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the EventService using the service query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=EventService"
@@ -131,7 +131,7 @@ stages:
     response:
       status_code: 200
 
-  # 10. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} nodeBMC API response code
+  # GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the EventService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/{id}"
@@ -144,8 +144,8 @@ stages:
 test_name: Query the ServiceEndpoints collection for the SessionService
 
 stages:
-  # 11. GET /ServiceEndpoints/SessionService API response code
-  # 12. GET /ServiceEndpoints/SessionService API response body
+  # GET /ServiceEndpoints/SessionService API response code
+  # GET /ServiceEndpoints/SessionService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the SessionService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService"
@@ -157,7 +157,7 @@ stages:
         json:
           id: ServiceEndpoints[0].RedfishEndpointID
 
-  # 13. GET /ServiceEndpoints?service=SessionService API response code
+  # GET /ServiceEndpoints?service=SessionService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the SessionService using the service query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=SessionService"
@@ -166,7 +166,7 @@ stages:
     response:
       status_code: 200
 
-  # 14. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} nodeBMC API response code
+  # GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the SessionService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/{id}"
@@ -179,8 +179,8 @@ stages:
 test_name: Query the ServiceEndpoints collection for the UpdateService
 
 stages:
-  # 15. GET /ServiceEndpoints/UpdateService API response code
-  # 16. GET /ServiceEndpoints/UpdateService API response body
+  # GET /ServiceEndpoints/UpdateService API response code
+  # GET /ServiceEndpoints/UpdateService API response body
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the UpdateService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService"
@@ -192,7 +192,7 @@ stages:
         json:
           id: ServiceEndpoints[0].RedfishEndpointID
 
-  # 17. GET /ServiceEndpoints?service=UpdateService API response code
+  # GET /ServiceEndpoints?service=UpdateService API response code
   - name: Ensure that we can conduct a query on the ServiceEndpoints collection for the UpdateService using the service query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints?service=UpdateService"
@@ -201,7 +201,7 @@ stages:
     response:
       status_code: 200
 
-  # 18. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} nodeBMC API response code
+  # GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} nodeBMC API response code
   - name: Ensure that we can conduct a query for a specific xname in the ServiceEndpoints collection for the UpdateService
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/{id}"
@@ -214,7 +214,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the AccountService with a valid but nonexistent xname
 
 stages:
-  # 19. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+  # GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the AccountService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/x1025c7s4b4"
@@ -227,7 +227,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the EventService with a valid but nonexistent xname
 
 stages:
-  # 20. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+  # GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the EventService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/x1025c7s4b4"
@@ -240,7 +240,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the SessionService with a valid but nonexistent xname
 
 stages:
-  # 21. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+  # GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the SessionService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/x1025c7s4b4"
@@ -253,7 +253,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the UpdateService with a valid but nonexistent xname
 
 stages:
-  # 22. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
+  # GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} valid nonexistent nodeBMC API response code
   - name: Verify failure when providing a valid but nonexistent xname for the UpdateService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/x1025c7s4b4"
@@ -266,7 +266,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the AccountService with an invalid xname
 
 stages:
-  # 23. GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+  # GET /ServiceEndpoints/AccountService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the AccountService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/AccountService/RedfishEndpoints/x1025000c7s4b4"
@@ -279,7 +279,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the EventService with an invalid xname
 
 stages:
-  # 24. GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+  # GET /ServiceEndpoints/EventService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the EventService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/EventService/RedfishEndpoints/x1025000c7s4b4"
@@ -292,7 +292,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the SessionService with an invalid xname
 
 stages:
-  # 25. GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+  # GET /ServiceEndpoints/SessionService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the SessionService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/SessionService/RedfishEndpoints/x1025000c7s4b4"
@@ -305,7 +305,7 @@ stages:
 test_name: Attempt to query the ServiceEndpoints collection for the UpdateService with an invalid xname
 
 stages:
-  # 26. GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} invalid nodeBMC API response code
+  # GET /ServiceEndpoints/UpdateService/RedfishEndpoints/{xname} invalid nodeBMC API response code
   - name: Verify failure when providing an invalid xname for the UpdateService in the ServiceEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ServiceEndpoints/UpdateService/RedfishEndpoints/x1025000c7s4b4"

@@ -1,0 +1,2060 @@
+# MIT License
+#
+# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# Tavern test cases for the Hardware State Manager (HSM) locks API
+# Author: Manny Alvarez
+# Service: Hardware State Manager
+
+# HMS test metrics test cases: 35
+# POST /locks/status No Components
+# GET /locks/status?type=partition No Components
+# POST /State/Components Add test components
+# POST /locks/status \w Components
+# GET /locks/status?type=partition \w Components
+# POST /locks/lock Lock components of one type
+# POST /locks/lock Lock already locked components
+# POST /locks/unlock Unlock components of one type
+# POST /locks/unlock Unlock already unlocked components
+# POST /locks/lock 2 components
+# POST /locks/service/reservations Try to reserve all rigid
+# POST /locks/service/reservations Try to reserve all flexible (reserves 2/4)
+# POST /locks/service/reservations Try to reserve already reserved
+# POST /locks/service/reservations/check Check 2 reservations
+# POST /locks/service/reservations/renew Renew 2 reservations
+# POST /locks/service/reservations/release Release 1 reservation
+# POST /locks/service/reservations/release Release 1 already released reservation
+# POST /locks/service/reservations/check Check 2 reservations
+# POST /locks/service/reservations/renew Renew 2 reservations rigid (fail)
+# POST /locks/service/reservations/renew Renew 2 reservations flexible (renews 1/2)
+# POST /locks/lock Lock reserved component
+# POST /locks/reservations Reserve 4 components rigid
+# POST /locks/reservations Reserve 4 components flexible (reserve 2/4)
+# POST /locks/reservations/remove Force remove reservations on 4 components rigid
+# POST /locks/reservations/remove Force remove reservations on 4 components flexible (remove 3/4)
+# POST /locks/reservations Reserve 2 locked components
+# POST /locks/reservations/release Release 1 reservation
+# POST /locks/reservations/release Release 1 already released reservation
+# POST /locks/disable Disable reservations on 2 components
+# POST /locks/disable Disable reservations on 4 components
+# POST /locks/repair Repair reservations on 2 components
+# POST /locks/repair Repair reservations on 4 components
+# POST /locks/unlock Unlock 4 components rigid
+# POST /locks/unlock Unlock 4 components flexible (unlock 2/4)
+# DELETE /State/Components/{xname} Remove test components
+---
+test_name: hsmAPILocks
+
+stages:
+  ##############################################
+  # Remove any test components we previously created.
+  # This will also remove any locks/reservations
+  # hanging around.
+  ##############################################
+
+  # DELETE /State/Components/p9999.9996
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9996
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9996"
+      method: DELETE
+  # DELETE /State/Components/p9999.9997
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9997
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9997"
+      method: DELETE
+  # DELETE /State/Components/p9999.9998
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9998
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9998"
+      method: DELETE
+  # DELETE /State/Components/p9999.9999
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9999
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9999"
+      method: DELETE
+
+  ##############################################
+  # Begin Tests
+  ##############################################
+
+  # POST /lock/status No Components
+  - name: hsmAPILocksStatusPOSTNoComponents - Try to get status our non-existent test components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/status"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9996","p9999.9997","p9999.9998","p9999.9999"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # GET /lock/status No Components
+  - name: hsmAPILocksStatusGETNoComponents - Try to get status our non-existent test components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/status?type=Partition"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /State/Components Node API response code
+  # This will create 4 lockable/reservable partition type components.
+  # Yes, it is technically legal to have a component of type Partition
+  # under /State/Components but it should never happen. Use it here for
+  # filtering.
+  - name: hsmAPILocksPOSTnodes - Create 4 components for locking usage.
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components"
+      method: POST
+      json: {"Components":[{"ID":"p9999.9996","State":"Populated"},{"ID":"p9999.9997","State":"Populated"},{"ID":"p9999.9998","State":"Populated"},{"ID":"p9999.9999","State":"Populated"}]}
+
+  # POST /lock/status \w Components
+  - name: hsmAPILocksStatusPOST - Try to get status our newly created components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/status"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9996","p9999.9997","p9999.9998","p9999.9999"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      Locked:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+                      Reserved:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+                      ReservationDisabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Components)"
+              operator: "eq"
+              expected: 4
+
+  # GET /lock/status \w Components
+  - name: hsmAPILocksStatusGET - Try to get status our newly created components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/status?type=Partition"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Components:
+                type: seq
+                matching: all
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      Locked:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+                      Reserved:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+                      ReservationDisabled:
+                        type: bool
+                        required: True
+                        enum:
+                          - false
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Components)"
+              operator: "eq"
+              expected: 4
+
+  # POST /locks/lock Lock 4 components of one type
+  - name: hsmAPILocksLockPOST - Lock 4 components of one type
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/lock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9998"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 4
+
+  # POST /locks/lock Lock already locked components
+  - name: hsmAPILocksLockPOST - Lock already locked components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/lock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component is Locked"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/unlock Unlock components of one type
+  - name: hsmAPILocksUnlockPOST - Unlock components of one type
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/unlock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9998"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 4
+
+  # POST /locks/unlock Unlock already unlocked components
+  - name: hsmAPILocksUnlockPOST - Unlock already unlocked components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/unlock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component is Unlocked"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/lock Lock 2 components
+  - name: hsmAPILocksLockPOST - Lock 2 components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/lock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9996","p9999.9997"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 2
+
+  # POST /locks/service/reservations Try to reserve all rigid
+  - name: hsmAPILocksServiceReservationsPOST - Try to reserve all rigid
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"],"ReservationDuration":15,"ProcessingModel":"rigid"}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component is Locked"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations Try to reserve all flexible (reserves 2/4)
+  - name: hsmAPILocksServiceReservationsPOST - Try to reserve all flexible
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"],"ReservationDuration":15,"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Success:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      DeputyKey:
+                        type: str
+                        required: True
+                      ReservationKey:
+                        type: str
+                        required: True
+                      ExpirationTime:
+                        type: str
+                        required: True
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "Locked"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 2
+      save:
+        json:
+          service_key_data_0: Success[0]
+          service_key_data_1: Success[1]
+
+  # POST /locks/service/reservations Try to reserve already reserved
+  - name: hsmAPILocksServiceReservationsPOST - Try to reserve already reserved
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9998","p9999.9999"],"ReservationDuration":15,"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Success:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      DeputyKey:
+                        type: str
+                        required: False
+                      ReservationKey:
+                        type: str
+                        required: False
+                      ExpirationTime:
+                        type: str
+                        required: False
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "Reserved"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success)"
+              operator: "eq"
+              expected: 0
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 2
+
+  # POST /locks/service/reservations/check Check 2 reservations
+  - name: hsmAPILocksServiceReservationsCheckPOST - Check 2 reservations
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/check"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"DeputyKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.DeputyKey}"},{"ID":"{service_key_data_1.ID}","Key":"{service_key_data_1.DeputyKey}"}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Success:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_0.ID}"
+                          - "{service_key_data_1.ID}"
+                      DeputyKey:
+                        type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_0.DeputyKey}"
+                          - "{service_key_data_1.DeputyKey}"
+                      CreationTime:
+                        type: str
+                        required: True
+                      ExpirationTime:
+                        type: str
+                        required: True
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/service/reservations/renew Renew 2 reservations
+  - name: hsmAPILocksServiceReservationsRenewPOST - Renew 2 reservations
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/renew"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.ReservationKey}"},{"ID":"{service_key_data_1.ID}","Key":"{service_key_data_1.ReservationKey}"}],"ReservationDuration":15}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_0.ID}"
+                          - "{service_key_data_1.ID}"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/service/reservations/release Release 1 reservation
+  - name: hsmAPILocksServiceReservationsReleasePOST - Release 1 reservation
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.ReservationKey}"}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_0.ID}"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 1
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/service/reservations/release Release 1 already released reservation
+  - name: hsmAPILocksServiceReservationsReleasePOST - Release 1 already released reservation
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.ReservationKey}"}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/check Check 2 reservations
+  - name: hsmAPILocksServiceReservationsCheckPOST - Check 2 reservations
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/check"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"DeputyKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.DeputyKey}"},{"ID":"{service_key_data_1.ID}","Key":"{service_key_data_1.DeputyKey}"}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Success:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_1.ID}"
+                      DeputyKey:
+                        type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_1.DeputyKey}"
+                      CreationTime:
+                        type: str
+                        required: True
+                      ExpirationTime:
+                        type: str
+                        required: True
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_0.ID}"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - NotFound
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success)"
+              operator: "eq"
+              expected: 1
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 1
+
+  # POST /locks/service/reservations/renew Renew 2 reservations rigid (fail)
+  - name: hsmAPILocksServiceReservationsRenewPOST - Renew 2 reservations
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/renew"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.ReservationKey}"},{"ID":"{service_key_data_1.ID}","Key":"{service_key_data_1.ReservationKey}"}],"ReservationDuration":15}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/service/reservations/renew Renew 2 reservations flexible (renews 1/2)
+  - name: hsmAPILocksServiceReservationsRenewPOST - Renew 2 reservations flexible
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/service/reservations/renew"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{service_key_data_0.ID}","Key":"{service_key_data_0.ReservationKey}"},{"ID":"{service_key_data_1.ID}","Key":"{service_key_data_1.ReservationKey}"}],"ReservationDuration":15,"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_1.ID}"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "{service_key_data_0.ID}"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "NotFound"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 1
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 1
+
+  # POST /locks/lock Lock reserved component
+  - name: hsmAPILocksLockPOST - Lock reserved component
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/lock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9999"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component is Reserved"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/reservations Reserve 4 components rigid
+  - name: hsmAPILocksReservationsPOST - Reserve 4 components rigid
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component is Unlocked"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/reservations Reserve 4 components flexible (reserve 2/4)
+  - name: hsmAPILocksReservationsPOST - Reserve 4 components flexible
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"],"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Success:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                      DeputyKey:
+                        type: str
+                        required: True
+                      ReservationKey:
+                        type: str
+                        required: True
+                      ExpirationTime:
+                        type: str
+                        required: True
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unlocked"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 2
+
+  # POST /locks/reservations/remove Force remove reservations on 4 components rigid
+  - name: hsmAPILocksReservationsRemovePOST - Force remove reservations on 4 components rigid
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/remove"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/reservations/remove Force remove reservations on 4 components flexible (remove 3/4)
+  - name: hsmAPILocksReservationsRemovePOST - Force remove reservations on 4 components flexible
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/remove"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"],"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 3
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "NotFound"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 3
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 1
+
+  # POST /locks/reservations Reserve 2 locked components
+  - name: hsmAPILocksReservationsPOST - Reserve 2 locked components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"],"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Success:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                      DeputyKey:
+                        type: str
+                        required: True
+                      ReservationKey:
+                        type: str
+                        required: True
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unlocked"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 2
+      save:
+        json:
+          key_data_0: Success[0]
+          key_data_1: Success[1]
+
+  # POST /locks/reservations/release Release 1 reservation
+  - name: hsmAPILocksReservationsReleasePOST - Release 1 reservation
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{key_data_0.ID}","Key":"{key_data_0.ReservationKey}"}]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 1
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "{key_data_0.ID}"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: False
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 1
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/reservations/release Release 1 already released reservation
+  - name: hsmAPILocksReservationsReleasePOST - Release 1 reservation
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/reservations/release"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ReservationKeys":[{"ID":"{key_data_0.ID}","Key":"{key_data_0.ReservationKey}"}]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component not found"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/disable Disable reservations on 2 components
+  - name: hsmAPILocksDisablePOST - Disable reservations on 2 components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/disable"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9998","p9999.9999"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/disable Disable reservations on 4 components
+  - name: hsmAPILocksDisablePOST - Disable reservations on 4 components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/disable"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9998"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 4
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/repair Repair reservations on 2 components
+  - name: hsmAPILocksRepairPOST - Repair reservations on 2 components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/repair"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"ComponentIDs":["p9999.9998","p9999.9999"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/repair Repair reservations on 4 components
+  - name: hsmAPILocksRepairPOST - Repair reservations on 4 components
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/repair"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 0
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+                          - "p9999.9998"
+                          - "p9999.9999"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: False
+                      Reason:
+                        type: str
+                        required: False
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 4
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 0
+
+  # POST /locks/unlock Unlock 4 components rigid
+  - name: hsmAPILocksUnlockPOST - Unlock 4 components rigid
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/unlock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"]}
+    response:
+      status_code: 400
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Bad Request"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "Component is Unlocked"
+              status:
+                type: int
+                required: True
+                enum:
+                  - 400
+
+  # POST /locks/unlock Unlock 4 components flexible (unlock 2/4)
+  - name: hsmAPILocksUnlockPOST - Unlock 4 components flexible
+    request:
+      url: "{hsm_base_url}/hsm/v2/locks/unlock"
+      method: POST
+      verify: !bool "{verify}"
+      json: {"Type":["Partition"],"ProcessingModel":"flexible"}
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              Counts:
+                type: map
+                required: True
+                mapping:
+                  Total:
+                    type: int
+                    required: True
+                    enum:
+                      - 4
+                  Success:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+                  Failure:
+                    type: int
+                    required: True
+                    enum:
+                      - 2
+              Success:
+                type: map
+                required: True
+                mapping:
+                  ComponentIDs:
+                    type: seq
+                    required: True
+                    sequence:
+                      - type: str
+                        required: True
+                        enum:
+                          - "p9999.9996"
+                          - "p9999.9997"
+              Failure:
+                type: seq
+                required: True
+                sequence:
+                  - type: map
+                    required: True
+                    mapping:
+                      ID:
+                        type: str
+                        required: True
+                        enum:
+                          - "p9999.9998"
+                          - "p9999.9999"
+                      Reason:
+                        type: str
+                        required: True
+                        enum:
+                          - "Unlocked"
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Success.ComponentIDs)"
+              operator: "eq"
+              expected: 2
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@.Failure)"
+              operator: "eq"
+              expected: 2
+
+  ##############################################
+  # Clean up
+  ##############################################
+
+  # DELETE /State/Components/{xname} Remove test components
+  # DELETE /State/Components/p9999.9996
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9996
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9996"
+      method: DELETE
+  # DELETE /State/Components/p9999.9997
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9997
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9997"
+      method: DELETE
+  # DELETE /State/Components/p9999.9998
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9998
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9998"
+      method: DELETE
+  # DELETE /State/Components/p9999.9999
+  - name: hsmAPIlocksDELETE - Delete leftover test component p9999.9999
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components/p9999.9999"
+      method: DELETE

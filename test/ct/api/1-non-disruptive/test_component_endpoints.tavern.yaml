@@ -20,34 +20,34 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) component endpoints API.
+# Tavern test cases for the Hardware State Manager (HSM) ComponentEndpoints API.
 # Author: Mitch Schooler, Isa Wazirzada
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 17
-# 1. GET /ComponentEndpoints API response code
-# 2. GET /ComponentEndpoints API response body
-# 3. GET /ComponentEndpoints?type=Node API response code
-# 4. GET /ComponentEndpoints?type=Node API response body
-# 5. GET /ComponentEndpoints/{node} API response code
-# 6. GET /ComponentEndpoints/{node} API response body
-# 7. GET /ComponentEndpoints?type=NodeBMC API response code
-# 8. GET /ComponentEndpoints?type=NodeBMC API response body
-# 9. GET /ComponentEndpoints/{nodeBMC} API response code
-# 10. GET /ComponentEndpoints/{nodeBMC} API response body
-# 11. GET /ComponentEndpoints?type=NodeEnclosure API response code
-# 12. GET /ComponentEndpoints?type=NodeEnclosure API response body
-# 13. GET /ComponentEndpoints/{nodeEnclosure} API response code
-# 14. GET /ComponentEndpoints/{nodeEnclosure} API response body
-# 15. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
-# 16. GET /ComponentEndpoints/{nodeBMC} invalid API response code
-# 17. GET /ComponentEndpoints/{nid} unsupported id API response code
+# GET /ComponentEndpoints API response code
+# GET /ComponentEndpoints API response body
+# GET /ComponentEndpoints?type=Node API response code
+# GET /ComponentEndpoints?type=Node API response body
+# GET /ComponentEndpoints/{node} API response code
+# GET /ComponentEndpoints/{node} API response body
+# GET /ComponentEndpoints?type=NodeBMC API response code
+# GET /ComponentEndpoints?type=NodeBMC API response body
+# GET /ComponentEndpoints/{nodeBMC} API response code
+# GET /ComponentEndpoints/{nodeBMC} API response body
+# GET /ComponentEndpoints?type=NodeEnclosure API response code
+# GET /ComponentEndpoints?type=NodeEnclosure API response body
+# GET /ComponentEndpoints/{nodeEnclosure} API response code
+# GET /ComponentEndpoints/{nodeEnclosure} API response body
+# GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
+# GET /ComponentEndpoints/{nodeBMC} invalid API response code
+# GET /ComponentEndpoints/{nid} unsupported id API response code
 ---
 test_name: Query the ComponentEndpoints collection
 
 stages:
-  # 1. GET /ComponentEndpoints API response code
-  # 2. GET /ComponentEndpoints API response body
+  # GET /ComponentEndpoints API response code
+  # GET /ComponentEndpoints API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints"
@@ -394,8 +394,8 @@ Accelerator[0-9]+"
 test_name: Query the ComponentEndpoints collection and get Node Information
 
 stages:
-  # 3. GET /ComponentEndpoints?type=Node API response code
-  # 4. GET /ComponentEndpoints?type=Node API response body
+  # GET /ComponentEndpoints?type=Node API response code
+  # GET /ComponentEndpoints?type=Node API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=Node"
@@ -438,8 +438,8 @@ stages:
         json:
           id: ComponentEndpoints[0].RedfishEndpointID
 
-  # 5. GET /ComponentEndpoints/{node} API response code
-  # 6. GET /ComponentEndpoints/{node} API response body
+  # GET /ComponentEndpoints/{node} API response code
+  # GET /ComponentEndpoints/{node} API response body
   - name: Ensure that we can conduct a query on a specific node xname in the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
@@ -472,8 +472,8 @@ stages:
 test_name: Query the ComponentEndpoints collection and get NodeBMC Information
 
 stages:
-  # 7. GET /ComponentEndpoints?type=NodeBMC API response code
-  # 8. GET /ComponentEndpoints?type=NodeBMC API response body
+  # GET /ComponentEndpoints?type=NodeBMC API response code
+  # GET /ComponentEndpoints?type=NodeBMC API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular BMC
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeBMC"
@@ -516,8 +516,8 @@ stages:
         json:
           id: ComponentEndpoints[0].RedfishEndpointID
 
-  # 9. GET /ComponentEndpoints/{nodeBMC} API response code
-  # 10. GET /ComponentEndpoints/{nodeBMC} API response body
+  # GET /ComponentEndpoints/{nodeBMC} API response code
+  # GET /ComponentEndpoints/{nodeBMC} API response body
   - name: Ensure that we can conduct a query on a specific node BMC xname in the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
@@ -550,8 +550,8 @@ stages:
 test_name: Query the ComponentEndpoints collection and get Node Enclosure Information
 
 stages:
-  # 11. GET /ComponentEndpoints?type=NodeEnclosure API response code
-  # 12. GET /ComponentEndpoints?type=NodeEnclosure API response body
+  # GET /ComponentEndpoints?type=NodeEnclosure API response code
+  # GET /ComponentEndpoints?type=NodeEnclosure API response body
   - name: Ensure that we can conduct a query on the ComponentEndpoints collection for a particular node enclosure
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints?type=NodeEnclosure"
@@ -594,8 +594,8 @@ stages:
         json:
           id: ComponentEndpoints[0].RedfishEndpointID
 
-  # 13. GET /ComponentEndpoints/{nodeEnclosure} API response code
-  # 14. GET /ComponentEndpoints/{nodeEnclosure} API response body
+  # GET /ComponentEndpoints/{nodeEnclosure} API response code
+  # GET /ComponentEndpoints/{nodeEnclosure} API response body
   - name: Ensure that we can conduct a query on a specific node enclosure xname in the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/{id}"
@@ -628,7 +628,7 @@ stages:
 test_name: Attempt to query the ComponentEndpoints collection with a valid but nonexistent xname
 
 stages:
-  # 15. GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
+  # GET /ComponentEndpoints/{nodeBMC} valid nonexistent API response code
   - name: Verify failure when providing a valid but nonexistent BMC xname in the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025c7s4b4"
@@ -641,7 +641,7 @@ stages:
 test_name: Attempt to query the ComponentEndpoints collection with an invalid xname
 
 stages:
-  # 16. GET /ComponentEndpoints/{nodeBMC} invalid API response code
+  # GET /ComponentEndpoints/{nodeBMC} invalid API response code
   - name: Verify failure when providing an invalid BMC xname in the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/x1025000c7s4b4"
@@ -654,7 +654,7 @@ stages:
 test_name: Attempt to query the ComponentEndpoints collection with a nid instead of an xname
 
 stages:
-  # 17. GET /ComponentEndpoints/{nid} unsupported id API response code
+  # GET /ComponentEndpoints/{nid} unsupported id API response code
   - name: Verify failure when providing a nid name instead of a valid BMC xname in the ComponentEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/ComponentEndpoints/1"

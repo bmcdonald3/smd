@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,31 +20,31 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-# Tavern test cases for the Hardware State Manager (HSM) Redfish endpoints API.
+# Tavern test cases for the Hardware State Manager (HSM) RedfishEndpoints API.
 # Author: Mitch Schooler, Isa Wazirzada
 # Service: Hardware State Manager
 
 # HMS test metrics test cases: 12
-# 1. GET /RedfishEndpoints API response code
-# 2. GET /RedfishEndpoints API response body
-# 3. GET /RedfishEndpoints?type=NodeBMC API response code
-# 4. GET /RedfishEndpoints?type=NodeBMC API response body
-# 5. GET /RedfishEndpoints/{xname} nodeBMC API response code
-# 6. GET /RedfishEndpoints/{xname} nodeBMC API response body
-# 7. GET /RedfishEndpoints?id={xname} nodeBMC API response code
-# 8. GET /RedfishEndpoints?id={xname} nodeBMC API response body
-# 9. GET /RedfishEndpoints?fqdn={fqdn} API response code
-# 10. GET /RedfishEndpoints?fqdn={fqdn} API response body
-# 11. Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response code
-# 12. Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response body
-# 13. GET /RedfishEndpoints/Query/{xname} nodeBMC API response code
-# 14. GET /RedfishEndpoints/Query/{xname} nodeBMC API response body
+# GET /RedfishEndpoints API response code
+# GET /RedfishEndpoints API response body
+# GET /RedfishEndpoints?type=NodeBMC API response code
+# GET /RedfishEndpoints?type=NodeBMC API response body
+# GET /RedfishEndpoints/{xname} NodeBMC API response code
+# GET /RedfishEndpoints/{xname} NodeBMC API response body
+# GET /RedfishEndpoints?id={xname} NodeBMC API response code
+# GET /RedfishEndpoints?id={xname} NodeBMC API response body
+# GET /RedfishEndpoints?fqdn={fqdn} API response code
+# GET /RedfishEndpoints?fqdn={fqdn} API response body
+# TODO: Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response code
+# TODO: Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response body
+# GET /RedfishEndpoints/Query/{xname} NodeBMC API response code
+# GET /RedfishEndpoints/Query/{xname} NodeBMC API response body
 ---
 test_name: Ensure that we can gather information from the RedfishEndpoints collection
 
 stages:
-  # 1. GET /RedfishEndpoints API response code
-  # 2. GET /RedfishEndpoints API response body
+  # GET /RedfishEndpoints API response code
+  # GET /RedfishEndpoints API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints"
@@ -76,12 +76,10 @@ stages:
                             required: True
                             enum:
                               - "DiscoverOK"
-                              #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
+                              # expected for ncn-m001 which is not connected to the site network
                               - "HTTPsGetFailed"
                           RedfishVersion:
                             type: str
-                            #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                            #required: True
                             required: False
                       Domain:
                         type: str
@@ -108,7 +106,6 @@ stages:
                         required: True
                       IPAddress:
                         type: str
-                        # introduced in v1.3, optional field
                         required: False
                       RediscoverOnUpdate:
                         type: bool
@@ -123,15 +120,13 @@ stages:
                           - "CabinetPDUController"
                       UUID:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
                         required: False
                       User:
                         type: str
                         required: True
 
-  # 3. GET /RedfishEndpoints?type=NodeBMC API response code
-  # 4. GET /RedfishEndpoints?type=NodeBMC API response body
+  # GET /RedfishEndpoints?type=NodeBMC API response code
+  # GET /RedfishEndpoints?type=NodeBMC API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection using the type parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?type=NodeBMC"
@@ -163,12 +158,10 @@ stages:
                             required: True
                             enum:
                               - "DiscoverOK"
-                              #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
+                              # expected for ncn-m001 which is not connected to the site network
                               - "HTTPsGetFailed"
                           RedfishVersion:
                             type: str
-                            #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                            #required: True
                             required: False
                       Domain:
                         type: str
@@ -195,7 +188,6 @@ stages:
                         required: True
                       IPAddress:
                         type: str
-                        # introduced in v1.3, optional field
                         required: False
                       RediscoverOnUpdate:
                         type: bool
@@ -207,8 +199,6 @@ stages:
                           - "NodeBMC"
                       UUID:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
                         required: False
                       User:
                         type: str
@@ -225,8 +215,8 @@ stages:
         json:
           xname: Components[0].ID
 
-  # 5. GET /RedfishEndpoints/{xname} nodeBMC API response code
-  # 6. GET /RedfishEndpoints/{xname} nodeBMC API response body
+  # GET /RedfishEndpoints/{xname} NodeBMC API response code
+  # GET /RedfishEndpoints/{xname} NodeBMC API response body
   - name: Get Redfish endpoint data for a given NodeBMC xname
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints/{xname}"
@@ -251,12 +241,10 @@ stages:
                     required: True
                     enum:
                       - "DiscoverOK"
-                      #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
+                      # expected for ncn-m001 which is not connected to the site network
                       - "HTTPsGetFailed"
                   RedfishVersion:
                     type: str
-                    #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                    #required: True
                     required: False
               Domain:
                 type: str
@@ -285,7 +273,6 @@ stages:
                 required: True
               IPAddress:
                 type: str
-                # introduced in v1.3, optional field
                 required: False
               RediscoverOnUpdate:
                 type: bool
@@ -297,8 +284,6 @@ stages:
                   - "NodeBMC"
               UUID:
                 type: str
-                #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                #required: True
                 required: False
               User:
                 type: str
@@ -306,11 +291,9 @@ stages:
       save:
         json:
           fqdn: FQDN
-          #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-          #uuid: UUID
 
-  # 7. GET /RedfishEndpoints?id={xname} nodeBMC API response code
-  # 8. GET /RedfishEndpoints?id={xname} nodeBMC API response body
+  # GET /RedfishEndpoints?id={xname} NodeBMC API response code
+  # GET /RedfishEndpoints?id={xname} NodeBMC API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection using the id parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?id={xname}"
@@ -342,12 +325,10 @@ stages:
                             required: True
                             enum:
                               - "DiscoverOK"
-                              #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
+                              # expected for ncn-m001 which is not connected to the site network
                               - "HTTPsGetFailed"
                           RedfishVersion:
                             type: str
-                            #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                            #required: True
                             required: False
                       Domain:
                         type: str
@@ -376,7 +357,6 @@ stages:
                         required: True
                       IPAddress:
                         type: str
-                        # introduced in v1.3, optional field
                         required: False
                       RediscoverOnUpdate:
                         type: bool
@@ -388,15 +368,13 @@ stages:
                           - "NodeBMC"
                       UUID:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
                         required: False
                       User:
                         type: str
                         required: True
 
-  # 9. GET /RedfishEndpoints?fqdn={fqdn} API response code
-  # 10. GET /RedfishEndpoints?fqdn={fqdn} API response body
+  # GET /RedfishEndpoints?fqdn={fqdn} API response code
+  # GET /RedfishEndpoints?fqdn={fqdn} API response body
   - name: Ensure that we can conduct a query on the RedfishEndpoints collection using the fqdn parameter
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?fqdn={fqdn}"
@@ -428,12 +406,10 @@ stages:
                             required: True
                             enum:
                               - "DiscoverOK"
-                              #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
+                              # expected for ncn-m001 which is not connected to the site network
                               - "HTTPsGetFailed"
                           RedfishVersion:
                             type: str
-                            #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                            #required: True
                             required: False
                       Domain:
                         type: str
@@ -462,7 +438,6 @@ stages:
                         required: True
                       IPAddress:
                         type: str
-                        # introduced in v1.3, optional field
                         required: False
                       RediscoverOnUpdate:
                         type: bool
@@ -474,15 +449,13 @@ stages:
                           - "NodeBMC"
                       UUID:
                         type: str
-                        #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-                        #required: True
                         required: False
                       User:
                         type: str
                         required: True
 
-  ## 11. Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response code
-  ## 12. Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response body
+  ## TODO: Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response code
+  ## TODO: Disabled (CAN NCNs in HSM issue CASMHMS-2913) - GET /RedfishEndpoints?uuid={uuid} API response body
   #- name: Ensure that we can conduct a query on the RedfishEndpoints collection using the uuid parameter
   #  request:
   #    url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints?uuid={uuid}"
@@ -516,12 +489,10 @@ stages:
   #                          required: True
   #                          enum:
   #                            - "DiscoverOK"
-  #                            #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
+  #                            # expected for ncn-m001 which is not connected to the site network
   #                            - "HTTPsGetFailed"
   #                        RedfishVersion:
   #                          type: str
-  #                          #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-  #                          #required: True
   #                          required: False
   #                    Domain:
   #                      type: str
@@ -548,7 +519,6 @@ stages:
   #                      required: True
   #                    IPAddress:
   #                      type: str
-  #                      # introduced in v1.3, optional field
   #                      required: False
   #                    RediscoverOnUpdate:
   #                      type: bool
@@ -560,8 +530,6 @@ stages:
   #                        - "NodeBMC"
   #                    UUID:
   #                      type: str
-  #                      #TODO: workaround CAN NCNs in HSM issue CASMHMS-2913
-  #                      #required: True
   #                      required: False
   #                      enum:
   #                        - "{uuid}"
@@ -569,8 +537,8 @@ stages:
   #                      type: str
   #                      required: True
 
-  # 13. GET /RedfishEndpoints/Query/{xname} nodeBMC API response code
-  # 14. GET /RedfishEndpoints/Query/{xname} nodeBMC API response body
+  # GET /RedfishEndpoints/Query/{xname} NodeBMC API response code
+  # GET /RedfishEndpoints/Query/{xname} NodeBMC API response body
   - name: Call the RedfishEndpoints Query API with a NodeBMC xname
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints/Query/{xname}"
