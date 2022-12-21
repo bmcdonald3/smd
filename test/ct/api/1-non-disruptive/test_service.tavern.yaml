@@ -165,13 +165,7 @@ stages:
                   - type: str
                     required: True
                     unique: True
-                    enum:
-                      - "Application"
-                      - "Compute"
-                      - "Management"
-                      - "Service"
-                      - "Storage"
-                      - "System"
+                    # allow for custom roles to be configured
               SubRole:
                 type: seq
                 required: True
@@ -180,10 +174,7 @@ stages:
                   - type: str
                     required: True
                     unique: True
-                    enum:
-                      - "Master"
-                      - "Storage"
-                      - "Worker"
+                    # allow for custom subroles to be configured
               State:
                 type: seq
                 required: True
@@ -406,13 +397,7 @@ stages:
                   - type: str
                     required: True
                     unique: True
-                    enum:
-                      - "Application"
-                      - "Compute"
-                      - "Management"
-                      - "Service"
-                      - "Storage"
-                      - "System"
+                    # allow for custom roles to be configured
 
   # GET /service/values/subrole API response code
   # GET /service/values/subrole API response body
@@ -437,10 +422,7 @@ stages:
                   - type: str
                     required: True
                     unique: True
-                    enum:
-                      - "Master"
-                      - "Storage"
-                      - "Worker"
+                    # allow for custom subroles to be configured
 
   # GET /service/values/state API response code
   # GET /service/values/state API response body
