@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -36,15 +36,15 @@ FROM build-base AS base
 RUN go env -w GO111MODULE=auto
 
 # Copy all the necessary files to the image.
-COPY cmd $GOPATH/src/github.com/Cray-HPE/hms-smd/cmd
-COPY internal $GOPATH/src/github.com/Cray-HPE/hms-smd/internal
-COPY pkg $GOPATH/src/github.com/Cray-HPE/hms-smd/pkg
-COPY vendor $GOPATH/src/github.com/Cray-HPE/hms-smd/vendor
+COPY cmd $GOPATH/src/github.com/Cray-HPE/hms-smd/v2/cmd
+COPY internal $GOPATH/src/github.com/Cray-HPE/hms-smd/v2/internal
+COPY pkg $GOPATH/src/github.com/Cray-HPE/hms-smd/v2/pkg
+COPY vendor $GOPATH/src/github.com/Cray-HPE/hms-smd/v2/vendor
 
 
 ### Final Stage ###
 FROM base
 # Run unit tests...
-CMD ["sh", "-c", "go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/cmd/smd && \
-    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/internal/./... && \
-    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/pkg/./..."]
+CMD ["sh", "-c", "go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/v2/cmd/smd && \
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/v2/internal/./... && \
+    go test -cover -v -tags musl github.com/Cray-HPE/hms-smd/v2/pkg/./..."]

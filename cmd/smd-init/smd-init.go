@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -34,7 +34,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
-	"github.com/Cray-HPE/hms-smd/internal/hmsds"
+	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
 )
 
 const APP_VERSION = "1"

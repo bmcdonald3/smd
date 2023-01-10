@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2020-2022] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2020-2023] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -38,7 +38,7 @@ import (
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 	"github.com/Cray-HPE/hms-base"
-	"github.com/Cray-HPE/hms-smd/pkg/sm"
+	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
 )
 
 const HSM_DEFAULT_RESERVATION_PATH = "/hsm/v2/locks/service/reservations"
