@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -29,10 +29,10 @@ import (
 	"net/url"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
-	"github.com/Cray-HPE/hms-smd/internal/hmsds"
-	rf "github.com/Cray-HPE/hms-smd/pkg/redfish"
-	st "github.com/Cray-HPE/hms-smd/pkg/sharedtest"
-	"github.com/Cray-HPE/hms-smd/pkg/sm"
+	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
+	rf "github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
+	st "github.com/Cray-HPE/hms-smd/v2/pkg/sharedtest"
+	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
 	"testing"
 )
 

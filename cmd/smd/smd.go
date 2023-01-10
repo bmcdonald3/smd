@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2018-2022] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2018-2023] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -38,11 +38,11 @@ import (
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	msgbus "github.com/Cray-HPE/hms-msgbus"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
-	"github.com/Cray-HPE/hms-smd/internal/hbtdapi"
-	"github.com/Cray-HPE/hms-smd/internal/hmsds"
-	"github.com/Cray-HPE/hms-smd/internal/slsapi"
-	"github.com/Cray-HPE/hms-smd/pkg/redfish"
-	"github.com/Cray-HPE/hms-smd/pkg/sm"
+	"github.com/Cray-HPE/hms-smd/v2/internal/hbtdapi"
+	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
+	"github.com/Cray-HPE/hms-smd/v2/internal/slsapi"
+	"github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
+	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
 	"github.com/Cray-HPE/hms-certs/pkg/hms_certs"
 	"strconv"
 	"strings"
@@ -103,29 +103,6 @@ type SmD struct {
 	hwInvHistAgeMax int
 	smapCompEP      *SyncMap
 	genTestPayloads string
-
-	// v1 APIs
-	apiRoot           string
-	serviceBase       string
-	valuesBase        string
-	stateBase         string
-	componentsBase    string
-	redfishEPBase     string
-	compEPBase        string
-	serviceEPBase     string
-	compEthIntBase    string
-	hwinvByLocBase    string
-	hwinvByFRUBase    string
-	invDiscoverBase   string
-	invDiscStatusBase string
-	nodeMapBase       string
-	subscriptionBase  string
-	groupsBase        string
-	partitionsBase    string
-	membershipsBase   string
-	compLockBase      string
-	sysInfoBase       string
-	powerMapBase      string
 
 	// v2 APIs
 	apiRootV2           string
@@ -743,28 +720,6 @@ func main() {
 	var err error
 
 	s.msgbusHandle = nil
-
-	s.apiRoot = "/hsm/v1"
-	s.serviceBase = s.apiRoot + "/service"
-	s.valuesBase = s.serviceBase + "/values"
-	s.stateBase = s.apiRoot + "/State"
-	s.componentsBase = s.stateBase + "/Components"
-	s.redfishEPBase = s.apiRoot + "/Inventory/RedfishEndpoints"
-	s.nodeMapBase = s.apiRoot + "/Defaults/NodeMaps"
-	s.compEPBase = s.apiRoot + "/Inventory/ComponentEndpoints"
-	s.serviceEPBase = s.apiRoot + "/Inventory/ServiceEndpoints"
-	s.compEthIntBase = s.apiRoot + "/Inventory/EthernetInterfaces"
-	s.hwinvByLocBase = s.apiRoot + "/Inventory/Hardware"
-	s.hwinvByFRUBase = s.apiRoot + "/Inventory/HardwareByFRU"
-	s.invDiscoverBase = s.apiRoot + "/Inventory/Discover"
-	s.invDiscStatusBase = s.apiRoot + "/Inventory/DiscoveryStatus"
-	s.subscriptionBase = s.apiRoot + "/Subscriptions"
-	s.groupsBase = s.apiRoot + "/groups"
-	s.partitionsBase = s.apiRoot + "/partitions"
-	s.membershipsBase = s.apiRoot + "/memberships"
-	s.compLockBase = s.apiRoot + "/locks"
-	s.sysInfoBase = s.apiRoot + "/sysinfo"
-	s.powerMapBase = s.sysInfoBase + "/powermaps"
 
 	s.apiRootV2 = "/hsm/v2"
 	s.serviceBaseV2 = s.apiRootV2 + "/service"

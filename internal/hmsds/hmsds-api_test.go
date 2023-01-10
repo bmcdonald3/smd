@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -28,7 +28,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Cray-HPE/hms-smd/pkg/sm"
+	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	sq "github.com/Masterminds/squirrel"
