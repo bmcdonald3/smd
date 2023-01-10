@@ -23,7 +23,7 @@
 package sm_test
 
 import (
-	stest "github.com/Cray-HPE/hms-smd/pkg/sharedtest"
+	stest "github.com/Cray-HPE/hms-smd/v2/pkg/sharedtest"
 	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
 	"testing"
 )
