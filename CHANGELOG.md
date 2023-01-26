@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2023-01-26
+
+### Fixed
+
+- CASMHMS-5902: Linting of language in API spec (no content changes); corrected markdown formatting issue in changelog
+
 ## [2.2.0] - 2023-01-09
 
 ### Removed
@@ -896,7 +902,7 @@ These are changes to charts in support of:
 
 - Added a configmap volume mount to the cray-smd deployment to mount as an updatable configfile.
 - Added a config file watcher to pick up any new roles/subroles defined in the config file.
-- Added /service/values/* REST APIs to list valid values for hms-base enums.
+- Added /service/values/\* REST APIs to list valid values for hms-base enums.
 
 ### Changed
 
