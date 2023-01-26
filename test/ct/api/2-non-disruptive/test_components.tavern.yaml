@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -76,7 +76,7 @@
 # GET /Components/Query/{xname} nodeBMC API response code
 # GET /Components/Query/{xname} nodeBMC API response body
 ---
-test_name: Ensure that we can conduct a query for all Nodes in the Component collection
+test_name: Ensure that we can query for all Nodes in the Component collection
 
 stages:
   # GET /Components?type=Node API response code all Nodes
@@ -126,8 +126,11 @@ stages:
                       Flag:
                         type: str
                         required: True
+                        #TODO: adjusting this enum to catch bad flags in hardware_checks instead
                         enum:
                           - "OK"
+                          - "Warning"
+                          - "Alert"
                       Enabled:
                         type: bool
                         required: True
@@ -195,7 +198,7 @@ stages:
           ID: Components[0].ID
 
 ---
-test_name: Ensure that we can conduct a query for all Node BMCs in the Component collection
+test_name: Ensure that we can query for all NodeBMCs in the Component collection
 
 stages:
   # GET /Components?type=NodeBMC API response code all NodeBMCs
@@ -267,7 +270,7 @@ stages:
                         required: False
 
 ---
-test_name: Ensure that we can conduct a query on the Node BMCs in the Component collection
+test_name: Ensure that we can query on the NodeBMCs in the Component collection
 
 stages:
   # GET /Components?type=NodeBMC API response code
@@ -287,7 +290,7 @@ stages:
 
   # GET /Components/{xname} nodeBMC API response code
   # GET /Components/{xname} nodeBMC API response body
-  - name: Ensure that we can conduct a query on a specific xname in the Component collection by looking for Node BMCs
+  - name: Ensure that we can query on a specific xname in the Component collection by looking for NodeBMCs
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
@@ -342,7 +345,7 @@ stages:
                   - "NodeBMC"
 
 ---
-test_name: Ensure that we can conduct a variety of queries on the Components collection
+test_name: Ensure that we can make a variety of queries on the Components collection
 
 # Turn strict json key checking off since 'SubRole' field may not always be present, such as for compute nodes
 strict:
@@ -351,7 +354,7 @@ strict:
 stages:
   # GET /Components?type=Node API response code
   # GET /Components?type=Node API response code
-  - name: Ensure that we can conduct a query on the Component collection by looking for Compute nodes
+  - name: Ensure that we can query on the Component collection by looking for Compute nodes
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
@@ -377,7 +380,7 @@ stages:
 
   # GET /Components/{xname} node API response code
   # GET /Components/{xname} node API response body
-  - name: Ensure that we can conduct a query on a specific compute node xname in the Component collection
+  - name: Ensure that we can query on a specific compute node xname in the Component collection
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/{xname}"
       method: GET
@@ -398,7 +401,7 @@ stages:
 
   # GET /Components/ByNID/{nid} node API response code
   # GET /Components/ByNID/{nid} node API response body
-  - name: Ensure that we can conduct a query on a specific NID in the Components collection
+  - name: Ensure that we can query on a specific NID in the Components collection
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/ByNID/{NID}"
       method: GET
@@ -518,7 +521,7 @@ stages:
 
   # GET /Components?type=Node API response code
   # GET /Components?type=Node API response body
-  - name: Conduct a query using the type parameter to look for hardware of the Node type
+  - name: Query using the type parameter to look for hardware of the Node type
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
@@ -589,7 +592,7 @@ stages:
 
   # GET /Components?type=Node&Flag={flag} API response code
   # GET /Components?type=Node&Flag={flag} API response body
-  - name: Conduct a query using the type and flag parameters to look for hardware of the Node type with a certain Flag
+  - name: Query using the type and flag parameters to look for hardware of the Node type with a certain Flag
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
@@ -662,7 +665,7 @@ stages:
 
   # GET /Components?type=Node&Arch=X86 API response code
   # GET /Components?type=Node&Arch=X86 API response body
-  - name: Conduct a query using the type and flag parameters to look for hardware of the X86 Arch type
+  - name: Query using the type and flag parameters to look for hardware of the X86 Arch type
     request:
       # also query with role=Compute since not all of the same node data is expected
       # in HSM for the master management PIT node ncn-m001 CASMHMS-4862
@@ -735,7 +738,7 @@ stages:
 
   # GET /Components?type=Node&nid={nid} API response code
   # GET /Components?type=Node&nid={nid} API response body
-  - name: Conduct a query using the type and nid query parameters
+  - name: Query using the type and nid query parameters
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Node&nid={NID}"
       method: GET
@@ -808,7 +811,7 @@ stages:
 
   # GET /Components?role=Compute API response code
   # GET /Components?role=Compute API response body
-  - name: Conduct a query using the role query parameter
+  - name: Query using the role query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?role=Compute"
       method: GET
@@ -877,7 +880,7 @@ stages:
 
   # GET /Components?type=Booster invalid API response code
   # GET /Components?type=Booster invalid API response body
-  - name: Verify failure when conducting a query on the Component collection by looking for a fictitious type of hardware (Booster)
+  - name: Verify failure when querying the Component collection for an invalid type of hardware (Booster)
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?type=Booster"
       method: GET
@@ -892,7 +895,7 @@ stages:
 
   # GET /Components?state=Ready API response code
   # GET /Components?state=Ready API response body
-  - name: Conduct a query on the Components collection using the State query parameter
+  - name: Query the Components collection using the State query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?state=Ready"
       method: GET
@@ -907,7 +910,7 @@ stages:
 
   # GET /Components?stateonly=True API response code
   # GET /Components?stateonly=True API response body
-  - name: Conduct a query on the Components collection using the StateOnly query parameter
+  - name: Query the Components collection using the StateOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?stateonly=True"
       method: GET
@@ -941,7 +944,7 @@ stages:
 
   # GET /Components?flagonly=True API response code
   # GET /Components?flagonly=True API response body
-  - name: Conduct a query on the Components collection using the FlagOnly query parameter
+  - name: Query the Components collection using the FlagOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?flagonly=True"
       method: GET
@@ -972,7 +975,7 @@ stages:
 
   # GET /Components?roleonly=True API response code
   # GET /Components?roleonly=True API response body
-  - name: Conduct a query on the Components collection using the RoleOnly query parameter
+  - name: Query the Components collection using the RoleOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?roleonly=True"
       method: GET
@@ -1006,7 +1009,7 @@ stages:
 
   # GET /Components?nidonly=True API response code
   # GET /Components?nidonly=True API response body
-  - name: Conduct a query on the Components collection using the NidOnly query parameter
+  - name: Query the Components collection using the NidOnly query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components?nidonly=True"
       method: GET
@@ -1056,7 +1059,7 @@ stages:
 
   # GET /Components/Query/{xname} node API response code
   # GET /Components/Query/{xname} node API response body
-  - name: Ensure that we can conduct a query for a specific Node xname using the Component Query API
+  - name: Ensure that we can query for a specific Node xname using the Component Query API
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/{xname}"
       method: GET
@@ -1147,7 +1150,7 @@ stages:
 
   # GET /Components/Query/{xname} nodeBMC API response code
   # GET /Components/Query/{xname} nodeBMC API response body
-  - name: Ensure that we can conduct a query for a specific NodeBMC xname using the Component Query API
+  - name: Ensure that we can query for a specific NodeBMC xname using the Component Query API
     request:
       url: "{hsm_base_url}/hsm/v2/State/Components/Query/{xname}"
       method: GET
