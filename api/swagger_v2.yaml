@@ -35,7 +35,7 @@ info:
     not. Nodemap is a JSON file that contains the xname of the node, node ID, and optionally
     role and subrole. Role can be Compute, Application, Storage, Management etc.
     The NodeMaps collection can be uploaded to HSM automatically at install time by specifying
-    it as a json file. As a result, the endpoints are then automatically discovered by REDS,
+    it as a JSON file. As a result, the endpoints are then automatically discovered by REDS,
     and inventory discovery is performed by HSM. The desired NID numbers will be set as
     soon as the nodes are created using the NodeMaps collection.
 
@@ -111,10 +111,10 @@ info:
     chosen label (group name). Each component may belong to any number of groups.
     If a group has exclusiveGroup=<excl-label> set, then a node
     may only be a member of one group that matches that exclusive label. For example, if
-    the exclusive group label 'colors' is associated with groups 'blue', 'red' and 'green',
+    the exclusive group label 'colors' is associated with groups 'blue', 'red', and 'green',
     then a component that is part of 'green' could not also be placed in 'red'.
 
-    You can create, modify, or delete groups and its members. You can also use group names
+    You can create, modify, or delete a group and its members. You can also use group names
     as filters for API calls.
 
     ### /partitions
@@ -123,7 +123,7 @@ info:
     A partition is a formal, non-overlapping division of the system that forms an administratively
     distinct sub-system. Each component may belong to at most one partition. Partitions
     are used as an access control mechanism or for implementing multi-tenancy. You can create,
-    modify, or delete partitions and its members. You can also use partitions as filters
+    modify, or delete a partition and its members. You can also use partitions as filters
     for other API calls.
 
     ### /memberships
@@ -142,7 +142,7 @@ info:
 
 
     Check discovery status for all components or you can track the status for a specific job
-    id. You can also check per-endpoint discover status for each RedfishEndpoint. Contains
+    ID. You can also check per-endpoint discover status for each RedfishEndpoint. Contains
     status information about the discovery operation for clients to query. The discover
     operation returns a link or links to status objects so that a client can determine when
     the discovery operation is complete.
@@ -190,7 +190,7 @@ info:
     #### GET /Inventory/DiscoveryStatus
 
     Check the discovery status of all Redfish endpoints. You can also check the discovery
-    status for each individual component by providing id.
+    status for each individual component by providing ID.
 
     ### Query and Update HMS Components (State/NID)
 
@@ -235,7 +235,7 @@ info:
 
     Delete the group specified by {group_label}.
 
-    ## Valid State Transistions
+    ## Valid State Transitions
 
     ```
 
@@ -265,7 +265,7 @@ info:
 
     ```
 
-    Generally, nodes transition 'Off' -> 'On' -> 'Ready' when going from 'Off' to booted and 'Ready' -> 'Ready/Warning' -> 'Standby' -> 'Off' when shutdown.
+    Generally, nodes transition 'Off' -> 'On' -> 'Ready' when going from 'Off' to booted, and 'Ready' -> 'Ready/Warning' -> 'Standby' -> 'Off' when shutdown.
 
 
   version: 1.0.0
@@ -340,7 +340,7 @@ tags:
     description: >-
       The MAC address to IP address relation for components in the system. If
       the component has been discovered by HSM, the xname of the component that
-      has the ethernet interface will be associated with it as well.
+      has the Ethernet interface will be associated with it as well.
   - name: Group
     description: >-
       A group is an informal, possibly overlapping division of the system that
@@ -649,27 +649,27 @@ paths:
           in: query
           type: boolean
           description: >-
-            Return only component state and flag fields (plus xname/id and
+            Return only component state and flag fields (plus xname/ID and
             type). Results can be modified and used for bulk state/flag-
             only patch operations.
         - name: flagonly
           in: query
           type: boolean
           description: >-
-            Return only component flag field (plus xname/id and type).
+            Return only component flag field (plus xname/ID and type).
             Results can be modified and used for bulk flag-only patch
             operations.
         - name: roleonly
           in: query
           type: boolean
           description: >-
-            Return only component role and subrole fields (plus xname/id and type).
+            Return only component role and subrole fields (plus xname/ID and type).
             Results can be modified and used for bulk role-only patches.
         - name: nidonly
           in: query
           type: boolean
           description: >-
-            Return only component NID field (plus xname/id and type).
+            Return only component NID field (plus xname/ID and type).
             Results can be modified and used for bulk NID-only patches.
       responses:
         "200":
@@ -796,7 +796,7 @@ paths:
           required: true
       responses:
         "200":
-          description: Component entry matching xname/id
+          description: Component entry matching xname/ID
           schema:
             $ref: '#/definitions/Component.1.0.0_Component'
         "400":
@@ -891,7 +891,7 @@ paths:
           required: true
       responses:
         "200":
-          description: Component entry matching xname/id
+          description: Component entry matching xname/ID
           schema:
             $ref: '#/definitions/Component.1.0.0_Component'
         "400":
@@ -1319,7 +1319,7 @@ paths:
       summary: Create component query (by xname list), returning ComponentArray
       description: >-
         Retrieve the targeted entries in the form of a ComponentArray by providing a payload
-        of component ids.
+        of component IDs.
       operationId: doComponentsQueryPost
       parameters:
         - name: payload
@@ -1452,27 +1452,27 @@ paths:
           in: query
           type: boolean
           description: >-
-            Return only component state and flag fields (plus xname/id and
+            Return only component state and flag fields (plus xname/ID and
             type). Results can be modified and used for bulk state/flag-
             only patch operations.
         - name: flagonly
           in: query
           type: boolean
           description: >-
-            Return only component flag field (plus xname/id and type).
+            Return only component flag field (plus xname/ID and type).
             Results can be modified and used for bulk flag-only patch
             operations.
         - name: roleonly
           in: query
           type: boolean
           description: >-
-            Return only component role and subrole fields (plus xname/id and type).
+            Return only component role and subrole fields (plus xname/ID and type).
             Results can be modified and used for bulk role-only patches.
         - name: nidonly
           in: query
           type: boolean
           description: >-
-            Return only component NID field (plus xname/id and type).
+            Return only component NID field (plus xname/ID and type).
             Results can be modified and used for bulk NID-only patches.
       responses:
         "200":
@@ -1990,7 +1990,7 @@ paths:
 
 
         The NodeMaps collection should be uploaded at install time by specifying
-        it as a json file. As a result, when the endpoints are automatically discovered
+        it as a JSON file. As a result, when the endpoints are automatically discovered
         by REDS, and inventory discovery is performed by HSM, the desired NID numbers will
         be set as soon as the nodes are created using the NodeMaps collection. All node xnames
         that are expected to be used in the system should be included in the mapping, even
@@ -2090,7 +2090,7 @@ paths:
           required: true
       responses:
         "200":
-          description: NodeMap entry matching xname/id
+          description: NodeMap entry matching xname/ID
           schema:
             $ref: '#/definitions/NodeMap.1.0.0_NodeMap'
         "400":
@@ -2220,7 +2220,7 @@ paths:
           in: query
           type: string
           description: >-
-            Retrieve HWInventoryByLocation entries with the given FRU id.
+            Retrieve HWInventoryByLocation entries with the given FRU ID.
       responses:
         "200":
           description: >-
@@ -2337,7 +2337,7 @@ paths:
           in: query
           type: string
           description: >-
-            Retrieve HWInventoryByFRU entries with the given FRU id.
+            Retrieve HWInventoryByFRU entries with the given FRU ID.
         - $ref: '#/parameters/compTypeParam'
         - name: manufacturer
           in: query
@@ -2421,7 +2421,7 @@ paths:
           required: true
       responses:
         "200":
-          description: HWInventoryByLocation entry matching xname/id
+          description: HWInventoryByLocation entry matching xname/ID
           schema:
             $ref: '#/definitions/HWInventory.1.0.0_HWInventoryByLocation'
           examples:
@@ -2437,8 +2437,8 @@ paths:
               HWInventoryByLocationType: HWInvByLocNode
               NodeLocationInfo:
                 Id: System.Embedded.1
-                Name: Name describing system or where it is located, per mgfr
-                Description: Description of system/node type, per mgfr
+                Name: Name describing system or where it is located, per manufacturing
+                Description: Description of system/node type, per manufacturing
                 Hostname: if_defined_in_Redfish
                 ProcessorSummary:
                   Count: 2
@@ -2907,7 +2907,7 @@ paths:
       responses:
         "200":
           description: >-
-            History entries for the HWInventoryByLocation entry matching xname/id
+            History entries for the HWInventoryByLocation entry matching xname/ID
           schema:
             $ref: '#/definitions/HWInventory.1.0.0_HWInventoryHistoryArray'
         "400":
@@ -2968,7 +2968,7 @@ paths:
           in: query
           type: string
           description: >-
-            Retrieve the history entries for HWInventoryByFRU entries with the given FRU id.
+            Retrieve the history entries for HWInventoryByFRU entries with the given FRU ID.
         - name: eventtype
           in: query
           type: string
@@ -3130,7 +3130,7 @@ paths:
           type: string
           description: >-
             Retrieve the RedfishEndpoint with the given IP address. A blank
-            string will get redfish endpoints without IP addresses.
+            string will get Redfish endpoints without IP addresses.
         - name: laststatus
           in: query
           type: string
@@ -3208,7 +3208,7 @@ paths:
     delete:
       tags:
         - RedfishEndpoint
-        - cli_danger$This will delete all redfish endpoints in HSM, continue?
+        - cli_danger$This will delete all Redfish endpoints in HSM, continue?
       summary: >-
         Delete all RedfishEndpoints
       description: >-
@@ -3249,7 +3249,7 @@ paths:
           required: true
       responses:
         "200":
-          description: RedfishEndpoint entry matching xname/id
+          description: RedfishEndpoint entry matching xname/ID
           schema:
             $ref: '#/definitions/RedfishEndpoint.1.0.0_RedfishEndpoint'
         "400":
@@ -3593,7 +3593,7 @@ paths:
           required: true
       responses:
         "200":
-          description: HWInventoryByLocation entry matching xname/id
+          description: HWInventoryByLocation entry matching xname/ID
           schema:
             $ref: '#/definitions/ComponentEndpoint.1.0.0_ComponentEndpoint'
           examples:
@@ -4066,61 +4066,61 @@ paths:
       tags:
         - ComponentEthernetInterfaces
       summary: >-
-        GET ALL existing component ethernet interfaces
+        GET ALL existing component Ethernet interfaces
       description: >-
-        Get all component ethernet interfaces that currently exist, optionally filtering
-        the set, returning an array of component ethernet interfaces.
+        Get all component Ethernet interfaces that currently exist, optionally filtering
+        the set, returning an array of component Ethernet interfaces.
       operationId: doCompEthInterfacesGetV2
       parameters:
         - name: MACAddress
           in: query
           type: string
           description: >-
-            Retrieve the component ethernet interface with the provided MAC address. Can be
-            repeated to select multiple component ethernet interfaces.
+            Retrieve the component Ethernet interface with the provided MAC address. Can be
+            repeated to select multiple component Ethernet interfaces.
         - name: IPAddress
           in: query
           type: string
           description: >-
-            Retrieve the component ethernet interface with the provided IP address. Can be
-            repeated to select multiple component ethernet interfaces. A blank string will
-            retrieve component ethernet interfaces that have no IP address.
+            Retrieve the component Ethernet interface with the provided IP address. Can be
+            repeated to select multiple component Ethernet interfaces. A blank string will
+            retrieve component Ethernet interfaces that have no IP address.
         - name: Network
           in: query
           type: string
           description: >-
-            Retrieve the component ethernet interface with a IP Addresses on the provided 
-            network. Can be repeated to select multiple component ethernet interfaces. A blank
-            string will retrieve component ethernet interfaces that have an IP address with no 
+            Retrieve the component Ethernet interface with a IP addresses on the provided 
+            network. Can be repeated to select multiple component Ethernet interfaces. A blank
+            string will retrieve component Ethernet interfaces that have an IP address with no 
             network.
         - name: ComponentID
           in: query
           type: string
           description: >-
-            Retrieve all component ethernet interfaces with the provided component ID. Can be
-            repeated to select multiple component ethernet interfaces.
+            Retrieve all component Ethernet interfaces with the provided component ID. Can be
+            repeated to select multiple component Ethernet interfaces.
         - name: Type
           in: query
           type: string
           description: >-
-            Retrieve all component ethernet interfaces with the provided parent HMS type. Can be
-            repeated to select multiple component ethernet interfaces.
+            Retrieve all component Ethernet interfaces with the provided parent HMS type. Can be
+            repeated to select multiple component Ethernet interfaces.
         - name: OlderThan
           in: query
           type: string
           description: >-
-            Retrieve all component ethernet interfaces that were last updated before the
+            Retrieve all component Ethernet interfaces that were last updated before the
             specified time. This takes an RFC3339 formatted string (2006-01-02T15:04:05Z07:00).
         - name: NewerThan
           in: query
           type: string
           description: >-
-            Retrieve all component ethernet interfaces that were last updated after the
+            Retrieve all component Ethernet interfaces that were last updated after the
             specified time. This takes an RFC3339 formatted string (2006-01-02T15:04:05Z07:00).
       responses:
         "200":
           description: >-
-            An array containing all existing component ethernet interface objects.
+            An array containing all existing component Ethernet interface objects.
           schema:
             type: array
             items:
@@ -4136,9 +4136,9 @@ paths:
     post:
       tags:
         - ComponentEthernetInterfaces
-      summary: CREATE a new component ethernet interface (via POST)
+      summary: CREATE a new component Ethernet interface (via POST)
       description: >-
-        Create a new component ethernet interface.
+        Create a new component Ethernet interface.
       operationId: doCompEthInterfacePostV2
       parameters:
         - name: payload
@@ -4160,7 +4160,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "409":
-          description: Conflict. Duplicate component ethernet interface would be created.
+          description: Conflict. Duplicate component Ethernet interface would be created.
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4170,11 +4170,11 @@ paths:
     delete:
       tags:
         - ComponentEthernetInterfaces
-        - cli_danger$This will delete all component ethernet interfaces, continue?
+        - cli_danger$This will delete all component Ethernet interfaces, continue?
       summary: >-
-        Clear the component ethernet interface collection.
+        Clear the component Ethernet interface collection.
       description: >-
-        Delete all component ethernet interface entries.
+        Delete all component Ethernet interface entries.
       operationId: doCompEthInterfaceDeleteAllV2
       responses:
         "200":
@@ -4199,19 +4199,19 @@ paths:
     get:
       tags:
         - ComponentEthernetInterfaces
-      summary: GET existing component ethernet interface {ethInterfaceID}
+      summary: GET existing component Ethernet interface {ethInterfaceID}
       description: >-
-        Retrieve the component ethernet interface which was created with the given {ethInterfaceID}.
+        Retrieve the component Ethernet interface which was created with the given {ethInterfaceID}.
       operationId: doCompEthInterfaceGetV2
       parameters:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface to return.
+          description: The ID of the component Ethernet interface to return.
           required: true
       responses:
         "200":
-          description: Component ethernet interface entry identified by {ethInterfaceID}, if it exists.
+          description: Component Ethernet interface entry identified by {ethInterfaceID}, if it exists.
           schema:
             $ref: '#/definitions/CompEthInterface.1.0.0'
         "400":
@@ -4229,19 +4229,19 @@ paths:
     delete:
       tags:
         - ComponentEthernetInterfaces
-      summary: DELETE existing component ethernet interface with {ethInterfaceID}
+      summary: DELETE existing component Ethernet interface with {ethInterfaceID}
       description: >-
-        Delete the given component ethernet interface with {ethInterfaceID}.
+        Delete the given component Ethernet interface with {ethInterfaceID}.
       operationId: doCompEthInterfaceDeleteV2
       parameters:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface to delete.
+          description: The ID of the component Ethernet interface to delete.
           required: true
       responses:
         "200":
-          description: Zero (success) error code - component ethernet interface is deleted.
+          description: Zero (success) error code - component Ethernet interface is deleted.
           schema:
             $ref: '#/definitions/Response_1.0.0'
         "400":
@@ -4249,7 +4249,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "404":
-          description: Does Not Exist - No component ethernet interface with ethInterfaceID.
+          description: Does Not Exist - No component Ethernet interface with ethInterfaceID.
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4259,9 +4259,9 @@ paths:
     patch:
       tags:
         - ComponentEthernetInterfaces
-      summary: UPDATE metadata for existing component ethernet interface {ethInterfaceID}
+      summary: UPDATE metadata for existing component Ethernet interface {ethInterfaceID}
       description: >-
-        To update the IP address, CompID, and/or description of a component ethernet interface,
+        To update the IP address, CompID, and/or description of a component Ethernet interface,
         a PATCH operation can be used. Omitted fields are not updated.
         The 'LastUpdate' field will be updated if an IP address is provided.
       operationId: doCompEthInterfacePatchV2
@@ -4270,7 +4270,7 @@ paths:
           in: path
           type: string
           description: >-
-            The ID of the component ethernet interface to update.
+            The ID of the component Ethernet interface to update.
           required: true
         - name: payload
           in: body
@@ -4285,7 +4285,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "404":
-          description: The component ethernet interface with this ethInterfaceID does not exist.
+          description: The component Ethernet interface with this ethInterfaceID does not exist.
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4297,19 +4297,19 @@ paths:
       tags:
         - ComponentEthernetInterfaces
       summary: >-
-        Retrieve all IP addresses of a component ethernet interface {ethInterfaceID}
+        Retrieve all IP addresses of a component Ethernet interface {ethInterfaceID}
       description: >-
-        Retrieve all IP addresses of a component ethernet interface {ethInterfaceID}
+        Retrieve all IP addresses of a component Ethernet interface {ethInterfaceID}
       operationId: doCompEthInterfaceIPAddressesGetV2
       parameters:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface to retrieve the IP Addresses of.
+          description: The ID of the component Ethernet interface to retrieve the IP addresses of.
           required: true
       responses:
         "200":
-          description: IP addresses of the component ethernet interface entry identified by {ethInterfaceID}, if it exists.
+          description: IP addresses of the component Ethernet interface entry identified by {ethInterfaceID}, if it exists.
           schema:
             type: array
             items:
@@ -4329,15 +4329,15 @@ paths:
     post:
       tags:
         - ComponentEthernetInterfaces
-      summary: CREATE a new IP address mapping in a component ethernet interface (via POST)
+      summary: CREATE a new IP address mapping in a component Ethernet interface (via POST)
       description: >-
-        Create a new IP address mapping in a component ethernet interface {ethInterfaceID}.
+        Create a new IP address mapping in a component Ethernet interface {ethInterfaceID}.
       operationId: doCompEthInterfaceIPAddressesPostV2
       parameters:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface to add the IP address to.
+          description: The ID of the component Ethernet interface to add the IP address to.
           required: true
         - name: payload
           in: body
@@ -4355,7 +4355,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "409":
-          description: Conflict. Duplicate IP address in component ethernet interface would be created.
+          description: Conflict. Duplicate IP address in component Ethernet interface would be created.
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4367,22 +4367,22 @@ paths:
       tags:
         - ComponentEthernetInterfaces
       summary: >-
-        UPDATE metadata for existing IP Address {ipAddress} in a component ethernet interface {ethInterfaceID
+        UPDATE metadata for existing IP address {ipAddress} in a component Ethernet interface {ethInterfaceID
       description: >-
-        "To update the network of an IP Address in a component ethernet interface,
+        "To update the network of an IP address in a component Ethernet interface,
         a PATCH operation can be used. Omitted fields are not updated.
-        The 'LastUpdate' field of the component ethernet interface will be updated"
+        The 'LastUpdate' field of the component Ethernet interface will be updated"
       operationId: doCompEthInterfaceIPAddressPatchV2
       parameters:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface with the IP address to patch.
+          description: The ID of the component Ethernet interface with the IP address to patch.
           required: true
         - name: ipAddress
           in: path
           type: string
-          description: The IP Address to patch from the component ethernet interface.
+          description: The IP address to patch from the component Ethernet interface.
           required: true
         - name: payload
           in: body
@@ -4397,7 +4397,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "404":
-          description: Does Not Exist - No IP address with ipAddress exists on the specified component ethernet interface.
+          description: Does Not Exist - No IP address with ipAddress exists on the specified component Ethernet interface.
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4407,25 +4407,25 @@ paths:
     delete:
       tags:
         - ComponentEthernetInterfaces
-      summary: DELETE existing IP Address mapping with {ipAddress} from a component ethernet interface with {ethInterfaceID}
+      summary: DELETE existing IP address mapping with {ipAddress} from a component Ethernet interface with {ethInterfaceID}
       description: >-
-        Delete the given IP Address mapping with {ipAddress} from a component ethernet interface with {ethInterfaceID}.
-        The 'LastUpdate' field of the component ethernet interface will be updated"
+        Delete the given IP address mapping with {ipAddress} from a component Ethernet interface with {ethInterfaceID}.
+        The 'LastUpdate' field of the component Ethernet interface will be updated"
       operationId: doCompEthInterfaceIPAddressDeleteV2
       parameters:
         - name: ethInterfaceID
           in: path
           type: string
-          description: The ID of the component ethernet interface to delete the IP Address from
+          description: The ID of the component Ethernet interface to delete the IP address from
           required: true
         - name: ipAddress
           in: path
           type: string
-          description: The IP Address to delete from the component ethernet interface.
+          description: The IP address to delete from the component Ethernet interface.
           required: true
       responses:
         "200":
-          description: Zero (success) error code - IP Address mapping is deleted.
+          description: Zero (success) error code - IP address mapping is deleted.
           schema:
             $ref: '#/definitions/Response_1.0.0'
         "400":
@@ -4433,7 +4433,7 @@ paths:
           schema:
             $ref: '#/definitions/Problem7807'
         "404":
-          description: Does Not Exist - No IP address with ipAddress exists on the specified component ethernet interface
+          description: Does Not Exist - No IP address with ipAddress exists on the specified component Ethernet interface
           schema:
             $ref: '#/definitions/Problem7807'
         default:
@@ -4474,7 +4474,7 @@ paths:
       summary: >-
         Retrieve DiscoveryStatus entry matching {id}
       description: >-
-        Retrieve DiscoveryStatus entry with the specific id.
+        Retrieve DiscoveryStatus entry with the specific ID.
       operationId: doDiscoveryStatusGet
       parameters:
         - name: id
@@ -4582,7 +4582,7 @@ paths:
       responses:
         "200":
           description: >-
-            A new subscription was created. The subscription id is
+            A new subscription was created. The subscription ID is
             included in the response.
           schema:
             $ref: '#/definitions/Subscriptions_SCNSubscriptionArrayItem.1.0.0'
@@ -5080,7 +5080,7 @@ paths:
       summary: Create new member of existing group (via POST)
       description: >-
         Create a new member of group {group_label} with the component
-        xname id provided in the payload.
+        xname ID provided in the payload.
         New member should not already exist in the given group.
       operationId: doGroupMembersPost
       parameters:
@@ -5428,7 +5428,7 @@ paths:
       summary: Create new member of existing partition (via POST)
       description: >-
         Create a new member of partition {partition_name} with the component
-        xname id provided in the payload.
+        xname ID provided in the payload.
         New member should not already exist in the given partition
       operationId: doPartitionMembersPost
       parameters:
@@ -5524,7 +5524,7 @@ paths:
       summary: >-
         Retrieve all memberships for components
       description: >-
-        Display group labels and partition names for each component xname id
+        Display group labels and partition names for each component xname ID
         (where applicable).
       operationId: doMembershipsGet
       parameters:
@@ -5547,7 +5547,7 @@ paths:
       responses:
         "200":
           description: >-
-            Array containing component xname ids to their group and
+            Array containing component xname IDs to their group and
             partition memberships.
           schema:
             type: array
@@ -5568,13 +5568,13 @@ paths:
       summary: >-
         Retrieve membership for component {xname}
       description: >-
-        Display group labels and partition names for a given component xname id.
+        Display group labels and partition names for a given component xname ID.
       operationId: doMembershipGet
       parameters:
         - name: xname
           in: path
           type: string
-          description: Component xname id (i.e. locational identifier)
+          description: Component xname ID (i.e. locational identifier)
           required: true
       responses:
         "200":
@@ -5696,7 +5696,7 @@ paths:
           required: true
       responses:
         "200":
-          description: PowerMap entry matching xname/id
+          description: PowerMap entry matching xname/ID
           schema:
             $ref: '#/definitions/PowerMap.1.0.0_PowerMap'
         "400":
@@ -5922,7 +5922,7 @@ definitions:
   Component.1.0.0_Patch.StateData:
     description: >-
       This is the payload of a StateData URI patch operation on a component.
-      Flag id optional and will be reset to OK if no Flag value is given.
+      Flag ID optional and will be reset to OK if no Flag value is given.
     properties:
       State:
         # Logical component state e.g. On, Off, Ready.
@@ -6309,24 +6309,24 @@ definitions:
         example: group_label
       stateonly:
         description: >-
-          Return only component state and flag fields (plus xname/id and
+          Return only component state and flag fields (plus xname/ID and
           type).  Results can be modified and used for bulk state/flag-
           only patch operations.
         type: boolean
       flagonly:
         description: >-
-          Return only component flag field (plus xname/id and type).
+          Return only component flag field (plus xname/ID and type).
           Results can be modified and used for bulk flag-only patch
           operations.
         type: boolean
       roleonly:
         description: >-
-          Return only component role and subrole fields (plus xname/id and type).
+          Return only component role and subrole fields (plus xname/ID and type).
           Results can be modified and used for bulk role-only patches.
         type: boolean
       nidonly:
         description: >-
-          Return only component NID field (plus xname/id and type).
+          Return only component NID field (plus xname/ID and type).
           Results can be modified and used for bulk NID-only patches.
         type: boolean
       type:
@@ -6440,24 +6440,24 @@ definitions:
         $ref: '#/definitions/XNamePartition.1.0.0'
       stateonly:
         description: >-
-          Return only component state and flag fields (plus xname/id and
+          Return only component state and flag fields (plus xname/ID and
           type).  Results can be modified and used for bulk state/flag-
           only patch operations.
         type: boolean
       flagonly:
         description: >-
-          Return only component flag field (plus xname/id and type).
+          Return only component flag field (plus xname/ID and type).
           Results can be modified and used for bulk flag-only patch
           operations.
         type: boolean
       roleonly:
         description: >-
-          Return only component role and subrole fields (plus xname/id and type).
+          Return only component role and subrole fields (plus xname/ID and type).
           Results can be modified and used for bulk role-only patches.
         type: boolean
       nidonly:
         description: >-
-          Return only component NID field (plus xname/id and type).
+          Return only component NID field (plus xname/ID and type).
           Results can be modified and used for bulk NID-only patches.
         type: boolean
     required:
@@ -6605,7 +6605,7 @@ definitions:
         # ComputerSystem.
         $ref: '#/definitions/RedfishType.1.0.0'
       RedfishSubtype:
-        # This is the type corresponding to the redfish object type, i.e. the
+        # This is the type corresponding to the Redfish object type, i.e. the
         # ChassisType field, SystemType, ManagerType fields.
         $ref: '#/definitions/RedfishSubtype.1.0.0'
       Enabled:
@@ -6630,7 +6630,7 @@ definitions:
         description: >-
           If the component e.g. a ComputerSystem/Node has a MAC on the
           management network, i.e. corresponding to the FQDN field's
-          ethernet interface, this field will be present.  Not the HSN
+          Ethernet interface, this field will be present.  Not the HSN
           MAC.  Represented as the standard colon-separated 6 byte hex string.
         pattern: '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$'
         type: string
@@ -7222,8 +7222,8 @@ definitions:
       HWInventoryByLocationType: HWInvByLocCabinet
       CabinetLocationInfo:
         Id: Cabinet
-        Name: Name describing cabinet or where it is located, per mgfr
-        Description: Description of cabinet, per mgfr
+        Name: Name describing cabinet or where it is located, per manufacturing
+        Description: Description of cabinet, per manufacturing
         Hostname: if_defined_in_Redfish
       PopulatedFRU:
         FRUID: Cray-2345-1234556789
@@ -7275,8 +7275,8 @@ definitions:
       HWInventoryByLocationType: HWInvByLocChassis
       ChassisLocationInfo:
         Id: Chassis.1
-        Name: Name describing component or its location, per mgfr
-        Description: Description, per mgfr
+        Name: Name describing component or its location, per manufacturing
+        Description: Description, per manufacturing
         Hostname: if_defined_in_Redfish
       PopulatedFRU:
         FRUID: Cray-ch01-23452345
@@ -7366,7 +7366,7 @@ definitions:
   HWInvByLocNode:
     description: >-
       This is a subtype of HWInventoryByLocation for HMSType Node.
-      It represents a service, compute or system node.
+      It represents a service, compute, or system node.
       It is selected via the 'discriminator: HWInventoryByLocationType'
       of HWInventoryByLocation when HWInventoryByLocationType is
       'HWInvByLocNode'.
@@ -7433,8 +7433,8 @@ definitions:
       HWInventoryByLocationType: HWInvByLocNode
       NodeLocationInfo:
         Id: System.Embedded.1
-        Name: Name describing system or where it is located, per mgfr
-        Description: Description of system/node type, per mgfr
+        Name: Name describing system or where it is located, per manufacturing
+        Description: Description of system/node type, per manufacturing
         Hostname: if_defined_in_Redfish
         ProcessorSummary:
           Count: 2
@@ -7712,7 +7712,7 @@ definitions:
       PDULocationInfo:
         Id: "1"
         Name: RackPDU1
-        Description: Description of PDU, per mgfr
+        Description: Description of PDU, per manufacturing
         UUID: 32354641-4135-4332-4a35-313735303734
       PopulatedFRU:
         FRUID: "CabinetPDU.29347ZT536"
@@ -7898,7 +7898,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturer's naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -7941,7 +7941,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturer's naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8016,7 +8016,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturer's naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8062,7 +8062,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturer's naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8097,7 +8097,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturer's naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8165,7 +8165,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturers naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8205,7 +8205,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturers naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8332,7 +8332,7 @@ definitions:
           The Id is included for informational purposes.  The RedfishEndpoint
           objects are intended to help locate and interact with HMS components
           via the Redfish endpoint, so this is mostly needed in case
-          servicing the component requires its id/name according to a
+          servicing the component requires its ID/name according to a
           particular COTS manufacturers naming scheme within, for example,
           a particular server enclosure.
         type: string
@@ -8521,7 +8521,7 @@ definitions:
   HWInvByFRUNode:
     description: >-
       This is a subtype of HWInventoryByFRU for HMSType Node.
-      It represents a service, compute or system node.
+      It represents a service, compute, or system node.
       It is selected via the 'discriminator: HWInventoryByFRUType'
       of HWInventoryByFRU when HWInventoryByFRUType is
       'HWInvByFRUNode'.
@@ -9037,7 +9037,7 @@ definitions:
         readOnly: true
         type: string
       RotationSpeedRPM:
-        description: The rotation speed of htis drive, in revolutions per minute (RPM)
+        description: The rotation speed of this drive, in revolutions per minute (RPM)
         readOnly: true
         type: number
       BlockSizeBytes:
@@ -9619,7 +9619,7 @@ definitions:
         description: >-
           This is the MAC on the of the Redfish Endpoint on the
           management network, i.e. corresponding to the FQDN field's
-          ethernet interface where the root service is running.
+          Ethernet interface where the root service is running.
           Not the HSN MAC.
           This is a MAC address in the standard colon-separated 12 byte hex
           format.
@@ -9630,7 +9630,7 @@ definitions:
         description: >-
           This is the IP of the Redfish Endpoint on the
           management network, i.e. corresponding to the FQDN field's
-          ethernet interface where the root service is running. This may be
+          Ethernet interface where the root service is running. This may be
           IPv4 or IPv6
         type: string
         example: 10.254.2.10
@@ -9807,7 +9807,7 @@ definitions:
   ServiceEndpoint.1.0.0_ServiceInfo:
     description: >-
       This is any additional information for the service.  This is service
-      specific.  Schema for redfish services can be found at
+      specific.  Schema for Redfish services can be found at
       https://redfish.dmtf.org/redfish/schema_index
     properties:
       Name:
@@ -9828,50 +9828,50 @@ definitions:
     type: object
   #########################################################################
   #
-  # CompEthInterface - Captures discovered data about component ethernet
+  # CompEthInterface - Captures discovered data about component Ethernet
   #                    interfaces on a particular ComponentEndpoint
   #
   #########################################################################
   CompEthInterface.1.0.0:
     description: >-
-      A component ethernet interface is an object describing a relation between
+      A component Ethernet interface is an object describing a relation between
       a MAC address and IP address for components.
     properties:
       ID:
         description: >-
-          The ID of the component ethernet interface.
+          The ID of the component Ethernet interface.
         type: string
         readOnly: true
         example: a4bf012b7310
       Description:
         description: >-
-          An optional description for the component ethernet interface.
+          An optional description for the component Ethernet interface.
         type: string
       MACAddress:
         description: >-
-          The MAC address of this component ethernet interface
+          The MAC address of this component Ethernet interface
         type: string
       IPAddresses:
         description: >-
-          The IP addresses associated with the MAC address for this component ethernet interface.
+          The IP addresses associated with the MAC address for this component Ethernet interface.
         type: array
         items:
           $ref: '#/definitions/CompEthInterface.1.0.0_IPAddressMapping'        
       LastUpdate:
         description: >-
-          A timestamp for when the component ethernet interface last was modified.
+          A timestamp for when the component Ethernet interface last was modified.
         format: date-time
         type: string
         readOnly: true
         example: '2020-05-13T19:18:45.524974Z'
       ComponentID:
         description: >-
-          The xname of the component with this ethernet interface. Maybe blank if
+          The xname of the component with this Ethernet interface. Maybe blank if
           the component has not been discovered yet.
         $ref: '#/definitions/XNameRW.1.0.0'
       Type:
         description: >-
-          HMS component type of the component with this ethernet interface. Maybe blank if
+          HMS component type of the component with this Ethernet interface. Maybe blank if
           the component has not been discovered yet.
         $ref: '#/definitions/HMSType.1.0.0'
     type: object
@@ -9879,51 +9879,51 @@ definitions:
       - MACAddress
   CompEthInterface.1.0.0_Patch:
     description: >-
-      To update the IP addresses, CompID, and/or description fields of a component ethernet interface,
+      To update the IP addresses, CompID, and/or description fields of a component Ethernet interface,
       a PATCH operation can be used. Omitted fields are not updated.
       NOTE: Updating the IP addresses field updates the LastUpdate field.  
     properties:
       Description:
         description: >-
-          An optional description for the component ethernet interface.
+          An optional description for the component Ethernet interface.
         type: string
       IPAddresses:
         description: >-
-          The IP addresses associated with the MAC address for this component ethernet interface.
+          The IP addresses associated with the MAC address for this component Ethernet interface.
         type: array
         items:
           $ref: '#/definitions/CompEthInterface.1.0.0_IPAddressMapping'        
       ComponentID:
         description: >-
-          The xname of the component with this ethernet interface.
+          The xname of the component with this Ethernet interface.
         $ref: '#/definitions/XNameRW.1.0.0'
     type: object
   CompEthInterface.1.0.0_IPAddressMapping:
     description: >-
-      A IP Address Mapping maps a IP Address to a network. In a Component Ethernet Interface it is used to describe what IP Addresses and their networks that are associated with it.
+      A IP address Mapping maps a IP address to a network. In a Component Ethernet Interface it is used to describe what IP addresses and their networks that are associated with it.
     properties:
       IPAddress:
         description: >-
-          The IP address associated with the MAC address for this component ethernet interface on for this particular network.
+          The IP address associated with the MAC address for this component Ethernet interface on for this particular network.
         type: string
         example: 10.252.0.1
       Network:
         type: string
         description: >-
-          The network that this IP Addresses is associated with.
+          The network that this IP addresses is associated with.
         example: HMN
     type: object
     required:
       - IPAddress
   CompEthInterface.1.0.0_IPAddressMapping_Patch:
     description: >-
-      To update the network field a IP Address mapping in a component 
-      ethernet interface a PATCH operation can be used. Omitted fields are not updated.
+      To update the network field a IP address mapping in a component 
+      Ethernet interface a PATCH operation can be used. Omitted fields are not updated.
     properties:
       Network:
         type: string
         description: >-
-          The network that this IP Addresses is associated with.
+          The network that this IP addresses is associated with.
     type: object
   ###########################################################################
   #
@@ -11420,7 +11420,7 @@ definitions:
         description: Human readable description of message.
         type: string
       Flag:
-        # OK, Warning, or Alert - Indicates message, warning or error.
+        # OK, Warning, or Alert - Indicates message, warning, or error.
         $ref: '#/definitions/HMSFlag.1.0.0'
     type: object
   EthernetNICInfo_1.0.0:
@@ -11777,7 +11777,7 @@ definitions:
     example: ComputerSystem
   RedfishSubtype.1.0.0:
     description: >-
-      This is the type corresponding to the redfish object type, i.e. the
+      This is the type corresponding to the Redfish object type, i.e. the
       ChassisType field, SystemType, ManagerType fields.  We only use
       these three types to create ComponentEndpoints for now.
     enum:
