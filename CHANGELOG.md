@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2023-01-26
+
+### Changed
+
+- Moved hardware-sensitive CT tests into separate bucket.
+
 ## [2.3.0] - 2023-01-26
 
 ### Fixed
@@ -432,6 +438,7 @@ Replaced golang Sarama kafka interface with Confluent.
 ## [1.28.12] - 2021-05-03
 
 ### Changed
+
 - CASMHMS-4811 - Added anti-affinity for HSM to avoid (if possible) scheduling on the same nodes as the Istio gateways.
 
 ## [1.28.11] - 2021-04-28
@@ -524,7 +531,6 @@ Replaced golang Sarama kafka interface with Confluent.
 ### Changed
 
 - Updated license file.
-
 
 ## [1.26.8] - 2020-12-18
 
@@ -1003,7 +1009,6 @@ These are changes to charts in support of:
 ### Fixed
 
 - CASMHMS-3007 - redact passwords from redfish struct output.
-
 
 ## [1.16.0] - 2020-02-13
 

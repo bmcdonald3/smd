@@ -126,7 +126,7 @@ stages:
                       Flag:
                         type: str
                         required: True
-                        #TODO: adjusting this enum to catch bad flags in hardware_checks instead
+                        # allow flags that indicate hardware problems here and catch them in hardware-checks instead
                         enum:
                           - "OK"
                           - "Warning"
