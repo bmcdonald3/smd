@@ -1,6 +1,6 @@
 // MIT License
 // 
-// (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2022-2023] Hewlett Packard Enterprise Development LP
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -30,6 +30,8 @@ import (
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -102,33 +104,50 @@ func smReservationRenewHandler(w http.ResponseWriter, r *http.Request) {
 	var retData ReservationReleaseRenewResponse
 	fname := "smReservationRenewHandler()"
 
-	body,_ := ioutil.ReadAll(r.Body)
-	err := json.Unmarshal(body,&inData)
-	if (err != nil) {
-		logger.Errorf("%s: Error unmarshalling req data: %v",fname,err)
+	body, _ := ioutil.ReadAll(r.Body)
+	err := json.Unmarshal(body, &inData)
+	if err != nil {
+		logger.Errorf("%s: Error unmarshalling req data: %v", fname, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	//Just copy gozintas into gozoutas
-
-	for _,key := range(inData.ReservationKeys) {
-		retData.Success.ComponentIDs = append(retData.Success.ComponentIDs,
-			key.ID)
+	for _, key := range inData.ReservationKeys {
+		if res, ok := resMap[key.ID]; ok && res.ReservationKey == key.Key {
+			retData.Success.ComponentIDs = append(retData.Success.ComponentIDs, key.ID)
+		} else {
+			failure := FailureResponse{
+				ID: key.ID,
+				Reason: "Component not found",
+			}
+			retData.Failure = append(retData.Failure, failure)
+		}
 	}
 
-	retData.Counts.Success = len(inData.ReservationKeys)
-	retData.Counts.Failure = 0
+	if inData.ProcessingModel == CLProcessingModelRigid && len(retData.Failure) > 0 {
+		for _, id := range retData.Success.ComponentIDs {
+			failure := FailureResponse{
+				ID: id,
+				Reason: "Component not found",
+			}
+			retData.Failure = append(retData.Failure, failure)
+		}
+		retData.Success.ComponentIDs = []string{}
+	}
+
+	retData.Counts.Success = len(retData.Success.ComponentIDs)
+	retData.Counts.Failure = len(retData.Failure)
 	retData.Counts.Total   = retData.Counts.Success + retData.Counts.Failure
 
-	ba,baerr := json.Marshal(&retData)
-	if (baerr != nil) {
-		logger.Errorf("%s: Error marshalling response data: %v",fname,baerr)
+	ba, baerr := json.Marshal(&retData)
+	if baerr != nil {
+		logger.Errorf("%s: Error marshalling response data: %v", fname, baerr)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type","application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(ba)
 }
@@ -397,3 +416,133 @@ func TestFlexAquire(t *testing.T) {
 	}
 }
 
+func TestReacquire(t *testing.T) {
+	checkInit()
+
+	/////////
+	// Test 1 - Test reacquire on non-existing reservations
+	/////////
+
+	xnames := []string{"x0c0s0b0n0", "x1c1s1b1n1"}
+	reservations := make([]Reservation, 0)
+	for _, xname := range xnames {
+		rKey := xname + ":rk:" + uuid.New().String()
+		dKey := xname + ":dk:" + uuid.New().String()
+		reservation := Reservation{
+			Xname: xname,
+			ReservationKey: rKey,
+			DeputyKey: dKey,
+			Expiration: time.Now(),
+		}
+		reservations = append(reservations, reservation)
+	}
+
+	resp, err := prod.Reacquire(reservations, true)
+	if len(resp.Success.ComponentIDs) != 0 {
+		t.Errorf("Test 1 failed. Reacquire() returned successes.")
+	}
+
+	/////////
+	// Test 2 - Test reacquire on existing reservations
+	/////////
+
+	// First Acquire the reservations
+	xnames = []string{"x0c0s0b0n0", "x1c1s1b1n1"}
+	err = prod.Aquire(xnames)
+	if err != nil {
+		t.Errorf("Test 2 failed. Aquire() failed: %v", err)
+	}
+
+	ok := prod.Check(xnames)
+	if ok != true {
+		t.Errorf("Test 2 failed. Check() failed!")
+	}
+
+	reservations = make([]Reservation, 0)
+	// Cause us to lose the reservations
+	for _, xname := range xnames {
+		res := prod.reservedMap[xname]
+		reservations = append(reservations, res)
+		prod.reservationMutex.Lock()
+		delete(prod.reservedMap, xname)
+		prod.reservationMutex.Unlock()
+	}
+
+	resp, err = prod.Reacquire(reservations, true)
+	if err != nil {
+		t.Errorf("Test 2 failed. Reacquire() failed: %v", err)
+	}
+
+	for _, rr := range resp.Success.ComponentIDs {
+		ok := false
+		for _, xx := range xnames  {
+			if rr == xx {
+				ok = true
+				break
+			}
+		}
+		if !ok {
+			t.Errorf("Test 2 failed. Did not match: '%s'", rr)
+		}
+	}
+
+	ok = prod.Check(xnames)
+	if ok != true {
+		t.Errorf("Test 2 failed. Check() failed!")
+	}
+
+	/////////
+	// Test 3 - Test reacquire rigid with one non-existing reservation
+	/////////
+
+	// Cause us to lose the reservations
+	prod.reservationMutex.Lock()
+	delete(prod.reservedMap, "x0c0s0b0n0")
+	delete(prod.reservedMap, "x1c1s1b1n1")
+	prod.reservationMutex.Unlock()
+
+	xnames = []string{"x0c0s0b0n0", "x1c1s1b1n1", "x2c2s2b2n2"}
+	reservation := Reservation{
+		Xname: "x2c2s2b2n2",
+		ReservationKey: "x2c2s2b2n2:rk:" + uuid.New().String(),
+		DeputyKey: "x2c2s2b2n2:dk:" + uuid.New().String(),
+		Expiration: time.Now(),
+	}
+	reservations = append(reservations, reservation)
+
+	resp, err = prod.Reacquire(reservations, false)
+	if len(resp.Success.ComponentIDs) != 0 {
+		t.Errorf("Test 1 failed. Reacquire() returned successes.")
+	}
+
+	rchk, ok := prod.FlexCheck(xnames)
+	if ok {
+		t.Errorf("Test 3 failed. FlexCheck() returned TRUE but shouldn't have.")
+	}
+	if len(rchk.Success) != 0 {
+		t.Errorf("Test 3 failed. FlexCheck() returned successes but shouldn't have.")
+	}
+
+	/////////
+	// Test 4 - Test reacquire flexible with one non-existing reservation
+	/////////
+
+	resp, err = prod.Reacquire(reservations, true)
+	if err != nil {
+		t.Errorf("Test 4 failed. Reacquire() failed: %v", err)
+	}
+
+	rchk, ok = prod.FlexCheck(xnames)
+	if ok {
+		t.Errorf("Test 4 failed. FlexCheck() returned TRUE but shouldn't have.")
+	}
+	if len(rchk.Success) != 2 {
+		t.Errorf("Test 4 failed. FlexCheck() returned %d successes. Expected 2", len(rchk.Success))
+	}
+
+	// Release()
+	_, err = prod.FlexRelease(xnames)
+	if err != nil {
+		t.Errorf("Test cleanup failed. FlexRelease() failed: %v", err)
+	}
+}
