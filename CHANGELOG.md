@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.0] - 2023-01-26
+## [2.5.0] - 2023-02-03
 
 ### Changed
 
-- Moved hardware-sensitive CT tests into separate bucket.
+- Moved hardware-sensitive CT tests into separate stage.
+
+## [2.4.0] - 2023-01-30
+
+### Added
+
+- CASMHMS-5863 - Added Reacquire() function to the reservations client library.
 
 ## [2.3.0] - 2023-01-26
 
