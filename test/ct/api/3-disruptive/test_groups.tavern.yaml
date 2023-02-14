@@ -819,3 +819,107 @@ stages:
                 required: True
                 enum:
                   - "deleted 1 entry"
+
+#TODO: NEW VVV
+
+  - name: Delete existing exclusive test group Blue in HSM (if present) to prevent conflict
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupBlue"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  # POST /groups exclusive group Blue API response code
+  - name: Verify /groups POST method exclusive group Blue
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupBlue","description":"Exclusive test group Blue for HSM API testing in CT framework.","tags":["hsmtestgroupBlue_tag1"],"members":{"ids":["{xname1}"]},"exclusiveGroup":"hsmtestgroupColors"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  - name: Delete existing exclusive test group Lion in HSM (if present) to prevent conflict
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupLion"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  # POST /groups exclusive group Lion API response code
+  - name: Verify /groups POST method exclusive group Lion
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupLion","description":"Exclusive test group Lion for HSM API testing in CT framework.","tags":["hsmtestgroupLion_tag1"],"members":{"ids":["{xname1}","{xname2}"]},"exclusiveGroup":"hsmtestgroupAnimals"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  - name: Delete existing exclusive test group Red in HSM (if present) to prevent conflict
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  # POST /groups exclusive group Red API response code
+  - name: Verify /groups POST method exclusive group Red
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupRed","description":"Exclusive test group Red for HSM API testing in CT framework.","tags":["hsmtestgroupRed_tag1"],"members":{"ids":["{xname1}"]},"exclusiveGroup":"hsmtestgroupColors"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 409
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Conflict"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "operation would conflict with an existing member in another exclusive group."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 409
+
+  # DELETE /groups/{group} exclusive group Blue API response code
+  # DELETE /groups/{group} exclusive group Blue API response body
+  - name: Verify /groups/label DELETE method
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupBlue"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
