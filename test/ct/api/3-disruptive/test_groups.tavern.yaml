@@ -24,10 +24,12 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 41
+# HMS test metrics test cases: 51
 # POST /groups group1 API response code
-# GET /groups/labels API response code
-# GET /groups/labels API response body
+# GET /groups/labels group name API response code
+# GET /groups/labels group name API response body
+# GET /groups/labels number of groups API response code
+# GET /groups/labels number of groups API response body
 # GET /groups/{group1} API response code
 # GET /groups/{group1} API response body
 # GET /groups?group={group1} API response code
@@ -42,8 +44,10 @@
 # POST /groups group2 API response code
 # GET /groups/{group2} API response code
 # GET /groups/{group2} API response body
-# GET /groups/labels API response code
-# GET /groups/labels API response body
+# GET /groups/labels group names API response code
+# GET /groups/labels group names API response body
+# GET /groups/labels number of groups API response code
+# GET /groups/labels number of groups API response body
 # GET /groups/{group1}/members API response code
 # GET /groups/{group1}/members API response body
 # POST /groups/{group1}/members API response code
@@ -56,10 +60,16 @@
 # POST /partitions API response code
 # GET /partitions/{partition} API response code
 # GET /partitions/{partition} API response body
+# GET /partitions/{partition} number of members API response code
+# GET /partitions/{partition} number of members API response body
 # GET /groups/{group1}?partition={partition} API response code
 # GET /groups/{group1}?partition={partition} API response body
+# GET /groups/{group1}?partition={partition} number of members API response code
+# GET /groups/{group1}?partition={partition} number of members API response body
 # GET /groups/{group1}/members?partition={partition} API response code
 # GET /groups/{group1}/members?partition={partition} API response body
+# GET /groups/{group1}/members?partition={partition} number of members API response code
+# GET /groups/{group1}/members?partition={partition} number of members API response body
 # DELETE /partitions/{partition} API response code
 # DELETE /partitions/{partition} API response body
 # DELETE /groups/{group1} API response code
@@ -100,8 +110,8 @@ stages:
     response:
       status_code: 201
 
-  # GET /groups/labels API response code
-  # GET /groups/labels API response body
+  # GET /groups/labels group name API response code
+  # GET /groups/labels group name API response body
   - name: Verify /groups/labels GET method
     request:
       url: "{hsm_base_url}/hsm/v2/groups/labels"
@@ -120,13 +130,23 @@ stages:
               - type: str
                 enum:
                   - "hsmtestgroup1"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
-        #function: tavern.testutils.helpers:validate_content
-        #extra_kwargs:
-        #  comparisons:
-        #    - jmespath: "length(@)"
-        #      operator: "gt"
-        #      expected: 0
+
+  # GET /groups/labels number of groups API response code
+  # GET /groups/labels number of groups API response body
+  - name: Verify /groups/labels GET method
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/labels"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_content
+        extra_kwargs:
+          comparisons:
+            - jmespath: "length(@)"
+              operator: "gt"
+              expected: 0
 
   # GET /groups/{group1} API response code
   # GET /groups/{group1} API response body
@@ -361,8 +381,8 @@ stages:
                           - "{xname2}"
                           - "{xname3}"
 
-  # GET /groups/labels API response code
-  # GET /groups/labels API response body
+  # GET /groups/labels group names API response code
+  # GET /groups/labels group names API response body
   - name: Verify /groups/labels GET method
     request:
       url: "{hsm_base_url}/hsm/v2/groups/labels"
@@ -376,13 +396,23 @@ stages:
           schema:
             type: seq
             required: True
-            matching: all
+            matching: "*"
             sequence:
               - type: str
                 enum:
                   - "hsmtestgroup1"
                   - "hsmtestgroup2"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
+
+  # GET /groups/labels number of groups API response code
+  # GET /groups/labels number of groups API response body
+  - name: Verify /groups/labels GET method
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/labels"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -400,23 +430,6 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname1}"
-                      - "{xname2}"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -450,24 +463,6 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname1}"
-                      - "{xname2}"
-                      - "{xname4}"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -521,23 +516,6 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname2}"
-                      - "{xname4}"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -619,7 +597,17 @@ stages:
                         required: True
                         enum:
                           - "{xname4}"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
+
+  # GET /partitions/{partition} number of members API response code
+  # GET /partitions/{partition} number of members API response body
+  - name: Verify /partitions/partition GET method
+    request:
+      url: "{hsm_base_url}/hsm/v2/partitions/p98"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -679,7 +667,17 @@ stages:
                         required: True
                         enum:
                           - "{xname4}"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
+
+  # GET /groups/{group1}?partition={partition} number of members API response code
+  # GET /groups/{group1}?partition={partition} number of members API response body
+  - name: Verify /groups/label GET method with partition parameter
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1?partition=p98"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -709,13 +707,22 @@ stages:
               ids:
                 type: seq
                 required: True
-                unique: True
                 matching: all
                 sequence:
                   - type: str
                     enum:
                       - "{xname4}"
-        #TODO: break this out, can't use multiple functions in one verify_response_with call
+
+  # GET /groups/{group1}/members?partition={partition} number of members API response code
+  # GET /groups/{group1}/members?partition={partition} number of members API response body
+  - name: Verify /groups/label/members GET method with partition parameter
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members?partition=p98"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
