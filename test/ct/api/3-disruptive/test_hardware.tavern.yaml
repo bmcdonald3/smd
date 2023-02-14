@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -2203,7 +2203,7 @@ stages:
 
   # GET /Inventory/Hardware API response code
   # GET /Inventory/Hardware API response body
-  - name: hsmAPIinventoryHardwareGET - Retrieve multiple Hardware Inventory entries using GET.
+  - name: hsmAPIinventoryHardwareGET - Retrieve all Hardware Inventory entries using GET.
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/Hardware"
       method: GET
@@ -2240,7 +2240,8 @@ stages:
                     required: True
                   PopulatedFRU:
                     type: map
-                    required: True
+                    # Allows unpopulated and empty hardware entries CASMHMS-5883
+                    required: False
                     # Allows the various ByFRUType fields and FRUInfo maps
                     allowempty: True
                     mapping:

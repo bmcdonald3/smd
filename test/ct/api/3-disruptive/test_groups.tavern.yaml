@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -24,8 +24,10 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 39
+# HMS test metrics test cases: 41
 # POST /groups group1 API response code
+# GET /groups/labels API response code
+# GET /groups/labels API response body
 # GET /groups/{group1} API response code
 # GET /groups/{group1} API response body
 # GET /groups?group={group1} API response code
@@ -97,6 +99,34 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 201
+
+  # GET /groups/labels API response code
+  # GET /groups/labels API response body
+  - name: Verify /groups/labels GET method
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/labels"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            required: True
+            matching: "*"
+            sequence:
+              - type: str
+                enum:
+                  - "hsmtestgroup1"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
+        #function: tavern.testutils.helpers:validate_content
+        #extra_kwargs:
+        #  comparisons:
+        #    - jmespath: "length(@)"
+        #      operator: "gt"
+        #      expected: 0
 
   # GET /groups/{group1} API response code
   # GET /groups/{group1} API response body
@@ -352,6 +382,7 @@ stages:
                 enum:
                   - "hsmtestgroup1"
                   - "hsmtestgroup2"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -385,6 +416,7 @@ stages:
                     enum:
                       - "{xname1}"
                       - "{xname2}"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -435,6 +467,7 @@ stages:
                       - "{xname1}"
                       - "{xname2}"
                       - "{xname4}"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -504,6 +537,7 @@ stages:
                     enum:
                       - "{xname2}"
                       - "{xname4}"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -585,6 +619,7 @@ stages:
                         required: True
                         enum:
                           - "{xname4}"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -644,6 +679,7 @@ stages:
                         required: True
                         enum:
                           - "{xname4}"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -679,6 +715,7 @@ stages:
                   - type: str
                     enum:
                       - "{xname4}"
+        #TODO: break this out, can't use multiple functions in one verify_response_with call
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
