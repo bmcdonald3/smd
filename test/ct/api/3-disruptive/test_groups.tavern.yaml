@@ -896,7 +896,7 @@ stages:
 
   # POST /groups exclusive group Red conflicting member API response code
   # POST /groups exclusive group Red conflicting member API response body
-  - name: Verify /groups POST method exclusive group Red
+  - name: Verify /groups POST method exclusive group Red conflicting member
     request:
       url: "{hsm_base_url}/hsm/v2/groups"
       json: {"label":"hsmtestgroupRed","description":"Exclusive test group Red for HSM API testing in CT framework.","tags":["hsmtestgroupRed_tag1"],"members":{"ids":["{xname1}"]},"exclusiveGroup":"hsmtestgroupColors"}
@@ -944,7 +944,7 @@ stages:
 
   # POST /groups/{group}/members exclusive group Red conflicting member API response code
   # POST /groups/{group}/members exclusive group Red conflicting member API response body
-  - name: Verify /groups/label/members POST method
+  - name: Verify /groups/label/members POST method exclusive group Red conflicting member
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members"
       json: {"id":"{xname1}"}
@@ -981,7 +981,7 @@ stages:
                   - 409
 
   # POST /groups/{group}/members exclusive group Red API response code
-  - name: Verify /groups/label/members POST method
+  - name: Verify /groups/label/members POST method exclusive group Red
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members"
       json: {"id":"{xname3}"}
@@ -992,7 +992,7 @@ stages:
 
   # DELETE /groups/{group}/members/{xname} exclusive group Red API response code
   # DELETE /groups/{group}/members/{xname} exclusive group Red API response body
-  - name: Verify /groups/label/members/xname DELETE method
+  - name: Verify /groups/label/members/xname DELETE method exclusive group Red
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members/{xname3}"
       method: DELETE
@@ -1019,7 +1019,7 @@ stages:
 
   # DELETE /groups/{group} exclusive group Blue API response code
   # DELETE /groups/{group} exclusive group Blue API response body
-  - name: Verify /groups/label DELETE method
+  - name: Verify /groups/label DELETE method exclusive group Blue
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupBlue"
       method: DELETE
@@ -1045,7 +1045,7 @@ stages:
                   - "deleted 1 entry"
 
   # POST /groups/{group}/members exclusive group Red API response code
-  - name: Verify /groups/label/members POST method
+  - name: Verify /groups/label/members POST method exclusive group Red now succeeds
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members"
       json: {"id":"{xname1}"}
@@ -1055,7 +1055,7 @@ stages:
       status_code: 201
 
   # PATCH /groups/{group} exclusive group Red API response code
-  - name: Verify /groups/label PATCH method
+  - name: Verify /groups/label PATCH method exclusive group Red
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed"
       json: {"description":"Exclusive test group Red for HSM API testing in CT framework (UPDATED).","tags":["hsmtestgroupRed_tag2"]}
@@ -1066,7 +1066,7 @@ stages:
 
   # DELETE /groups/{group} exclusive group Red API response code
   # DELETE /groups/{group} exclusive group Red API response body
-  - name: Verify /groups/label DELETE method
+  - name: Verify /groups/label DELETE method exclusive group Red
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed"
       method: DELETE
@@ -1093,7 +1093,7 @@ stages:
 
   # DELETE /groups/{group} exclusive group Lion API response code
   # DELETE /groups/{group} exclusive group Lion API response body
-  - name: Verify /groups/label DELETE method
+  - name: Verify /groups/label DELETE method exclusive group Lion
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupLion"
       method: DELETE
