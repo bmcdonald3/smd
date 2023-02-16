@@ -24,12 +24,10 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 69
+# HMS test metrics test cases: TODO
 # POST /groups group1 API response code
-# GET /groups/labels group name API response code
-# GET /groups/labels group name API response body
-# GET /groups/labels number of groups API response code
-# GET /groups/labels number of groups API response body
+# GET /groups/labels API response code
+# GET /groups/labels API response body
 # GET /groups/{group1} API response code
 # GET /groups/{group1} API response body
 # GET /groups?group={group1} API response code
@@ -44,10 +42,8 @@
 # POST /groups group2 API response code
 # GET /groups/{group2} API response code
 # GET /groups/{group2} API response body
-# GET /groups/labels group names API response code
-# GET /groups/labels group names API response body
-# GET /groups/labels number of groups API response code
-# GET /groups/labels number of groups API response body
+# GET /groups/labels API response code
+# GET /groups/labels API response body
 # GET /groups/{group1}/members API response code
 # GET /groups/{group1}/members API response body
 # POST /groups/{group1}/members API response code
@@ -60,16 +56,10 @@
 # POST /partitions API response code
 # GET /partitions/{partition} API response code
 # GET /partitions/{partition} API response body
-# GET /partitions/{partition} number of members API response code
-# GET /partitions/{partition} number of members API response body
 # GET /groups/{group1}?partition={partition} API response code
 # GET /groups/{group1}?partition={partition} API response body
-# GET /groups/{group1}?partition={partition} number of members API response code
-# GET /groups/{group1}?partition={partition} number of members API response body
 # GET /groups/{group1}/members?partition={partition} API response code
 # GET /groups/{group1}/members?partition={partition} API response body
-# GET /groups/{group1}/members?partition={partition} number of members API response code
-# GET /groups/{group1}/members?partition={partition} number of members API response body
 # DELETE /partitions/{partition} API response code
 # DELETE /partitions/{partition} API response body
 # DELETE /groups/{group1} API response code
@@ -128,8 +118,8 @@ stages:
     response:
       status_code: 201
 
-  # GET /groups/labels group name API response code
-  # GET /groups/labels group name API response body
+  # GET /groups/labels API response code
+  # GET /groups/labels API response body
   - name: Verify /groups/labels GET method
     request:
       url: "{hsm_base_url}/hsm/v2/groups/labels"
@@ -138,33 +128,22 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: seq
-            required: True
-            matching: "*"
-            sequence:
-              - type: str
-                enum:
-                  - "hsmtestgroup1"
-
-  # GET /groups/labels number of groups API response code
-  # GET /groups/labels number of groups API response body
-  - name: Verify /groups/labels GET method
-    request:
-      url: "{hsm_base_url}/hsm/v2/groups/labels"
-      method: GET
-      verify: !bool "{verify}"
-    response:
-      status_code: 200
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@)"
-              operator: "gt"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              matching: "*"
+              sequence:
+                - type: str
+                  enum:
+                    - "hsmtestgroup1"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@)"
+                operator: "gt"
+                expected: 0
 
   # GET /groups/{group1} API response code
   # GET /groups/{group1} API response body
@@ -399,8 +378,8 @@ stages:
                           - "{xname2}"
                           - "{xname3}"
 
-  # GET /groups/labels group names API response code
-  # GET /groups/labels group names API response body
+  # GET /groups/labels API response code
+  # GET /groups/labels API response body
   - name: Verify /groups/labels GET method
     request:
       url: "{hsm_base_url}/hsm/v2/groups/labels"
@@ -409,34 +388,23 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: seq
-            required: True
-            matching: "*"
-            sequence:
-              - type: str
-                enum:
-                  - "hsmtestgroup1"
-                  - "hsmtestgroup2"
-
-  # GET /groups/labels number of groups API response code
-  # GET /groups/labels number of groups API response body
-  - name: Verify /groups/labels GET method
-    request:
-      url: "{hsm_base_url}/hsm/v2/groups/labels"
-      method: GET
-      verify: !bool "{verify}"
-    response:
-      status_code: 200
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@)"
-              operator: "gt"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              matching: "*"
+              sequence:
+                - type: str
+                  enum:
+                    - "hsmtestgroup1"
+                    - "hsmtestgroup2"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@)"
+                operator: "gt"
+                expected: 1
 
   # GET /groups/{group1}/members API response code
   # GET /groups/{group1}/members API response body
@@ -576,65 +544,54 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              name:
-                type: str
-                required: True
-                enum:
-                  - "p98"
-              description:
-                type: str
-                required: True
-                enum:
-                  - "Test partition 1 for HSM API testing in CT framework."
-              tags:
-                type: seq
-                required: True
-                matching: all
-                sequence:
-                  - type: str
-                    required: True
-                    enum:
-                      - "p98_tag1"
-                      - "p98_tag2"
-              members:
-                type: map
-                required: True
-                mapping:
-                  ids:
-                    type: seq
-                    required: True
-                    matching: all
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{xname4}"
-
-  # GET /partitions/{partition} number of members API response code
-  # GET /partitions/{partition} number of members API response body
-  - name: Verify /partitions/partition GET method
-    request:
-      url: "{hsm_base_url}/hsm/v2/partitions/p98"
-      method: GET
-      verify: !bool "{verify}"
-    response:
-      status_code: 200
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.members.ids)"
-              operator: "eq"
-              expected: 1
-            - jmespath: "@.members.ids[0]"
-              operator: "eq"
-              expected: "{xname4}"
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                name:
+                  type: str
+                  required: True
+                  enum:
+                    - "p98"
+                description:
+                  type: str
+                  required: True
+                  enum:
+                    - "Test partition 1 for HSM API testing in CT framework."
+                tags:
+                  type: seq
+                  required: True
+                  matching: all
+                  sequence:
+                    - type: str
+                      required: True
+                      enum:
+                        - "p98_tag1"
+                        - "p98_tag2"
+                members:
+                  type: map
+                  required: True
+                  mapping:
+                    ids:
+                      type: seq
+                      required: True
+                      matching: all
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{xname4}"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.members.ids)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "@.members.ids[0]"
+                operator: "eq"
+                expected: "{xname4}"
 
   # GET /groups/{group1}?partition={partition} API response code
   # GET /groups/{group1}?partition={partition} API response body
@@ -646,65 +603,54 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              label:
-                type: str
-                required: True
-                enum:
-                  - "hsmtestgroup1"
-              description:
-                type: str
-                required: True
-                enum:
-                  - "Test group 1 for HSM API testing in CT framework (UPDATED)."
-              tags:
-                type: seq
-                required: True
-                matching: all
-                sequence:
-                  - type: str
-                    required: True
-                    enum:
-                      - "hsmtestgroup1_tag3"
-                      - "hsmtestgroup1_tag4"
-              members:
-                type: map
-                required: True
-                mapping:
-                  ids:
-                    type: seq
-                    required: True
-                    matching: all
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{xname4}"
-
-  # GET /groups/{group1}?partition={partition} number of members API response code
-  # GET /groups/{group1}?partition={partition} number of members API response body
-  - name: Verify /groups/label GET method with partition parameter
-    request:
-      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1?partition=p98"
-      method: GET
-      verify: !bool "{verify}"
-    response:
-      status_code: 200
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.members.ids)"
-              operator: "eq"
-              expected: 1
-            - jmespath: "@.members.ids[0]"
-              operator: "eq"
-              expected: "{xname4}"
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                label:
+                  type: str
+                  required: True
+                  enum:
+                    - "hsmtestgroup1"
+                description:
+                  type: str
+                  required: True
+                  enum:
+                    - "Test group 1 for HSM API testing in CT framework (UPDATED)."
+                tags:
+                  type: seq
+                  required: True
+                  matching: all
+                  sequence:
+                    - type: str
+                      required: True
+                      enum:
+                        - "hsmtestgroup1_tag3"
+                        - "hsmtestgroup1_tag4"
+                members:
+                  type: map
+                  required: True
+                  mapping:
+                    ids:
+                      type: seq
+                      required: True
+                      matching: all
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{xname4}"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.members.ids)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "@.members.ids[0]"
+                operator: "eq"
+                expected: "{xname4}"
 
   # GET /groups/{group1}/members?partition={partition} API response code
   # GET /groups/{group1}/members?partition={partition} API response body
@@ -716,46 +662,35 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname4}"
-
-  # GET /groups/{group1}/members?partition={partition} number of members API response code
-  # GET /groups/{group1}/members?partition={partition} number of members API response body
-  - name: Verify /groups/label/members GET method with partition parameter
-    request:
-      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup1/members?partition=p98"
-      method: GET
-      verify: !bool "{verify}"
-    response:
-      status_code: 200
-      verify_response_with:
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(values(@)[0])"
-              operator: "eq"
-              expected: 1
-            - jmespath: "contains(values(@)[0], '{xname1}')"
-              operator: "eq"
-              expected: False
-            - jmespath: "contains(values(@)[0], '{xname2}')"
-              operator: "eq"
-              expected: False
-            - jmespath: "contains(values(@)[0], '{xname4}')"
-              operator: "eq"
-              expected: True
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                ids:
+                  type: seq
+                  required: True
+                  matching: all
+                  sequence:
+                    - type: str
+                      enum:
+                        - "{xname4}"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(values(@)[0])"
+                operator: "eq"
+                expected: 1
+              - jmespath: "contains(values(@)[0], '{xname1}')"
+                operator: "eq"
+                expected: False
+              - jmespath: "contains(values(@)[0], '{xname2}')"
+                operator: "eq"
+                expected: False
+              - jmespath: "contains(values(@)[0], '{xname4}')"
+                operator: "eq"
+                expected: True
 
   # DELETE /partitions/{partition} API response code
   # DELETE /partitions/{partition} API response body
