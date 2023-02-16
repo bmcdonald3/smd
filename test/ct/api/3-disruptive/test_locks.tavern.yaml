@@ -28,8 +28,8 @@
 # POST /locks/status No Components
 # GET /locks/status?type=partition No Components
 # POST /State/Components Add test components
-# POST /locks/status \w Components
-# GET /locks/status?type=partition \w Components
+# POST /locks/status w/ Components
+# GET /locks/status?type=partition w/ Components
 # POST /locks/lock Lock components of one type
 # POST /locks/lock Lock already locked components
 # POST /locks/unlock Unlock components of one type
@@ -179,7 +179,7 @@ stages:
       method: POST
       json: {"Components":[{"ID":"p9999.9996","State":"Populated"},{"ID":"p9999.9997","State":"Populated"},{"ID":"p9999.9998","State":"Populated"},{"ID":"p9999.9999","State":"Populated"}]}
 
-  # POST /lock/status \w Components
+  # POST /lock/status w/ Components
   - name: hsmAPILocksStatusPOST - Try to get status our newly created components
     request:
       url: "{hsm_base_url}/hsm/v2/locks/status"
@@ -233,7 +233,7 @@ stages:
                 operator: "eq"
                 expected: 4
 
-  # GET /lock/status \w Components
+  # GET /lock/status w/ Components
   - name: hsmAPILocksStatusGET - Try to get status our newly created components
     request:
       url: "{hsm_base_url}/hsm/v2/locks/status?type=Partition"
@@ -296,66 +296,65 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                          - "p9999.9998"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 4
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                            - "p9999.9998"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 4
 
   # POST /locks/lock Lock already locked components
   - name: hsmAPILocksLockPOST - Lock already locked components
@@ -404,66 +403,65 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                          - "p9999.9998"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 4
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                            - "p9999.9998"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 4
 
   # POST /locks/unlock Unlock already unlocked components
   - name: hsmAPILocksUnlockPOST - Unlock already unlocked components
@@ -512,64 +510,63 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 2
 
   # POST /locks/service/reservations Try to reserve all rigid
   - name: hsmAPILocksServiceReservationsPOST - Try to reserve all rigid
@@ -618,66 +615,61 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Success:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-                      DeputyKey:
-                        type: str
-                        required: True
-                      ReservationKey:
-                        type: str
-                        required: True
-                      ExpirationTime:
-                        type: str
-                        required: True
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "Locked"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Success:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                        DeputyKey:
+                          type: str
+                          required: True
+                        ReservationKey:
+                          type: str
+                          required: True
+                        ExpirationTime:
+                          type: str
+                          required: False
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "Locked"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 2
       save:
         json:
           service_key_data_0: Success[0]
@@ -693,63 +685,58 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Success:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      DeputyKey:
-                        type: str
-                        required: False
-                      ReservationKey:
-                        type: str
-                        required: False
-                      ExpirationTime:
-                        type: str
-                        required: False
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "Reserved"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success)"
-              operator: "eq"
-              expected: 0
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Success:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        DeputyKey:
+                          type: str
+                          required: False
+                        ReservationKey:
+                          type: str
+                          required: False
+                        ExpirationTime:
+                          type: str
+                          required: False
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "Reserved"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success)"
+                operator: "eq"
+                expected: 0
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 2
 
   # POST /locks/service/reservations/check Check 2 reservations
   - name: hsmAPILocksServiceReservationsCheckPOST - Check 2 reservations
@@ -761,64 +748,59 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Success:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_0.ID}"
-                          - "{service_key_data_1.ID}"
-                      DeputyKey:
-                        type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_0.DeputyKey}"
-                          - "{service_key_data_1.DeputyKey}"
-                      CreationTime:
-                        type: str
-                        required: True
-                      ExpirationTime:
-                        type: str
-                        required: True
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Success:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_0.ID}"
+                            - "{service_key_data_1.ID}"
+                        DeputyKey:
+                          type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_0.DeputyKey}"
+                            - "{service_key_data_1.DeputyKey}"
+                        CreationTime:
+                          type: str
+                          required: True
+                        ExpirationTime:
+                          type: str
+                          required: False
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/service/reservations/renew Renew 2 reservations
   - name: hsmAPILocksServiceReservationsRenewPOST - Renew 2 reservations
@@ -830,71 +812,66 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_0.ID}"
-                          - "{service_key_data_1.ID}"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_0.ID}"
+                            - "{service_key_data_1.ID}"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/service/reservations/release Release 1 reservation
   - name: hsmAPILocksServiceReservationsReleasePOST - Release 1 reservation
@@ -906,70 +883,65 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_0.ID}"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 1
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_0.ID}"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+          function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/service/reservations/release Release 1 already released reservation
   - name: hsmAPILocksServiceReservationsReleasePOST - Release 1 already released reservation
@@ -1018,66 +990,61 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Success:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_1.ID}"
-                      DeputyKey:
-                        type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_1.DeputyKey}"
-                      CreationTime:
-                        type: str
-                        required: True
-                      ExpirationTime:
-                        type: str
-                        required: True
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_0.ID}"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "NotFound"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success)"
-              operator: "eq"
-              expected: 1
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Success:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_1.ID}"
+                        DeputyKey:
+                          type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_1.DeputyKey}"
+                        CreationTime:
+                          type: str
+                          required: True
+                        ExpirationTime:
+                          type: str
+                          required: False
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_0.ID}"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "NotFound"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 1
 
   # POST /locks/service/reservations/renew Renew 2 reservations rigid (fail)
   - name: hsmAPILocksServiceReservationsRenewPOST - Renew 2 reservations
@@ -1126,74 +1093,69 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_1.ID}"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "{service_key_data_0.ID}"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "NotFound"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 1
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_1.ID}"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "{service_key_data_0.ID}"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "NotFound"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 1
 
   # POST /locks/lock Lock reserved component
   - name: hsmAPILocksLockPOST - Lock reserved component
@@ -1279,66 +1241,61 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Success:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                      DeputyKey:
-                        type: str
-                        required: True
-                      ReservationKey:
-                        type: str
-                        required: True
-                      ExpirationTime:
-                        type: str
-                        required: True
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "Unlocked"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Success:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                        DeputyKey:
+                          type: str
+                          required: True
+                        ReservationKey:
+                          type: str
+                          required: True
+                        ExpirationTime:
+                          type: str
+                          required: False
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "Unlocked"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 2
 
   # POST /locks/reservations/remove Force remove reservations on 4 components rigid
   - name: hsmAPILocksReservationsRemovePOST - Force remove reservations on 4 components rigid
@@ -1387,76 +1344,71 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 3
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "NotFound"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 3
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 3
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "NotFound"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 3
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 1
 
   # POST /locks/reservations Reserve 2 locked components
   - name: hsmAPILocksReservationsPOST - Reserve 2 locked components
@@ -1468,63 +1420,58 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Success:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                      DeputyKey:
-                        type: str
-                        required: True
-                      ReservationKey:
-                        type: str
-                        required: True
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "Unlocked"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Success:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                        DeputyKey:
+                          type: str
+                          required: True
+                        ReservationKey:
+                          type: str
+                          required: True
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "Unlocked"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 2
       save:
         json:
           key_data_0: Success[0]
@@ -1540,70 +1487,65 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 1
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{key_data_0.ID}"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: False
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 1
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 1
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{key_data_0.ID}"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: False
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/reservations/release Release 1 already released reservation
   - name: hsmAPILocksReservationsReleasePOST - Release 1 reservation
@@ -1652,71 +1594,66 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/disable Disable reservations on 4 components
   - name: hsmAPILocksDisablePOST - Disable reservations on 4 components
@@ -1728,73 +1665,68 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                          - "p9999.9998"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 4
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                            - "p9999.9998"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 4
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/repair Repair reservations on 2 components
   - name: hsmAPILocksRepairPOST - Repair reservations on 2 components
@@ -1806,71 +1738,66 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/repair Repair reservations on 4 components
   - name: hsmAPILocksRepairPOST - Repair reservations on 4 components
@@ -1882,73 +1809,68 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 0
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-                          - "p9999.9998"
-                          - "p9999.9999"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: False
-                      Reason:
-                        type: str
-                        required: False
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 4
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 0
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 0
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                            - "p9999.9998"
+                            - "p9999.9999"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: False
+                        Reason:
+                          type: str
+                          required: False
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 4
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 0
 
   # POST /locks/unlock Unlock 4 components rigid
   - name: hsmAPILocksUnlockPOST - Unlock 4 components rigid
@@ -1997,76 +1919,71 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              Counts:
-                type: map
-                required: True
-                mapping:
-                  Total:
-                    type: int
-                    required: True
-                    enum:
-                      - 4
-                  Success:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-                  Failure:
-                    type: int
-                    required: True
-                    enum:
-                      - 2
-              Success:
-                type: map
-                required: True
-                mapping:
-                  ComponentIDs:
-                    type: seq
-                    required: True
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "p9999.9996"
-                          - "p9999.9997"
-              Failure:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "p9999.9998"
-                          - "p9999.9999"
-                      Reason:
-                        type: str
-                        required: True
-                        enum:
-                          - "Unlocked"
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Success.ComponentIDs)"
-              operator: "eq"
-              expected: 2
-        #TODO: use list of functions
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.Failure)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                Counts:
+                  type: map
+                  required: True
+                  mapping:
+                    Total:
+                      type: int
+                      required: True
+                      enum:
+                        - 4
+                    Success:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                    Failure:
+                      type: int
+                      required: True
+                      enum:
+                        - 2
+                Success:
+                  type: map
+                  required: True
+                  mapping:
+                    ComponentIDs:
+                      type: seq
+                      required: True
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "p9999.9996"
+                            - "p9999.9997"
+                Failure:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "p9999.9998"
+                            - "p9999.9999"
+                        Reason:
+                          type: str
+                          required: True
+                          enum:
+                            - "Unlocked"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.Success.ComponentIDs)"
+                operator: "eq"
+                expected: 2
+              - jmespath: "length(@.Failure)"
+                operator: "eq"
+                expected: 2
 
   ##############################################
   # Clean up
