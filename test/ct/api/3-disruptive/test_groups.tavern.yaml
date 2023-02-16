@@ -24,7 +24,7 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: TODO
+# HMS test metrics test cases: 49
 # POST /groups group1 API response code
 # GET /groups/labels API response code
 # GET /groups/labels API response body
@@ -74,16 +74,6 @@
 # POST /groups/{group}/members exclusive group Red conflicting member API response code
 # POST /groups/{group}/members exclusive group Red conflicting member API response body
 # POST /groups/{group}/members exclusive group Red API response code
-# DELETE /groups/{group}/members/{xname} exclusive group Red API response code
-# DELETE /groups/{group}/members/{xname} exclusive group Red API response body
-# DELETE /groups/{group} exclusive group Blue API response code
-# DELETE /groups/{group} exclusive group Blue API response body
-# POST /groups/{group}/members exclusive group Red API response code
-# PATCH /groups/{group} exclusive group Red API response code
-# DELETE /groups/{group} exclusive group Red API response code
-# DELETE /groups/{group} exclusive group Red API response body
-# DELETE /groups/{group} exclusive group Lion API response code
-# DELETE /groups/{group} exclusive group Lion API response body
 ---
 test_name: Verify POST, GET, PATCH, and DELETE methods for various /groups APIs
 
