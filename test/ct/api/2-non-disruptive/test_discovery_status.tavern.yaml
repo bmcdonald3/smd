@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -60,7 +60,9 @@ stages:
                     type: str
                     enum:
                       - "Complete"
+                      - "InProgress"
                       - "NotStarted"
+                      - "Pending"
                   Details:
                     type: map
                     required: False
@@ -97,7 +99,9 @@ stages:
                 type: str
                 enum:
                   - "Complete"
+                  - "InProgress"
                   - "NotStarted"
+                  - "Pending"
               Details:
                 type: map
                 required: False
