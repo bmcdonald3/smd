@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -104,26 +104,26 @@ stages:
     response:
       status_code: 201
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: seq
-            required: True
-            sequence:
-              - type: map
-                required: True
-                mapping:
-                  URI:
-                    type: str
-                    required: True
-                    enum:
-                      - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b91"
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@)"
-              operator: "eq"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              sequence:
+                - type: map
+                  required: True
+                  mapping:
+                    URI:
+                      type: str
+                      required: True
+                      enum:
+                        - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b91"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@)"
+                operator: "eq"
+                expected: 1
 
   # POST /Inventory/RedfishEndpoints Create already existent RFEndpoint
   - name: hsmAPIRedfishEndpointsPOST - Create already existent RFEndpoint
@@ -313,28 +313,28 @@ stages:
     response:
       status_code: 201
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: seq
-            required: True
-            sequence:
-              - type: map
-                required: True
-                mapping:
-                  URI:
-                    type: str
-                    required: True
-                    enum:
-                      - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b92"
-                      - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b93"
-                      - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b94"
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@)"
-              operator: "eq"
-              expected: 3
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              sequence:
+                - type: map
+                  required: True
+                  mapping:
+                    URI:
+                      type: str
+                      required: True
+                      enum:
+                        - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b92"
+                        - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b93"
+                        - "/hsm/v2/Inventory/RedfishEndpoints/x9999c7s99b94"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@)"
+                operator: "eq"
+                expected: 3
 
   # GET /Inventory/RedfishEndpoints Check discovery status (on enabled)
   - name: hsmAPIRedfishEndpointsGET - Check discovery status (on enabled)
@@ -345,88 +345,88 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              RedfishEndpoints:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      DiscoveryInfo:
-                        type: map
-                        mapping:
-                          LastDiscoveryAttempt:
-                            type: timestamp
-                            required: True
-                          LastDiscoveryStatus:
-                            type: str
-                            required: True
-                            enum:
-                              # Depending on how fast things happen, the status could have already failed.
-                              # The point is that it isn't NotYetQueried
-                              - "HTTPsGetFailed"
-                              - "DiscoveryStarted"
-                          RedfishVersion:
-                            type: str
-                            required: False
-                      Domain:
-                        type: str
-                        required: True
-                      Enabled:
-                        type: bool
-                        required: True
-                        enum:
-                          - True
-                      FQDN:
-                        type: str
-                        required: True
-                        enum:
-                          - "x9999c7s99b92"
-                      Hostname:
-                        type: str
-                        required: True
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "x9999c7s99b92"
-                      MACAddr:
-                        type: str
-                        required: False
-                      Password:
-                        type: str
-                        required: True
-                        enum:
-                          - ""
-                      IPAddress:
-                        type: str
-                        required: False
-                      RediscoverOnUpdate:
-                        type: bool
-                        required: True
-                      Type:
-                        type: str
-                        required: True
-                        enum:
-                          - "NodeBMC"
-                      UUID:
-                        type: str
-                        required: False
-                      User:
-                        type: str
-                        required: True
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.RedfishEndpoints)"
-              operator: "eq"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                RedfishEndpoints:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        DiscoveryInfo:
+                          type: map
+                          mapping:
+                            LastDiscoveryAttempt:
+                              type: timestamp
+                              required: True
+                            LastDiscoveryStatus:
+                              type: str
+                              required: True
+                              enum:
+                                # Depending on how fast things happen, the status could have already failed.
+                                # The point is that it isn't NotYetQueried
+                                - "HTTPsGetFailed"
+                                - "DiscoveryStarted"
+                            RedfishVersion:
+                              type: str
+                              required: False
+                        Domain:
+                          type: str
+                          required: True
+                        Enabled:
+                          type: bool
+                          required: True
+                          enum:
+                            - True
+                        FQDN:
+                          type: str
+                          required: True
+                          enum:
+                            - "x9999c7s99b92"
+                        Hostname:
+                          type: str
+                          required: True
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "x9999c7s99b92"
+                        MACAddr:
+                          type: str
+                          required: False
+                        Password:
+                          type: str
+                          required: True
+                          enum:
+                            - ""
+                        IPAddress:
+                          type: str
+                          required: False
+                        RediscoverOnUpdate:
+                          type: bool
+                          required: True
+                        Type:
+                          type: str
+                          required: True
+                          enum:
+                            - "NodeBMC"
+                        UUID:
+                          type: str
+                          required: False
+                        User:
+                          type: str
+                          required: True
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.RedfishEndpoints)"
+                operator: "eq"
+                expected: 1
 
   # GET /Inventory/RedfishEndpoints Check discovery status (on disabled)
   - name: hsmAPIRedfishEndpointsGET - Check discovery status (on disabled)
@@ -437,87 +437,88 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              RedfishEndpoints:
-                type: seq
-                required: True
-                sequence:
-                  - type: map
-                    required: True
-                    mapping:
-                      DiscoveryInfo:
-                        type: map
-                        mapping:
-                          LastDiscoveryAttempt:
-                            type: timestamp
-                            required: True
-                          LastDiscoveryStatus:
-                            type: str
-                            required: True
-                            enum:
-                              - "NotYetQueried"
-                          RedfishVersion:
-                            type: str
-                            required: False
-                      Domain:
-                        type: str
-                        required: True
-                      Enabled:
-                        type: bool
-                        required: True
-                        enum:
-                          - True
-                      FQDN:
-                        type: str
-                        required: True
-                        enum:
-                          - "x9999c7s99b93"
-                          - "x9999c7s99b94"
-                      Hostname:
-                        type: str
-                        required: True
-                      ID:
-                        type: str
-                        required: True
-                        enum:
-                          - "x9999c7s99b93"
-                          - "x9999c7s99b94"
-                      MACAddr:
-                        type: str
-                        required: False
-                      Password:
-                        type: str
-                        required: True
-                        enum:
-                          - ""
-                      IPAddress:
-                        type: str
-                        required: False
-                      RediscoverOnUpdate:
-                        type: bool
-                        required: True
-                      Type:
-                        type: str
-                        required: True
-                        enum:
-                          - "NodeBMC"
-                      UUID:
-                        type: str
-                        required: False
-                      User:
-                        type: str
-                        required: True
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.RedfishEndpoints)"
-              operator: "eq"
-              expected: 2
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                RedfishEndpoints:
+                  type: seq
+                  required: True
+                  sequence:
+                    - type: map
+                      required: True
+                      mapping:
+                        DiscoveryInfo:
+                          type: map
+                          mapping:
+                            LastDiscoveryAttempt:
+                              type: timestamp
+                              required: False
+                            LastDiscoveryStatus:
+                              type: str
+                              required: True
+                              enum:
+                                - "NotYetQueried"
+                            RedfishVersion:
+                              type: str
+                              required: False
+                        Domain:
+                          type: str
+                          required: True
+                        Enabled:
+                          type: bool
+                          required: True
+                          enum:
+                            - False
+                        FQDN:
+                          type: str
+                          required: True
+                          enum:
+                            - "x9999c7s99b93"
+                            - "x9999c7s99b94"
+                        Hostname:
+                          type: str
+                          required: True
+                        ID:
+                          type: str
+                          required: True
+                          enum:
+                            - "x9999c7s99b93"
+                            - "x9999c7s99b94"
+                        MACAddr:
+                          type: str
+                          required: False
+                        Password:
+                          type: str
+                          required: True
+                          enum:
+                            - ""
+                        IPAddress:
+                          type: str
+                          required: False
+                        RediscoverOnUpdate:
+                          type: bool
+                          required: True
+                        Type:
+                          type: str
+                          required: True
+                          enum:
+                            - "NodeBMC"
+                        UUID:
+                          type: str
+                          required: False
+                        User:
+                          type: str
+                          required: True
+        #TODO
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.RedfishEndpoints)"
+                operator: "eq"
+                expected: 2
 
   # PATCH /Inventory/RedfishEndpoints/{xname3} Patch Hostname (hostname FQDN mismatch)
   - name: hsmAPIRedfishEndpointsPATCH - Patch Hostname (hostname FQDN mismatch)
