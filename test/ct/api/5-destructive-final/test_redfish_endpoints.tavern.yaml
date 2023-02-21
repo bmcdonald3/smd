@@ -24,13 +24,14 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 1
-# DELETE /Inventory/RedfishEndpoints
+# HMS test metrics test cases: 2
+# DELETE /Inventory/RedfishEndpoints endpoints present
+# DELETE /Inventory/RedfishEndpoints no endpoints present
 ---
 test_name: hsmAPIinventoryRedfishEndpointsDeleteAll
 
 stages:
-  # DELETE /Inventory/RedfishEndpoints
+  # DELETE /Inventory/RedfishEndpoints endpoints present
   - name: hsmAPIinventoryRedfishEndpointsDeleteAll - Delete all RFEndpoints
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints"
@@ -53,4 +54,51 @@ stages:
               message:
                 type: str
                 required: True
+                pattern: "deleted [0-9]+ entr.*"
+
+  # DELETE /Inventory/RedfishEndpoints no endpoints present
+  - name: hsmAPIinventoryRedfishEndpointsDeleteAll - Attempt to delete all RFEndpoints when none are present
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/RedfishEndpoints"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code:
+        - 404 # expected
+        - 200 # prevent possible race condition with automatic rediscovery
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: False
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: False
+                enum:
+                  - "Not Found"
+              detail:
+                type: str
+                required: False
+                enum:
+                  - "no entries to delete"
+              status:
+                type: int
+                required: False
+                enum:
+                  - 404
+              code:
+                type: int
+                required: False
+                enum:
+                  - 0
+              message:
+                type: str
+                required: False
                 pattern: "deleted [0-9]+ entr.*"
