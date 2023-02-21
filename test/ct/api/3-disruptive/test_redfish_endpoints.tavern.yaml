@@ -512,7 +512,6 @@ stages:
                         User:
                           type: str
                           required: True
-        #TODO
         - function: tavern.testutils.helpers:validate_content
           extra_kwargs:
             comparisons:
