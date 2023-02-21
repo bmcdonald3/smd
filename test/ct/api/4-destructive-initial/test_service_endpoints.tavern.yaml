@@ -253,7 +253,6 @@ stages:
         detail: no such service under redfish endpoint.
         status: 404
 
-  #TODO: this is new
   # DELETE /Inventory/ServiceEndpoints/{service}/RedfishEndpoints/{xname} invalid xname
   - name: Delete Service Endpoints for xname
     request:

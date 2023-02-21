@@ -24,9 +24,10 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 2
+# HMS test metrics test cases: 3
 # POST /Inventory/Discover single endpoint
 # POST /Inventory/Discover multiple endpoints
+# GET /DiscoveryStatus all
 ---
 test_name: hsmAPIinventoryDiscover
 
@@ -93,3 +94,40 @@ stages:
                     type: str
                     required: True
                     pattern: "/hsm/v2/Inventory/DiscoveryStatus/[0-9]+"
+
+  # GET /DiscoveryStatus all
+  - name: Ensure that we can conduct a discovery status query
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/DiscoveryStatus"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: seq
+            matching: all
+            sequence:
+              - type: map
+                matching: all
+                mapping:
+                  ID:
+                    type: int
+                  LastUpdateTime:
+                    type: timestamp
+                  Status:
+                    type: str
+                    enum:
+                      - "Complete"
+                      - "InProgress"
+                      - "NotStarted"
+                      - "Pending"
+                  Details:
+                    type: map
+                    required: False
+                    mapping:
+                      description:
+                        type: str
+                        required: False
