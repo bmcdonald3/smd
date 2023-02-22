@@ -24,7 +24,7 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 36
+# HMS test metrics test cases: 38
 # POST /partitions partition1 API response code
 # GET /partitions/{partition1} API response code
 # GET /partitions/{partition1} API response body
@@ -42,8 +42,8 @@
 # POST /partitions partition2 API response code
 # GET /partitions/{partition2} API response code
 # GET /partitions/{partition2} API response body
-# GET /partitions/names API response code
-# GET /partitions/names API response body
+# GET /partitions/names test partitions present API response code
+# GET /partitions/names test partitions present API response body
 # GET /partitions/{partition1}/members API response code
 # GET /partitions/{partition1}/members API response body
 # POST /partitions/{partition1}/members API response code
@@ -59,6 +59,8 @@
 # DELETE /partitions/{partition1} API response body
 # DELETE /partitions/{partition2} API response code
 # DELETE /partitions/{partition2} API response body
+# GET /partitions/names non-present test partitions API response code
+# GET /partitions/names non-present test partitions API response body
 # POST /partitions/{partition}/members non-present partition API response code
 # POST /partitions/{partition}/members non-present partition API response body
 ---
@@ -365,9 +367,9 @@ stages:
                         enum:
                           - "{xname3}"
 
-  # GET /partitions/names API response code
-  # GET /partitions/names API response body
-  - name: Verify /partitions/names GET method
+  # GET /partitions/names test partitions present API response code
+  # GET /partitions/names test partitions present API response body
+  - name: Verify /partitions/names GET method test partitions present
     request:
       url: "{hsm_base_url}/hsm/v2/partitions/names"
       method: GET
@@ -383,15 +385,18 @@ stages:
               matching: all
               sequence:
                 - type: str
-                  enum:
-                    - "p98"
-                    - "p99"
         - function: tavern.testutils.helpers:validate_content
           extra_kwargs:
             comparisons:
               - jmespath: "length(@)"
                 operator: "gt"
                 expected: 1
+              - jmespath: "contains((@), 'p98')"
+                operator: "eq"
+                expected: True
+              - jmespath: "contains((@), 'p99')"
+                operator: "eq"
+                expected: True
 
   # GET /partitions/{partition1}/members API response code
   # GET /partitions/{partition1}/members API response body
@@ -641,6 +646,34 @@ stages:
                 required: True
                 enum:
                   - "deleted 1 entry"
+
+  # GET /partitions/names non-present test partitions API response code
+  # GET /partitions/names non-present test partitions API response body
+  - name: Verify /partitions/names GET method non-present test partitions
+    request:
+      url: "{hsm_base_url}/hsm/v2/partitions/names"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              matching: all
+              sequence:
+                - type: str
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "contains((@), 'p98')"
+                operator: "eq"
+                expected: False
+              - jmespath: "contains((@), 'p99')"
+                operator: "eq"
+                expected: False
 
   # POST /partitions/{partition}/members non-present partition API response code
   # POST /partitions/{partition}/members non-present partition API response body
