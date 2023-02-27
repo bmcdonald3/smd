@@ -4674,7 +4674,7 @@ paths:
           schema:
             $ref: '#/definitions/Subscriptions_SCNPostSubscription'
       responses:
-        "200":
+        "204":
           description: Success. The subscription has been overwritten.
         "400":
           description: >-
