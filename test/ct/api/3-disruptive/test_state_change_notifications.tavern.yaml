@@ -39,7 +39,7 @@
 # DELETE /Subscriptions/SCN/{id} existing subscription
 # DELETE /Subscriptions/SCN/{id} nonexistent subscription
 ---
-test_name: Verify POST, GET, PATCH, PUT, and DELETE methods for the State Change Notification APIs
+test_name: Verify POST, GET, PATCH, PUT, and DELETE methods for the State Change Notifications APIs
 
 stages:
   #############
