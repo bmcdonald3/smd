@@ -235,18 +235,15 @@ stages:
                 required: True
                 sequence:
                   - type: map
-                    #TODO
                     required: True
                     mapping:
                       IPAddress:
                         type: str
-                        #TODO
                         required: True
                         enum:
                           - "99.9.9.9"
                       Network:
                         type: str
-                        #TODO
                         required: True
                         enum:
                           - "HSMTavernTest"
@@ -315,18 +312,15 @@ stages:
                 required: True
                 sequence:
                   - type: map
-                    #TODO
                     required: True
                     mapping:
                       IPAddress:
                         type: str
-                        #TODO
                         required: True
                         enum:
                           - "99.9.9.9"
                       Network:
                         type: str
-                        #TODO
                         required: True
                         enum:
                           - "HSMTavernTestPatch"
@@ -347,18 +341,15 @@ stages:
             required: True
             sequence:
               - type: map
-                #TODO
                 required: True
                 mapping:
                   IPAddress:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "99.9.9.9"
                   Network:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "HSMTavernTestPatch"
@@ -391,19 +382,16 @@ stages:
             required: True
             sequence:
               - type: map
-                #TODO
                 required: True
                 mapping:
                   IPAddress:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "99.9.9.9"
                       - "99.9.9.8"
                   Network:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "HSMTavernTestPatch"
@@ -435,19 +423,16 @@ stages:
             required: True
             sequence:
               - type: map
-                #TODO
                 required: True
                 mapping:
                   IPAddress:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "99.9.9.9"
                       - "99.9.9.8"
                   Network:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "HSMTavernTestPatch"
@@ -482,18 +467,15 @@ stages:
             required: True
             sequence:
               - type: map
-                #TODO
                 required: True
                 mapping:
                   IPAddress:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "99.9.9.9"
                   Network:
                     type: str
-                    #TODO
                     required: True
                     enum:
                       - "HSMTavernTestPatch"
