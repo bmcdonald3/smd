@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2021] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -24,17 +24,19 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 18
+# HMS test metrics test cases: 20
 # GET /memberships API response code
 # GET /memberships API response body
-# GET /memberships/{xname} node API response code
-# GET /memberships/{xname} node API response body
+# GET /memberships/{xname} NodeBMC API response code
+# GET /memberships/{xname} NodeBMC API response body
+# GET /memberships/{xname} Node API response code
+# GET /memberships/{xname} Node API response body
 # GET /memberships?arch={arch} API response code
 # GET /memberships?arch={arch} API response body
 # GET /memberships?flag={flag} API response code
 # GET /memberships?flag={flag} API response body
-# GET /memberships?id={xname} node API response code
-# GET /memberships?id={xname} node API response body
+# GET /memberships?id={xname} Node API response code
+# GET /memberships?id={xname} Node API response body
 # GET /memberships?nid={nid} API response code
 # GET /memberships?nid={nid} API response body
 # GET /memberships?role={role} API response code
@@ -66,38 +68,32 @@ stages:
               - type: map
                 matching: all
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
-  - name: Get info about a node from the Components collection to use in the following stages
+  - name: Get info about a NodeBMC from the Components collection to use in upcoming stages
     request:
-      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=NodeBMC"
       method: GET
       verify: !bool "{verify}"
     response:
       status_code: 200
       save:
         json:
-          arch: Components[0].Arch
-          flag: Components[0].Flag
-          id: Components[0].ID
-          nid: Components[0].NID
-          role: Components[0].Role
-          state: Components[0].State
-          type: Components[0].Type
+          bmc_id: Components[0].ID
 
-  # GET /memberships/{xname} node API response code
-  # GET /memberships/{xname} node API response body
-  - name: Get membership data for a given node using API endpoint
+  # GET /memberships/{xname} NodeBMC API response code
+  # GET /memberships/{xname} NodeBMC API response body
+  - name: Get membership data for a given NodeBMC using API endpoint
     request:
-      url: "{hsm_base_url}/hsm/v2/memberships/{id}"
+      url: "{hsm_base_url}/hsm/v2/memberships/{bmc_id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -108,19 +104,61 @@ stages:
           schema:
             type: map
             mapping:
+              id:
+                type: str
               groupLabels:
                 type: seq
                 matching: all
                 sequence:
                   - type: str
+              partitionName:
+                type: str
+
+  - name: Get info about a Node from the Components collection to use in upcoming stages
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      save:
+        json:
+          node_id: Components[0].ID
+          type: Components[0].Type
+          state: Components[0].State
+          flag: Components[0].Flag
+          role: Components[0].Role
+          nid: Components[0].NID
+          arch: Components[0].Arch
+
+  # GET /memberships/{xname} Node API response code
+  # GET /memberships/{xname} Node API response body
+  - name: Get membership data for a given Node using API endpoint
+    request:
+      url: "{hsm_base_url}/hsm/v2/memberships/{node_id}"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            mapping:
               id:
                 type: str
+              groupLabels:
+                type: seq
+                matching: all
+                sequence:
+                  - type: str
               partitionName:
                 type: str
 
   # GET /memberships?arch={arch} API response code
   # GET /memberships?arch={arch} API response body
-  - name: Get membership data for a given node using arch query parameter
+  - name: Get membership data for a given Node using arch query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?arch={arch}"
       method: GET
@@ -136,19 +174,19 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
   # GET /memberships?flag={flag} API response code
   # GET /memberships?flag={flag} API response body
-  - name: Get membership data for a given node using flag query parameter
+  - name: Get membership data for a given Node using flag query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?flag={flag}"
       method: GET
@@ -164,21 +202,21 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
-  # GET /memberships?id={xname} node API response code
-  # GET /memberships?id={xname} node API response body
-  - name: Get membership data for a given node using id query parameter
+  # GET /memberships?id={xname} Node API response code
+  # GET /memberships?id={xname} Node API response body
+  - name: Get membership data for a given Node using id query parameter
     request:
-      url: "{hsm_base_url}/hsm/v2/memberships?id={id}"
+      url: "{hsm_base_url}/hsm/v2/memberships?id={node_id}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -192,19 +230,19 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
   # GET /memberships?nid={nid} API response code
   # GET /memberships?nid={nid} API response body
-  - name: Get membership data for a given node using nid query parameter
+  - name: Get membership data for a given Node using nid query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?nid={nid}"
       method: GET
@@ -220,19 +258,19 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
   # GET /memberships?role={role} API response code
   # GET /memberships?role={role} API response body
-  - name: Get membership data for a given node using role query parameter
+  - name: Get membership data for a given Node using role query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?role={role}"
       method: GET
@@ -248,19 +286,19 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
   # GET /memberships?state={state} API response code
   # GET /memberships?state={state} API response body
-  - name: Get membership data for a given node using state query parameter
+  - name: Get membership data for a given Node using state query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?state={state}"
       method: GET
@@ -276,19 +314,19 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str
 
   # GET /memberships?type={type} API response code
   # GET /memberships?type={type} API response body
-  - name: Get membership data for a given node using type query parameter
+  - name: Get membership data for a given Node using type query parameter
     request:
       url: "{hsm_base_url}/hsm/v2/memberships?type={type}"
       method: GET
@@ -304,12 +342,12 @@ stages:
             sequence:
               - type: map
                 mapping:
+                  id:
+                    type: str
                   groupLabels:
                     type: seq
                     matching: all
                     sequence:
                       - type: str
-                  id:
-                    type: str
                   partitionName:
                     type: str

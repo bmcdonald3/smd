@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2020-2023] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -20,20 +20,28 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-FROM artifactory.algol60.net/csm-docker/stable/hms-test:5.0.0
+import json
+import logging
 
-COPY smoke/ /src/app
-COPY api/ /src/app/api
-COPY tavern_global_config_ct_test.yaml /src/app/tavern_global_config_ct_test.yaml
-COPY hsm_test_utils.py /src/libs/hsm_test_utils.py
+from box import Box
+from tavern.util import exceptions
 
-ENV PATH="/src/libs:${PATH}"
-ENV PATH="/src/app:${PATH}"
-ENV PYTHONPATH=$PYTHONPATH:/src/libs
+logger = logging.getLogger(__name__)
 
-USER root
-RUN chown -R 65534:65534 /src
-USER 65534:65534
+def get_id_of_scn_subscriber_url(response, subscriber_url):
+    subscriber_url_id = None
+    response_data = json.loads(response.text)
 
-# this is inherited from the hms-test container
-ENTRYPOINT [ "entrypoint.sh" ] 
+    # check subscriptions for matching subscriber and url
+    for subscription in response_data['SubscriptionList']:
+        id = subscription['ID']
+        subscriber = subscription['Subscriber']
+        url = subscription['Url']
+        logger.debug("Subscription: ID=%s, Subscriber=%s, Url=%s", id, subscriber, url)
+        subscription_sub_url = subscriber + url
+        if subscription_sub_url == subscriber_url:
+            logger.debug("Found matching subscriber_url: ID=%s", id)
+            subscriber_url_id = id
+            break
+
+    return Box({"subscriber_url_id": subscriber_url_id})

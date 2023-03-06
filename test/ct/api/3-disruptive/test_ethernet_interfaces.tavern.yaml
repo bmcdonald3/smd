@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2022-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -21,16 +21,38 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 
 # Tavern test cases for the Hardware State Manager (HSM) EthernetInterfaces API
-# Author: Mike Buchmann
+# Author: Mike Buchmann, Mitch Schooler
 # Service: Hardware State Manager
 
+# HMS test metrics test cases: 22
+# DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}
+# POST /Inventory/EthernetInterfaces
+# GET /Inventory/EthernetInterfaces
+# GET /Inventory/EthernetInterfaces?ComponentID={compID}
+# GET /Inventory/EthernetInterfaces?ComponentID={compID} invalid ID
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID}
+# PATCH /Inventory/EthernetInterfaces/{ethInterfaceID} description
+# PATCH /Inventory/EthernetInterfaces/{ethInterfaceID} network
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID}
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+# POST /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+# PATCH /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+# DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+# POST /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+# PATCH /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+# DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+# DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}
+# DELETE /Inventory/EthernetInterfaces/{ethInterfaceID} non-present ID
+# GET /Inventory/EthernetInterfaces/{ethInterfaceID} non-present ID
 ---
-test_name: HSM Ethernet Interfaces Collection
+test_name: hsmAPIinventoryEthernetInterfacesDisruptive
 
 stages:
-  # DELETE /Inventory/EthernetInterfaces
-  # Note this will delete test interface if it existed
-  - name: Delete component ethernet interface
+  # DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}
+  - name: Delete test component ethernet interface (if present)
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: DELETE
@@ -48,10 +70,10 @@ stages:
         URI: "/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       save:
         json:
-          uri: URI
+          uri: "URI"
 
   # GET /Inventory/EthernetInterfaces
-  - name: Get Ethernet Interfaces Inventory
+  - name: Retrieve all ethernet interfaces
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces"
       method: GET
@@ -74,6 +96,9 @@ stages:
                   Description:
                     type: str
                     required: True
+                  MACAddress:
+                    type: str
+                    required: True
                   LastUpdate:
                     type: str
                     required: True
@@ -81,9 +106,6 @@ stages:
                     type: str
                     required: True
                   Type:
-                    type: str
-                    required: True
-                  MACAddress:
                     type: str
                     required: True
                   IPAddresses:
@@ -101,12 +123,12 @@ stages:
                             required: False
       save:
         json:
-          id: "[0].ComponentID"
+          compID: "[0].ComponentID"
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Get Ethernet Interfaces Inventory query
+  # GET /Inventory/EthernetInterfaces?ComponentID={compID}
+  - name: Retrieve ethernet interface for a specific ComponentID
     request:
-      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces?ComponentID={id}"
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces?ComponentID={compID}"
       method: GET
       verify: !bool "{verify}"
     response:
@@ -127,16 +149,18 @@ stages:
                   Description:
                     type: str
                     required: True
+                  MACAddress:
+                    type: str
+                    required: True
                   LastUpdate:
                     type: str
                     required: True
                   ComponentID:
                     type: str
                     required: True
+                    enum:
+                      - "{compID}"
                   Type:
-                    type: str
-                    required: True
-                  MACAddress:
                     type: str
                     required: True
                   IPAddresses:
@@ -153,8 +177,8 @@ stages:
                             type: str
                             required: False
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Get Ethernet Interfaces Inventory query BAD REQEST
+  # GET /Inventory/EthernetInterfaces?ComponentID={compID} invalid ID
+  - name: Attempt to retrieve ethernet interface with an invalid ID
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces?ComponentID=BADID"
       method: GET
@@ -167,8 +191,8 @@ stages:
         detail: "Invalid CompID."
         status: 400
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Get component ethernet interface
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID}
+  - name: Retrieve component ethernet interface
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: GET
@@ -192,6 +216,11 @@ stages:
                 required: True
                 enum:
                   - "Test Component Interface"
+              MACAddress:
+                type: str
+                required: True
+                enum:
+                  - "9a:99:99:99:99:99"
               LastUpdate:
                 type: str
                 required: True
@@ -201,31 +230,26 @@ stages:
               Type:
                 type: str
                 required: True
-              MACAddress:
-                type: str
-                required: True
-                enum:
-                  - "9a:99:99:99:99:99"
               IPAddresses:
                 type: seq
                 required: True
                 sequence:
                   - type: map
-                    required: False
+                    required: True
                     mapping:
                       IPAddress:
                         type: str
-                        required: False
+                        required: True
                         enum:
                           - "99.9.9.9"
                       Network:
                         type: str
-                        required: False
+                        required: True
                         enum:
                           - "HSMTavernTest"
 
-  # PATCH /Inventory/EthernetInterfaces
-  - name: Patch component ethernet interface
+  # PATCH /Inventory/EthernetInterfaces/{ethInterfaceID} description
+  - name: Update component ethernet interface
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: PATCH
@@ -234,8 +258,18 @@ stages:
     response:
       status_code: 200
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Get component ethernet interface
+  # PATCH /Inventory/EthernetInterfaces/{ethInterfaceID} network
+  - name: Update component ethernet interface
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
+      method: PATCH
+      verify: !bool "{verify}"
+      json: {"IPAddresses":[{"IPAddress":"99.9.9.9","Network":"HSMTavernTestPatch"}]}
+    response:
+      status_code: 200
+
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID}
+  - name: Retrieve updated component ethernet interface
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: GET
@@ -259,6 +293,11 @@ stages:
                 required: True
                 enum:
                   - "Test Patch Component Interface"
+              MACAddress:
+                type: str
+                required: True
+                enum:
+                  - "9a:99:99:99:99:99"
               LastUpdate:
                 type: str
                 required: True
@@ -268,31 +307,26 @@ stages:
               Type:
                 type: str
                 required: True
-              MACAddress:
-                type: str
-                required: True
-                enum:
-                  - "9a:99:99:99:99:99"
               IPAddresses:
                 type: seq
                 required: True
                 sequence:
                   - type: map
-                    required: False
+                    required: True
                     mapping:
                       IPAddress:
                         type: str
-                        required: False
+                        required: True
                         enum:
                           - "99.9.9.9"
                       Network:
                         type: str
-                        required: False
+                        required: True
                         enum:
-                          - "HSMTavernTest"
+                          - "HSMTavernTestPatch"
 
-  # GET /Inventory/EthernetInterfaces/IPAddresses
-  - name: Get component ethernet interface IPAddresses
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+  - name: Retrieve component ethernet interface IPAddresses
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
@@ -307,24 +341,24 @@ stages:
             required: True
             sequence:
               - type: map
-                required: False
+                required: True
                 mapping:
                   IPAddress:
                     type: str
-                    required: False
+                    required: True
                     enum:
                       - "99.9.9.9"
                   Network:
                     type: str
-                    required: False
+                    required: True
                     enum:
-                      - "HSMTavernTest"
+                      - "HSMTavernTestPatch"
 
-  # POST /Inventory/EthernetInterfaces/IPAddresses
+  # POST /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
   - name: Add component ethernet interface IPAddresses
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
-      json: {"IPAddress":"99.9.9.8","Network":"HSMTavernTest"}
+      json: {"IPAddress":"99.9.9.8","Network":"HSMTavernTestPatch"}
       method: POST
       verify: !bool "{verify}"
     response:
@@ -332,7 +366,7 @@ stages:
       json:
         URI: !anystr
 
-  # GET /Inventory/EthernetInterfaces/IPAddresses
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
   - name: Get component ethernet interface IPAddresses
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
@@ -348,22 +382,23 @@ stages:
             required: True
             sequence:
               - type: map
-                required: False
+                required: True
                 mapping:
                   IPAddress:
                     type: str
-                    required: False
+                    required: True
                     enum:
                       - "99.9.9.9"
                       - "99.9.9.8"
                   Network:
                     type: str
-                    required: False
+                    required: True
                     enum:
-                      - "HSMTavernTest"
+                      - "HSMTavernTestPatch"
 
-  # PATCH /Inventory/EthernetInterfaces/IPAddresses
-  - name: Patch component ethernet interface IPAddresses
+  #TODO: this test case isn't being detected by coverage tool CASMHMS-5926
+  # PATCH /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+  - name: Patch component ethernet interface IPAddresses network
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.8"
       json: {"Network":"HSMTavernTest2"}
@@ -372,8 +407,8 @@ stages:
     response:
       status_code: 200
 
-  # GET /Inventory/EthernetInterfaces/IPAddresses
-  - name: Get component ethernet interface IPAddresses
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+  - name: Retrieve updated component ethernet interface IPAddresses
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
@@ -388,23 +423,24 @@ stages:
             required: True
             sequence:
               - type: map
-                required: False
+                required: True
                 mapping:
                   IPAddress:
                     type: str
-                    required: False
+                    required: True
                     enum:
                       - "99.9.9.9"
                       - "99.9.9.8"
                   Network:
                     type: str
-                    required: False
+                    required: True
                     enum:
-                      - "HSMTavernTest"
+                      - "HSMTavernTestPatch"
                       - "HSMTavernTest2"
 
-  # DELETE /Inventory/EthernetInterfaces/IPAddresses
-  - name: Delete component ethernet interface IPAddresses
+  #TODO: this test case isn't being detected by coverage tool CASMHMS-5926
+  # DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+  - name: Delete component ethernet interface IPAddress
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.8"
       method: DELETE
@@ -415,8 +451,8 @@ stages:
         code: 0
         message: "deleted 1 entry"
 
-  # GET /Inventory/EthernetInterfaces/IPAddresses
-  - name: Get component ethernet interface IPAddresses
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+  - name: Retrieve component ethernet interface IPAddresses
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
       method: GET
@@ -431,20 +467,56 @@ stages:
             required: True
             sequence:
               - type: map
-                required: False
+                required: True
                 mapping:
                   IPAddress:
                     type: str
-                    required: False
+                    required: True
                     enum:
                       - "99.9.9.9"
                   Network:
                     type: str
-                    required: False
+                    required: True
                     enum:
-                      - "HSMTavernTest"
+                      - "HSMTavernTestPatch"
 
-  # DELETE /Inventory/EthernetInterfaces
+  # POST /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses
+  - name: Add another component ethernet interface IPAddresses
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses"
+      json: {"IPAddress":"99.9.9.7","Network":"HSMTavernTestPatch"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+      json:
+        URI: !anystr
+
+  #TODO: this test case isn't being detected by coverage tool CASMHMS-5926
+  # PATCH /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+  - name: Patch another component ethernet interface IPAddresses network
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.7"
+      json: {"Network":"HSMTavernTest2PATCH"}
+      method: PATCH
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+
+  #TODO: this test case isn't being detected by coverage tool CASMHMS-5926
+  # DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}/IPAddresses/{ipAddr}
+  - name: Delete another component ethernet interface IPAddress
+    request:
+      url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999/IPAddresses/99.9.9.7"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      json:
+        code: 0
+        message: "deleted 1 entry"
+
+  # DELETE /Inventory/EthernetInterfaces/{ethInterfaceID}
   - name: Delete component ethernet interface
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
@@ -456,8 +528,8 @@ stages:
         code: 0
         message: "deleted 1 entry"
 
-  # DELETE /Inventory/EthernetInterfaces
-  - name: Delete component ethernet interface fail
+  # DELETE /Inventory/EthernetInterfaces/{ethInterfaceID} non-present ID
+  - name: Attempt to delete component ethernet interface that is not present
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: DELETE
@@ -470,8 +542,8 @@ stages:
         detail: "no such component ethernet interface."
         status: 404
 
-  # GET /Inventory/EthernetInterfaces
-  - name: Get component ethernet interface fail
+  # GET /Inventory/EthernetInterfaces/{ethInterfaceID} non-present ID
+  - name: Attempt to retrieve a component ethernet interface that is not present
     request:
       url: "{hsm_base_url}/hsm/v2/Inventory/EthernetInterfaces/9a9999999999"
       method: GET

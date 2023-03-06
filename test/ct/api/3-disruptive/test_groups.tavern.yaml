@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -24,8 +24,10 @@
 # Author: Mitch Schooler
 # Service: Hardware State Manager
 
-# HMS test metrics test cases: 39
+# HMS test metrics test cases: 49
 # POST /groups group1 API response code
+# GET /groups/labels API response code
+# GET /groups/labels API response body
 # GET /groups/{group1} API response code
 # GET /groups/{group1} API response body
 # GET /groups?group={group1} API response code
@@ -64,6 +66,14 @@
 # DELETE /groups/{group1} API response body
 # DELETE /groups/{group2} API response code
 # DELETE /groups/{group2} API response body
+# POST /groups exclusive group Blue API response code
+# POST /groups exclusive group Lion API response code
+# POST /groups exclusive group Red conflicting member API response code
+# POST /groups exclusive group Red conflicting member API response body
+# POST /groups exclusive group Red API response code
+# POST /groups/{group}/members exclusive group Red conflicting member API response code
+# POST /groups/{group}/members exclusive group Red conflicting member API response body
+# POST /groups/{group}/members exclusive group Red API response code
 ---
 test_name: Verify POST, GET, PATCH, and DELETE methods for various /groups APIs
 
@@ -97,6 +107,33 @@ stages:
       verify: !bool "{verify}"
     response:
       status_code: 201
+
+  # GET /groups/labels API response code
+  # GET /groups/labels API response body
+  - name: Verify /groups/labels GET method
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/labels"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              matching: "*"
+              sequence:
+                - type: str
+                  enum:
+                    - "hsmtestgroup1"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@)"
+                operator: "gt"
+                expected: 0
 
   # GET /groups/{group1} API response code
   # GET /groups/{group1} API response body
@@ -341,23 +378,23 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: seq
-            required: True
-            matching: all
-            sequence:
-              - type: str
-                enum:
-                  - "hsmtestgroup1"
-                  - "hsmtestgroup2"
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@)"
-              operator: "gt"
-              expected: 1
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: seq
+              required: True
+              matching: "*"
+              sequence:
+                - type: str
+                  enum:
+                    - "hsmtestgroup1"
+                    - "hsmtestgroup2"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@)"
+                operator: "gt"
+                expected: 1
 
   # GET /groups/{group1}/members API response code
   # GET /groups/{group1}/members API response body
@@ -369,22 +406,6 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname1}"
-                      - "{xname2}"
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -418,23 +439,6 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname1}"
-                      - "{xname2}"
-                      - "{xname4}"
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -488,22 +492,6 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname2}"
-                      - "{xname4}"
         function: tavern.testutils.helpers:validate_content
         extra_kwargs:
           comparisons:
@@ -546,54 +534,54 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              name:
-                type: str
-                required: True
-                enum:
-                  - "p98"
-              description:
-                type: str
-                required: True
-                enum:
-                  - "Test partition 1 for HSM API testing in CT framework."
-              tags:
-                type: seq
-                required: True
-                matching: all
-                sequence:
-                  - type: str
-                    required: True
-                    enum:
-                      - "p98_tag1"
-                      - "p98_tag2"
-              members:
-                type: map
-                required: True
-                mapping:
-                  ids:
-                    type: seq
-                    required: True
-                    matching: all
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{xname4}"
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.members.ids)"
-              operator: "eq"
-              expected: 1
-            - jmespath: "@.members.ids[0]"
-              operator: "eq"
-              expected: "{xname4}"
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                name:
+                  type: str
+                  required: True
+                  enum:
+                    - "p98"
+                description:
+                  type: str
+                  required: True
+                  enum:
+                    - "Test partition 1 for HSM API testing in CT framework."
+                tags:
+                  type: seq
+                  required: True
+                  matching: all
+                  sequence:
+                    - type: str
+                      required: True
+                      enum:
+                        - "p98_tag1"
+                        - "p98_tag2"
+                members:
+                  type: map
+                  required: True
+                  mapping:
+                    ids:
+                      type: seq
+                      required: True
+                      matching: all
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{xname4}"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.members.ids)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "@.members.ids[0]"
+                operator: "eq"
+                expected: "{xname4}"
 
   # GET /groups/{group1}?partition={partition} API response code
   # GET /groups/{group1}?partition={partition} API response body
@@ -605,54 +593,54 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              label:
-                type: str
-                required: True
-                enum:
-                  - "hsmtestgroup1"
-              description:
-                type: str
-                required: True
-                enum:
-                  - "Test group 1 for HSM API testing in CT framework (UPDATED)."
-              tags:
-                type: seq
-                required: True
-                matching: all
-                sequence:
-                  - type: str
-                    required: True
-                    enum:
-                      - "hsmtestgroup1_tag3"
-                      - "hsmtestgroup1_tag4"
-              members:
-                type: map
-                required: True
-                mapping:
-                  ids:
-                    type: seq
-                    required: True
-                    matching: all
-                    sequence:
-                      - type: str
-                        required: True
-                        enum:
-                          - "{xname4}"
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(@.members.ids)"
-              operator: "eq"
-              expected: 1
-            - jmespath: "@.members.ids[0]"
-              operator: "eq"
-              expected: "{xname4}"
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                label:
+                  type: str
+                  required: True
+                  enum:
+                    - "hsmtestgroup1"
+                description:
+                  type: str
+                  required: True
+                  enum:
+                    - "Test group 1 for HSM API testing in CT framework (UPDATED)."
+                tags:
+                  type: seq
+                  required: True
+                  matching: all
+                  sequence:
+                    - type: str
+                      required: True
+                      enum:
+                        - "hsmtestgroup1_tag3"
+                        - "hsmtestgroup1_tag4"
+                members:
+                  type: map
+                  required: True
+                  mapping:
+                    ids:
+                      type: seq
+                      required: True
+                      matching: all
+                      sequence:
+                        - type: str
+                          required: True
+                          enum:
+                            - "{xname4}"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(@.members.ids)"
+                operator: "eq"
+                expected: 1
+              - jmespath: "@.members.ids[0]"
+                operator: "eq"
+                expected: "{xname4}"
 
   # GET /groups/{group1}/members?partition={partition} API response code
   # GET /groups/{group1}/members?partition={partition} API response body
@@ -664,36 +652,35 @@ stages:
     response:
       status_code: 200
       verify_response_with:
-        function: tavern.testutils.helpers:validate_pykwalify
-        extra_kwargs:
-          schema:
-            type: map
-            required: True
-            mapping:
-              ids:
-                type: seq
-                required: True
-                unique: True
-                matching: all
-                sequence:
-                  - type: str
-                    enum:
-                      - "{xname4}"
-        function: tavern.testutils.helpers:validate_content
-        extra_kwargs:
-          comparisons:
-            - jmespath: "length(values(@)[0])"
-              operator: "eq"
-              expected: 1
-            - jmespath: "contains(values(@)[0], '{xname1}')"
-              operator: "eq"
-              expected: False
-            - jmespath: "contains(values(@)[0], '{xname2}')"
-              operator: "eq"
-              expected: False
-            - jmespath: "contains(values(@)[0], '{xname4}')"
-              operator: "eq"
-              expected: True
+        - function: tavern.testutils.helpers:validate_pykwalify
+          extra_kwargs:
+            schema:
+              type: map
+              required: True
+              mapping:
+                ids:
+                  type: seq
+                  required: True
+                  matching: all
+                  sequence:
+                    - type: str
+                      enum:
+                        - "{xname4}"
+        - function: tavern.testutils.helpers:validate_content
+          extra_kwargs:
+            comparisons:
+              - jmespath: "length(values(@)[0])"
+                operator: "eq"
+                expected: 1
+              - jmespath: "contains(values(@)[0], '{xname1}')"
+                operator: "eq"
+                expected: False
+              - jmespath: "contains(values(@)[0], '{xname2}')"
+                operator: "eq"
+                expected: False
+              - jmespath: "contains(values(@)[0], '{xname4}')"
+                operator: "eq"
+                expected: True
 
   # DELETE /partitions/{partition} API response code
   # DELETE /partitions/{partition} API response body
@@ -754,6 +741,286 @@ stages:
   - name: Verify /groups/label DELETE method
     request:
       url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroup2"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+---
+test_name: Verify POST, GET, PATCH, and DELETE methods for various /groups APIs with exclusive groups
+
+stages:
+  - name: Get four Node xnames from the HSM Components collection to use in upcoming stages
+    request:
+      url: "{hsm_base_url}/hsm/v2/State/Components?type=Node"
+      method: GET
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      save:
+        json:
+          xname1: Components[0].ID
+          xname2: Components[1].ID
+          xname3: Components[2].ID
+          xname4: Components[3].ID
+
+  - name: Delete existing exclusive test group Blue in HSM (if present) to prevent conflict
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupBlue"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  # POST /groups exclusive group Blue API response code
+  - name: Verify /groups POST method exclusive group Blue
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupBlue","description":"Exclusive test group Blue for HSM API testing in CT framework.","tags":["hsmtestgroupBlue_tag1"],"members":{"ids":["{xname1}"]},"exclusiveGroup":"hsmtestgroupColors"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  - name: Delete existing exclusive test group Lion in HSM (if present) to prevent conflict
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupLion"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  # POST /groups exclusive group Lion API response code
+  - name: Verify /groups POST method exclusive group Lion
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupLion","description":"Exclusive test group Lion for HSM API testing in CT framework.","tags":["hsmtestgroupLion_tag1"],"members":{"ids":["{xname1}","{xname2}"]},"exclusiveGroup":"hsmtestgroupAnimals"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  - name: Delete existing exclusive test group Red in HSM (if present) to prevent conflict
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed"
+      method: DELETE
+      verify: !bool "{verify}"
+
+  # POST /groups exclusive group Red conflicting member API response code
+  # POST /groups exclusive group Red conflicting member API response body
+  - name: Verify /groups POST method exclusive group Red conflicting member
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupRed","description":"Exclusive test group Red for HSM API testing in CT framework.","tags":["hsmtestgroupRed_tag1"],"members":{"ids":["{xname1}"]},"exclusiveGroup":"hsmtestgroupColors"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 409
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Conflict"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "operation would conflict with an existing member in another exclusive group."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 409
+
+  # POST /groups exclusive group Red API response code
+  - name: Verify /groups POST method exclusive group Red
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups"
+      json: {"label":"hsmtestgroupRed","description":"Exclusive test group Red for HSM API testing in CT framework.","tags":["hsmtestgroupRed_tag1"],"members":{"ids":["{xname2}"]},"exclusiveGroup":"hsmtestgroupColors"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  # POST /groups/{group}/members exclusive group Red conflicting member API response code
+  # POST /groups/{group}/members exclusive group Red conflicting member API response body
+  - name: Verify /groups/label/members POST method exclusive group Red conflicting member
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members"
+      json: {"id":"{xname1}"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 409
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              type:
+                type: str
+                required: True
+                enum:
+                  - "about:blank"
+              title:
+                type: str
+                required: True
+                enum:
+                  - "Conflict"
+              detail:
+                type: str
+                required: True
+                enum:
+                  - "operation would conflict with an existing member in another exclusive group."
+              status:
+                type: int
+                required: True
+                enum:
+                  - 409
+
+  # POST /groups/{group}/members exclusive group Red API response code
+  - name: Verify /groups/label/members POST method exclusive group Red
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members"
+      json: {"id":"{xname3}"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  # DELETE /groups/{group}/members/{xname} exclusive group Red API response code
+  # DELETE /groups/{group}/members/{xname} exclusive group Red API response body
+  - name: Verify /groups/label/members/xname DELETE method exclusive group Red
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members/{xname3}"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # DELETE /groups/{group} exclusive group Blue API response code
+  # DELETE /groups/{group} exclusive group Blue API response body
+  - name: Verify /groups/label DELETE method exclusive group Blue
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupBlue"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # POST /groups/{group}/members exclusive group Red API response code
+  - name: Verify /groups/label/members POST method exclusive group Red now succeeds
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed/members"
+      json: {"id":"{xname1}"}
+      method: POST
+      verify: !bool "{verify}"
+    response:
+      status_code: 201
+
+  # PATCH /groups/{group} exclusive group Red API response code
+  - name: Verify /groups/label PATCH method exclusive group Red
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed"
+      json: {"description":"Exclusive test group Red for HSM API testing in CT framework (UPDATED).","tags":["hsmtestgroupRed_tag2"]}
+      method: PATCH
+      verify: !bool "{verify}"
+    response:
+      status_code: 204
+
+  # DELETE /groups/{group} exclusive group Red API response code
+  # DELETE /groups/{group} exclusive group Red API response body
+  - name: Verify /groups/label DELETE method exclusive group Red
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupRed"
+      method: DELETE
+      verify: !bool "{verify}"
+    response:
+      status_code: 200
+      verify_response_with:
+        function: tavern.testutils.helpers:validate_pykwalify
+        extra_kwargs:
+          schema:
+            type: map
+            required: True
+            mapping:
+              code:
+                type: int
+                required: True
+                enum:
+                  - 0
+              message:
+                type: str
+                required: True
+                enum:
+                  - "deleted 1 entry"
+
+  # DELETE /groups/{group} exclusive group Lion API response code
+  # DELETE /groups/{group} exclusive group Lion API response body
+  - name: Verify /groups/label DELETE method exclusive group Lion
+    request:
+      url: "{hsm_base_url}/hsm/v2/groups/hsmtestgroupLion"
       method: DELETE
       verify: !bool "{verify}"
     response:

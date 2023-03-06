@@ -30,12 +30,12 @@
 # GET /Subscriptions/SCN/{id} API response code
 # GET /Subscriptions/SCN/{id} API response body
 ---
-test_name: Ensure that we can gather information from the state change notifications collection
+test_name: Ensure that we can gather information from the State Change Notifications collection
 
 stages:
   # GET /Subscriptions/SCN API response code
   # GET /Subscriptions/SCN API response body
-  - name: Ensure that we can conduct a query on the state change notifications collection
+  - name: Ensure that we can conduct a query on the State Change Notifications collection
     request:
       url: "{hsm_base_url}/hsm/v2/Subscriptions/SCN"
       method: GET
@@ -54,12 +54,15 @@ stages:
                 sequence:
                   - type: map
                     mapping:
-                      Enabled:
-                        type: bool
-                        required: False
                       ID:
                         type: int
                         required: True
+                      Subscriber:
+                        type: str
+                        required: True
+                      Enabled:
+                        type: bool
+                        required: False
                       Roles:
                         type: seq
                         required: False
@@ -95,9 +98,6 @@ stages:
                               - "halt"
                               - "Ready"
                               - "ready"
-                      Subscriber:
-                        type: str
-                        required: True
                       Url:
                         type: str
                         required: True
@@ -107,7 +107,7 @@ stages:
 
   # GET /Subscriptions/SCN/{id} API response code
   # GET /Subscriptions/SCN/{id} API response body
-  - name: Ensure that we can conduct a query for a specific ID from the state change notifications collection
+  - name: Ensure that we can conduct a query for a specific ID from the State Change Notifications collection
     request:
       url: "{hsm_base_url}/hsm/v2/Subscriptions/SCN/{ID}"
       method: GET
@@ -120,12 +120,15 @@ stages:
           schema:
             type: map
             mapping:
-              Enabled:
-                type: bool
-                required: False
               ID:
                 type: int
                 required: True
+              Subscriber:
+                type: str
+                required: True
+              Enabled:
+                type: bool
+                required: False
               Roles:
                 type: seq
                 required: False
@@ -161,9 +164,6 @@ stages:
                       - "halt"
                       - "Ready"
                       - "ready"
-              Subscriber:
-                type: str
-                required: True
               Url:
                 type: str
                 required: True
