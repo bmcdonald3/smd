@@ -2326,6 +2326,13 @@ func (m *EpMemory) discoverLocalPhase2() {
 
 	m.Ordinal = m.epRF.getMemoryOrdinal(m)
 	m.ID = m.sysRF.ID + "d" + strconv.Itoa(m.Ordinal)
+
+	// Workaround for DIMMs that don't report the Status struct.
+	// They have a serial number of "NO DIMM" when empty.
+	if m.MemoryRF.Status.State == "" && m.MemoryRF.SerialNumber == "NO DIMM" {
+		m.MemoryRF.Status.State = "Absent"
+	}
+	
 	if m.MemoryRF.Status.State != "Absent" {
 		m.Status = "Populated"
 		m.State = base.StatePopulated.String()
