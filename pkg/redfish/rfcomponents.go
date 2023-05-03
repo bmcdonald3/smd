@@ -1,6 +1,6 @@
 // MIT License
 //
-// (C) Copyright [2019-2022] Hewlett Packard Enterprise Development LP
+// (C) Copyright [2019-2023] Hewlett Packard Enterprise Development LP
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -415,7 +415,9 @@ func (c *EpChassis) discoverLocalPhase2() {
 
 	// Check if we have something valid to insert into the data store
 	hmsType := base.GetHMSType(c.ID)
-	if !base.IsHMSTypeContainer(hmsType) || c.Type != hmsType.String() {
+	if (!base.IsHMSTypeContainer(hmsType) &&
+	    hmsType != base.MgmtSwitch) ||
+	    c.Type != hmsType.String() {
 		errlog.Printf("Error: Bad xname ID ('%s') or Type ('%s' != %s) for %s\n",
 			c.ID, c.Type, hmsType.String(), c.ChassisURL)
 		c.LastStatus = VerificationFailed
