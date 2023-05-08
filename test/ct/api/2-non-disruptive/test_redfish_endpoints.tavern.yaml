@@ -116,10 +116,13 @@ stages:
                         type: str
                         required: True
                         enum:
-                          - "NodeBMC"
-                          - "ChassisBMC"
-                          - "RouterBMC"
                           - "CabinetPDUController"
+                          - "CDUMgmtSwitch"
+                          - "ChassisBMC"
+                          - "MgmtHLSwitch"
+                          - "MgmtSwitch"
+                          - "NodeBMC"
+                          - "RouterBMC"
                       UUID:
                         type: str
                         required: False
