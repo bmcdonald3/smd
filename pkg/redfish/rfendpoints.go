@@ -1895,3 +1895,132 @@ func IsManufacturer(mfrCheckStr, mfr string) int {
 	}
 	return -1
 }
+
+////////////////////////////////////////////////////////////////////////////
+// Processor architecture detection
+////////////////////////////////////////////////////////////////////////////
+
+// ProcessorArchitecture Enum
+const (
+	ProcessorArchARM   string = "ARM"   // ARM
+	ProcessorArchIA64  string = "IA-64" // Intel Itanium
+	ProcessorArchMIPS  string = "MIPS"  // MIPS
+	ProcessorArchOEM   string = "OEM"   // OEM-defined
+	ProcessorArchPower string = "Power" // Power
+	ProcessorArchX86   string = "x86"   // x86 or x86-64
+)
+
+// Processor InstructionSet Enum
+const (
+	ProcessorInstructionSetARMA32   string = "ARM-A32"  // ARM 32-bit
+	ProcessorInstructionSetARMA64   string = "ARM-A64"  // ARM 64-bit
+	ProcessorInstructionSetIA64     string = "IA-64"    // Intel IA-64
+	ProcessorInstructionSetMIPS32   string = "MIPS32"   // MIPS 32-bit
+	ProcessorInstructionSetMIPS64   string = "MIPS64"   // MIPS 64-bit
+	ProcessorInstructionSetOEM      string = "OEM"      // OEM-defined
+	ProcessorInstructionSetPowerISA string = "PowerISA" // PowerISA-64 or PowerISA-32
+	ProcessorInstructionSetX86      string = "x86"      // x86
+	ProcessorInstructionSetX86_64   string = "x86-64"   // x86-64
+)
+
+// Check the processor's ProcessorArchitecture and InstructionSet fields
+// to determine the architecture.
+func GetProcessorArch(p *EpProcessor) (procArch string) {
+	rfArch := p.ProcessorRF.ProcessorArchitecture
+	if rfArch == "" {
+		rfArch = p.ProcessorRF.InstructionSet
+	}
+	switch(rfArch) {
+	case "":
+		procArch = base.ArchUnknown.String()
+	case ProcessorArchX86:           fallthrough
+	case ProcessorInstructionSetX86_64:
+		procArch = base.ArchX86.String()
+	case ProcessorArchARM:              fallthrough
+	case ProcessorInstructionSetARMA32: fallthrough
+	case ProcessorInstructionSetARMA64:
+		procArch = base.ArchARM.String()
+	default:
+		procArch = base.ArchOther.String()
+	}
+	return
+}
+
+////////////////////////////////////////////////////////////////////////////
+// System architecture detection
+////////////////////////////////////////////////////////////////////////////
+
+// These *ArchMaps are used for working around redfish on Cray EX hardware not
+// supplying the 'ProcessorArchitecture' or 'InstructionSet' fields for the
+// processors. They are used for matching known Cray EX hardware types to a
+// processor architecture.
+//
+// These lists should not need to be maintained or expanded because future
+// Cray EX hardware should provide the needed processor fields.
+
+// Model matching strings for Cray EX hardware.
+var CrayEXModelArchMap = map[string]string{
+	"ex235": base.ArchX86.String(),
+	"ex420": base.ArchX86.String(),
+	"ex425": base.ArchX86.String(),
+	"ex254": base.ArchARM.String(),
+}
+
+// Drescription matching strings for Cray EX hardware
+var CrayEXDescrArchMap = map[string]string{
+	"windomnodecard":    base.ArchX86.String(),
+	"wnc":               base.ArchX86.String(),
+	"cnc":               base.ArchX86.String(),
+	"bardpeaknc":        base.ArchX86.String(),
+	"grizzlypknodecard": base.ArchX86.String(),
+	"antero":            base.ArchX86.String(),
+	"blancapeaknc":      base.ArchARM.String(),
+}
+
+
+func GetSystemArch(s *EpSystem) string {
+	sysArch := base.ArchUnknown.String()
+	// Search the processor collection for the architecture.
+	for _, proc := range s.Processors.OIDs {
+		if proc.Type != base.Processor.String() {
+			// Skip GPUs
+			continue
+		}
+		if sysArch == base.ArchUnknown.String() ||
+		   (sysArch == base.ArchOther.String() &&
+		    proc.Arch != base.ArchUnknown.String()) {
+			// Try for the best identification (X86/ARM > Other > UNKNOWN).
+			sysArch = proc.Arch
+		}
+		if sysArch != base.ArchUnknown.String() &&
+		   sysArch != base.ArchOther.String() {
+			// Found x86 or ARM
+			break
+		}
+	}
+
+	// If the Arch is still unknown it might be because Cray-HPE EX* hardware
+	// is not supplying the 'ProcessorArchitecture' or 'InstructionSet' fields
+	// for the processors or the processor collection wasn't present. Try to
+	// determine the processor architecture based on the node's model.
+	if sysArch == base.ArchUnknown.String() &&
+	   IsManufacturer(s.SystemRF.Manufacturer, CrayMfr) == 1 {
+		if len(s.SystemRF.Model) > 0 {
+			rfModel := strings.ToLower(s.SystemRF.Model)
+			for matchStr, arch := range CrayEXModelArchMap {
+				if strings.Contains(rfModel, matchStr) {
+					return arch
+				}
+			}
+		}
+		if len(s.SystemRF.Description) > 0 {
+			rfDescr := strings.ToLower(s.SystemRF.Description)
+			for matchStr, arch := range CrayEXDescrArchMap {
+				if strings.Contains(rfDescr, matchStr) {
+					return arch
+				}
+			}
+		}
+	}
+	return sysArch
+}

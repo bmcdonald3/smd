@@ -1668,7 +1668,7 @@ func (s *EpSystem) discoverLocalPhase2() {
 		return
 	}
 	// TODO: actually discover these
-	s.Arch = base.ArchX86.String()
+	s.Arch = base.ArchUnknown.String()
 	s.NetType = base.NetSling.String()
 	s.DefaultRole = base.RoleCompute.String()
 	s.DefaultSubRole = ""
@@ -1698,6 +1698,10 @@ func (s *EpSystem) discoverLocalPhase2() {
 		fmt.Printf("s.HpeDevices.discoverLocalPhase2(): returned err %v", err)
 		childStatus = ChildVerificationFailed
 	}
+
+	// GetSystemArch() requires the processor Arch information detected by
+	// Processors.discoverLocalPhase2().
+	s.Arch = GetSystemArch(s)
 
 	s.LastStatus = childStatus
 }
@@ -2155,6 +2159,11 @@ func (p *EpProcessor) discoverLocalPhase2() {
 			errlog.Printf("Using untrackable FRUID: %s\n", generatedFRUID)
 		}
 		p.FRUID = generatedFRUID
+		
+		// Discover processor arch
+		if p.Type == base.Processor.String() {
+			p.Arch = GetProcessorArch(p)
+		}
 	} else {
 		p.Status = "Empty"
 		p.State = base.StateEmpty.String()
