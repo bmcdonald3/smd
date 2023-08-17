@@ -33,9 +33,9 @@ import (
 
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
-	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
-	rf "github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
-	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
+	"github.com/bikeshack/hms-smd/v2/internal/hmsds"
+	rf "github.com/bikeshack/hms-smd/v2/pkg/redfish"
+	"github.com/bikeshack/hms-smd/v2/pkg/sm"
 
 	"github.com/gorilla/mux"
 )

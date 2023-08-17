@@ -38,10 +38,10 @@ import (
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
-	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
-	rf "github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
-	stest "github.com/Cray-HPE/hms-smd/v2/pkg/sharedtest"
-	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
+	"github.com/bikeshack/hms-smd/v2/internal/hmsds"
+	rf "github.com/bikeshack/hms-smd/v2/pkg/redfish"
+	stest "github.com/bikeshack/hms-smd/v2/pkg/sharedtest"
+	"github.com/bikeshack/hms-smd/v2/pkg/sm"
 
 	"github.com/gorilla/mux"
 )

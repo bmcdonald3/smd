@@ -1,5 +1,7 @@
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
+
+project_name: smd
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -13,6 +15,7 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
     no_unique_dist_dir: true
     tags:
       - musl
@@ -25,6 +28,7 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
     no_unique_dist_dir: true
     tags:
       - musl
@@ -36,10 +40,24 @@ builds:
       - linux
     goarch:
       - amd64
+      - arm64
     no_unique_dist_dir: true
     tags:
       - musl
       - dynamic
+
+dockers:
+  - image_templates:
+      - alexlovelltroy/{{.ProjectName}}:latest
+      - alexlovelltroy/{{.ProjectName}}:{{ .Tag }}
+      - alexlovelltroy/{{.ProjectName}}:{{ .Major }}
+      - alexlovelltroy/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
 
 
 
@@ -53,6 +71,12 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
+    files:
+      - migrations/*
+      - LICENSE
+      - CHANGELOG.md
+      - README.md
+
 
 checksum:
   name_template: 'checksums.txt'
@@ -64,6 +88,7 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+
 
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.

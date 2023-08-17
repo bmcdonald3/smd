@@ -30,8 +30,8 @@ import (
 
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
-	rf "github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
-	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
+	rf "github.com/bikeshack/hms-smd/v2/pkg/redfish"
+	"github.com/bikeshack/hms-smd/v2/pkg/sm"
 )
 
 // When we discover a Redfish Endpoint, the data retrieved is processed
