@@ -39,7 +39,6 @@ import (
 	base "github.com/Cray-HPE/hms-base"
 	"github.com/Cray-HPE/hms-certs/pkg/hms_certs"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
-	msgbus "github.com/Cray-HPE/hms-msgbus"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
 	"github.com/Cray-HPE/hms-smd/v2/internal/hbtdapi"
 	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
@@ -98,14 +97,13 @@ type SmD struct {
 	dbPort    int
 	dbOpts    string
 
-	tlsCert         string
-	tlsKey          string
-	proxyURL        string
-	httpListen      string
-	msgbusListen    string
-	logLevelIn      int
-	msgbusConfig    msgbus.MsgBusConfig
-	msgbusHandle    msgbus.MsgBusIO
+	tlsCert      string
+	tlsKey       string
+	proxyURL     string
+	httpListen   string
+	msgbusListen string
+	logLevelIn   int
+
 	hwInvHistAgeMax int
 	smapCompEP      *SyncMap
 	genTestPayloads string
@@ -726,8 +724,6 @@ func main() {
 	var s SmD
 	var err error
 
-	s.msgbusHandle = nil
-
 	s.apiRootV2 = "/hsm/v2"
 	s.serviceBaseV2 = s.apiRootV2 + "/service"
 	s.valuesBaseV2 = s.serviceBaseV2 + "/values"
@@ -890,7 +886,6 @@ func main() {
 
 	// Start monitoring message bus, if configured
 	s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
-	go s.StartRFEventMonitor()
 
 	// Start the component lock cleanup thread
 	s.CompReservationCleanup()
