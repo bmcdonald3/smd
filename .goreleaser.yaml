@@ -8,6 +8,7 @@ before:
 builds:
   - id: smd
     main: ./cmd/smd/
+    binary: smd
     goos:
       - linux
     goarch:
@@ -16,28 +17,30 @@ builds:
     tags:
       - musl
       - dynamic
-    no_main_check: true
     
   - id: smd-init
     main: ./cmd/smd-init/
+    binary: smd-init
     goos:
       - linux
     goarch:
       - amd64
     no_unique_dist_dir: true
-    no_main_check: true
-
+    tags:
+      - musl
+      - dynamic
   - id: smd-loader
     main: ./cmd/smd-loader/
+    binary: smd-loader
     goos:
       - linux
     goarch:
       - amd64
     no_unique_dist_dir: true
-    no_main_check: true
+    tags:
+      - musl
+      - dynamic
 
-  - env:
-    - CGO_ENABLED=0
 
 
 archives:

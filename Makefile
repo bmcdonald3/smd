@@ -52,13 +52,13 @@ VERSION := `git describe --tags --abbrev=0`
 LDFLAGS=-ldflags "-X=$(GIT)main.commit=$(BUILD) -X=$(GIT)main.version=$(VERSION) -X=$(GIT)main.date=$(shell date +%Y-%m-%d:%H:%M:%S)"
 
 smd:
-	go build -v -tags musl -tags dynamic $(LDFLAGS) ./cmd/smd
+	go build -o dist/smd -v -tags musl -tags dynamic $(LDFLAGS) ./cmd/smd
 
 smd-init:
-	go build -v -tags musl $(LDFLAGS) ./cmd/smd-init
+	go build -o dist/smd-init -v -tags musl $(LDFLAGS) ./cmd/smd-init
 
 smd-loader:
-	go build -v -tags musl $(LDFLAGS) ./cmd/smd-loader
+	go build -o dist/smd-loader -v -tags musl $(LDFLAGS) ./cmd/smd-loader
 
 coverage:
 	go test -cover -v -tags musl ./cmd/* ./internal/* ./pkg/*
