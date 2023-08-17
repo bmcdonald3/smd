@@ -7,7 +7,6 @@ require (
 	github.com/Cray-HPE/hms-certs v1.4.0
 	github.com/Cray-HPE/hms-compcredentials v1.11.3
 	github.com/Cray-HPE/hms-go-http-lib v1.5.4
-	github.com/Cray-HPE/hms-msgbus v1.11.0
 	github.com/Cray-HPE/hms-securestorage v1.13.0
 	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/Masterminds/squirrel v1.5.4
@@ -20,8 +19,13 @@ require (
 )
 
 require (
+	github.com/confluentinc/confluent-kafka-go v1.7.0 // indirect
+	github.com/stretchr/testify v1.8.2 // indirect
+)
+
+require (
+	github.com/Cray-HPE/hms-msgbus v1.11.0
 	github.com/cenkalti/backoff/v3 v3.2.2 // indirect
-	github.com/confluentinc/confluent-kafka-go v1.9.2 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/docker/docker v23.0.4+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -46,7 +50,6 @@ require (
 	github.com/opencontainers/image-spec v1.1.0-rc2.0.20221005185240-3a7f492d3f1b // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/ryanuber/go-glob v1.0.0 // indirect
-	github.com/stretchr/testify v1.8.2 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect

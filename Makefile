@@ -49,10 +49,10 @@ binaries: smd smd-init smd-loader
 
 BUILD := `git rev-parse --short HEAD`
 VERSION := `git describe --tags --abbrev=0`
-LDFLAGS=-ldflags "-X=$(GIT)build.Build=$(BUILD) -X=$(GIT)build.Version=$(VERSION)"
+LDFLAGS=-ldflags "-X=$(GIT)main.commit=$(BUILD) -X=$(GIT)main.version=$(VERSION) -X=$(GIT)main.date=$(shell date +%Y-%m-%d:%H:%M:%S)"
 
 smd:
-	go build -v -tags musl $(LDFLAGS) ./cmd/smd
+	go build -v -tags musl -tags dynamic $(LDFLAGS) ./cmd/smd
 
 smd-init:
 	go build -v -tags musl $(LDFLAGS) ./cmd/smd-init

@@ -6,14 +6,39 @@ before:
     - go mod tidy
 
 builds:
-  - env:
-      - CGO_ENABLED=0
+  - id: smd
+    main: ./cmd/smd/
     goos:
       - linux
-      - darwin
     goarch:
       - amd64
-      - arm64
+    no_unique_dist_dir: true
+    tags:
+      - musl
+      - dynamic
+    no_main_check: true
+    
+  - id: smd-init
+    main: ./cmd/smd-init/
+    goos:
+      - linux
+    goarch:
+      - amd64
+    no_unique_dist_dir: true
+    no_main_check: true
+
+  - id: smd-loader
+    main: ./cmd/smd-loader/
+    goos:
+      - linux
+    goarch:
+      - amd64
+    no_unique_dist_dir: true
+    no_main_check: true
+
+  - env:
+    - CGO_ENABLED=0
+
 
 archives:
   - format: tar.gz
@@ -25,10 +50,7 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
-    format_overrides:
-    - goos: windows
-      format: zip
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
