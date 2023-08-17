@@ -5,9 +5,6 @@
 cmd/smd-loader/node_nid_map.json
 kubernetes/cray-hms-smd/helm
 .idea
-smd
-smd-init
-smd-loader
 
 # Prevent certificates from getting checked in
 *.ca
