@@ -12197,7 +12197,7 @@ parameters:
       - X86
       - ARM
       - Other
-      - Unknown
+      - UNKNOWN
   compClassParam:
     name: class
     in: query
