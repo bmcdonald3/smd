@@ -25,6 +25,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -38,11 +39,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-type componentIn struct {
-	base.Component
-	ExtendedInfo json.RawMessage `json:"ExtendedInfo,omitempty"`
-}
 
 type componentArrayIn struct {
 	Components   []base.Component `json:"Components"`
@@ -128,15 +124,6 @@ type CompEthInterfaceFltr struct {
 	CompID    []string `json:"componentid"`
 	Type      []string `json:"type"`
 }
-
-const (
-	compUpdateState    = "State"
-	compUpdateFlagOnly = "FlagOnly"
-	compUpdateEnabled  = "Enabled"
-	compUpdateSwStatus = "SoftwareStatus"
-	compUpdateRole     = "Role"
-	compUpdateNID      = "NID"
-)
 
 type HMSValueSelect int
 
@@ -248,7 +235,7 @@ func nidRangeToCompFilter(nidRanges []string, f *hmsds.ComponentFilter) (*hmsds.
 		if len(nidRange) > 1 {
 			// NID Range
 			if len(nidRange[0]) == 0 || len(nidRange[len(nidRange)-1]) == 0 {
-				return f, errors.New("Argument was not a valid NID Range")
+				return f, errors.New("argument was not a valid NID Range")
 			}
 			NIDStart = append(NIDStart, nidRange[0])
 			NIDEnd = append(NIDEnd, nidRange[len(nidRange)-1])
@@ -427,7 +414,7 @@ func (s *SmD) doComponentDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such xname.")
 		return
 	}
@@ -596,7 +583,6 @@ func (s *SmD) doComponentsPost(w http.ResponseWriter, r *http.Request) {
 
 	// Send 204 status (success, no content in response)
 	sendJsonError(w, http.StatusNoContent, "operation completed")
-	return
 }
 
 // Get all HMS Components under multiple parent components as named array
@@ -814,37 +800,35 @@ func (s *SmD) doCompBulkNIDPatch(w http.ResponseWriter, r *http.Request) {
 
 	// Send 204 status (success, no content in response)
 	sendJsonError(w, http.StatusNoContent, "")
-	return
 }
 
 // Update component state and flag for a list of components
 func (s *SmD) doCompBulkStateDataPatch(w http.ResponseWriter, r *http.Request) {
 	s.compBulkPatch(w, r, StateDataUpdate, "doCompBulkStateDataPatch")
-	return
 }
 
 // Update component state and flag for a list of components
 func (s *SmD) doCompBulkFlagOnlyPatch(w http.ResponseWriter, r *http.Request) {
 	s.compBulkPatch(w, r, FlagOnlyUpdate, "doCompBulkFlagOnlyPatch")
-	return
+
 }
 
 // Update component 'Enabled' boolean for a list of components
 func (s *SmD) doCompBulkEnabledPatch(w http.ResponseWriter, r *http.Request) {
 	s.compBulkPatch(w, r, EnabledUpdate, "doCompBulkEnabledPatch")
-	return
+
 }
 
 // Update component SoftwareStatus field for a list of components
 func (s *SmD) doCompBulkSwStatusPatch(w http.ResponseWriter, r *http.Request) {
 	s.compBulkPatch(w, r, SwStatusUpdate, "doCompBulkSwStatusPatch")
-	return
+
 }
 
 // Update component state and flag for a list of components
 func (s *SmD) doCompBulkRolePatch(w http.ResponseWriter, r *http.Request) {
 	s.compBulkPatch(w, r, RoleUpdate, "doCompBulkRolePatch")
-	return
+
 }
 
 // Helper function for doing a bulk patch via http.  CompUpdateInvalid
@@ -897,7 +881,7 @@ func (s *SmD) compPatchHelper(
 			sendJsonError(w, http.StatusBadRequest, err.Error())
 		} else {
 			// Non-HMS error, print generic error message.
-			if isBulk == true {
+			if isBulk {
 				// print generic message for bulk error
 				sendJsonError(w, http.StatusBadRequest, "operation 'Bulk "+
 					op+" Update' failed")
@@ -922,47 +906,47 @@ func (s *SmD) compPatchHelper(
 	}
 	// Send 204 status (success, no content in response)
 	sendJsonError(w, http.StatusNoContent, "")
-	return
+
 }
 
 // Patch the State and Flag field (latter defaults to OK) for a single
 // component.
 func (s *SmD) doCompStateDataPatch(w http.ResponseWriter, r *http.Request) {
 	s.componentPatch(w, r, StateDataUpdate, "doCompStateDataPatch")
-	return
+
 }
 
 // Patch the Flag field only (state does not change) for a single component.
 func (s *SmD) doCompFlagOnlyPatch(w http.ResponseWriter, r *http.Request) {
 	s.componentPatch(w, r, FlagOnlyUpdate, "doCompFlagOnlyPatch")
-	return
+
 }
 
 // Patch the Enabled boolean for a single component, leaving other fields
 // in place.
 func (s *SmD) doCompEnabledPatch(w http.ResponseWriter, r *http.Request) {
 	s.componentPatch(w, r, EnabledUpdate, "doCompEnabledPatch")
-	return
+
 }
 
 // Patch the SoftwareStatus field for a single component, leaving other
 // fields in place.
 func (s *SmD) doCompSwStatusPatch(w http.ResponseWriter, r *http.Request) {
 	s.componentPatch(w, r, SwStatusUpdate, "doCompSwStatusPatch")
-	return
+
 }
 
 // Patch the Role field for a single component, leaving other fields in place.
 func (s *SmD) doCompRolePatch(w http.ResponseWriter, r *http.Request) {
 	s.componentPatch(w, r, RoleUpdate, "doCompRolePatch")
-	return
+
 }
 
 // Update the NID (Node ID) for a single component, leaving other fields
 // in place.
 func (s *SmD) doCompNIDPatch(w http.ResponseWriter, r *http.Request) {
 	s.componentPatch(w, r, SingleNIDUpdate, "doCompNIDPatch")
-	return
+
 }
 
 // Scan function to keep compatibility with API, though we don't really
@@ -1099,7 +1083,7 @@ func (s *SmD) doComponentPut(w http.ResponseWriter, r *http.Request) {
 
 	// Send 204 status (success, no content in response)
 	sendJsonError(w, http.StatusNoContent, "operation completed")
-	return
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1209,7 +1193,7 @@ func (s *SmD) doNodeMapsPost(w http.ResponseWriter, r *http.Request) {
 
 	numStr := strconv.FormatInt(int64(len(nnms.NodeMaps)), 10)
 	sendJsonError(w, http.StatusOK, "Created or modified "+numStr+" entries")
-	return
+
 }
 
 // UPDATE EXISTING Node->NID mapping by it's xname URI.
@@ -1218,8 +1202,8 @@ func (s *SmD) doNodeMapPut(w http.ResponseWriter, r *http.Request) {
 	xname := base.NormalizeHMSCompID(vars["xname"])
 
 	var m sm.NodeMap
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &m)
+	body, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal(body, &m)
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
 			"error decoding JSON "+err.Error())
@@ -1261,7 +1245,7 @@ func (s *SmD) doNodeMapPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendJsonNodeMapRsp(w, nnm)
-	return
+
 }
 
 // Delete single NodeMap, by its xname ID.
@@ -1281,7 +1265,7 @@ func (s *SmD) doNodeMapDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such xname.")
 		return
 	}
@@ -1450,7 +1434,7 @@ func (s *SmD) doHWInvByLocationPost(w http.ResponseWriter, r *http.Request) {
 
 	numStr := strconv.Itoa(len(hwlocs))
 	sendJsonError(w, http.StatusOK, "Created "+numStr+" entries")
-	return
+
 }
 
 // Get single HWInvByFRU entry by its FRU ID
@@ -1706,7 +1690,7 @@ func (s *SmD) doHWInvByLocationDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such xname.")
 		return
 	}
@@ -1741,7 +1725,7 @@ func (s *SmD) doHWInvByFRUDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such FRU ID.")
 		return
 	}
@@ -2137,7 +2121,7 @@ func (s *SmD) doRedfishEndpointDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such xname.")
 		return
 	}
@@ -2279,7 +2263,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 
 	// Send 200 status (success
 	sendJsonRFEndpointRsp(w, retEP)
-	return
+
 }
 
 // PATCH existing RedfishEndpoint entry but only the fields specified.
@@ -2383,7 +2367,7 @@ func (s *SmD) doRedfishEndpointPatch(w http.ResponseWriter, r *http.Request) {
 
 	// Send 200 status (success
 	sendJsonRFEndpointRsp(w, retEP)
-	return
+
 }
 
 // Polymorphic type that takes either a single (scan-friendly) RedfishEndpoint
@@ -2500,7 +2484,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 	// Send a URI array of the created resources, along with 201 (created).
 	uris := eps.GetResourceURIArray(s.redfishEPBaseV2)
 	sendJsonNewResourceIDArray(w, s.redfishEPBaseV2, uris)
-	return
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2572,7 +2556,7 @@ func (s *SmD) doComponentEndpointDelete(w http.ResponseWriter, r *http.Request) 
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such xname.")
 		return
 	}
@@ -2610,27 +2594,6 @@ func (s *SmD) doComponentEndpointsDeleteAll(w http.ResponseWriter, r *http.Reque
 	}
 	numStr := strconv.FormatInt(numDeleted, 10)
 	sendJsonError(w, http.StatusOK, "deleted "+numStr+" entries")
-}
-
-// Might not need this.  Might be able to use normal get on collection.
-func (s *SmD) doComponentEndpointQueryGet(w http.ResponseWriter, r *http.Request) {
-	ceps := new(sm.ComponentEndpointArray)
-	vars := mux.Vars(r)
-	xname := vars["xname"]
-	if xname == "" || xname == "all" || xname == "s0" {
-		var err error
-		ceps.ComponentEndpoints, err = s.db.GetCompEndpointsAll()
-		if err != nil {
-			s.LogAlways("doComponentEndpointQueryGet(): Lookup failure: %s", err)
-			sendJsonDBError(w, "", "", err)
-			return
-		}
-		sendJsonCompEndpointArrayRsp(w, ceps)
-		return
-	} else {
-		sendJsonError(w, http.StatusBadRequest, "not yet implemented")
-		return
-	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2748,7 +2711,7 @@ func (s *SmD) doServiceEndpointDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such service under redfish endpoint.")
 		return
 	}
@@ -2812,13 +2775,13 @@ func (s *SmD) doCompEthInterfaceDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonError(w, http.StatusInternalServerError, "DB query failed.")
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		s.lg.Printf("doCompEthInterfaceDelete(): No such component ethernet interface, %s", id)
 		sendJsonError(w, http.StatusNotFound, "no such component ethernet interface.")
 		return
 	}
 	sendJsonError(w, http.StatusOK, "deleted 1 entry")
-	return
+
 }
 
 // Get all component ethernet interfaces that currently exist, optionally filtering the set,
@@ -2914,7 +2877,7 @@ func (s *SmD) doCompEthInterfacesGetV2(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendJsonCompEthInterfaceV2ArrayRsp(w, ceis)
-	return
+
 }
 
 // Create a new component ethernet interface.
@@ -2956,9 +2919,9 @@ func (s *SmD) doCompEthInterfacePostV2(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uri := &sm.ResourceURI{s.compEthIntBaseV2 + "/" + cei.ID}
+	uri := &sm.ResourceURI{URI: s.compEthIntBaseV2 + "/" + cei.ID}
 	sendJsonNewResourceID(w, uri)
-	return
+
 }
 
 // Retrieve the component ethernet interface which was created with the given {id}.
@@ -2980,14 +2943,14 @@ func (s *SmD) doCompEthInterfaceGetV2(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "bad query param: ", "", err)
 		return
 	}
-	if ceis == nil || len(ceis) == 0 {
+	if len(ceis) == 0 {
 		s.lg.Printf("doCompEthInterfaceGetV2(): No such component ethernet interface, %s", id)
 		sendJsonError(w, http.StatusNotFound, "No such component ethernet interface: "+id)
 		return
 	}
 
 	sendJsonCompEthInterfaceV2Rsp(w, ceis[0])
-	return
+
 }
 
 // To update the IP address and/or description of a component ethernet interface,
@@ -3029,7 +2992,7 @@ func (s *SmD) doCompEthInterfacePatchV2(w http.ResponseWriter, r *http.Request) 
 	}
 
 	sendJsonCompEthInterfaceV2Rsp(w, cei)
-	return
+
 }
 
 // Get a array of all IP Addresses mappings that are currently
@@ -3054,7 +3017,7 @@ func (s *SmD) doCompEthInterfaceIPAddressesGetV2(w http.ResponseWriter, r *http.
 		sendJsonDBError(w, "bad query param: ", "", err)
 		return
 	}
-	if ceis == nil || len(ceis) == 0 {
+	if len(ceis) == 0 {
 		s.lg.Printf("doCompEthInterfaceIPAddressesGetV2(): No such component ethernet interface, %s", id)
 		sendJsonError(w, http.StatusNotFound, "No such component ethernet interface: "+id)
 		return
@@ -3109,7 +3072,7 @@ func (s *SmD) doCompEthInterfaceIPAddressPostV2(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	uri := &sm.ResourceURI{s.compEthIntBaseV2 + "/" + id + "/IPAddresses/" + ipID}
+	uri := &sm.ResourceURI{URI: s.compEthIntBaseV2 + "/" + id + "/IPAddresses/" + ipID}
 	sendJsonNewResourceID(w, uri)
 }
 
@@ -3187,7 +3150,7 @@ func (s *SmD) doCompEthInterfaceIPAddressDeleteV2(w http.ResponseWriter, r *http
 		return
 	}
 
-	if didDelete == false {
+	if !didDelete {
 		s.lg.Printf("doCompEthInterfaceMembersDelete(): No such ip address, %s, in component ethernet interface, %s", ipAddr, id)
 		sendJsonError(w, http.StatusNotFound, "component ethernet interface has no such ip address.")
 		return
@@ -4002,7 +3965,7 @@ func (s *SmD) doGroupsGet(w http.ResponseWriter, r *http.Request) {
 		groups = append(groups, *group)
 	}
 	sendJsonGroupArrayRsp(w, &groups)
-	return
+
 }
 
 // Create a new group identified by the label field. Label should be given
@@ -4011,8 +3974,8 @@ func (s *SmD) doGroupsGet(w http.ResponseWriter, r *http.Request) {
 func (s *SmD) doGroupsPost(w http.ResponseWriter, r *http.Request) {
 	var groupIn sm.Group
 
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &groupIn)
+	body, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal(body, &groupIn)
 	if err != nil {
 		s.lg.Printf("doGroupsPost(): Unmarshal body: %s", err)
 		sendJsonError(w, http.StatusInternalServerError,
@@ -4048,9 +4011,9 @@ func (s *SmD) doGroupsPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.groupsBaseV2 + "/" + label}}
+	uris := []*sm.ResourceURI{{URI: s.groupsBaseV2 + "/" + label}}
 	sendJsonNewResourceIDArray(w, s.groupsBaseV2, uris)
-	return
+
 }
 
 // Retrieve the group which was created with the given {group_label}.
@@ -4111,7 +4074,7 @@ func (s *SmD) doGroupGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonGroupRsp(w, group)
-	return
+
 }
 
 // Delete the given group label. Any members previously in the group will no
@@ -4132,20 +4095,21 @@ func (s *SmD) doGroupDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonError(w, http.StatusInternalServerError, "DB query failed.")
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		s.lg.Printf("doGroupDelete(): No such group, %s", label)
 		sendJsonError(w, http.StatusNotFound, "no such group.")
 		return
 	}
 	sendJsonError(w, http.StatusOK, "deleted 1 entry")
-	return
+
 }
 
 // To update the tags array and/or description, a PATCH operation can be used.
 // Omitted fields are not updated.
 // NOTE: This cannot be used to completely replace the members list. Rather,
-//       individual members can be removed or added with the
-//       POST/DELETE {group_label}/members API.
+//
+//	individual members can be removed or added with the
+//	POST/DELETE {group_label}/members API.
 func (s *SmD) doGroupPatch(w http.ResponseWriter, r *http.Request) {
 	var groupPatch sm.GroupPatch
 	vars := mux.Vars(r)
@@ -4193,7 +4157,7 @@ func (s *SmD) doGroupPatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonError(w, http.StatusNoContent, "Success")
-	return
+
 }
 
 // Get a string array of all group labels (i.e. group names) that currently
@@ -4206,7 +4170,7 @@ func (s *SmD) doGroupLabelsGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendJsonStringArrayRsp(w, &labels)
-	return
+
 }
 
 // Get all members of an existing group {group_label}, optionally filtering the set,
@@ -4269,7 +4233,7 @@ func (s *SmD) doGroupMembersGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonMembersRsp(w, &group.Members)
-	return
+
 }
 
 // Create a new member of group {group_label} with the component xname id provided
@@ -4318,9 +4282,9 @@ func (s *SmD) doGroupMembersPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.groupsBaseV2 + "/" + label + "/members/" + id}}
+	uris := []*sm.ResourceURI{{URI: s.groupsBaseV2 + "/" + label + "/members/" + id}}
 	sendJsonNewResourceIDArray(w, s.groupsBaseV2, uris)
-	return
+
 }
 
 // Remove component {xname_id} from the members of group {group_label}.
@@ -4350,13 +4314,13 @@ func (s *SmD) doGroupMemberDelete(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		s.lg.Printf("doGroupMemberDelete(): No such member, %s, in group, %s", id, label)
 		sendJsonError(w, http.StatusNotFound, "group has no such member.")
 		return
 	}
 	sendJsonError(w, http.StatusOK, "deleted 1 entry")
-	return
+
 }
 
 /*
@@ -4459,7 +4423,7 @@ func (s *SmD) doPartitionsGet(w http.ResponseWriter, r *http.Request) {
 		partitions = append(partitions, *partition)
 	}
 	sendJsonPartitionArrayRsp(w, &partitions)
-	return
+
 }
 
 // Create a new partition identified by the name field. Partition name
@@ -4505,9 +4469,9 @@ func (s *SmD) doPartitionsPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.partitionsBaseV2 + "/" + name}}
+	uris := []*sm.ResourceURI{{URI: s.partitionsBaseV2 + "/" + name}}
 	sendJsonNewResourceIDArray(w, s.partitionsBaseV2, uris)
-	return
+
 }
 
 // Retrieve the partition which was created with the given {partition_name}.
@@ -4536,7 +4500,7 @@ func (s *SmD) doPartitionGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonPartitionRsp(w, part)
-	return
+
 }
 
 // Delete partition {partition_name}. Any members previously in the partition
@@ -4557,20 +4521,21 @@ func (s *SmD) doPartitionDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonError(w, http.StatusInternalServerError, "DB query failed.")
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		s.lg.Printf("doPartitionDelete(): No such partition, %s", name)
 		sendJsonError(w, http.StatusNotFound, "no such partition.")
 		return
 	}
 	sendJsonError(w, http.StatusOK, "deleted 1 entry")
-	return
+
 }
 
 // To update the tags array and/or description, a PATCH operation can be used.
 // Omitted fields are not updated.
 // NOTE: This cannot be used to completely replace the members list. Rather,
-//       individual members can be removed or added with the POST/DELETE
-//       {partition_name}/members API.
+//
+//	individual members can be removed or added with the POST/DELETE
+//	{partition_name}/members API.
 func (s *SmD) doPartitionPatch(w http.ResponseWriter, r *http.Request) {
 	var partPatch sm.PartitionPatch
 	vars := mux.Vars(r)
@@ -4625,7 +4590,7 @@ func (s *SmD) doPartitionPatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonError(w, http.StatusNoContent, "Success")
-	return
+
 }
 
 // Get a string array of all partition names that currently exist in HSM.
@@ -4638,7 +4603,7 @@ func (s *SmD) doPartitionNamesGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendJsonStringArrayRsp(w, &names)
-	return
+
 }
 
 // Get all members of existing partition {partition_name}, optionally filtering
@@ -4668,7 +4633,7 @@ func (s *SmD) doPartitionMembersGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonMembersRsp(w, &part.Members)
-	return
+
 }
 
 // Create a new member of partition {partition_name} with the component xname
@@ -4719,9 +4684,9 @@ func (s *SmD) doPartitionMembersPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	uris := []*sm.ResourceURI{{s.partitionsBaseV2 + "/" + name + "/members/" + id}}
+	uris := []*sm.ResourceURI{{URI: s.partitionsBaseV2 + "/" + name + "/members/" + id}}
 	sendJsonNewResourceIDArray(w, s.partitionsBaseV2, uris)
-	return
+
 }
 
 // Remove component {xname_id} from the members of partition {partition_name}.
@@ -4751,13 +4716,13 @@ func (s *SmD) doPartitionMemberDelete(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		s.lg.Printf("doPartitionMemberDelete(): No such member, %s, in partition, %s", id, name)
 		sendJsonError(w, http.StatusNotFound, "partition has no such member.")
 		return
 	}
 	sendJsonError(w, http.StatusOK, "deleted 1 entry")
-	return
+
 }
 
 /*
@@ -4819,7 +4784,7 @@ func (s *SmD) doMembershipGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendJsonMembershipRsp(w, membership)
-	return
+
 }
 
 /*
@@ -4853,7 +4818,7 @@ func (s *SmD) compLocksV2Helper(w http.ResponseWriter, r *http.Request, action s
 	}
 
 	sendJsonCompLockV2UpdateRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksReservationRemove(w http.ResponseWriter, r *http.Request) {
@@ -4883,7 +4848,7 @@ func (s *SmD) doCompLocksReservationRemove(w http.ResponseWriter, r *http.Reques
 	}
 
 	sendJsonCompLockV2UpdateRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksReservationRelease(w http.ResponseWriter, r *http.Request) {
@@ -4913,7 +4878,7 @@ func (s *SmD) doCompLocksReservationRelease(w http.ResponseWriter, r *http.Reque
 	}
 
 	sendJsonCompLockV2UpdateRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksReservationCreate(w http.ResponseWriter, r *http.Request) {
@@ -4944,7 +4909,7 @@ func (s *SmD) doCompLocksReservationCreate(w http.ResponseWriter, r *http.Reques
 	}
 
 	sendJsonCompReservationRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksServiceReservationRenew(w http.ResponseWriter, r *http.Request) {
@@ -4979,12 +4944,12 @@ func (s *SmD) doCompLocksServiceReservationRenew(w http.ResponseWriter, r *http.
 	}
 
 	sendJsonCompLockV2UpdateRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksServiceReservationRelease(w http.ResponseWriter, r *http.Request) {
 	s.doCompLocksReservationRelease(w, r)
-	return
+
 }
 
 func (s *SmD) doCompLocksServiceReservationCreate(w http.ResponseWriter, r *http.Request) {
@@ -5019,14 +4984,14 @@ func (s *SmD) doCompLocksServiceReservationCreate(w http.ResponseWriter, r *http
 	}
 
 	sendJsonCompReservationRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksServiceReservationCheck(w http.ResponseWriter, r *http.Request) {
 	var filter sm.CompLockV2DeputyKeyArray
 
-	body, err := ioutil.ReadAll(r.Body)
-	err = json.Unmarshal(body, &filter)
+	body, _ := io.ReadAll(r.Body)
+	err := json.Unmarshal(body, &filter)
 	if err != nil {
 		s.lg.Printf("doCompLocksServiceReservationCheck(): Unmarshal body: %s", err)
 		sendJsonError(w, http.StatusInternalServerError,
@@ -5049,7 +5014,7 @@ func (s *SmD) doCompLocksServiceReservationCheck(w http.ResponseWriter, r *http.
 	}
 
 	sendJsonCompReservationRsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksStatus(w http.ResponseWriter, r *http.Request) {
@@ -5094,7 +5059,7 @@ func (s *SmD) doCompLocksStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sendJsonCompLockV2Rsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksStatusGet(w http.ResponseWriter, r *http.Request) {
@@ -5153,27 +5118,27 @@ func (s *SmD) doCompLocksStatusGet(w http.ResponseWriter, r *http.Request) {
 	results.Components = locks
 
 	sendJsonCompLockV2Rsp(w, results)
-	return
+
 }
 
 func (s *SmD) doCompLocksLock(w http.ResponseWriter, r *http.Request) {
 	s.compLocksV2Helper(w, r, hmsds.CLUpdateActionLock)
-	return
+
 }
 
 func (s *SmD) doCompLocksUnlock(w http.ResponseWriter, r *http.Request) {
 	s.compLocksV2Helper(w, r, hmsds.CLUpdateActionUnlock)
-	return
+
 }
 
 func (s *SmD) doCompLocksRepair(w http.ResponseWriter, r *http.Request) {
 	s.compLocksV2Helper(w, r, hmsds.CLUpdateActionRepair)
-	return
+
 }
 
 func (s *SmD) doCompLocksDisable(w http.ResponseWriter, r *http.Request) {
 	s.compLocksV2Helper(w, r, hmsds.CLUpdateActionDisable)
-	return
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -5258,7 +5223,7 @@ func (s *SmD) doPowerMapsPost(w http.ResponseWriter, r *http.Request) {
 
 	numStr := strconv.FormatInt(int64(len(ms)), 10)
 	sendJsonError(w, http.StatusOK, "Created or modified "+numStr+" entries")
-	return
+
 }
 
 // UPDATE EXISTING Power mapping by it's xname URI.
@@ -5306,7 +5271,7 @@ func (s *SmD) doPowerMapPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	sendJsonPowerMapRsp(w, m)
-	return
+
 }
 
 // Delete single PowerMap, by its xname ID.
@@ -5326,7 +5291,7 @@ func (s *SmD) doPowerMapDelete(w http.ResponseWriter, r *http.Request) {
 		sendJsonDBError(w, "", "", err)
 		return
 	}
-	if didDelete == false {
+	if !didDelete {
 		sendJsonError(w, http.StatusNotFound, "no such xname.")
 		return
 	}
