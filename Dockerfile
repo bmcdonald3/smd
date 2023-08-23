@@ -10,4 +10,6 @@ COPY  smd /
 COPY smd-loader /
 COPY smd-init /
 
-ENTRYPOINT [ "/sbin/tini", "--", "/smd" ]
+CMD [ "/smd" ]
+
+ENTRYPOINT [ "/sbin/tini", "--" ]
