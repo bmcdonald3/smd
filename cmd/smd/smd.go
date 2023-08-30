@@ -34,7 +34,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-	base "github.com/Cray-HPE/hms-base"
+	base "github.com/Cray-HPE/hms-base/v2"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	msgbus "github.com/Cray-HPE/hms-msgbus"
 	sstorage "github.com/Cray-HPE/hms-securestorage"

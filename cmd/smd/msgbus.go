@@ -23,7 +23,7 @@
 package main
 
 import (
-	base "github.com/Cray-HPE/hms-base"
+	base "github.com/Cray-HPE/hms-base/v2"
 	msgbus "github.com/Cray-HPE/hms-msgbus"
 	"strconv"
 	"strings"

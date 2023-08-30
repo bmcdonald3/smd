@@ -34,7 +34,7 @@ import (
 	"net/url"
 	"os"
 	"testing"
-	"github.com/Cray-HPE/hms-base"
+	"github.com/Cray-HPE/hms-base/v2"
 )
 
 var client *retryablehttp.Client

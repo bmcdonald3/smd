@@ -24,7 +24,8 @@ package hmsds
 
 import (
 	"fmt"
-	base "github.com/Cray-HPE/hms-base"
+	base "github.com/Cray-HPE/hms-base/v2"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
 	"strings"
 )
@@ -568,7 +569,7 @@ func buildCompEPQuery(baseQuery string, f *CompEPFilter) (string, []interface{},
 	if err != nil {
 		return baseQuery, q.args, ErrHMSDSArgBadRedfishType
 	}
-	err = q.doQueryArg("type", f.Type, base.VerifyNormalizeType)
+	err = q.doQueryArg("type", f.Type, xnametypes.VerifyNormalizeType)
 	if err != nil {
 		return baseQuery, q.args, ErrHMSDSArgBadType
 	}
@@ -595,7 +596,7 @@ func buildRedfishEPQuery(baseQuery string, f *RedfishEPFilter) (string, []interf
 	if err := q.doQueryArg("uuid", f.UUID, nil); err != nil {
 		return baseQuery, q.args, ErrHMSDSArgBadArg
 	}
-	err := q.doQueryArg("type", f.Type, base.VerifyNormalizeType)
+	err := q.doQueryArg("type", f.Type, xnametypes.VerifyNormalizeType)
 	if err != nil {
 		return baseQuery, q.args, ErrHMSDSArgBadType
 	}
@@ -672,7 +673,7 @@ func (q *preparedQuery) setCompUpdateArgs(f *ComponentFilter) error {
 	if q == nil {
 		return ErrHMSDSArgNil
 	}
-	err := q.doUpdateArg("type", f.Type, nil, base.VerifyNormalizeType, false)
+	err := q.doUpdateArg("type", f.Type, nil, xnametypes.VerifyNormalizeType, false)
 	if err != nil {
 		return ErrHMSDSArgBadType
 	}
@@ -739,7 +740,7 @@ func (q *preparedQuery) setCompWhereQuery(f *ComponentFilter, cont bool) error {
 	if err != nil {
 		return ErrHMSDSArgBadID
 	}
-	err = q.doQueryArg("type", f.Type, base.VerifyNormalizeType)
+	err = q.doQueryArg("type", f.Type, xnametypes.VerifyNormalizeType)
 	if err != nil {
 		return ErrHMSDSArgBadType
 	}
@@ -890,7 +891,7 @@ func buildBulkCompUpdateQuery(baseQuery string, ids []string) (string, []interfa
 		} else {
 			filterQuery += " WHERE (id = ?"
 		}
-		args = append(args, base.NormalizeHMSCompID(ids[i]))
+		args = append(args, xnametypes.NormalizeHMSCompID(ids[i]))
 	}
 	filterQuery += ");"
 	return filterQuery, args, nil
@@ -1301,7 +1302,7 @@ func nidStrTransform(checkStr string) string {
 // If xname is valid, returns normalized xname, otherwise returns empty
 // string.
 func validXNameFilter(xname string) string {
-	return base.VerifyNormalizeCompID(xname)
+	return xnametypes.VerifyNormalizeCompID(xname)
 }
 
 // If group or partion name is valid, return it normalized, else return

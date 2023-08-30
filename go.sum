@@ -26,6 +26,8 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/ClickHouse/clickhouse-go v1.3.12/go.mod h1:EaI/sW7Azgz9UATzd5ZdZHRUhHgv5+JMS9NSr2smCJI=
 github.com/Cray-HPE/hms-base v1.15.0 h1:VaQj6cY9OAs6rcD1miE133eqQnRTkEcX1lnwJA/SUuU=
 github.com/Cray-HPE/hms-base v1.15.0/go.mod h1:+G8KFLPtanLC5lQ602hrf3MDfLTmIXedTavVCOdz5XA=
+github.com/Cray-HPE/hms-base/v2 v2.0.1 h1:xHQWmoOlmA/UU0zDWjHxCK/qOF9WMLr7MrSpFAxLXWY=
+github.com/Cray-HPE/hms-base/v2 v2.0.1/go.mod h1:Mq+Ao3q4YtNZJZ1ly9wnEIKyvc3+QaA1B/xpiUpyhzQ=
 github.com/Cray-HPE/hms-certs v1.3.2 h1:Prd7PTwiSMULYuL8bhsvw7LSICx+pSvpWlA9fQKvW9s=
 github.com/Cray-HPE/hms-certs v1.3.2/go.mod h1:6DymilWScLtbQkaQRMuf55K1MzEi0kYCoXfT212yLjY=
 github.com/Cray-HPE/hms-compcredentials v1.11.2 h1:Ug7e7vMSx1STHKkniWY27ddD1X49pQAEljQmTcVkng4=
@@ -36,6 +38,10 @@ github.com/Cray-HPE/hms-msgbus v1.11.0 h1:w5ThMJ8D5pmuvXhc817rJDG4TTixEfvtcDi3tR
 github.com/Cray-HPE/hms-msgbus v1.11.0/go.mod h1:cxn+lUOq3tpY3+KdFml6L56ZQo8sqN2VoZ6gGxds6o8=
 github.com/Cray-HPE/hms-securestorage v1.12.2 h1:H5n0i6ldzewd5p7PI2Hktr/+9cYfSCui+0367p2L6n8=
 github.com/Cray-HPE/hms-securestorage v1.12.2/go.mod h1:P4CMKqQVlx/lv+AdyEjNQubZw2FKNyo/IAtFNgQ3VuI=
+github.com/Cray-HPE/hms-xname v1.2.0 h1:boZ8QlTQr/FxXbH+sloqr7qCGkKatJ6QNyIGbdOVmdw=
+github.com/Cray-HPE/hms-xname v1.2.0/go.mod h1:XKdjQSzoTps5KDOE8yWojBTAWASGaS6LfRrVDxwTQO8=
+github.com/Cray-HPE/hms-xname v1.3.0 h1:DQmetMniubqcaL6Cxarz9+7KFfWGSEizIhfPHIgC3Gw=
+github.com/Cray-HPE/hms-xname v1.3.0/go.mod h1:XKdjQSzoTps5KDOE8yWojBTAWASGaS6LfRrVDxwTQO8=
 github.com/DATA-DOG/go-sqlmock v1.3.3 h1:CWUqKXe0s8A2z6qCgkP4Kru7wC11YoAnoupUKFDnH08=
 github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/Masterminds/squirrel v1.4.0 h1:he5i/EXixZxrBUWcxzDYMiju9WZ3ld/l7QBNuo/eN3w=

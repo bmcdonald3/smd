@@ -30,7 +30,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"github.com/Cray-HPE/hms-base"
+	"github.com/Cray-HPE/hms-base/v2"
 	hmshttp "github.com/Cray-HPE/hms-go-http-lib"
 	"syscall"
 	"time"

@@ -35,7 +35,8 @@ import (
 	"strings"
 	"testing"
 
-	base "github.com/Cray-HPE/hms-base"
+	base "github.com/Cray-HPE/hms-base/v2"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
 	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
@@ -4730,7 +4731,7 @@ func TestDoHWInvByLocationQueryGet(t *testing.T) {
 		hmsdsRespErr: nil,
 		expectedFilter: &hmsds.HWInvLocFilter{
 			ID:       []string{"x0c0s0b0n0"},
-			Type:     []string{base.Processor.String()},
+			Type:     []string{xnametypes.Processor.String()},
 			Children: true,
 		},
 		expectedResp: payload3,

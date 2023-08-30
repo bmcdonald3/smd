@@ -25,7 +25,8 @@ package hmsds
 import (
 	"strings"
 
-	base "github.com/Cray-HPE/hms-base"
+	base "github.com/Cray-HPE/hms-base/v2"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 )
 
 type FieldFilter int
@@ -448,7 +449,7 @@ func (f *ComponentFilter) VerifyNormalize() error {
 	if err != nil {
 		return ErrHMSDSArgBadID
 	}
-	err = checkFilterField(f.Type, base.VerifyNormalizeType, true)
+	err = checkFilterField(f.Type, xnametypes.VerifyNormalizeType, true)
 	if err != nil {
 		return ErrHMSDSArgBadType
 	}
