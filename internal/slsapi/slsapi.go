@@ -31,7 +31,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	base "github.com/Cray-HPE/hms-base"
+	base "github.com/Cray-HPE/hms-base/v2"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 	"time"
 )
 
@@ -54,7 +55,7 @@ type NodeHardware struct {
 	Xname           string       `json:"Xname"`
 	Type            string       `json:"Type"`
 	Class           string       `json:"Class"`
-	TypeString      base.HMSType `json:"TypeString"`
+	TypeString      xnametypes.HMSType `json:"TypeString"`
 	ExtraProperties ComptypeNode `json:"ExtraProperties"`
 }
 
