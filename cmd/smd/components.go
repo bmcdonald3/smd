@@ -28,9 +28,9 @@ import (
 	"strconv"
 
 	base "github.com/Cray-HPE/hms-base/v2"
-	"github.com/Cray-HPE/hms-xname/xnametypes"
 	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
 	rf "github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 )
 
 ////////////////////////////////////////////////////////////////////////////
@@ -388,7 +388,12 @@ func (s *SmD) GetCompDefaults(xname, defaultRole, defaultSubRole, defaultClass s
 // Get a bogus nid for an xname
 func GetBogusNID(xname string) uint64 {
 	var cab, chassis, slot, controller, node uint
-	fmt.Sscanf(xname, "x%dc%ds%db%dn%d", &cab, &chassis, &slot, &controller, &node)
+	if xnametypes.GetHMSType(xname) == xnametypes.VirtualNode {
+		var ignore uint
+		fmt.Sscanf(xname, "x%dc%ds%db%dn%dv%d", &cab, &chassis, &slot, &controller, &ignore, &node)
+	} else {
+		fmt.Sscanf(xname, "x%dc%ds%db%dn%d", &cab, &chassis, &slot, &controller, &node)
+	}
 	nid := ((cab + 1) * 16384) + (chassis * 2048) + (slot * 32) + (controller * 4) + node
 	return uint64(nid)
 }
