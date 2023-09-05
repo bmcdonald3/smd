@@ -63,6 +63,54 @@ services:
       - vault
     networks:
       - smd
+  #
+  # SLS
+  #
+  cray-sls-postgres:
+    hostname: sls-postgres
+    image: artifactory.algol60.net/docker.io/library/postgres:11-alpine
+    environment:
+      - POSTGRES_USER=slsuser
+      - POSTGRES_DB=sls
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "54321:5432"
+    networks:
+      - smd
+  cray-sls-init:
+    image: artifactory.algol60.net/csm-docker/unstable/cray-sls:2.3.0-20230831143258.635ad7f
+    command: ["sls-init"]
+    environment:
+      - POSTGRES_HOST=sls-postgres
+      - DBOPTS=sslmode=disable
+      - DBUSER=slsuser
+    depends_on:
+      - cray-sls-postgres
+    networks:
+      - smd
+  cray-sls:
+    image: artifactory.algol60.net/csm-docker/unstable/cray-sls:2.3.0-20230831143258.635ad7f
+    environment:
+      - POSTGRES_HOST=cray-sls-postgres
+      - DBOPTS=sslmode=disable
+      - DBUSER=slsuser
+      - CRAY_VAULT_AUTH_PATH=auth/token/create
+      - CRAY_VAULT_ROLE_FILE=configs/namespace
+      - CRAY_VAULT_JWT_FILE=configs/token
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=hms
+      - VAULT_KEYPATH=secret/hms-creds
+    ports:
+      - "8376:8376"
+    depends_on:
+      - cray-sls-postgres
+      - cray-sls-init
+    networks:
+      - smd
+
+  #
+  # HSM
+  #
   hmsds-postgres:
     hostname: hmsds-postgres
     image: artifactory.algol60.net/docker.io/library/postgres:11-alpine
@@ -100,12 +148,13 @@ services:
       - VAULT_KEYPATH=hms-creds
       - SMD_WVAULT=true
       - SMD_RVAULT=true
-      - SMD_SLS_HOST=
+      - SMD_SLS_HOST=http://cray-sls:8376/v1
       - SMD_HBTD_HOST=
     hostname: cray-smd
     depends_on:
       - cray-smd-init
       - vault
+      - cray-sls
     networks:
       - smd
     ports:
