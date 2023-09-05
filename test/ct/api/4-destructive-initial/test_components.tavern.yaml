@@ -9234,7 +9234,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # POST Create node with System role information
   - name: Create {type} component using POST with system role information
@@ -9322,7 +9322,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # PUT Node with no system role information
   - name: Create Node component using PUT with no system role information
@@ -9336,8 +9336,6 @@ stages:
           State: Populated
     response:
       status_code: 204
-    response:
-      status_code: 201
 
   # GET Verify Node was created successfully
   - name: Verify {type} component was successfully created using PUT with no system role information
@@ -9389,7 +9387,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # PUT Node with system role information
   - name: Create {type} component using PUT with system role information
@@ -9476,7 +9474,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
 ---
 test_name: Verify Component operations on (Virtual)Nodes with system role information in SLS
@@ -9606,7 +9604,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # POST Create node with System role information
   - name: Create {type} component using POST with system role information
@@ -9694,7 +9692,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # PUT Node with no system role information
   - name: Create Node component using PUT with no system role information
@@ -9746,11 +9744,27 @@ stages:
               Role:
                 type: str
                 enum:
-                - "Compute" # This is the role that nodes get by default
+                - "Application"
+              SubRole:
+                type: str
+                enum:
+                - "Storage"
               NID:
                 type: int
                 enum:
-                - !int "{bogus_nid}" # Bogus NID computed from xname
+                - 9999999967
+              Class:
+                type: str
+                enum:
+                - "River"
+              Arch:
+                type: str
+                enum:
+                - "X86"
+              NetType:
+                type: str
+                enum:
+                - "Sling"
 
   # DELETE Node
   - name: Remove test {type} from State Components
@@ -9759,7 +9773,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # PUT Node with system role information
   - name: Create {type} component using PUT with system role information
@@ -9846,7 +9860,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
 
   # Remove test node from SLS
@@ -9856,7 +9870,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
 ---
 test_name: Verify Component operations on (Virtual)Nodes with system role information in NodeMaps
@@ -9979,7 +9993,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # POST Create node with System role information
   - name: Create {type} component using POST with system role information
@@ -10067,7 +10081,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
   # PUT Node with no system role information
   - name: Create Node component using PUT with no system role information
@@ -10119,11 +10133,27 @@ stages:
               Role:
                 type: str
                 enum:
-                - "Compute" # This is the role that nodes get by default
+                - "Application"
+              SubRole:
+                type: str
+                enum:
+                - "Storage"
               NID:
                 type: int
                 enum:
-                - !int "{bogus_nid}" # Bogus NID computed from xname
+                - 9999999967
+              Class:
+                type: str
+                enum:
+                - "River"
+              Arch:
+                type: str
+                enum:
+                - "X86"
+              NetType:
+                type: str
+                enum:
+                - "Sling"
 
   # DELETE Node
   - name: Remove test {type} from State Components
@@ -10132,7 +10162,7 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200 
 
   # PUT Node with system role information
   - name: Create {type} component using PUT with system role information
@@ -10219,14 +10249,14 @@ stages:
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
 
 
-  # Remove test node from SLS
-  - name: Remove the test {type} from SLS
+  # Remove test node from NodeMaps
+  - name: Remove the test {type} from NodeMaps
     request:
-      url: "{sls_base_url}/v1/hardware/{xname}"
+      url: "{hsm_base_url}/hsm/v2/Defaults/NodeMaps/{xname}"
       method: DELETE
       verify: !bool "{verify}"
     response:
-      status_code: 201
+      status_code: 200
