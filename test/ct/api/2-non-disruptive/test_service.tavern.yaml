@@ -256,6 +256,7 @@ stages:
                       - "SMSBox"
                       - "StorageGroup"
                       - "System"
+                      - "VirtualNode"
 
   # GET /service/values/arch API response code
   # GET /service/values/arch API response body
@@ -538,3 +539,4 @@ stages:
                       - "SMSBox"
                       - "StorageGroup"
                       - "System"
+                      - "VirtualNode"

@@ -1437,6 +1437,7 @@ paths:
             - HSNLink
             - HSNConnector
             - INVALID
+            - VirtualNode
         - $ref: '#/parameters/compStateParam'
         - $ref: '#/parameters/compFlagParam'
         - $ref: '#/parameters/compRoleParam'
@@ -11808,6 +11809,7 @@ definitions:
       - HSNLink
       - HSNConnector
       - INVALID
+      - VirtualNode
     type: string
     readOnly: true
     example: Node
@@ -12096,6 +12098,7 @@ parameters:
       - HSNLink
       - HSNConnector
       - INVALID
+      - VirtualNode
   compStateParam:
     name: state
     in: query

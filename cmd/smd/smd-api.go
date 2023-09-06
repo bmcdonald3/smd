@@ -31,11 +31,11 @@ import (
 	"strings"
 
 	base "github.com/Cray-HPE/hms-base/v2"
-	"github.com/Cray-HPE/hms-xname/xnametypes"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	"github.com/Cray-HPE/hms-smd/v2/internal/hmsds"
 	rf "github.com/Cray-HPE/hms-smd/v2/pkg/redfish"
 	"github.com/Cray-HPE/hms-smd/v2/pkg/sm"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 
 	"github.com/gorilla/mux"
 )
@@ -506,7 +506,7 @@ func (s *SmD) doComponentsPost(w http.ResponseWriter, r *http.Request) {
 	}
 	// Get the nid and role defaults for all node types
 	for _, comp := range compsIn.Components {
-		if comp.Type == xnametypes.Node.String() {
+		if comp.Type == xnametypes.Node.String() || comp.Type == xnametypes.VirtualNode.String() {
 			if len(comp.Role) == 0 || len(comp.NID) == 0 || len(comp.Class) == 0 {
 				newNID, defRole, defSubRole, defClass := s.GetCompDefaults(comp.ID, base.RoleCompute.String(), "", "")
 				if len(comp.Role) == 0 {
@@ -1051,7 +1051,7 @@ func (s *SmD) doComponentPut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Get the nid and role defaults for all node types
-	if component.Type == xnametypes.Node.String() {
+	if component.Type == xnametypes.Node.String() || component.Type == xnametypes.VirtualNode.String() {
 		if len(component.Role) == 0 || len(component.NID) == 0 || len(component.Class) == 0 {
 			newNID, defRole, defSubRole, defClass := s.GetCompDefaults(component.ID, base.RoleCompute.String(), "", "")
 			if len(component.Role) == 0 {
@@ -4145,8 +4145,9 @@ func (s *SmD) doGroupDelete(w http.ResponseWriter, r *http.Request) {
 // To update the tags array and/or description, a PATCH operation can be used.
 // Omitted fields are not updated.
 // NOTE: This cannot be used to completely replace the members list. Rather,
-//       individual members can be removed or added with the
-//       POST/DELETE {group_label}/members API.
+//
+//	individual members can be removed or added with the
+//	POST/DELETE {group_label}/members API.
 func (s *SmD) doGroupPatch(w http.ResponseWriter, r *http.Request) {
 	var groupPatch sm.GroupPatch
 	vars := mux.Vars(r)
@@ -4570,8 +4571,9 @@ func (s *SmD) doPartitionDelete(w http.ResponseWriter, r *http.Request) {
 // To update the tags array and/or description, a PATCH operation can be used.
 // Omitted fields are not updated.
 // NOTE: This cannot be used to completely replace the members list. Rather,
-//       individual members can be removed or added with the POST/DELETE
-//       {partition_name}/members API.
+//
+//	individual members can be removed or added with the POST/DELETE
+//	{partition_name}/members API.
 func (s *SmD) doPartitionPatch(w http.ResponseWriter, r *http.Request) {
 	var partPatch sm.PartitionPatch
 	vars := mux.Vars(r)
