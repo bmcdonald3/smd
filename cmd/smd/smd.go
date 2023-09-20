@@ -896,7 +896,15 @@ func main() {
 
 	// Start monitoring message bus, if configured
 	s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
-	go s.StartRFEventMonitor()
+	if s.msgbusListen != "" {
+		if err := s.MsgBusConfig(s.msgbusListen); err != nil {
+			s.LogAlways("WARNING: Cannot parse message bus host: %s", err)
+		} else {
+			go s.StartRFEventMonitor()
+		}
+	} else {
+		s.LogAlways("No message bus host given (msg-host == \"%v\"). Not listening for events on the message bus.", s.msgbusListen)
+	}
 
 	// Start the component lock cleanup thread
 	s.CompReservationCleanup()
@@ -911,8 +919,9 @@ func main() {
 	s.DiscoveryUpdater()
 
 	// Start serving HTTP
+	var router *mux.Router
 	routes := s.generateRoutes()
-	router := s.NewRouter(routes)
+	router = s.NewRouter(routes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
 	s.LogAlways("Listening for connections.")
