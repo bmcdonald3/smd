@@ -106,6 +106,7 @@ type SmD struct {
 	hwInvHistAgeMax int
 	smapCompEP      *SyncMap
 	genTestPayloads string
+	disableDiscovery bool
 
 	// v2 APIs
 	apiRootV2           string
@@ -550,6 +551,7 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbHost, "dbhost", "", "Database hostname")
 	flag.StringVar(&s.dbPortStr, "dbport", "", "Database port")
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
+	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -915,8 +917,10 @@ func main() {
 	s.srfpJobList = make(map[string]*Job, 0)
 	s.discMap = make(map[string]int, 0)
 	s.JobSync()
-	s.DiscoverySync()
-	s.DiscoveryUpdater()
+	if !s.disableDiscovery {
+		s.DiscoverySync()
+		s.DiscoveryUpdater()
+	}
 
 	// Start serving HTTP
 	var router *mux.Router
