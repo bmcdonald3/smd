@@ -832,7 +832,7 @@ func main() {
 				time.Sleep(5 * time.Second)
 				continue
 			}
-			err = pgmigrate.ApplyMigrations("file:///persistent_migrations", migrateConnection)
+			err = pgmigrate.ApplyMigrations("/persistent_migrations", migrateConnection)
 			if err != nil {
 				s.LogAlways("Error applying migrations: %s", err)
 				time.Sleep(5 * time.Second)
