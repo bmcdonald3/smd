@@ -47,7 +47,8 @@ builds:
       - dynamic
 
 dockers:
-  - image_templates:
+  - 
+    image_templates:
       - bikeshack/{{.ProjectName}}:latest
       - bikeshack/{{.ProjectName}}:{{ .Tag }}
       - bikeshack/{{.ProjectName}}:{{ .Major }}
@@ -58,6 +59,11 @@ dockers:
       - "--label=org.opencontainers.image.title={{.ProjectName}}"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
+    extra_files:
+      - LICENSE
+      - CHANGELOG.md
+      - README.md
+      - migrations/
 
 
 
