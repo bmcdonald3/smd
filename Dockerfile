@@ -10,6 +10,8 @@ COPY smd-init /
 RUN mkdir /persistent_migrations
 COPY migrations/* /persistent_migrations/
 
+EXPOSE 27779
+
 # nobody 65534:65534
 USER 65534:65534
 
