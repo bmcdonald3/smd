@@ -20,6 +20,7 @@ require (
 
 require (
 	github.com/confluentinc/confluent-kafka-go v1.7.0 // indirect
+	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/stretchr/testify v1.8.2 // indirect
 )
 
@@ -31,6 +32,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.0 // indirect
 	github.com/go-test/deep v1.1.0 // indirect
+	github.com/gorilla/handlers v1.5.1
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.4.0 // indirect
