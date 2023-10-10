@@ -2479,7 +2479,9 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 	// Do discovery if needed on new Endpoints.  Should never need to
 	// force this because the endpoint should always be new, else we would
 	// have already failed the operation.
-	go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
+	if !s.disableDiscovery {
+		go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
+	}
 
 	// Send a URI array of the created resources, along with 201 (created).
 	uris := eps.GetResourceURIArray(s.redfishEPBaseV2)

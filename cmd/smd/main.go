@@ -105,9 +105,10 @@ type SmD struct {
 	msgbusListen string
 	logLevelIn   int
 
-	hwInvHistAgeMax int
-	smapCompEP      *SyncMap
-	genTestPayloads string
+	hwInvHistAgeMax  int
+	smapCompEP       *SyncMap
+	genTestPayloads  string
+	disableDiscovery bool
 
 	// v2 APIs
 	apiRootV2           string
@@ -555,6 +556,7 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbPortStr, "dbport", "", "Database port")
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
+	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -907,7 +909,16 @@ func main() {
 	s.wpRFEvent.Run()
 
 	// Start monitoring message bus, if configured
-	s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
+	// s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
+	// if s.msgbusListen != "" {
+		// if err := s.MsgBusConfig(s.msgbusListen); err != nil {
+			// s.LogAlways("WARNING: Cannot parse message bus host: %s", err)
+		// } else {
+			// go s.StartRFEventMonitor()
+		// }
+	// } else {
+		// s.LogAlways("No message bus host given (msg-host == \"%v\"). Not listening for events on the message bus.", s.msgbusListen)
+	// }
 
 	// Start the component lock cleanup thread
 	s.CompReservationCleanup()
@@ -918,12 +929,15 @@ func main() {
 	s.srfpJobList = make(map[string]*Job, 0)
 	s.discMap = make(map[string]int, 0)
 	s.JobSync()
-	s.DiscoverySync()
-	s.DiscoveryUpdater()
+	if !s.disableDiscovery {
+		s.DiscoverySync()
+		s.DiscoveryUpdater()
+	}
 
 	// Start serving HTTP
+	var router *mux.Router
 	routes := s.generateRoutes()
-	router := s.NewRouter(routes)
+	router = s.NewRouter(routes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
 	s.LogAlways("Listening for connections at: ", s.httpListen)
