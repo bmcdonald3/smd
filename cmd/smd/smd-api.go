@@ -2500,7 +2500,10 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 		go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
 	}
 
-	err = s.parseRfRequestData(w, body)
+	err = s.parseRedfishPostData(w, body)
+	if err != nil {
+
+	}
 
 	// Send a URI array of the created resources, along with 201 (created).
 	uris := eps.GetResourceURIArray(s.redfishEPBaseV2)
@@ -2510,7 +2513,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 
 // Parse the incoming JSON data, extracts specific keys, and writes the data
 // to the database
-func (s *SmD) parseRfRequestData(w http.ResponseWriter, data []byte) error {
+func (s *SmD) parseRedfishPostData(w http.ResponseWriter, data []byte) error {
 	s.lg.Printf("parsing request data...")
 	var obj map[string]interface{}
 	err := json.Unmarshal(data, &obj)
