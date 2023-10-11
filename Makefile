@@ -26,7 +26,7 @@ VERSION ?= $(shell cat .version)
 
 all: image unittest ct snyk ct_image
 
-.PHONY : all image unittest snyk ct ct_image binaries coverage
+.PHONY : all image unittest snyk ct ct_image binaries coverage docker
 
 image:
 	docker build ${NO_CACHE} --pull ${DOCKER_ARGS} --tag '${NAME}:${VERSION}' -f Dockerfile .
@@ -43,22 +43,38 @@ ct:
 ct_image:
 	docker build --no-cache -f test/ct/Dockerfile test/ct/ --tag hms-smd-test:${VERSION} 
 
-binaries: smd smd-init smd-loader
+binaries: smd smd-init smd-loader native
 
 
 
-BUILD := `git rev-parse HEAD --short`
+BUILD := `git rev-parse --short HEAD`
 VERSION := `git describe --tags --abbrev=0`
-LDFLAGS=-ldflags "-X=$(GIT)build.Build=$(BUILD) -X=$(GIT)build.Version=$(VERSION)"
+LDFLAGS=-ldflags "-X=$(GIT)main.commit=$(BUILD) -X=$(GIT)main.version=$(VERSION) -X=$(GIT)main.date=$(shell date +%Y-%m-%d:%H:%M:%S)"
 
-smd:
-	go build -v $(LDFLAGS) ./cmd/smd
+smd: cmd/smd/*.go
+	GOOS=linux GOARCH=amd64 go build -o smd -v -tags musl $(LDFLAGS) ./cmd/smd
 
-smd-init:
-	go build -v $(LDFLAGS) ./cmd/smd-init
+smd-init: cmd/smd-init/*.go
+	GOOS=linux GOARCH=amd64 go build -o smd-init -v -tags musl $(LDFLAGS) ./cmd/smd-init
 
-smd-loader:
-	go build -v $(LDFLAGS) ./cmd/smd-loader
+native:
+	go build -o smd-init-native -v -tags musl $(LDFLAGS) ./cmd/smd-init
+	go build -o smd-native -v -tags musl $(LDFLAGS) ./cmd/smd
+	go build -o smd-loader-native -v -tags musl $(LDFLAGS) ./cmd/smd-loader
+
+
+
+smd-loader: cmd/smd-loader/*.go
+	GOOS=linux GOARCH=amd64 go build -o smd-loader -v -tags musl $(LDFLAGS) ./cmd/smd-loader
 
 coverage:
 	go test -cover -v -tags musl ./cmd/* ./internal/* ./pkg/*
+
+clean:
+	rm -f smd smd-init smd-loader smd-native smd-init-native
+	go clean -testcache
+	go clean -cache
+	go clean -modcache
+
+docker: smd smd-init smd-loader
+	docker build -t bikeshack/smd:$(VERSION)-dirty .

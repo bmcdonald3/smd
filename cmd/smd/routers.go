@@ -24,8 +24,10 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"strings"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 )
 
@@ -40,13 +42,15 @@ type Routes []Route
 
 func (s *SmD) NewRouter(routes []Route) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
+	router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 	for _, route := range routes {
 		var handler http.Handler
 		handler = route.HandlerFunc
 		if s.lgLvl >= LOG_DEBUG ||
 			(!strings.Contains(route.Name, "doReadyGet") &&
-			!strings.Contains(route.Name, "doLivenessGet")) {
-			handler = s.Logger(handler, route.Name)
+				!strings.Contains(route.Name, "doLivenessGet")) {
+			handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+			// handler = s.Logger(handler, route.Name)
 		}
 
 		router.
