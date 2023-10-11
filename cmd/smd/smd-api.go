@@ -25,6 +25,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -2499,10 +2500,91 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 		go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
 	}
 
+	err = s.parseRfRequestData(w, body)
+
 	// Send a URI array of the created resources, along with 201 (created).
 	uris := eps.GetResourceURIArray(s.redfishEPBaseV2)
 	sendJsonNewResourceIDArray(w, s.redfishEPBaseV2, uris)
 	return
+}
+
+// Parse the incoming JSON data, extracts specific keys, and writes the data
+// to the database
+func (s *SmD) parseRfRequestData(w http.ResponseWriter, data []byte) error {
+	s.lg.Printf("parsing request data...")
+	var obj map[string]interface{}
+	err := json.Unmarshal(data, &obj)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to parse request data: %v", err))
+	}
+
+	// try and decode component and upsert
+	cep := sm.ComponentEndpoint{
+		ComponentDescription: 		rf.ComponentDescription{
+			ID: obj["ID"].(string),
+			MACAddr: obj["MACAddr"].(string),
+		},
+		Enabled: 	true,
+	}
+	
+	err = json.Unmarshal(data, &cep.ComponentDescription)
+	// err = cep.DecodeComponentInfo(data)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to decode component info: %v", err))
+		return err
+	}
+	err = s.db.UpsertCompEndpoint(&cep)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to upsert component endpoint: %v", err))
+		return err
+	}
+	
+	// parse json data for inventory
+	// inventoryJson, foundInventory := obj["Inventory"]
+	// if foundInventory {
+	// 	var inventory map[string]interface{}
+	// 	json.Unmarshal(inventoryJson, &inventory)
+
+	// }
+
+	// // parse json data for chassis
+	// chassisJson, foundChassis := obj["Chassis"]
+	// if foundChassis {
+	// 	var chassisList []json.RawMessage
+	// 	json.Unmarshal(chassisJson, &chassisList)
+	// 	for _, c := range chassisList {
+	// 		var chassis rf.Chassis
+	// 		json.Unmarshal(c, &chassis)
+
+	// 		ep := &rf.RedfishEP{}
+	// 		rid := rf.ResourceID{Oid: fmt.Sprint(chassis.Oid)}
+	// 		epChassis := rf.NewEpChassis(ep, rid, -1)
+	// 		epChassis.InventoryData = rf.InventoryData{
+				
+	// 		}
+	// 		epChassis.ChassisRF = chassis
+	// 		epChassis.Power = &rf.EpPower{}
+	// 	}
+	// }
+	
+
+	// // update found data in database
+	// ep := &sm.RedfishEndpoint{
+	// 	RedfishEPDescription: rf.RedfishEPDescription{
+
+	// 	},
+	// 	ComponentEndpoints: []*sm.ComponentEndpoint{
+
+	// 	},
+	// 	ServiceEndpoints: []*sm.ServiceEndpoint{
+
+	// 	},
+	// }
+	// s.db.UpdateRFEndpoint(ep)
+	return nil
 }
 
 /////////////////////////////////////////////////////////////////////////////
