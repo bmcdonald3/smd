@@ -2527,64 +2527,60 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 	// 	}
 	// }
 
-	// parse json data for inventory
-	// inventoryJson, foundInventory := obj["Inventory"]
-	// if foundInventory {
-		
-	// }
-
-	
-
-	// // interfaces
-	// interfaces, foundInterfaces := obj["Interfaces"]
-	// if foundInterfaces {
-
-	// }
-
-	// try and decode component and upsert
-
 	// systems
-	interfaces, foundInterfaces := obj["Interfaces"]
-	// systems, foundSystems := obj["Systems"]
-	if foundInterfaces {
-		for _, i := range interfaces.([]any) {
-			in := i.(map[string]any)
-			cep := sm.ComponentEndpoint{
-				ComponentDescription: rf.ComponentDescription{
+	systems, foundSystems := obj["Systems"]
+	if foundSystems {
+		for _, system := range systems.([]any) {
+			// component
+			data, foundData := system.(map[string]any)["Data"]
+			if foundData {
+				// get system status (specifically if it is enabled?)
+				status, ok := data.(map[string]any)["Status"].(map[string]any)["State"]
+				enabled := ok && status == "Enabled"
+				component := base.Component {
 					ID: obj["ID"].(string),
-					Type: "Node",
-					RedfishType: "ComputerSystem",
-					RedfishSubtype: "BMC",
-					MACAddr: in["MACAddress"].(string),
-					// UUID: obj["UUID"].(string),
-					// OdataID: "/redfish/v1/",
-					RfEndpointID: obj["ID"].(string),
-				},
-				RfEndpointFQDN: in["FQDN"].(string),
-				Enabled: 	true,
+					Type: "ComputerSystem",
+					Enabled: &enabled,
+				}
+				_, err := s.db.InsertComponent(&component)
+				if err != nil {
+					sendJsonError(w, http.StatusInternalServerError,
+						fmt.Sprintf("failed to insert component: %v", err))
+					return err
+				}
 			}
 
-			enabled := true
-			component := base.Component {
-				ID: obj["ID"].(string),
-				Type: "ComputerSystem",
-				Enabled: &enabled,
-			}
-			rowsAffected, err := s.db.InsertComponent(&component)
-			if err != nil {
-				sendJsonError(w, http.StatusInternalServerError,
-					fmt.Sprintf("failed to insert component: %v", err))
-				return err
-			}
-			s.lg.Printf("rows affected: %d", rowsAffected)
-			err = s.db.UpsertCompEndpoint(&cep)
-			if err != nil {
-				sendJsonError(w, http.StatusInternalServerError,
-					fmt.Sprintf("failed to upsert component endpoint: %v", err))
-				return err
+			// component endpoints
+			interfaces, foundInterfaces := system.(map[string]any)["EthernetInterfaces"]
+			if foundInterfaces {
+				for _, i := range interfaces.([]any) {
+					in := i.(map[string]any)
+					cep := sm.ComponentEndpoint{
+						ComponentDescription: rf.ComponentDescription{
+							ID: obj["ID"].(string),
+							Type: "Node",
+							RedfishType: "ComputerSystem",
+							RedfishSubtype: "BMC",
+							MACAddr: in["MACAddress"].(string),
+							// UUID: obj["UUID"].(string),
+							// OdataID: "/redfish/v1/",
+							RfEndpointID: obj["ID"].(string),
+						},
+						RfEndpointFQDN: in["FQDN"].(string),
+						Enabled: 	true,
+					}
+
+					err = s.db.UpsertCompEndpoint(&cep)
+					if err != nil {
+						sendJsonError(w, http.StatusInternalServerError,
+							fmt.Sprintf("failed to upsert component endpoint: %v", err))
+						return err
+					}
+				}
 			}
 		}
 	}
+	
 	
 	// err = json.Unmarshal(data, &cep.ComponentDescription)
 	// err = cep.DecodeComponentInfo(data)
