@@ -2541,7 +2541,8 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 				enabled := ok && status == "LinkUp"
 				component := base.Component {
 					ID: obj["ID"].(string),
-					Type: "ComputerSystem",
+					// State: "On",
+					Type: "Node",
 					Enabled: &enabled,
 				}
 				_, err := s.db.InsertComponent(&component)
@@ -2562,7 +2563,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 					ID: obj["ID"].(string),
 					Type: "Node",
 					RedfishType: "ComputerSystem",
-					RedfishSubtype: "Physical",
+					RedfishSubtype: data.(map[string]any)["SystemType"].(string),
 					UUID: uuid.(string),
 					RfEndpointID: obj["ID"].(string),
 				},
