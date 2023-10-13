@@ -2533,12 +2533,10 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 		for _, system := range systems.([]any) {
 			// component
 			data, foundData := system.(map[string]any)["Data"]
+			status, ok := data.(map[string]any)["Status"].(map[string]any)["State"]
+			enabled := ok && status == "Enabled"
 			if foundData {
-				// get system status (specifically if it is enabled?)
-				// status, ok := data.(map[string]any)["Status"].(map[string]any)["State"]
-				// enabled := ok && status == "Enabled"
-				status, ok := data.(map[string]any)["LinkStatus"]
-				enabled := ok && status == "LinkUp"
+				// get ethernet interface link status
 				component := base.Component {
 					ID: obj["ID"].(string),
 					// State: "On",
@@ -2558,6 +2556,8 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 			if !ok {
 				uuid = ""
 			}
+			// get system status (specifically if it is enabled?)
+			
 			cep := sm.ComponentEndpoint{
 				ComponentDescription: rf.ComponentDescription{
 					ID: obj["ID"].(string),
@@ -2570,7 +2570,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 				RfEndpointFQDN: "",
 				URL: data.(map[string]any)["@odata.id"].(string),
 				ComponentEndpointType: "ComponentEndpointComputerSystem",
-				Enabled: 	true,
+				Enabled: 	enabled,
 				RedfishSystemInfo: nil,
 			}
 
@@ -2580,7 +2580,9 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 				nicInfo := []*rf.EthernetNICInfo{}
 				for _, i := range interfaces.([]any) {
 					in := i.(map[string]any)
+					enabled := in["InterfaceEnabled"].(bool)
 					nicInfo = append(nicInfo, &rf.EthernetNICInfo{
+						InterfaceEnabled: &enabled,
 						RedfishId: in["Id"].(string),
 						Oid: in["@odata.id"].(string),
 						Description: in["Description"].(string),
