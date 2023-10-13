@@ -2535,8 +2535,10 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 			data, foundData := system.(map[string]any)["Data"]
 			if foundData {
 				// get system status (specifically if it is enabled?)
-				status, ok := data.(map[string]any)["Status"].(map[string]any)["State"]
-				enabled := ok && status == "Enabled"
+				// status, ok := data.(map[string]any)["Status"].(map[string]any)["State"]
+				// enabled := ok && status == "Enabled"
+				status, ok := data.(map[string]any)["LinkStatus"]
+				enabled := ok && status == "LinkUp"
 				component := base.Component {
 					ID: obj["ID"].(string),
 					Type: "ComputerSystem",
@@ -2549,34 +2551,53 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 					return err
 				}
 			}
-
+			
 			// component endpoints
+			uuid, ok := data.(map[string]any)["UUID"]
+			if !ok {
+				uuid = ""
+			}
+			cep := sm.ComponentEndpoint{
+				ComponentDescription: rf.ComponentDescription{
+					ID: obj["ID"].(string),
+					Type: "Node",
+					RedfishType: "ComputerSystem",
+					RedfishSubtype: "Physical",
+					UUID: uuid.(string),
+					RfEndpointID: obj["ID"].(string),
+				},
+				RfEndpointFQDN: "",
+				URL: data.(map[string]any)["@odata.id"].(string),
+				ComponentEndpointType: "ComponentEndpointComputerSystem",
+				Enabled: 	true,
+				RedfishSystemInfo: nil,
+			}
+
+			// add ethernet interfaces to component endpoint
 			interfaces, foundInterfaces := system.(map[string]any)["EthernetInterfaces"]
 			if foundInterfaces {
+				nicInfo := []*rf.EthernetNICInfo{}
 				for _, i := range interfaces.([]any) {
 					in := i.(map[string]any)
-					cep := sm.ComponentEndpoint{
-						ComponentDescription: rf.ComponentDescription{
-							ID: obj["ID"].(string),
-							Type: "Node",
-							RedfishType: "ComputerSystem",
-							RedfishSubtype: "BMC",
-							MACAddr: in["MACAddress"].(string),
-							// UUID: obj["UUID"].(string),
-							// OdataID: "/redfish/v1/",
-							RfEndpointID: obj["ID"].(string),
-						},
-						RfEndpointFQDN: in["FQDN"].(string),
-						Enabled: 	true,
-					}
-
-					err = s.db.UpsertCompEndpoint(&cep)
-					if err != nil {
-						sendJsonError(w, http.StatusInternalServerError,
-							fmt.Sprintf("failed to upsert component endpoint: %v", err))
-						return err
-					}
+					nicInfo = append(nicInfo, &rf.EthernetNICInfo{
+						RedfishId: in["Id"].(string),
+						Oid: in["@odata.id"].(string),
+						Description: in["Description"].(string),
+						MACAddress: in["MACAddress"].(string),
+					})
 				}
+				cep.RedfishSystemInfo = &rf.ComponentSystemInfo{
+					Actions: nil,
+					EthNICInfo: nicInfo,
+				}
+			}
+
+			// finally, insert component endpoint into DB
+			err = s.db.UpsertCompEndpoint(&cep)
+			if err != nil {
+				sendJsonError(w, http.StatusInternalServerError,
+					fmt.Sprintf("failed to upsert component endpoint: %v", err))
+				return err
 			}
 		}
 	}
