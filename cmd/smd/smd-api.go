@@ -2586,7 +2586,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 						RedfishId: in["Id"].(string),
 						Oid: in["@odata.id"].(string),
 						Description: in["Description"].(string),
-						MACAddress: in["MACAddress"].(string),
+						MACAddress: strings.ToLower(in["MACAddress"].(string)),
 					})
 				}
 				cep.RedfishSystemInfo = &rf.ComponentSystemInfo{
