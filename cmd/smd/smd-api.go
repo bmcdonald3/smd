@@ -2529,7 +2529,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 
 	// systems
 	systems, foundSystems := obj["Systems"]
-	if foundSystems {
+	if foundSystems && systems != nil {
 		for _, system := range systems.([]any) {
 			// component
 			data, foundData := system.(map[string]any)["Data"]
