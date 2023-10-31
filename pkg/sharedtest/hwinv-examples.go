@@ -25,7 +25,7 @@ package sharedtest
 import (
 	"encoding/json"
 
-	"github.com/bikeshack/hms-smd/v2/pkg/sm"
+	"github.com/OpenChami/hms-smd/v2/pkg/sm"
 )
 
 ///////////////////////////////////////////////////////////////////////////////

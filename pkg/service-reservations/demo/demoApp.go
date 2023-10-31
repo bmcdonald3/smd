@@ -25,7 +25,7 @@ package main
 import (
 	"time"
 
-	reservation "github.com/bikeshack/hms-smd/v2/pkg/service-reservations"
+	reservation "github.com/OpenChami/hms-smd/v2/pkg/service-reservations"
 	"github.com/sirupsen/logrus"
 )
 

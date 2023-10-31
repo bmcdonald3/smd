@@ -25,8 +25,8 @@ package sm_test
 import (
 	"testing"
 
-	stest "github.com/bikeshack/hms-smd/v2/pkg/sharedtest"
-	"github.com/bikeshack/hms-smd/v2/pkg/sm"
+	stest "github.com/OpenChami/hms-smd/v2/pkg/sharedtest"
+	"github.com/OpenChami/hms-smd/v2/pkg/sm"
 )
 
 ///////////////////////////////////////////////////////////////////////////////

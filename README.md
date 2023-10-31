@@ -211,11 +211,11 @@ http://web.us.cray.com/~ekoen/cray-portal/public
 
 Latest detailed API usage examples:
 
-https://github.com/bikeshack/hms-smd/blob/master/docs/examples.adoc  (current)
+https://github.com/OpenChami/hms-smd/blob/master/docs/examples.adoc  (current)
 
 Latest swagger.yaml (if you would prefer to use the OpenAPI viewer of your choice):
 
-https://github.com/bikeshack/hms-smd/blob/master/api/swagger_v2.yaml (current)
+https://github.com/OpenChami/hms-smd/blob/master/api/swagger_v2.yaml (current)
 
 ## SMD CT Testing
 
