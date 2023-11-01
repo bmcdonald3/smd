@@ -35,8 +35,8 @@ import (
 	"time"
 
 	base "github.com/Cray-HPE/hms-base"
-	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
-	"github.com/OpenCHAMI/smd/v2/pkg/sm"
+	"github.com/OpenCHAMI/smd/pkg/rf"
+	"github.com/OpenCHAMI/smd/pkg/sm"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/lib/pq"

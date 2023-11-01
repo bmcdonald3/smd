@@ -25,7 +25,7 @@ package sharedtest
 import (
 	"encoding/json"
 
-	"github.com/OpenCHAMI/smd/v2/pkg/sm"
+	"github.com/OpenCHAMI/smd/pkg/sm"
 )
 
 ///////////////////////////////////////////////////////////////////////////////
