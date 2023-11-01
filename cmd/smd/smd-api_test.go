@@ -39,7 +39,7 @@ import (
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
-	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
+	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	stest "github.com/OpenCHAMI/smd/v2/pkg/sharedtest"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 

@@ -44,7 +44,7 @@ import (
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
 	"github.com/OpenCHAMI/smd/v2/internal/pgmigrate"
 	"github.com/OpenCHAMI/smd/v2/internal/slsapi"
-	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
+	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-retryablehttp"

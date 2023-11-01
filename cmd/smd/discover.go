@@ -30,7 +30,7 @@ import (
 
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
-	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
+	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 )
 

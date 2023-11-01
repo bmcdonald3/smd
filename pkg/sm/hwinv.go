@@ -28,7 +28,7 @@ import (
 	"strconv"
 
 	base "github.com/Cray-HPE/hms-base"
-	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
+	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 )
 
 var ErrHWLocInvalid = base.NewHMSError("sm", "ID is empty or not a valid xname")
