@@ -40,12 +40,12 @@ import (
 	"github.com/Cray-HPE/hms-certs/pkg/hms_certs"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
-	"github.com/OpenChami/hms-smd/v2/internal/hbtdapi"
-	"github.com/OpenChami/hms-smd/v2/internal/hmsds"
-	"github.com/OpenChami/hms-smd/v2/internal/pgmigrate"
-	"github.com/OpenChami/hms-smd/v2/internal/slsapi"
-	rf "github.com/OpenChami/hms-smd/v2/pkg/redfish"
-	"github.com/OpenChami/hms-smd/v2/pkg/sm"
+	"github.com/OpenChami/smd/v2/internal/hbtdapi"
+	"github.com/OpenChami/smd/v2/internal/hmsds"
+	"github.com/OpenChami/smd/v2/internal/pgmigrate"
+	"github.com/OpenChami/smd/v2/internal/slsapi"
+	rf "github.com/OpenChami/smd/v2/pkg/redfish"
+	"github.com/OpenChami/smd/v2/pkg/sm"
 	"github.com/gorilla/mux"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
@@ -911,13 +911,13 @@ func main() {
 	// Start monitoring message bus, if configured
 	// s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
 	// if s.msgbusListen != "" {
-		// if err := s.MsgBusConfig(s.msgbusListen); err != nil {
-			// s.LogAlways("WARNING: Cannot parse message bus host: %s", err)
-		// } else {
-			// go s.StartRFEventMonitor()
-		// }
+	// if err := s.MsgBusConfig(s.msgbusListen); err != nil {
+	// s.LogAlways("WARNING: Cannot parse message bus host: %s", err)
 	// } else {
-		// s.LogAlways("No message bus host given (msg-host == \"%v\"). Not listening for events on the message bus.", s.msgbusListen)
+	// go s.StartRFEventMonitor()
+	// }
+	// } else {
+	// s.LogAlways("No message bus host given (msg-host == \"%v\"). Not listening for events on the message bus.", s.msgbusListen)
 	// }
 
 	// Start the component lock cleanup thread

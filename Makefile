@@ -41,7 +41,7 @@ ct:
 	./runCT.sh
 
 ct_image:
-	docker build --no-cache -f test/ct/Dockerfile test/ct/ --tag hms-smd-test:${VERSION} 
+	docker build --no-cache -f test/ct/Dockerfile test/ct/ --tag smd-test:${VERSION} 
 
 binaries: smd smd-init smd-loader native
 

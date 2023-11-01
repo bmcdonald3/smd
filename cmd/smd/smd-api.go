@@ -34,9 +34,9 @@ import (
 
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
-	"github.com/OpenChami/hms-smd/v2/internal/hmsds"
-	rf "github.com/OpenChami/hms-smd/v2/pkg/redfish"
-	"github.com/OpenChami/hms-smd/v2/pkg/sm"
+	"github.com/OpenChami/smd/v2/internal/hmsds"
+	rf "github.com/OpenChami/smd/v2/pkg/redfish"
+	"github.com/OpenChami/smd/v2/pkg/sm"
 
 	"github.com/gorilla/mux"
 )
@@ -2520,7 +2520,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 	// 		rid := rf.ResourceID{Oid: fmt.Sprint(rfChassis.Oid)}
 	// 		epChassis := rf.NewEpChassis(ep, rid, -1)
 	// 		epChassis.InventoryData = rf.InventoryData{
-				
+
 	// 		}
 	// 		epChassis.ChassisRF = rfChassis
 	// 		epChassis.Power = &rf.EpPower{}
@@ -2537,10 +2537,10 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 			enabled := ok && status == "Enabled"
 			if foundData {
 				// get ethernet interface link status
-				component := base.Component {
+				component := base.Component{
 					ID: obj["ID"].(string),
 					// State: "On",
-					Type: "Node",
+					Type:    "Node",
 					Enabled: &enabled,
 				}
 				_, err := s.db.InsertComponent(&component)
@@ -2550,28 +2550,28 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 					return err
 				}
 			}
-			
+
 			// component endpoints
 			uuid, ok := data.(map[string]any)["UUID"]
 			if !ok {
 				uuid = ""
 			}
 			// get system status (specifically if it is enabled?)
-			
+
 			cep := sm.ComponentEndpoint{
 				ComponentDescription: rf.ComponentDescription{
-					ID: obj["ID"].(string),
-					Type: "Node",
-					RedfishType: "ComputerSystem",
+					ID:             obj["ID"].(string),
+					Type:           "Node",
+					RedfishType:    "ComputerSystem",
 					RedfishSubtype: data.(map[string]any)["SystemType"].(string),
-					UUID: uuid.(string),
-					RfEndpointID: obj["ID"].(string),
+					UUID:           uuid.(string),
+					RfEndpointID:   obj["ID"].(string),
 				},
-				RfEndpointFQDN: "",
-				URL: data.(map[string]any)["@odata.id"].(string),
+				RfEndpointFQDN:        "",
+				URL:                   data.(map[string]any)["@odata.id"].(string),
 				ComponentEndpointType: "ComponentEndpointComputerSystem",
-				Enabled: 	enabled,
-				RedfishSystemInfo: nil,
+				Enabled:               enabled,
+				RedfishSystemInfo:     nil,
 			}
 
 			// add ethernet interfaces to component endpoint
@@ -2583,14 +2583,14 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 					enabled := in["InterfaceEnabled"].(bool)
 					nicInfo = append(nicInfo, &rf.EthernetNICInfo{
 						InterfaceEnabled: &enabled,
-						RedfishId: in["Id"].(string),
-						Oid: in["@odata.id"].(string),
-						Description: in["Description"].(string),
-						MACAddress: strings.ToLower(in["MACAddress"].(string)),
+						RedfishId:        in["Id"].(string),
+						Oid:              in["@odata.id"].(string),
+						Description:      in["Description"].(string),
+						MACAddress:       strings.ToLower(in["MACAddress"].(string)),
 					})
 				}
 				cep.RedfishSystemInfo = &rf.ComponentSystemInfo{
-					Actions: nil,
+					Actions:    nil,
 					EthNICInfo: nicInfo,
 				}
 			}
@@ -2604,8 +2604,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 			}
 		}
 	}
-	
-	
+
 	// err = json.Unmarshal(data, &cep.ComponentDescription)
 	// err = cep.DecodeComponentInfo(data)
 	// if err != nil {
@@ -2613,7 +2612,6 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 	// 		fmt.Sprintf("failed to decode component info: %v", err))
 	// 	return err
 	// }
-	
 
 	// // update found data in database
 	// ep := &sm.RedfishEndpoint{

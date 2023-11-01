@@ -49,10 +49,10 @@ builds:
 dockers:
   - 
     image_templates:
-      - bikeshack/{{.ProjectName}}:latest
-      - bikeshack/{{.ProjectName}}:{{ .Tag }}
-      - bikeshack/{{.ProjectName}}:{{ .Major }}
-      - bikeshack/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}
+      - ghcr.io/openchami/{{.ProjectName}}:latest
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}
     build_flag_templates:
       - "--pull"
       - "--label=org.opencontainers.image.created={{.Date}}"
@@ -63,7 +63,7 @@ dockers:
       - LICENSE
       - CHANGELOG.md
       - README.md
-      - migrations/*
+      - migrations/
 
 
 

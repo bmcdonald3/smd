@@ -1,5 +1,18 @@
-# Cray Hardware State Manager (smd)
+# State Management Database(smd)
 
+This is a fork of the original SMD code from [Cray-HPE/hms-smd](https://github.com/Cray-HPE/hms-smd), suitable only for experimentation and demo purposes at this point.
+
+While the OpenCHAMI smd daemon is fundamentally the same as the original from HPE, it differs in a few ways:
+
+* The vendor directory has been removed and the go version has been updated
+* Releases are handled with goreleaser and containers are published to ghcr.io
+* Additional commandline arguments are available to disable internal "threads" in favor of external daemons
+* The `/components` endpoint supports POST
+* HPE build and test frameworks are not used
+
+It still provides inventory management services for HPC systems based on BMC discovery and enumeration.
+
+The rest of this README is unchanged from the HPE version.
 __________________________________________________________________
 
 The Shasta Hardware State Manager monitors and interrogates hardware components
@@ -211,11 +224,11 @@ http://web.us.cray.com/~ekoen/cray-portal/public
 
 Latest detailed API usage examples:
 
-https://github.com/OpenChami/hms-smd/blob/master/docs/examples.adoc  (current)
+https://github.com/OpenChami/smd/blob/master/docs/examples.adoc  (current)
 
 Latest swagger.yaml (if you would prefer to use the OpenAPI viewer of your choice):
 
-https://github.com/OpenChami/hms-smd/blob/master/api/swagger_v2.yaml (current)
+https://github.com/OpenChami/smd/blob/master/api/swagger_v2.yaml (current)
 
 ## SMD CT Testing
 
@@ -503,7 +516,7 @@ be something simple.  Logging into each cray-smd pod using kubectl exec
 and doing "apk add openssh" will allow you to install ssh and use it to
 connect to external hosts, however the -D option gives an error logging in.
 In any case, you would have to reroll the values.yaml helm chart for
-cray-hms-smd (and incrememnt the version number in Chart.yaml) to add the
+cray-smd (and incrememnt the version number in Chart.yaml) to add the
 SMD_PROXY env variable (see above)
 
 ***Accessing Postgres Operator***

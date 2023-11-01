@@ -1,4 +1,4 @@
-module github.com/OpenChami/hms-smd/v2
+module github.com/OpenChami/smd/v2
 
 go 1.20
 
