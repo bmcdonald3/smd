@@ -30,7 +30,7 @@ import (
 	"strings"
 
 	base "github.com/Cray-HPE/hms-base"
-	"github.com/OpenChami/smd/v2/pkg/sm"
+	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 
 	"github.com/lib/pq"
 )

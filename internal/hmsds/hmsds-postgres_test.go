@@ -34,9 +34,9 @@ import (
 	"time"
 
 	base "github.com/Cray-HPE/hms-base"
-	rf "github.com/OpenChami/smd/v2/pkg/redfish"
-	stest "github.com/OpenChami/smd/v2/pkg/sharedtest"
-	"github.com/OpenChami/smd/v2/pkg/sm"
+	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
+	stest "github.com/OpenCHAMI/smd/v2/pkg/sharedtest"
+	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	sq "github.com/Masterminds/squirrel"
