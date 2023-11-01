@@ -24,7 +24,7 @@ package hmsds
 
 import (
 	base "github.com/Cray-HPE/hms-base"
-	"github.com/OpenChami/hms-smd/v2/pkg/sm"
+	"github.com/OpenChami/smd/v2/pkg/sm"
 )
 
 var e = base.NewHMSError("hmsds", "GenericError")

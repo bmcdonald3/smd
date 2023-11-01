@@ -35,7 +35,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/OpenChami/hms-smd/v2/pkg/sm"
+	base "github.com/Cray-HPE/hms-base"
+	"github.com/OpenChami/smd/v2/pkg/sm"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 )

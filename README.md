@@ -211,11 +211,11 @@ http://web.us.cray.com/~ekoen/cray-portal/public
 
 Latest detailed API usage examples:
 
-https://github.com/OpenChami/hms-smd/blob/master/docs/examples.adoc  (current)
+https://github.com/OpenChami/smd/blob/master/docs/examples.adoc  (current)
 
 Latest swagger.yaml (if you would prefer to use the OpenAPI viewer of your choice):
 
-https://github.com/OpenChami/hms-smd/blob/master/api/swagger_v2.yaml (current)
+https://github.com/OpenChami/smd/blob/master/api/swagger_v2.yaml (current)
 
 ## SMD CT Testing
 
@@ -503,7 +503,7 @@ be something simple.  Logging into each cray-smd pod using kubectl exec
 and doing "apk add openssh" will allow you to install ssh and use it to
 connect to external hosts, however the -D option gives an error logging in.
 In any case, you would have to reroll the values.yaml helm chart for
-cray-hms-smd (and incrememnt the version number in Chart.yaml) to add the
+cray-smd (and incrememnt the version number in Chart.yaml) to add the
 SMD_PROXY env variable (see above)
 
 ***Accessing Postgres Operator***
