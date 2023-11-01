@@ -26,7 +26,7 @@ import (
 	"encoding/json"
 
 	base "github.com/Cray-HPE/hms-base"
-	"github.com/OpenCHAMI/smd/v2/pkg/rf"
+	"github.com/OpenCHAMI/smd/pkg/rf"
 )
 
 // This is a generic link to a resource owned by state manager, i.e. a
