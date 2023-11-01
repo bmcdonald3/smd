@@ -26,7 +26,7 @@ import (
 	"encoding/json"
 
 	base "github.com/Cray-HPE/hms-base"
-	rf "github.com/OpenChami/smd/v2/pkg/redfish"
+	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
 )
 
 // This is a generic link to a resource owned by state manager, i.e. a
