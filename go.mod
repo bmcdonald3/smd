@@ -1,4 +1,4 @@
-module github.com/OpenCHAMI/smd
+module github.com/OpenCHAMI/smd/v2
 
 go 1.20
 
