@@ -1,5 +1,18 @@
-# Cray Hardware State Manager (smd)
+# State Management Database(smd)
 
+This is a fork of the original SMD code from [Cray-HPE/hms-smd](https://github.com/Cray-HPE/hms-smd), suitable only for experimentation and demo purposes at this point.
+
+While the OpenCHAMI smd daemon is fundamentally the same as the original from HPE, it differs in a few ways:
+
+* The vendor directory has been removed and the go version has been updated
+* Releases are handled with goreleaser and containers are published to ghcr.io
+* Additional commandline arguments are available to disable internal "threads" in favor of external daemons
+* The `/components` endpoint supports POST
+* HPE build and test frameworks are not used
+
+It still provides inventory management services for HPC systems based on BMC discovery and enumeration.
+
+The rest of this README is unchanged from the HPE version.
 __________________________________________________________________
 
 The Shasta Hardware State Manager monitors and interrogates hardware components
