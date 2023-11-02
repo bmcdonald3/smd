@@ -34,9 +34,9 @@ import (
 	"time"
 
 	base "github.com/Cray-HPE/hms-base"
-	"github.com/OpenCHAMI/smd/pkg/rf"
-	stest "github.com/OpenCHAMI/smd/pkg/sharedtest"
-	"github.com/OpenCHAMI/smd/pkg/sm"
+	"github.com/OpenCHAMI/smd/v2/pkg/rf"
+	stest "github.com/OpenCHAMI/smd/v2/pkg/sharedtest"
+	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	sq "github.com/Masterminds/squirrel"

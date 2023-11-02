@@ -38,10 +38,10 @@ import (
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
-	"github.com/OpenCHAMI/smd/internal/hmsds"
-	"github.com/OpenCHAMI/smd/pkg/rf"
-	stest "github.com/OpenCHAMI/smd/pkg/sharedtest"
-	"github.com/OpenCHAMI/smd/pkg/sm"
+	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
+	"github.com/OpenCHAMI/smd/v2/pkg/rf"
+	stest "github.com/OpenCHAMI/smd/v2/pkg/sharedtest"
+	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 
 	"github.com/gorilla/mux"
 )
