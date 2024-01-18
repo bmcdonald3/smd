@@ -7,15 +7,13 @@ on:
   push:
     tags:
       - v*
-
+      
+permissions: write-all # Necessary for the generate-build-provenance action with containers
 
 jobs:
 
   build:
-    permissions: 
-      id-token: write
-      packages: write
-      contents: write
+
 
     runs-on: ubuntu-latest
 
