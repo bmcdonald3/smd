@@ -38,7 +38,6 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 
-	"github.com/go-chi/chi/mux"
 	"github.com/gorilla/mux"
 )
 

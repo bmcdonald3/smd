@@ -27,8 +27,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/go-chi/chi"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 )
 
 type Route struct {
@@ -40,27 +41,82 @@ type Route struct {
 
 type Routes []Route
 
-func (s *SmD) NewRouter(routes []Route) *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-	router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
-	for _, route := range routes {
-		var handler http.Handler
-		handler = route.HandlerFunc
-		if s.lgLvl >= LOG_DEBUG ||
-			(!strings.Contains(route.Name, "doReadyGet") &&
-				!strings.Contains(route.Name, "doLivenessGet")) {
-			handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-			// handler = s.Logger(handler, route.Name)
-		}
+var tokenAuth *jwtauth.JWTAuth
 
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
+func init() {
+	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
+
+}
+
+func (s *SmD) NewRouter(routes []Route, requireAuth bool) *chi.Mux {
+
+	// router := mux.NewRouter().StrictSlash(true)
+	router := chi.NewRouter()
+	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
+	}))
+
+	if requireAuth {
+		router.Group(func(r chi.Router) {
+			// Seek, verify and validate JWT tokens
+			r.Use(jwtauth.Verifier(tokenAuth))
+
+			// Handle valid / invalid tokens. In this example, we use
+			// the provided authenticator middleware, but you can write your
+			// own very easily, look at the Authenticator method in jwtauth.go
+			// and tweak it, its not scary.
+			r.Use(jwtauth.Authenticator(tokenAuth))
+
+			// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
+			for _, route := range routes {
+				var handler http.Handler = route.HandlerFunc
+				if s.lgLvl >= LOG_DEBUG ||
+					(!strings.Contains(route.Name, "doReadyGet") &&
+						!strings.Contains(route.Name, "doLivenessGet")) {
+					handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+					// handler = s.Logger(handler, route.Name)
+					handler = s.Logger(handler, route.Name)
+				}
+				s.LogAlways("route: %v\n", route.Pattern)
+				r.Method(
+					route.Method,
+					route.Pattern,
+					handler,
+				)
+				// router.
+				// 	Methods(route.Method).
+				// 	Path(route.Pattern).
+				// 	Name(route.Name).
+				// 	Handler(handler)
+			}
+		})
+	} else {
+		// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
+		for _, route := range routes {
+			var handler http.Handler
+			handler = route.HandlerFunc
+			if s.lgLvl >= LOG_DEBUG ||
+				(!strings.Contains(route.Name, "doReadyGet") &&
+					!strings.Contains(route.Name, "doLivenessGet")) {
+				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+				// handler = s.Logger(handler, route.Name)
+			}
+			s.LogAlways("route: %v\n", route.Pattern)
+			router.Method(
+				route.Method,
+				route.Pattern,
+				handler,
+			)
+			// router.
+			// 	Methods(route.Method).
+			// 	Path(route.Pattern).
+			// 	Name(route.Name).
+			// 	Handler(handler)
+		}
 	}
 
-	router.MethodNotAllowedHandler = http.HandlerFunc(s.doMethodNotAllowedHandler)
+	router.MethodNotAllowed(http.HandlerFunc(s.doMethodNotAllowedHandler))
+	// router.MethodNotAllowedHandler = http.HandlerFunc(s.doMethodNotAllowedHandler)
 	s.router = router
 
 	return router
@@ -70,16 +126,20 @@ func (s *SmD) getAllMethodsForRequest(req *http.Request) []string {
 	var allMethods []string
 	smdRoutes := s.generateRoutes()
 	for _, smdRoute := range smdRoutes {
-		route := s.router.Get(smdRoute.Name)
-		if route != nil {
-			var match mux.RouteMatch
-			if route.Match(req, &match) || match.MatchErr == mux.ErrMethodMismatch {
-				methods, err := route.GetMethods()
-				if err == nil {
-					allMethods = append(allMethods, methods...)
-				}
-			}
+		if s.router.Match(chi.NewRouteContext(), smdRoute.Method, smdRoute.Pattern) {
+			return []string{smdRoute.Method}
 		}
+
+		// route := s.router.Get(smdRoute.Name)
+		// if route != nil {
+		// 	var match mux.RouteMatch
+		// 	if route.Match(req, &match) || match.MatchErr == mux.ErrMethodMismatch {
+		// 		methods, err := route.GetMethods()
+		// 		if err == nil {
+		// 			allMethods = append(allMethods, methods...)
+		// 		}
+		// 	}
+		// }
 	}
 	return allMethods
 }

@@ -46,7 +46,7 @@ import (
 	"github.com/OpenCHAMI/smd/v2/internal/slsapi"
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 )
@@ -109,6 +109,7 @@ type SmD struct {
 	smapCompEP       *SyncMap
 	genTestPayloads  string
 	disableDiscovery bool
+	requireAuth      bool
 
 	// v2 APIs
 	apiRootV2           string
@@ -164,7 +165,8 @@ type SmD struct {
 	discMapLock sync.Mutex
 
 	//router
-	router *mux.Router
+	// router *mux.Router
+	router *chi.Mux
 
 	httpClient *retryablehttp.Client
 }
@@ -557,6 +559,7 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
+	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWTs authorization to allow using API endpoints")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -935,9 +938,9 @@ func main() {
 	}
 
 	// Start serving HTTP
-	var router *mux.Router
+	var router *chi.Mux
 	routes := s.generateRoutes()
-	router = s.NewRouter(routes)
+	router = s.NewRouter(routes, s.requireAuth)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
 	s.LogAlways("Listening for connections at: ", s.httpListen)
