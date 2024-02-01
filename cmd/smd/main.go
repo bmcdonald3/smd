@@ -956,12 +956,13 @@ func main() {
 
 	// Start serving HTTP
 	var router *chi.Mux
-	routes := s.generateRoutes()
-	router = s.NewRouter(routes)
+	publicRoutes := s.generatePublicRoutes()
+	protectedRoutes := s.generateProtectedRoutes()
+	router = s.NewRouter(publicRoutes, protectedRoutes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
 	s.LogAlways("Listening for connections at: ", s.httpListen)
-	s.LogAlways("Registered SMD Routes: ", routes)
+	s.LogAlways("Registered SMD Routes: ", append(publicRoutes, protectedRoutes...))
 	err = s.setupCerts(s.tlsCert, s.tlsKey)
 	if err == nil {
 		err = http.ListenAndServeTLS(s.httpListen, s.tlsCert, s.tlsKey, router)

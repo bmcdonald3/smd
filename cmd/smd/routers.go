@@ -68,7 +68,7 @@ func (s *SmD) loadPublicKeyFromURL(url string) error {
 	return fmt.Errorf("failed to load public key: %v", err)
 }
 
-func (s *SmD) NewRouter(routes []Route) *chi.Mux {
+func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
 	router := chi.NewRouter()
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
@@ -80,7 +80,8 @@ func (s *SmD) NewRouter(routes []Route) *chi.Mux {
 				jwtauth.Authenticator(s.tokenAuth),
 			)
 
-			for _, route := range routes {
+			// Register protected routes
+			for _, route := range protectedRoutes {
 				var handler http.Handler = route.HandlerFunc
 				if s.lgLvl >= LOG_DEBUG ||
 					(!strings.Contains(route.Name, "doReadyGet") &&
@@ -95,8 +96,28 @@ func (s *SmD) NewRouter(routes []Route) *chi.Mux {
 				)
 			}
 		})
+
+		// Register public routes
+		for _, route := range publicRoutes {
+			var handler http.Handler
+			handler = route.HandlerFunc
+			if s.lgLvl >= LOG_DEBUG ||
+				(!strings.Contains(route.Name, "doReadyGet") &&
+					!strings.Contains(route.Name, "doLivenessGet")) {
+				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+				// handler = s.Logger(handler, route.Name)
+			}
+			s.LogAlways("route: %v\n", route.Pattern)
+			router.Method(
+				route.Method,
+				route.Pattern,
+				handler,
+			)
+		}
+
 	} else {
 		// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
+		routes := append(publicRoutes, protectedRoutes...)
 		for _, route := range routes {
 			var handler http.Handler
 			handler = route.HandlerFunc
@@ -156,9 +177,8 @@ func (s *SmD) doMethodNotAllowedHandler(w http.ResponseWriter, r *http.Request) 
 	sendJsonError(w, http.StatusMethodNotAllowed, "allow "+allowString)
 }
 
-func (s *SmD) generateRoutes() Routes {
+func (s *SmD) generatePublicRoutes() Routes {
 	return Routes{
-
 		///////////////////////////////////////////////////////////////////////
 		// v2 API routes
 		///////////////////////////////////////////////////////////////////////
@@ -230,6 +250,11 @@ func (s *SmD) generateRoutes() Routes {
 			s.valuesBaseV2 + "/type",
 			s.doTypeValuesGet,
 		},
+	}
+}
+
+func (s *SmD) generateProtectedRoutes() Routes {
+	return Routes{
 		// Components
 		Route{
 			"doComponentGetV2",
@@ -388,16 +413,7 @@ func (s *SmD) generateRoutes() Routes {
 			strings.ToUpper("Delete"),
 			s.compEPBaseV2,
 			s.doComponentEndpointsDeleteAll,
-		},
-		//Route{
-		//	"doComponentEndpointQueryGetV2",
-		//	strings.ToUpper("Get"),
-		//	s.compEPBaseV2 + "/Query/{xname}",
-		//	s.doComponentEndpointQueryGet,
-		//},
-
-		// ServiceEndpoints
-		Route{
+		}, Route{
 			"doServiceEndpointGetV2", // Individual entry
 			strings.ToUpper("Get"),
 			s.serviceEPBaseV2 + "/{service}/RedfishEndpoints/{xname}",
@@ -997,4 +1013,8 @@ func (s *SmD) generateRoutes() Routes {
 			s.doPowerMapsDeleteAll,
 		},
 	}
+}
+
+func (s *SmD) generateRoutes() Routes {
+	return append(s.generatePublicRoutes(), s.generateProtectedRoutes()...)
 }
