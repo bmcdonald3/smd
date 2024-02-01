@@ -23,6 +23,8 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -30,6 +32,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
+	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwa"
 )
 
 type Route struct {
@@ -41,53 +45,54 @@ type Route struct {
 
 type Routes []Route
 
-var tokenAuth *jwtauth.JWTAuth
+func (s *SmD) loadPublicKeyFromURL(url string) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	set, err := jwk.Fetch(ctx, url)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	for it := set.Iterate(context.Background()); it.Next(context.Background()); {
+		pair := it.Pair()
+		key := pair.Value.(jwk.Key)
 
-func init() {
-	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil)
+		var rawkey interface{}
+		if err := key.Raw(&rawkey); err != nil {
+			continue
+		}
 
+		s.tokenAuth = jwtauth.New(jwa.RS256.String(), nil, rawkey)
+		return nil
+	}
+
+	return fmt.Errorf("failed to load public key: %v", err)
 }
 
-func (s *SmD) NewRouter(routes []Route, requireAuth bool) *chi.Mux {
-
-	// router := mux.NewRouter().StrictSlash(true)
+func (s *SmD) NewRouter(routes []Route) *chi.Mux {
 	router := chi.NewRouter()
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 	}))
-
-	if requireAuth {
+	if s.requireAuth {
 		router.Group(func(r chi.Router) {
-			// Seek, verify and validate JWT tokens
-			r.Use(jwtauth.Verifier(tokenAuth))
+			r.Use(
+				jwtauth.Verifier(s.tokenAuth),
+				jwtauth.Authenticator(s.tokenAuth),
+			)
 
-			// Handle valid / invalid tokens. In this example, we use
-			// the provided authenticator middleware, but you can write your
-			// own very easily, look at the Authenticator method in jwtauth.go
-			// and tweak it, its not scary.
-			r.Use(jwtauth.Authenticator(tokenAuth))
-
-			// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 			for _, route := range routes {
 				var handler http.Handler = route.HandlerFunc
 				if s.lgLvl >= LOG_DEBUG ||
 					(!strings.Contains(route.Name, "doReadyGet") &&
 						!strings.Contains(route.Name, "doLivenessGet")) {
 					handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-					// handler = s.Logger(handler, route.Name)
 					handler = s.Logger(handler, route.Name)
 				}
-				s.LogAlways("route: %v\n", route.Pattern)
 				r.Method(
 					route.Method,
 					route.Pattern,
 					handler,
 				)
-				// router.
-				// 	Methods(route.Method).
-				// 	Path(route.Pattern).
-				// 	Name(route.Name).
-				// 	Handler(handler)
 			}
 		})
 	} else {
@@ -107,16 +112,10 @@ func (s *SmD) NewRouter(routes []Route, requireAuth bool) *chi.Mux {
 				route.Pattern,
 				handler,
 			)
-			// router.
-			// 	Methods(route.Method).
-			// 	Path(route.Pattern).
-			// 	Name(route.Name).
-			// 	Handler(handler)
 		}
 	}
 
 	router.MethodNotAllowed(http.HandlerFunc(s.doMethodNotAllowedHandler))
-	// router.MethodNotAllowedHandler = http.HandlerFunc(s.doMethodNotAllowedHandler)
 	s.router = router
 
 	return router

@@ -47,6 +47,7 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 )
@@ -166,7 +167,8 @@ type SmD struct {
 
 	//router
 	// router *mux.Router
-	router *chi.Mux
+	router    *chi.Mux
+	tokenAuth *jwtauth.JWTAuth
 
 	httpClient *retryablehttp.Client
 }
@@ -937,10 +939,25 @@ func main() {
 		s.DiscoveryUpdater()
 	}
 
+	// Initialize token authorization and load JWKS well-knowns from .well-known endpoint
+	if s.requireAuth {
+		s.LogAlways("Fetching public key from server...")
+		for i := 0; i <= 5; i++ {
+			err = s.loadPublicKeyFromURL("http://hydra:4444/.well-known/jwks.json")
+			if err != nil {
+				s.LogAlways("failed to initialize auth token: %v", err)
+				time.Sleep(5 * time.Second)
+				continue
+			}
+			s.LogAlways("Initialized the auth token successfully.")
+			break
+		}
+	}
+
 	// Start serving HTTP
 	var router *chi.Mux
 	routes := s.generateRoutes()
-	router = s.NewRouter(routes, s.requireAuth)
+	router = s.NewRouter(routes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
 	s.LogAlways("Listening for connections at: ", s.httpListen)
