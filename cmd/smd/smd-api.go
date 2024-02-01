@@ -381,6 +381,7 @@ func (s *SmD) getHMSValues(valSelect HMSValueSelect, w http.ResponseWriter, r *h
 
 // Get single HMS component by xname ID
 func (s *SmD) doComponentGet(w http.ResponseWriter, r *http.Request) {
+	// TODO: get route variables using chi instead of mux
 	vars := mux.Vars(r)
 	xname := base.NormalizeHMSCompID(vars["xname"])
 
@@ -4800,12 +4801,14 @@ func (s *SmD) doPartitionMembersPost(w http.ResponseWriter, r *http.Request) {
 			"error decoding JSON "+err.Error())
 		return
 	}
-	normID := base.NormalizeHMSCompID(memberIn.ID)
-	if !base.IsHMSCompIDValid(normID) {
-		s.lg.Printf("doPartitionMembersPost(): Invalid xname ID.")
-		sendJsonError(w, http.StatusBadRequest, "invalid xname ID")
-		return
-	}
+	s.lg.Printf("doParitionMembersPost(): Skipping 'xname' check.")
+	// normID := base.NormalizeHMSCompID(memberIn.ID)
+	// if !base.IsHMSCompIDValid(normID) {
+	// 	s.lg.Printf("doPartitionMembersPost(): Invalid xname ID.")
+	// 	sendJsonError(w, http.StatusBadRequest, "invalid xname ID")
+	// 	return
+	// }
+	normID := memberIn.ID
 	id, err := s.db.AddPartitionMember(name, normID)
 	if err != nil {
 		s.lg.Printf("doPartitionMembersPost(): %s %s Err: %s", r.RemoteAddr,

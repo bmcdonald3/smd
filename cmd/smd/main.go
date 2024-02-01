@@ -46,7 +46,8 @@ import (
 	"github.com/OpenCHAMI/smd/v2/internal/slsapi"
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 )
@@ -109,6 +110,7 @@ type SmD struct {
 	smapCompEP       *SyncMap
 	genTestPayloads  string
 	disableDiscovery bool
+	requireAuth      bool
 
 	// v2 APIs
 	apiRootV2           string
@@ -164,7 +166,9 @@ type SmD struct {
 	discMapLock sync.Mutex
 
 	//router
-	router *mux.Router
+	// router *mux.Router
+	router    *chi.Mux
+	tokenAuth *jwtauth.JWTAuth
 
 	httpClient *retryablehttp.Client
 }
@@ -557,6 +561,7 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
+	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWTs authorization to allow using API endpoints")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -934,14 +939,30 @@ func main() {
 		s.DiscoveryUpdater()
 	}
 
+	// Initialize token authorization and load JWKS well-knowns from .well-known endpoint
+	if s.requireAuth {
+		s.LogAlways("Fetching public key from server...")
+		for i := 0; i <= 5; i++ {
+			err = s.loadPublicKeyFromURL("http://hydra:4444/.well-known/jwks.json")
+			if err != nil {
+				s.LogAlways("failed to initialize auth token: %v", err)
+				time.Sleep(5 * time.Second)
+				continue
+			}
+			s.LogAlways("Initialized the auth token successfully.")
+			break
+		}
+	}
+
 	// Start serving HTTP
-	var router *mux.Router
-	routes := s.generateRoutes()
-	router = s.NewRouter(routes)
+	var router *chi.Mux
+	publicRoutes := s.generatePublicRoutes()
+	protectedRoutes := s.generateProtectedRoutes()
+	router = s.NewRouter(publicRoutes, protectedRoutes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
 	s.LogAlways("Listening for connections at: ", s.httpListen)
-	s.LogAlways("Registered SMD Routes: ", routes)
+	s.LogAlways("Registered SMD Routes: ", append(publicRoutes, protectedRoutes...))
 	err = s.setupCerts(s.tlsCert, s.tlsKey)
 	if err == nil {
 		err = http.ListenAndServeTLS(s.httpListen, s.tlsCert, s.tlsKey, router)

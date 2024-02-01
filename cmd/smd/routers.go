@@ -23,12 +23,17 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
 
+	"github.com/go-chi/chi"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/lestrrat-go/jwx/v2/jwa"
 )
 
 type Route struct {
@@ -40,27 +45,98 @@ type Route struct {
 
 type Routes []Route
 
-func (s *SmD) NewRouter(routes []Route) *mux.Router {
-	router := mux.NewRouter().StrictSlash(true)
-	router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
-	for _, route := range routes {
-		var handler http.Handler
-		handler = route.HandlerFunc
-		if s.lgLvl >= LOG_DEBUG ||
-			(!strings.Contains(route.Name, "doReadyGet") &&
-				!strings.Contains(route.Name, "doLivenessGet")) {
-			handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-			// handler = s.Logger(handler, route.Name)
+func (s *SmD) loadPublicKeyFromURL(url string) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	set, err := jwk.Fetch(ctx, url)
+	if err != nil {
+		return fmt.Errorf("%v", err)
+	}
+	for it := set.Iterate(context.Background()); it.Next(context.Background()); {
+		pair := it.Pair()
+		key := pair.Value.(jwk.Key)
+
+		var rawkey interface{}
+		if err := key.Raw(&rawkey); err != nil {
+			continue
 		}
 
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
+		s.tokenAuth = jwtauth.New(jwa.RS256.String(), nil, rawkey)
+		return nil
 	}
 
-	router.MethodNotAllowedHandler = http.HandlerFunc(s.doMethodNotAllowedHandler)
+	return fmt.Errorf("failed to load public key: %v", err)
+}
+
+func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
+	router := chi.NewRouter()
+	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
+	}))
+	if s.requireAuth {
+		router.Group(func(r chi.Router) {
+			r.Use(
+				jwtauth.Verifier(s.tokenAuth),
+				jwtauth.Authenticator(s.tokenAuth),
+			)
+
+			// Register protected routes
+			for _, route := range protectedRoutes {
+				var handler http.Handler = route.HandlerFunc
+				if s.lgLvl >= LOG_DEBUG ||
+					(!strings.Contains(route.Name, "doReadyGet") &&
+						!strings.Contains(route.Name, "doLivenessGet")) {
+					handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+					handler = s.Logger(handler, route.Name)
+				}
+				r.Method(
+					route.Method,
+					route.Pattern,
+					handler,
+				)
+			}
+		})
+
+		// Register public routes
+		for _, route := range publicRoutes {
+			var handler http.Handler
+			handler = route.HandlerFunc
+			if s.lgLvl >= LOG_DEBUG ||
+				(!strings.Contains(route.Name, "doReadyGet") &&
+					!strings.Contains(route.Name, "doLivenessGet")) {
+				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+				// handler = s.Logger(handler, route.Name)
+			}
+			s.LogAlways("route: %v\n", route.Pattern)
+			router.Method(
+				route.Method,
+				route.Pattern,
+				handler,
+			)
+		}
+
+	} else {
+		// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
+		routes := append(publicRoutes, protectedRoutes...)
+		for _, route := range routes {
+			var handler http.Handler
+			handler = route.HandlerFunc
+			if s.lgLvl >= LOG_DEBUG ||
+				(!strings.Contains(route.Name, "doReadyGet") &&
+					!strings.Contains(route.Name, "doLivenessGet")) {
+				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
+				// handler = s.Logger(handler, route.Name)
+			}
+			s.LogAlways("route: %v\n", route.Pattern)
+			router.Method(
+				route.Method,
+				route.Pattern,
+				handler,
+			)
+		}
+	}
+
+	router.MethodNotAllowed(http.HandlerFunc(s.doMethodNotAllowedHandler))
 	s.router = router
 
 	return router
@@ -70,16 +146,20 @@ func (s *SmD) getAllMethodsForRequest(req *http.Request) []string {
 	var allMethods []string
 	smdRoutes := s.generateRoutes()
 	for _, smdRoute := range smdRoutes {
-		route := s.router.Get(smdRoute.Name)
-		if route != nil {
-			var match mux.RouteMatch
-			if route.Match(req, &match) || match.MatchErr == mux.ErrMethodMismatch {
-				methods, err := route.GetMethods()
-				if err == nil {
-					allMethods = append(allMethods, methods...)
-				}
-			}
+		if s.router.Match(chi.NewRouteContext(), smdRoute.Method, smdRoute.Pattern) {
+			return []string{smdRoute.Method}
 		}
+
+		// route := s.router.Get(smdRoute.Name)
+		// if route != nil {
+		// 	var match mux.RouteMatch
+		// 	if route.Match(req, &match) || match.MatchErr == mux.ErrMethodMismatch {
+		// 		methods, err := route.GetMethods()
+		// 		if err == nil {
+		// 			allMethods = append(allMethods, methods...)
+		// 		}
+		// 	}
+		// }
 	}
 	return allMethods
 }
@@ -97,9 +177,8 @@ func (s *SmD) doMethodNotAllowedHandler(w http.ResponseWriter, r *http.Request) 
 	sendJsonError(w, http.StatusMethodNotAllowed, "allow "+allowString)
 }
 
-func (s *SmD) generateRoutes() Routes {
+func (s *SmD) generatePublicRoutes() Routes {
 	return Routes{
-
 		///////////////////////////////////////////////////////////////////////
 		// v2 API routes
 		///////////////////////////////////////////////////////////////////////
@@ -171,6 +250,11 @@ func (s *SmD) generateRoutes() Routes {
 			s.valuesBaseV2 + "/type",
 			s.doTypeValuesGet,
 		},
+	}
+}
+
+func (s *SmD) generateProtectedRoutes() Routes {
+	return Routes{
 		// Components
 		Route{
 			"doComponentGetV2",
@@ -329,16 +413,7 @@ func (s *SmD) generateRoutes() Routes {
 			strings.ToUpper("Delete"),
 			s.compEPBaseV2,
 			s.doComponentEndpointsDeleteAll,
-		},
-		//Route{
-		//	"doComponentEndpointQueryGetV2",
-		//	strings.ToUpper("Get"),
-		//	s.compEPBaseV2 + "/Query/{xname}",
-		//	s.doComponentEndpointQueryGet,
-		//},
-
-		// ServiceEndpoints
-		Route{
+		}, Route{
 			"doServiceEndpointGetV2", // Individual entry
 			strings.ToUpper("Get"),
 			s.serviceEPBaseV2 + "/{service}/RedfishEndpoints/{xname}",
@@ -938,4 +1013,8 @@ func (s *SmD) generateRoutes() Routes {
 			s.doPowerMapsDeleteAll,
 		},
 	}
+}
+
+func (s *SmD) generateRoutes() Routes {
+	return append(s.generatePublicRoutes(), s.generateProtectedRoutes()...)
 }
