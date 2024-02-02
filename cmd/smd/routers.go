@@ -107,7 +107,6 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
 				// handler = s.Logger(handler, route.Name)
 			}
-			s.LogAlways("route: %v\n", route.Pattern)
 			router.Method(
 				route.Method,
 				route.Pattern,
@@ -127,7 +126,6 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
 				// handler = s.Logger(handler, route.Name)
 			}
-			s.LogAlways("route: %v\n", route.Pattern)
 			router.Method(
 				route.Method,
 				route.Pattern,
