@@ -76,6 +76,7 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+	router.Use(middleware.StripSlashes)
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 	}))
