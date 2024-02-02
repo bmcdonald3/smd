@@ -28,8 +28,10 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
 	"github.com/lestrrat-go/jwx/jwk"
@@ -70,9 +72,15 @@ func (s *SmD) loadPublicKeyFromURL(url string) error {
 
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
 	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 	}))
+
+	router.Use(middleware.Timeout(60 * time.Second))
 	if s.requireAuth {
 		router.Group(func(r chi.Router) {
 			r.Use(
