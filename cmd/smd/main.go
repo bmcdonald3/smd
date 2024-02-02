@@ -961,8 +961,9 @@ func main() {
 	router = s.NewRouter(publicRoutes, protectedRoutes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
-	s.LogAlways("Listening for connections at: ", s.httpListen)
-	s.LogAlways("Registered SMD Routes: ", append(publicRoutes, protectedRoutes...))
+	s.LogAlways("Listening for connections at: %v", s.httpListen)
+	s.LogAlways("Registered SMD protected routes: %v", protectedRoutes)
+	s.LogAlways("Registered SMD public routes: %v", publicRoutes)
 	err = s.setupCerts(s.tlsCert, s.tlsKey)
 	if err == nil {
 		err = http.ListenAndServeTLS(s.httpListen, s.tlsCert, s.tlsKey, router)
