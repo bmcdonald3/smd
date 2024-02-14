@@ -166,9 +166,9 @@ type SmD struct {
 	discMapLock sync.Mutex
 
 	//router
-	// router *mux.Router
 	router    *chi.Mux
 	tokenAuth *jwtauth.JWTAuth
+	jwksURL   string
 
 	httpClient *retryablehttp.Client
 }
@@ -559,9 +559,10 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbHost, "dbhost", "", "Database hostname")
 	flag.StringVar(&s.dbPortStr, "dbport", "", "Database port")
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
+	flag.StringVar(&s.jwksURL, "jwks-url", "https://127.0.0.1/", "Set the JWKS URL to fetch public key for validation")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
-	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWTs authorization to allow using API endpoints")
+	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWT authorization to access protected API endpoints")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -943,7 +944,7 @@ func main() {
 	if s.requireAuth {
 		s.LogAlways("Fetching public key from server...")
 		for i := 0; i <= 5; i++ {
-			err = s.loadPublicKeyFromURL("http://hydra:4444/.well-known/jwks.json")
+			err = s.loadPublicKeyFromURL(s.jwksURL)
 			if err != nil {
 				s.LogAlways("failed to initialize auth token: %v", err)
 				time.Sleep(5 * time.Second)
