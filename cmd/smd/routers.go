@@ -47,7 +47,7 @@ type Route struct {
 
 type Routes []Route
 
-func (s *SmD) loadPublicKeyFromURL(url string) error {
+func (s *SmD) fetchPublicKeyFromURL(url string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	set, err := jwk.Fetch(ctx, url)
@@ -71,6 +71,7 @@ func (s *SmD) loadPublicKeyFromURL(url string) error {
 }
 
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
+	// create router and use recommended middleware
 	router := chi.NewRouter()
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
@@ -114,7 +115,6 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 				(!strings.Contains(route.Name, "doReadyGet") &&
 					!strings.Contains(route.Name, "doLivenessGet")) {
 				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-				// handler = s.Logger(handler, route.Name)
 			}
 			router.Method(
 				route.Method,
@@ -124,7 +124,6 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 		}
 
 	} else {
-		// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 		routes := append(publicRoutes, protectedRoutes...)
 		for _, route := range routes {
 			var handler http.Handler
@@ -133,7 +132,6 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 				(!strings.Contains(route.Name, "doReadyGet") &&
 					!strings.Contains(route.Name, "doLivenessGet")) {
 				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-				// handler = s.Logger(handler, route.Name)
 			}
 			router.Method(
 				route.Method,
@@ -156,17 +154,6 @@ func (s *SmD) getAllMethodsForRequest(req *http.Request) []string {
 		if s.router.Match(chi.NewRouteContext(), smdRoute.Method, smdRoute.Pattern) {
 			return []string{smdRoute.Method}
 		}
-
-		// route := s.router.Get(smdRoute.Name)
-		// if route != nil {
-		// 	var match mux.RouteMatch
-		// 	if route.Match(req, &match) || match.MatchErr == mux.ErrMethodMismatch {
-		// 		methods, err := route.GetMethods()
-		// 		if err == nil {
-		// 			allMethods = append(allMethods, methods...)
-		// 		}
-		// 	}
-		// }
 	}
 	return allMethods
 }

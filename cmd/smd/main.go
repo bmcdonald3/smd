@@ -944,7 +944,7 @@ func main() {
 	if s.requireAuth {
 		s.LogAlways("Fetching public key from server...")
 		for i := 0; i <= 5; i++ {
-			err = s.loadPublicKeyFromURL(s.jwksURL)
+			err = s.fetchPublicKeyFromURL(s.jwksURL)
 			if err != nil {
 				s.LogAlways("failed to initialize auth token: %v", err)
 				time.Sleep(5 * time.Second)
