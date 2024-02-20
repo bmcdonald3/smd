@@ -559,7 +559,7 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbHost, "dbhost", "", "Database hostname")
 	flag.StringVar(&s.dbPortStr, "dbport", "", "Database port")
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
-	flag.StringVar(&s.jwksURL, "jwks-url", "https://127.0.0.1/", "Set the JWKS URL to fetch public key for validation")
+	flag.StringVar(&s.jwksURL, "jwks-url", "https://127.0.0.1:9091/jwks.json", "Set the JWKS URL to fetch public key for validation")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
 	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWT authorization to access protected API endpoints")
@@ -620,6 +620,14 @@ func (s *SmD) parseCmdLine() {
 			s.dbPortStr = val
 		}
 	}
+	envvar = "SMD_JWKS_URL"
+	if s.jwksURL == "" {
+		if val := os.Getenv(envvar); val != "" {
+			s.jwksURL = val
+			s.requireAuth = true
+		}
+	}
+
 	if s.dbPortStr == "" {
 		fmt.Printf("Missing DB port number")
 		flag.Usage()
