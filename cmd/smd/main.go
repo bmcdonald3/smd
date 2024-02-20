@@ -166,9 +166,9 @@ type SmD struct {
 	discMapLock sync.Mutex
 
 	//router
-	// router *mux.Router
 	router    *chi.Mux
 	tokenAuth *jwtauth.JWTAuth
+	jwksURL   string
 
 	httpClient *retryablehttp.Client
 }
@@ -559,9 +559,10 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbHost, "dbhost", "", "Database hostname")
 	flag.StringVar(&s.dbPortStr, "dbport", "", "Database port")
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
+	flag.StringVar(&s.jwksURL, "jwks-url", "https://127.0.0.1:9091/jwks.json", "Set the JWKS URL to fetch public key for validation")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
-	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWTs authorization to allow using API endpoints")
+	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWT authorization to access protected API endpoints")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -619,6 +620,14 @@ func (s *SmD) parseCmdLine() {
 			s.dbPortStr = val
 		}
 	}
+	envvar = "SMD_JWKS_URL"
+	if s.jwksURL == "" {
+		if val := os.Getenv(envvar); val != "" {
+			s.jwksURL = val
+			s.requireAuth = true
+		}
+	}
+
 	if s.dbPortStr == "" {
 		fmt.Printf("Missing DB port number")
 		flag.Usage()
@@ -943,7 +952,7 @@ func main() {
 	if s.requireAuth {
 		s.LogAlways("Fetching public key from server...")
 		for i := 0; i <= 5; i++ {
-			err = s.loadPublicKeyFromURL("http://hydra:4444/.well-known/jwks.json")
+			err = s.fetchPublicKeyFromURL(s.jwksURL)
 			if err != nil {
 				s.LogAlways("failed to initialize auth token: %v", err)
 				time.Sleep(5 * time.Second)
@@ -961,8 +970,9 @@ func main() {
 	router = s.NewRouter(publicRoutes, protectedRoutes)
 
 	s.LogAlways("GOMAXPROCS is: %v", runtime.GOMAXPROCS(0))
-	s.LogAlways("Listening for connections at: ", s.httpListen)
-	s.LogAlways("Registered SMD Routes: ", append(publicRoutes, protectedRoutes...))
+	s.LogAlways("Listening for connections at: %v", s.httpListen)
+	s.LogAlways("Registered SMD protected routes: %v", protectedRoutes)
+	s.LogAlways("Registered SMD public routes: %v", publicRoutes)
 	err = s.setupCerts(s.tlsCert, s.tlsKey)
 	if err == nil {
 		err = http.ListenAndServeTLS(s.httpListen, s.tlsCert, s.tlsKey, router)

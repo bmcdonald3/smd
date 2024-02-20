@@ -28,8 +28,10 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
 	"github.com/lestrrat-go/jwx/jwk"
@@ -45,7 +47,7 @@ type Route struct {
 
 type Routes []Route
 
-func (s *SmD) loadPublicKeyFromURL(url string) error {
+func (s *SmD) fetchPublicKeyFromURL(url string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	set, err := jwk.Fetch(ctx, url)
@@ -69,10 +71,18 @@ func (s *SmD) loadPublicKeyFromURL(url string) error {
 }
 
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
+	// create router and use recommended middleware
 	router := chi.NewRouter()
+	router.Use(middleware.RequestID)
+	router.Use(middleware.RealIP)
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.StripSlashes)
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 	}))
+
+	router.Use(middleware.Timeout(60 * time.Second))
 	if s.requireAuth {
 		router.Group(func(r chi.Router) {
 			r.Use(
@@ -105,9 +115,7 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 				(!strings.Contains(route.Name, "doReadyGet") &&
 					!strings.Contains(route.Name, "doLivenessGet")) {
 				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-				// handler = s.Logger(handler, route.Name)
 			}
-			s.LogAlways("route: %v\n", route.Pattern)
 			router.Method(
 				route.Method,
 				route.Pattern,
@@ -116,7 +124,6 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 		}
 
 	} else {
-		// router.NotFoundHandler = s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 		routes := append(publicRoutes, protectedRoutes...)
 		for _, route := range routes {
 			var handler http.Handler
@@ -125,9 +132,7 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 				(!strings.Contains(route.Name, "doReadyGet") &&
 					!strings.Contains(route.Name, "doLivenessGet")) {
 				handler = handlers.CombinedLoggingHandler(os.Stdout, handler)
-				// handler = s.Logger(handler, route.Name)
 			}
-			s.LogAlways("route: %v\n", route.Pattern)
 			router.Method(
 				route.Method,
 				route.Pattern,
@@ -149,17 +154,6 @@ func (s *SmD) getAllMethodsForRequest(req *http.Request) []string {
 		if s.router.Match(chi.NewRouteContext(), smdRoute.Method, smdRoute.Pattern) {
 			return []string{smdRoute.Method}
 		}
-
-		// route := s.router.Get(smdRoute.Name)
-		// if route != nil {
-		// 	var match mux.RouteMatch
-		// 	if route.Match(req, &match) || match.MatchErr == mux.ErrMethodMismatch {
-		// 		methods, err := route.GetMethods()
-		// 		if err == nil {
-		// 			allMethods = append(allMethods, methods...)
-		// 		}
-		// 	}
-		// }
 	}
 	return allMethods
 }
