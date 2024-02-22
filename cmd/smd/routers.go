@@ -83,7 +83,7 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 	}))
 
 	router.Use(middleware.Timeout(60 * time.Second))
-	if s.requireAuth {
+	if s.jwksURL != "" {
 		router.Group(func(r chi.Router) {
 			r.Use(
 				jwtauth.Verifier(s.tokenAuth),
