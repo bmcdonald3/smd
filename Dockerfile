@@ -2,9 +2,12 @@ FROM cgr.dev/chainguard/wolfi-base
 
 RUN apk add --no-cache tini
 
+# Include curl in the final image.
+RUN set -ex \
+    && apk -U upgrade \
+    && apk add --no-cache curl
 
-
-COPY  smd /
+COPY smd /
 COPY smd-loader /
 COPY smd-init /
 RUN mkdir /persistent_migrations
