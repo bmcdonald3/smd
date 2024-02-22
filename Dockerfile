@@ -15,6 +15,6 @@ EXPOSE 27779
 # nobody 65534:65534
 USER 65534:65534
 
-CMD [ "/smd"]
+CMD [ "/smd" ]
 
 ENTRYPOINT [ "/sbin/tini", "--" ]
