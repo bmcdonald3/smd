@@ -46,7 +46,7 @@ import (
 	"github.com/OpenCHAMI/smd/v2/internal/slsapi"
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
@@ -110,7 +110,6 @@ type SmD struct {
 	smapCompEP       *SyncMap
 	genTestPayloads  string
 	disableDiscovery bool
-	requireAuth      bool
 
 	// v2 APIs
 	apiRootV2           string
@@ -559,10 +558,9 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.dbHost, "dbhost", "", "Database hostname")
 	flag.StringVar(&s.dbPortStr, "dbport", "", "Database port")
 	flag.StringVar(&s.dbOpts, "dbopts", "", "Database options string")
-	flag.StringVar(&s.jwksURL, "jwks-url", "https://127.0.0.1:9091/jwks.json", "Set the JWKS URL to fetch public key for validation")
+	flag.StringVar(&s.jwksURL, "jwks-url", "", "Set the JWKS URL to fetch public key for validation")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
-	flag.BoolVar(&s.requireAuth, "require-auth", false, "Require JWT authorization to access protected API endpoints")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -624,7 +622,6 @@ func (s *SmD) parseCmdLine() {
 	if s.jwksURL == "" {
 		if val := os.Getenv(envvar); val != "" {
 			s.jwksURL = val
-			s.requireAuth = true
 		}
 	}
 
@@ -949,7 +946,7 @@ func main() {
 	}
 
 	// Initialize token authorization and load JWKS well-knowns from .well-known endpoint
-	if s.requireAuth {
+	if s.jwksURL != "" {
 		s.LogAlways("Fetching public key from server...")
 		for i := 0; i <= 5; i++ {
 			err = s.fetchPublicKeyFromURL(s.jwksURL)
