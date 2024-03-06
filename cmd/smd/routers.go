@@ -59,6 +59,9 @@ func (s *SmD) fetchPublicKeyFromURL(url string) error {
 		return fmt.Errorf("failed to marshal JWKS: %v", err)
 	}
 	s.tokenAuth, err = jwtauth.NewKeySet(jwks)
+	if err != nil {
+		return fmt.Errorf("failed to initialize JWKS: %v", err)
+	}
 	// for it := set.Iterate(context.Background()); it.Next(context.Background()); {
 	// 	pair := it.Pair()
 	// 	key := pair.Value.(jwk.Key)
@@ -73,7 +76,7 @@ func (s *SmD) fetchPublicKeyFromURL(url string) error {
 	// 	return nil
 	// }
 
-	return fmt.Errorf("failed to load public key: %v", err)
+	return nil
 }
 
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
