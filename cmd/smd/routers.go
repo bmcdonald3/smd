@@ -24,6 +24,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -34,8 +35,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
-	"github.com/lestrrat-go/jwx/jwk"
-	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
 type Route struct {
@@ -54,18 +54,24 @@ func (s *SmD) fetchPublicKeyFromURL(url string) error {
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
-	for it := set.Iterate(context.Background()); it.Next(context.Background()); {
-		pair := it.Pair()
-		key := pair.Value.(jwk.Key)
-
-		var rawkey interface{}
-		if err := key.Raw(&rawkey); err != nil {
-			continue
-		}
-
-		s.tokenAuth = jwtauth.New(jwa.RS256.String(), nil, rawkey)
-		return nil
+	jwks, err := json.Marshal(set)
+	if err != nil {
+		return fmt.Errorf("failed to marshal JWKS: %v", err)
 	}
+	s.tokenAuth, err = jwtauth.NewKeySet(jwks)
+	// for it := set.Iterate(context.Background()); it.Next(context.Background()); {
+	// 	pair := it.Pair()
+	// 	key := pair.Value.(jwk.Key)
+
+	// 	var rawkey interface{}
+	// 	if err := key.Raw(&rawkey); err != nil {
+	// 		continue
+	// 	}
+
+	// 	s.tokenAuth = jwtauth.New(jwa.RS256.String(), nil, rawkey)
+
+	// 	return nil
+	// }
 
 	return fmt.Errorf("failed to load public key: %v", err)
 }
