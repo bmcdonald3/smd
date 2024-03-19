@@ -23,9 +23,6 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -35,7 +32,6 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
-	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
 type Route struct {
@@ -46,38 +42,6 @@ type Route struct {
 }
 
 type Routes []Route
-
-func (s *SmD) fetchPublicKeyFromURL(url string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	set, err := jwk.Fetch(ctx, url)
-	if err != nil {
-		return fmt.Errorf("%v", err)
-	}
-	jwks, err := json.Marshal(set)
-	if err != nil {
-		return fmt.Errorf("failed to marshal JWKS: %v", err)
-	}
-	s.tokenAuth, err = jwtauth.NewKeySet(jwks)
-	if err != nil {
-		return fmt.Errorf("failed to initialize JWKS: %v", err)
-	}
-	// for it := set.Iterate(context.Background()); it.Next(context.Background()); {
-	// 	pair := it.Pair()
-	// 	key := pair.Value.(jwk.Key)
-
-	// 	var rawkey interface{}
-	// 	if err := key.Raw(&rawkey); err != nil {
-	// 		continue
-	// 	}
-
-	// 	s.tokenAuth = jwtauth.New(jwa.RS256.String(), nil, rawkey)
-
-	// 	return nil
-	// }
-
-	return nil
-}
 
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
 	// create router and use recommended middleware
