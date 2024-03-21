@@ -23,19 +23,15 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
+	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/jwtauth/v5"
 	"github.com/gorilla/handlers"
-	"github.com/lestrrat-go/jwx/jwk"
-	"github.com/lestrrat-go/jwx/v2/jwa"
 )
 
 type Route struct {
@@ -46,29 +42,6 @@ type Route struct {
 }
 
 type Routes []Route
-
-func (s *SmD) fetchPublicKeyFromURL(url string) error {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	set, err := jwk.Fetch(ctx, url)
-	if err != nil {
-		return fmt.Errorf("%v", err)
-	}
-	for it := set.Iterate(context.Background()); it.Next(context.Background()); {
-		pair := it.Pair()
-		key := pair.Value.(jwk.Key)
-
-		var rawkey interface{}
-		if err := key.Raw(&rawkey); err != nil {
-			continue
-		}
-
-		s.tokenAuth = jwtauth.New(jwa.RS256.String(), nil, rawkey)
-		return nil
-	}
-
-	return fmt.Errorf("failed to load public key: %v", err)
-}
 
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
 	// create router and use recommended middleware
