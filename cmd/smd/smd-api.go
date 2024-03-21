@@ -428,10 +428,12 @@ func (s *SmD) doComponentsGet(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	// Check claims before doing anything if using authentication
-	if _, err := s.VerifyScope([]string{"smd_read"}, r); err != nil {
-		sendJsonError(w, http.StatusUnauthorized,
-			fmt.Sprintf("failed to verify scope: %v", err))
-		return
+	if s.IsUsingAuthentication() {
+		if _, err := s.VerifyScope([]string{"smd.read"}, r); err != nil {
+			sendJsonError(w, http.StatusUnauthorized,
+				fmt.Sprintf("failed to verify scope: %v", err))
+			return
+		}
 	}
 
 	// Parse arguments
@@ -2062,10 +2064,12 @@ func (s *SmD) doRedfishEndpointsGet(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	// Check claims before doing anything if using authentication
-	if _, err := s.VerifyScope([]string{"smd_read"}, r); err != nil {
-		sendJsonError(w, http.StatusUnauthorized,
-			fmt.Sprintf("failed to verify scope: %v", err))
-		return
+	if s.IsUsingAuthentication() {
+		if _, err := s.VerifyScope([]string{"smd.read"}, r); err != nil {
+			sendJsonError(w, http.StatusUnauthorized,
+				fmt.Sprintf("failed to verify scope: %v", err))
+			return
+		}
 	}
 
 	// Parse arguments
