@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/go-chi/jwtauth/v5"
+	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
