@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.15.0]
+
+### Changed
+
+- Updated go module dependencies to use temporary jwtauth with OpenCHAMI
+
+### Added
+
+- Added error check to jwtauth.NewKeySet
+- Added jwtauth.NewKeySet to use entire JWKS for verification
+- Added access token scope checks
+
+## [2.14.2]
+
+### Added
+
+- Added curl to container image
+
+### Changed
+
+- Changed go-chi to v5
+
+## [2.14.1]
+
+### Added
+
+- Added `SMD_JWKS_URL` environment variable and updated default value
+- Added `jwksURL` parameter to fetch public key for validation
+- Added more middleware options, including one to strip slashes in URLS
+
+### Fixed
+
+- Fixed formatting strings
+
+### Removed
+
+- Removed extra unnecessary logging
+
+## [2.14.0]
+
+### Changed
+
+- Split routes into public and protected endpoints
+
+### Fixed
+
+- Fixed JWT verification implementation
+
+### Added
+
+- Added middleware to verify JWTs in router
+
+### Removed
+
+- Removed required `xname` check for `doPartitionMembersPost`
+
 ## [2.9.1]
 
 ### Fixed
