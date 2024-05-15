@@ -1271,6 +1271,10 @@ func (ep *RedfishEP) getChassisHMSType(c *EpChassis) string {
 		// NodeEnclosures may be RackMount, Enclosure.
 		fallthrough
 	case RFSubtypeRackMount:
+		if isFoxconnChassis(c) {
+			// Foxconn Paradise has a bunch of RackMount chassis we can ignore
+			return xnametypes.HMSTypeInvalid.String()
+		}
 		if ep.NumSystems > 0 {
 			// Does the endpoint contain nodes?
 			// For now assume NodeEnclosure.
@@ -1307,6 +1311,12 @@ func (ep *RedfishEP) getChassisHMSType(c *EpChassis) string {
 			ep.Type == xnametypes.MgmtHLSwitch.String() ||
 			ep.Type == xnametypes.CDUMgmtSwitch.String() {
 			return ep.Type
+		}
+		return xnametypes.HMSTypeInvalid.String()
+	case RFSubtypeZone:
+		if isFoxconnChassis(c) {
+			// Foxconn Paradise uses the Baseboard_0 chassis as the primary node enclosure
+			return xnametypes.NodeEnclosure.String()
 		}
 		return xnametypes.HMSTypeInvalid.String()
 	default:
