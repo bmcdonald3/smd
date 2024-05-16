@@ -217,6 +217,19 @@ func (s *SmD) generatePublicRoutes() Routes {
 			s.valuesBaseV2 + "/type",
 			s.doTypeValuesGet,
 		},
+		// other
+		Route{
+			"doComponentsGetV2",
+			strings.ToUpper("Get"),
+			s.componentsBaseV2,
+			s.doComponentsGet,
+		},
+		Route{
+			"doCompEthInterfacesGetV2",
+			strings.ToUpper("Get"),
+			s.compEthIntBaseV2,
+			s.doCompEthInterfacesGetV2,
+		},
 	}
 }
 
@@ -240,12 +253,6 @@ func (s *SmD) generateProtectedRoutes() Routes {
 			strings.ToUpper("Delete"),
 			s.componentsBaseV2 + "/{xname}",
 			s.doComponentDelete,
-		},
-		Route{
-			"doComponentsGetV2",
-			strings.ToUpper("Get"),
-			s.componentsBaseV2,
-			s.doComponentsGet,
 		},
 		Route{
 			"doComponentsPostV2",
@@ -412,12 +419,6 @@ func (s *SmD) generateProtectedRoutes() Routes {
 		},
 
 		// Component Ethernet Interfaces - V2
-		Route{
-			"doCompEthInterfacesGetV2",
-			strings.ToUpper("Get"),
-			s.compEthIntBaseV2,
-			s.doCompEthInterfacesGetV2,
-		},
 		Route{
 			"doCompEthInterfacePostV2",
 			strings.ToUpper("Post"),
