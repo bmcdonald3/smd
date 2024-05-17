@@ -427,15 +427,6 @@ func (s *SmD) doComponentsGet(w http.ResponseWriter, r *http.Request) {
 	comps := new(base.ComponentArray)
 	var err error
 
-	// Check claims before doing anything if using authentication
-	if s.IsUsingAuthentication() {
-		if _, err := s.VerifyScope([]string{"smd.read"}, r); err != nil {
-			sendJsonError(w, http.StatusUnauthorized,
-				fmt.Sprintf("failed to verify scope: %v", err))
-			return
-		}
-	}
-
 	// Parse arguments
 	if err := r.ParseForm(); err != nil {
 		s.lg.Printf("doComponentsGet(): ParseForm: %s", err)
@@ -2062,15 +2053,6 @@ func (s *SmD) doRedfishEndpointGet(w http.ResponseWriter, r *http.Request) {
 func (s *SmD) doRedfishEndpointsGet(w http.ResponseWriter, r *http.Request) {
 	eps := new(sm.RedfishEndpointArray)
 	var err error
-
-	// Check claims before doing anything if using authentication
-	if s.IsUsingAuthentication() {
-		if _, err := s.VerifyScope([]string{"smd.read"}, r); err != nil {
-			sendJsonError(w, http.StatusUnauthorized,
-				fmt.Sprintf("failed to verify scope: %v", err))
-			return
-		}
-	}
 
 	// Parse arguments
 	if err := r.ParseForm(); err != nil {
