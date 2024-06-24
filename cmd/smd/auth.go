@@ -96,10 +96,29 @@ func (s *SmD) VerifyScope(testScopes []string, r *http.Request) (bool, error) {
 	return true, nil
 }
 
+type statusCheckTransport struct {
+	http.RoundTripper
+}
+
+func (ct *statusCheckTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	resp, err := http.DefaultTransport.RoundTrip(req)
+	if err == nil && resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("status code: %d", resp.StatusCode)
+	}
+
+	return resp, err
+}
+
+func newHTTPClient() *http.Client {
+	return &http.Client{Transport: &statusCheckTransport{}}
+}
+
 func (s *SmD) fetchPublicKeyFromURL(url string) error {
+	client := newHTTPClient()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	set, err := jwk.Fetch(ctx, url)
+	set, err := jwk.Fetch(ctx, url, jwk.WithHTTPClient(client))
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
