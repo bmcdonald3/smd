@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"slices"
 
@@ -120,7 +122,15 @@ func (s *SmD) fetchPublicKeyFromURL(url string) error {
 	defer cancel()
 	set, err := jwk.Fetch(ctx, url, jwk.WithHTTPClient(client))
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		msg := "%w"
+
+		// if the error tree contains an EOF, it means that the response was empty,
+		// so add a more descriptive message to the error tree
+		if errors.Is(err, io.EOF) {
+			msg = "received empty response for key: %w"
+		}
+
+		return fmt.Errorf(msg, err)
 	}
 	jwks, err := json.Marshal(set)
 	if err != nil {
