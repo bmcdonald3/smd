@@ -34,6 +34,7 @@ import (
 	"github.com/gorilla/handlers"
 	openchami_middleware "github.com/openchami/node-orchestrator/pkg/middleware"
 	"github.com/rs/zerolog"
+	zlog "github.com/rs/zerolog/log"
 )
 
 type Route struct {
@@ -48,7 +49,7 @@ type Routes []Route
 func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux {
 	// Setup logger
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	logger := zerolog.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	logger := zlog.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
 	// create router and use recommended middleware
 	router := chi.NewRouter()
