@@ -40,7 +40,6 @@ import (
 	"github.com/Cray-HPE/hms-certs/pkg/hms_certs"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
-	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
 	"github.com/OpenCHAMI/smd/v2/internal/hbtdapi"
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
 	"github.com/OpenCHAMI/smd/v2/internal/pgmigrate"
@@ -48,6 +47,7 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi/v5"
+	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
 )
