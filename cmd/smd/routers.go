@@ -32,7 +32,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/handlers"
-	openchami_middleware "github.com/openchami/node-orchestrator/pkg/middleware"
+	openchami_authenticator "github.com/openchami/chi-middleware/authenticator"
+	openchami_logger "github.com/openchami/chi-middleware/log"
 	"github.com/rs/zerolog"
 	zlog "github.com/rs/zerolog/log"
 )
@@ -58,7 +59,7 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.StripSlashes)
-	router.Use(openchami_middleware.OpenCHAMILogger(logger))
+	router.Use(openchami_logger.OpenCHAMILogger(logger))
 	router.NotFound(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Logger(http.NotFoundHandler(), "NotFoundHandler")
 	}))
@@ -68,7 +69,7 @@ func (s *SmD) NewRouter(publicRoutes []Route, protectedRoutes []Route) *chi.Mux 
 		router.Group(func(r chi.Router) {
 			r.Use(
 				jwtauth.Verifier(s.tokenAuth),
-				openchami_middleware.AuthenticatorWithRequiredClaims(s.tokenAuth, []string{"sub", "iss", "aud"}),
+				openchami_authenticator.AuthenticatorWithRequiredClaims(s.tokenAuth, []string{"sub", "iss", "aud"}),
 			)
 
 			// Register protected routes

@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
+	"github.com/lestrrat-go/jwx/jwt"
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
