@@ -32,7 +32,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/handlers"
-	openchami_authenticator "github.com/openchami/chi-middleware/authenticator"
+	openchami_authenticator "github.com/openchami/chi-middleware/auth"
 	openchami_logger "github.com/openchami/chi-middleware/log"
 	"github.com/rs/zerolog"
 	zlog "github.com/rs/zerolog/log"
