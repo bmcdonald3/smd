@@ -2627,6 +2627,125 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 	return nil
 }
 
+func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpointArray, data []byte) error {
+	// temporary parsing structs
+	type (
+		NetworkAdapter struct {
+			Uri  string `json:"uri"`
+			Name string `json:"name"`
+		}
+		EthernetInterface struct {
+			Uri  string `json:"uri"`
+			Mac  string `json:"mac"`
+			Ip   string `json:"ip"`
+			Name string `json:"name"`
+		}
+		NetworkInterface struct {
+			Uri         string         `json:"uri"`
+			Name        string         `json:"name"`
+			Description string         `json:"description"`
+			Adapter     NetworkAdapter `json:"adapter"`
+		}
+		System struct {
+			Uri                string              `json:"uri"`
+			Manufacturer       string              `json:"manufacturer"`
+			Name               string              `json:"name"`
+			Model              string              `json:"model"`
+			Serial             string              `json:"serial"`
+			BiosVersion        string              `json:"bios_version"`
+			EthernetInterfaces []EthernetInterface `json:"ethernet_interfaces"`
+			NetworkInterfaces  []NetworkInterface  `json:"network_interfaces"`
+			PowerState         string              `json:"power_state"`
+			ProcessCount       int                 `json:"processor_count"`
+			ProcessType        string              `json:"processor_type"`
+			MemoryTotal        int                 `json:"memory_total"`
+		}
+		Root struct {
+			ID          string   `json:"ID"`
+			FQDN        string   `json:"FQDN"`
+			MACRequired bool     `json:"MACRequired"`
+			Name        string   `json:"Name"`
+			Type        string   `json:"Type"`
+			User        string   `json:"User"`
+			Systems     []System `json:"Systems"`
+		}
+	)
+	var (
+		root Root
+		err  error
+	)
+
+	// unmarshal the root JSON object from data
+	err = json.Unmarshal(data, &root)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to unmarshal Redfish data: %w", err))
+	}
+
+	var addEthernetInterfacesToNICInfo = func(eths []EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
+		// append NIC info to component endpoint
+		nicInfo := make([]*rf.EthernetNICInfo, len(eths))
+		for _, eth := range eths {
+			nicInfo = append(nicInfo, &rf.EthernetNICInfo{
+				InterfaceEnabled: &enabled,
+				RedfishId:        eth.Uri, // NOTE: what should this value be from RF?
+				Oid:              eth.Uri, // NOTE: what should this value be from RF?
+				Description:      "",      // NOTE: intentionally set explicitly since this is included in V1
+				MACAddress:       eth.Mac,
+			})
+		}
+		return nicInfo
+	}
+
+	// iterate over all of the systems to create component and component endpoint
+	for _, system := range root.Systems {
+		var (
+			enabled   = strings.ToLower(system.PowerState) == "on"
+			nicInfo   = addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled)
+			component = base.Component{
+				ID:      root.ID,
+				Type:    root.Type,
+				Enabled: &enabled,
+			}
+			componentEndpoint = sm.ComponentEndpoint{
+				ComponentDescription: rf.ComponentDescription{
+					ID:             root.ID,
+					Type:           root.Type,
+					RedfishType:    "ComputerSystem", // TODO: need to get the RF type
+					RedfishSubtype: "",               // TODO: need to get the RF subtype
+					UUID:           "",               // TODO: need to get the UUID
+					RfEndpointID:   root.ID,
+				},
+				RfEndpointFQDN:        "",
+				URL:                   system.Uri,
+				ComponentEndpointType: "ComponentEndpointComputerSystem",
+				Enabled:               enabled,
+				RedfishSystemInfo: &rf.ComponentSystemInfo{
+					Actions:    nil,
+					EthNICInfo: nicInfo,
+				},
+			}
+		)
+
+		// components
+		rowsAffected, err := s.db.InsertComponent(&component)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed to insert %d components(s): %w", rowsAffected, err))
+		}
+
+		// component endpoints
+		err = s.db.UpsertCompEndpoint(&componentEndpoint)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed to upsert component endpoint: %w", err))
+		}
+
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // Component endpoints
 /////////////////////////////////////////////////////////////////////////////
