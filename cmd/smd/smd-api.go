@@ -2483,11 +2483,22 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 		go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
 	}
 
-	// parse data and populate component endpoints before inserting into db
-	err = s.parseRedfishPostData(w, eps, body)
-	if err != nil {
-		sendJsonError(w, http.StatusInternalServerError,
-			fmt.Sprintf("could not parse data: %v", err))
+	// check for the data format sent via the schema version
+	schemaVersion := s.getSchemaVersion(w, body)
+	if schemaVersion == 1 {
+		// parse data and populate component endpoints before inserting into db
+		err = s.parseRedfishPostData(w, eps, body)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed parsing post data: %w", err))
+		}
+	} else {
+		// parse data using the new inventory data format (will conform to schema)
+		err = s.parseRedfishPostDataV2(w, body)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed parsing post data (V2): %w", err))
+		}
 	}
 
 	// Send a URI array of the created resources, along with 201 (created).
@@ -2506,24 +2517,6 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 		sendJsonError(w, http.StatusInternalServerError,
 			fmt.Sprintf("failed to unmarshal data: %v", err))
 	}
-
-	// parse json data for chassis ([]interface{})
-	// chassis, foundChassis := obj["Chassis"]
-	// if foundChassis {
-	// 	for _, c := range chassis.([]any) {
-	// 		var rfChassis rf.Chassis
-	// 		ep := &rf.RedfishEP{
-	// 			ServiceRootURL: c["@odata.id"].(string),
-	// 		}
-	// 		rid := rf.ResourceID{Oid: fmt.Sprint(rfChassis.Oid)}
-	// 		epChassis := rf.NewEpChassis(ep, rid, -1)
-	// 		epChassis.InventoryData = rf.InventoryData{
-
-	// 		}
-	// 		epChassis.ChassisRF = rfChassis
-	// 		epChassis.Power = &rf.EpPower{}
-	// 	}
-	// }
 
 	// systems
 	systems, foundSystems := obj["Systems"]
@@ -2602,32 +2595,10 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 			}
 		}
 	}
-
-	// err = json.Unmarshal(data, &cep.ComponentDescription)
-	// err = cep.DecodeComponentInfo(data)
-	// if err != nil {
-	// 	sendJsonError(w, http.StatusInternalServerError,
-	// 		fmt.Sprintf("failed to decode component info: %v", err))
-	// 	return err
-	// }
-
-	// // update found data in database
-	// ep := &sm.RedfishEndpoint{
-	// 	RedfishEPDescription: rf.RedfishEPDescription{
-
-	// 	},
-	// 	ComponentEndpoints: []*sm.ComponentEndpoint{
-
-	// 	},
-	// 	ServiceEndpoints: []*sm.ServiceEndpoint{
-
-	// 	},
-	// }
-	// s.db.UpdateRFEndpoint(ep)
 	return nil
 }
 
-func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpointArray, data []byte) error {
+func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	// temporary parsing structs
 	type (
 		NetworkAdapter struct {
@@ -2635,10 +2606,12 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpo
 			Name string `json:"name"`
 		}
 		EthernetInterface struct {
-			Uri  string `json:"uri"`
-			Mac  string `json:"mac"`
-			Ip   string `json:"ip"`
-			Name string `json:"name"`
+			Uri         string `json:"uri"`
+			Mac         string `json:"mac"`
+			Ip          string `json:"ip"`
+			Name        string `json:"name"`
+			Description string `json:"description"`
+			Enabled     bool   `json:"enabled"`
 		}
 		NetworkInterface struct {
 			Uri         string         `json:"uri"`
@@ -2648,6 +2621,8 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpo
 		}
 		System struct {
 			Uri                string              `json:"uri"`
+			Uuid               string              `json:"uuid"`
+			SystemType         string              `json:"system_type"`
 			Manufacturer       string              `json:"manufacturer"`
 			Name               string              `json:"name"`
 			Model              string              `json:"model"`
@@ -2687,10 +2662,10 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpo
 		nicInfo := make([]*rf.EthernetNICInfo, len(eths))
 		for _, eth := range eths {
 			nicInfo = append(nicInfo, &rf.EthernetNICInfo{
-				InterfaceEnabled: &enabled,
-				RedfishId:        eth.Uri, // NOTE: what should this value be from RF?
-				Oid:              eth.Uri, // NOTE: what should this value be from RF?
-				Description:      "",      // NOTE: intentionally set explicitly since this is included in V1
+				InterfaceEnabled: &enabled,        // NOTE: get via RF "InterfaceEnabled"
+				RedfishId:        eth.Uri,         // NOTE: what should this value be from RF?
+				Oid:              eth.Uri,         // NOTE: what should this value be from RF?
+				Description:      eth.Description, // NOTE: intentionally set explicitly since this is included in V1
 				MACAddress:       eth.Mac,
 			})
 		}
@@ -2704,6 +2679,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpo
 			nicInfo   = addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled)
 			component = base.Component{
 				ID:      root.ID,
+				State:   system.PowerState,
 				Type:    root.Type,
 				Enabled: &enabled,
 			}
@@ -2711,9 +2687,9 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpo
 				ComponentDescription: rf.ComponentDescription{
 					ID:             root.ID,
 					Type:           root.Type,
-					RedfishType:    "ComputerSystem", // TODO: need to get the RF type
-					RedfishSubtype: "",               // TODO: need to get the RF subtype
-					UUID:           "",               // TODO: need to get the UUID
+					RedfishType:    "ComputerSystem",  // TODO: need to get the RF type
+					RedfishSubtype: system.SystemType, // TODO: need to get the RF subtype (SystemType)
+					UUID:           system.Uuid,       // TODO: need to get the UUID (UUID)
 					RfEndpointID:   root.ID,
 				},
 				RfEndpointFQDN:        "",
@@ -2744,6 +2720,30 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, eps *sm.RedfishEndpo
 	}
 
 	return nil
+}
+
+// getSchemaVersion() tries to extract the schema version from the JSON data.
+func (s *SmD) getSchemaVersion(w http.ResponseWriter, data []byte) int {
+	var (
+		schemaVersion int = 1 // default to 1
+		root          map[string]any
+		ok            bool
+		err           error
+	)
+
+	// unmarshal JSON to root
+	err = json.Unmarshal(data, &root)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to unmarshal data: %w", err))
+	}
+
+	// try and extract schema version and set if valid
+	version, ok := root["SchemaVersion"]
+	if ok {
+		schemaVersion = version.(int)
+	}
+	return schemaVersion
 }
 
 /////////////////////////////////////////////////////////////////////////////
