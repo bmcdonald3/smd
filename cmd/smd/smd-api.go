@@ -38,7 +38,8 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi/v5"
-	"github.com/openchami/schemas"
+	redfish "github.com/openchami/schemas/redfish_endpoints"
+	"github.com/openchami/schemas/schemas"
 )
 
 type componentArrayIn struct {
@@ -2602,7 +2603,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	s.lg.Printf("parsing request data using default parsing method...")
 	var (
-		root schemas.RedfishEndpoint
+		root redfish.RedfishEndpoint
 		err  error
 	)
 
@@ -2619,10 +2620,10 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 		for _, eth := range eths {
 			nicInfo = append(nicInfo, &rf.EthernetNICInfo{
 				InterfaceEnabled: &enabled,        // NOTE: get via RF "InterfaceEnabled"
-				RedfishId:        eth.Uri,         // NOTE: what should this value be from RF?
-				Oid:              eth.Uri,         // NOTE: what should this value be from RF?
+				RedfishId:        eth.URI,         // NOTE: what should this value be from RF?
+				Oid:              eth.URI,         // NOTE: what should this value be from RF?
 				Description:      eth.Description, // NOTE: intentionally set explicitly since this is included in V1
-				MACAddress:       eth.Mac,
+				MACAddress:       eth.MAC,
 			})
 		}
 		return nicInfo
