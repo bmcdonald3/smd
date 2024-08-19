@@ -34,6 +34,7 @@ import (
 
 	base "github.com/Cray-HPE/hms-base"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
+	"github.com/OpenCHAMI/schemas"
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
@@ -2510,7 +2511,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 // Parse the incoming JSON data, extracts specific keys, and writes the data
 // to the database
 func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpointArray, data []byte) error {
-	s.lg.Printf("parsing request data...")
+	s.lg.Printf("parsing request data using default parsing method...")
 	var obj map[string]any
 	err := json.Unmarshal(data, &obj)
 	if err != nil {
@@ -2599,54 +2600,9 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 }
 
 func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
-	// temporary parsing structs
-	type (
-		NetworkAdapter struct {
-			Uri  string `json:"uri"`
-			Name string `json:"name"`
-		}
-		EthernetInterface struct {
-			Uri         string `json:"uri"`
-			Mac         string `json:"mac"`
-			Ip          string `json:"ip"`
-			Name        string `json:"name"`
-			Description string `json:"description"`
-			Enabled     bool   `json:"enabled"`
-		}
-		NetworkInterface struct {
-			Uri         string         `json:"uri"`
-			Name        string         `json:"name"`
-			Description string         `json:"description"`
-			Adapter     NetworkAdapter `json:"adapter"`
-		}
-		System struct {
-			Uri                string              `json:"uri"`
-			Uuid               string              `json:"uuid"`
-			SystemType         string              `json:"system_type"`
-			Manufacturer       string              `json:"manufacturer"`
-			Name               string              `json:"name"`
-			Model              string              `json:"model"`
-			Serial             string              `json:"serial"`
-			BiosVersion        string              `json:"bios_version"`
-			EthernetInterfaces []EthernetInterface `json:"ethernet_interfaces"`
-			NetworkInterfaces  []NetworkInterface  `json:"network_interfaces"`
-			PowerState         string              `json:"power_state"`
-			ProcessCount       int                 `json:"processor_count"`
-			ProcessType        string              `json:"processor_type"`
-			MemoryTotal        int                 `json:"memory_total"`
-		}
-		Root struct {
-			ID          string   `json:"ID"`
-			FQDN        string   `json:"FQDN"`
-			MACRequired bool     `json:"MACRequired"`
-			Name        string   `json:"Name"`
-			Type        string   `json:"Type"`
-			User        string   `json:"User"`
-			Systems     []System `json:"Systems"`
-		}
-	)
+	s.lg.Printf("parsing request data using default parsing method...")
 	var (
-		root Root
+		root schemas.RedfishEndpoint
 		err  error
 	)
 
@@ -2657,7 +2613,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 			fmt.Sprintf("failed to unmarshal Redfish data: %w", err))
 	}
 
-	var addEthernetInterfacesToNICInfo = func(eths []EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
+	var addEthernetInterfacesToNICInfo = func(eths []schemas.EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
 		// append NIC info to component endpoint
 		nicInfo := make([]*rf.EthernetNICInfo, len(eths))
 		for _, eth := range eths {
