@@ -2487,7 +2487,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 
 	// check for the data format sent via the schema version
 	schemaVersion := s.getSchemaVersion(w, body)
-	if schemaVersion == 0 {
+	if schemaVersion <= 0 {
 		// parse data and populate component endpoints before inserting into db
 		err = s.parseRedfishPostData(w, eps, body)
 		if err != nil {
@@ -2601,7 +2601,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 }
 
 func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
-	s.lg.Printf("parsing request data using default parsing method...")
+	s.lg.Printf("parsing request data using V2 parsing method...")
 
 	type Root struct {
 		redfish.RedfishEndpoint
@@ -2670,6 +2670,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed to insert %d components(s): %w", rowsAffected, err))
+			return fmt.Errorf("failed to insert %d components(s): %w", rowsAffected, err)
 		}
 
 		// component endpoints
@@ -2677,6 +2678,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed to upsert component endpoint: %w", err))
+			return fmt.Errorf("failed to upsert component endpoint: %w", err)
 		}
 
 	}
