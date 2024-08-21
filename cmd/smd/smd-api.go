@@ -2487,7 +2487,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 
 	// check for the data format sent via the schema version
 	schemaVersion := s.getSchemaVersion(w, body)
-	if schemaVersion == 1 {
+	if schemaVersion == 0 {
 		// parse data and populate component endpoints before inserting into db
 		err = s.parseRedfishPostData(w, eps, body)
 		if err != nil {
@@ -2687,7 +2687,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 // getSchemaVersion() tries to extract the schema version from the JSON data.
 func (s *SmD) getSchemaVersion(w http.ResponseWriter, data []byte) int {
 	var (
-		schemaVersion int = 1 // default to 1
+		schemaVersion int = 0 // default to 0
 		root          map[string]any
 		ok            bool
 		err           error
