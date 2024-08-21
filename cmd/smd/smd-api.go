@@ -38,8 +38,8 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi/v5"
-	redfish "github.com/openchami/schemas/redfish_endpoints"
 	"github.com/openchami/schemas/schemas"
+	redfish "github.com/openchami/schemas/schemas/csm"
 )
 
 type componentArrayIn struct {
@@ -2602,6 +2602,11 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 
 func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	s.lg.Printf("parsing request data using default parsing method...")
+
+	type Root struct {
+		RedfishEndpoint redfish.RedfishEndpoint
+		Systems         []schemas.InventoryDetail
+	}
 	var (
 		root redfish.RedfishEndpoint
 		err  error
@@ -2637,13 +2642,13 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 			component = base.Component{
 				ID:      root.ID,
 				State:   system.PowerState,
-				Type:    root.Type,
+				Type:    string(root.Type),
 				Enabled: &enabled,
 			}
 			componentEndpoint = sm.ComponentEndpoint{
 				ComponentDescription: rf.ComponentDescription{
 					ID:             root.ID,
-					Type:           root.Type,
+					Type:           string(root.Type),
 					RedfishType:    "ComputerSystem",  // TODO: need to get the RF type
 					RedfishSubtype: system.SystemType, // TODO: need to get the RF subtype (SystemType)
 					UUID:           system.Uuid,       // TODO: need to get the UUID (UUID)
