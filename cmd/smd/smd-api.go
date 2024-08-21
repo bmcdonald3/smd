@@ -2604,11 +2604,11 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	s.lg.Printf("parsing request data using default parsing method...")
 
 	type Root struct {
-		RedfishEndpoint redfish.RedfishEndpoint
-		Systems         []schemas.InventoryDetail
+		redfish.RedfishEndpoint
+		Systems []schemas.InventoryDetail
 	}
 	var (
-		root redfish.RedfishEndpoint
+		root Root
 		err  error
 	)
 
@@ -2651,11 +2651,11 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 					Type:           string(root.Type),
 					RedfishType:    "ComputerSystem",  // TODO: need to get the RF type
 					RedfishSubtype: system.SystemType, // TODO: need to get the RF subtype (SystemType)
-					UUID:           system.Uuid,       // TODO: need to get the UUID (UUID)
+					UUID:           system.UUID,       // TODO: need to get the UUID (UUID)
 					RfEndpointID:   root.ID,
 				},
 				RfEndpointFQDN:        "",
-				URL:                   system.Uri,
+				URL:                   system.URI,
 				ComponentEndpointType: "ComponentEndpointComputerSystem",
 				Enabled:               enabled,
 				RedfishSystemInfo: &rf.ComponentSystemInfo{
