@@ -2703,7 +2703,7 @@ func (s *SmD) getSchemaVersion(w http.ResponseWriter, data []byte) int {
 	// try and extract schema version and set if valid
 	version, ok := root["SchemaVersion"]
 	if ok {
-		schemaVersion = version.(int)
+		schemaVersion = int(version.(float64))
 	}
 	return schemaVersion
 }
