@@ -2617,6 +2617,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
 			fmt.Sprintf("failed to unmarshal Redfish data: %w", err))
+		return fmt.Errorf("failed to unmarshal Redfish data: %w", err)
 	}
 
 	var addEthernetInterfacesToNICInfo = func(eths []schemas.EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
