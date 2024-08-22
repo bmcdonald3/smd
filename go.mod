@@ -22,7 +22,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/openchami/chi-middleware/auth v0.0.0-20240812224658-b16b83c70700
 	github.com/openchami/chi-middleware/log v0.0.0-20240812224658-b16b83c70700
-	github.com/openchami/schemas v0.0.0-20240819151820-7a7e0fd6c9d7
+	github.com/openchami/schemas v0.0.0-20240822140637-d8f34a22a2d4
 	github.com/rs/zerolog v1.33.0
 	github.com/sirupsen/logrus v1.9.3
 )
