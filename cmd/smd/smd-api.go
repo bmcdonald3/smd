@@ -38,6 +38,8 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi/v5"
+	"github.com/openchami/schemas/schemas"
+	redfish "github.com/openchami/schemas/schemas/csm"
 )
 
 type componentArrayIn struct {
@@ -2483,11 +2485,22 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 		go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
 	}
 
-	// parse data and populate component endpoints before inserting into db
-	err = s.parseRedfishPostData(w, eps, body)
-	if err != nil {
-		sendJsonError(w, http.StatusInternalServerError,
-			fmt.Sprintf("could not parse data: %v", err))
+	// check for the data format sent via the schema version
+	schemaVersion := s.getSchemaVersion(w, body)
+	if schemaVersion <= 0 {
+		// parse data and populate component endpoints before inserting into db
+		err = s.parseRedfishPostData(w, eps, body)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed parsing post data: %w", err))
+		}
+	} else {
+		// parse data using the new inventory data format (will conform to schema)
+		err = s.parseRedfishPostDataV2(w, body)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed parsing post data (V2): %w", err))
+		}
 	}
 
 	// Send a URI array of the created resources, along with 201 (created).
@@ -2499,31 +2512,13 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 // Parse the incoming JSON data, extracts specific keys, and writes the data
 // to the database
 func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpointArray, data []byte) error {
-	s.lg.Printf("parsing request data...")
+	s.lg.Printf("parsing request data using default parsing method...")
 	var obj map[string]any
 	err := json.Unmarshal(data, &obj)
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
 			fmt.Sprintf("failed to unmarshal data: %v", err))
 	}
-
-	// parse json data for chassis ([]interface{})
-	// chassis, foundChassis := obj["Chassis"]
-	// if foundChassis {
-	// 	for _, c := range chassis.([]any) {
-	// 		var rfChassis rf.Chassis
-	// 		ep := &rf.RedfishEP{
-	// 			ServiceRootURL: c["@odata.id"].(string),
-	// 		}
-	// 		rid := rf.ResourceID{Oid: fmt.Sprint(rfChassis.Oid)}
-	// 		epChassis := rf.NewEpChassis(ep, rid, -1)
-	// 		epChassis.InventoryData = rf.InventoryData{
-
-	// 		}
-	// 		epChassis.ChassisRF = rfChassis
-	// 		epChassis.Power = &rf.EpPower{}
-	// 	}
-	// }
 
 	// systems
 	systems, foundSystems := obj["Systems"]
@@ -2602,29 +2597,118 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 			}
 		}
 	}
-
-	// err = json.Unmarshal(data, &cep.ComponentDescription)
-	// err = cep.DecodeComponentInfo(data)
-	// if err != nil {
-	// 	sendJsonError(w, http.StatusInternalServerError,
-	// 		fmt.Sprintf("failed to decode component info: %v", err))
-	// 	return err
-	// }
-
-	// // update found data in database
-	// ep := &sm.RedfishEndpoint{
-	// 	RedfishEPDescription: rf.RedfishEPDescription{
-
-	// 	},
-	// 	ComponentEndpoints: []*sm.ComponentEndpoint{
-
-	// 	},
-	// 	ServiceEndpoints: []*sm.ServiceEndpoint{
-
-	// 	},
-	// }
-	// s.db.UpdateRFEndpoint(ep)
 	return nil
+}
+
+func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
+	s.lg.Printf("parsing request data using V2 parsing method...")
+
+	type Root struct {
+		redfish.RedfishEndpoint
+		Systems []schemas.InventoryDetail
+	}
+	var (
+		root Root
+		err  error
+	)
+
+	// unmarshal the root JSON object from data
+	err = json.Unmarshal(data, &root)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to unmarshal Redfish data: %w", err))
+		return fmt.Errorf("failed to unmarshal Redfish data: %w", err)
+	}
+
+	var addEthernetInterfacesToNICInfo = func(eths []schemas.EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
+		// append NIC info to component endpoint
+		nicInfo := make([]*rf.EthernetNICInfo, len(eths))
+		for _, eth := range eths {
+			nicInfo = append(nicInfo, &rf.EthernetNICInfo{
+				InterfaceEnabled: &enabled,        // NOTE: get via RF "InterfaceEnabled"
+				RedfishId:        eth.URI,         // NOTE: what should this value be from RF?
+				Oid:              eth.URI,         // NOTE: what should this value be from RF?
+				Description:      eth.Description, // NOTE: intentionally set explicitly since this is included in V1
+				MACAddress:       eth.MAC,
+			})
+		}
+		return nicInfo
+	}
+
+	// iterate over all of the systems to create component and component endpoint
+	for _, system := range root.Systems {
+		var (
+			enabled   = strings.ToLower(system.PowerState) == "on"
+			nicInfo   = addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled)
+			component = base.Component{
+				ID:      root.ID,
+				State:   system.PowerState,
+				Type:    string(root.Type),
+				Enabled: &enabled,
+			}
+			componentEndpoint = sm.ComponentEndpoint{
+				ComponentDescription: rf.ComponentDescription{
+					ID:             root.ID,
+					Type:           string(root.Type),
+					RedfishType:    "ComputerSystem",  // TODO: need to get the RF type
+					RedfishSubtype: system.SystemType, // TODO: need to get the RF subtype (SystemType)
+					UUID:           system.UUID,       // TODO: need to get the UUID (UUID)
+					RfEndpointID:   root.ID,
+				},
+				RfEndpointFQDN:        "",
+				URL:                   system.URI,
+				ComponentEndpointType: "ComponentEndpointComputerSystem",
+				Enabled:               enabled,
+				RedfishSystemInfo: &rf.ComponentSystemInfo{
+					Actions:    nil,
+					EthNICInfo: nicInfo,
+				},
+			}
+		)
+
+		// components
+		rowsAffected, err := s.db.InsertComponent(&component)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed to insert %d components(s): %w", rowsAffected, err))
+			return fmt.Errorf("failed to insert %d components(s): %w", rowsAffected, err)
+		}
+
+		// component endpoints
+		err = s.db.UpsertCompEndpoint(&componentEndpoint)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed to upsert component endpoint: %w", err))
+			return fmt.Errorf("failed to upsert component endpoint: %w", err)
+		}
+
+	}
+
+	return nil
+}
+
+// getSchemaVersion() tries to extract the schema version from the JSON data.
+func (s *SmD) getSchemaVersion(w http.ResponseWriter, data []byte) int {
+	var (
+		schemaVersion int = 0 // default to 0
+		root          map[string]any
+		ok            bool
+		err           error
+	)
+
+	// unmarshal JSON to root
+	err = json.Unmarshal(data, &root)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			fmt.Sprintf("failed to unmarshal data: %w", err))
+	}
+
+	// try and extract schema version and set if valid
+	version, ok := root["SchemaVersion"]
+	if ok {
+		schemaVersion = int(version.(float64))
+	}
+	return schemaVersion
 }
 
 /////////////////////////////////////////////////////////////////////////////
