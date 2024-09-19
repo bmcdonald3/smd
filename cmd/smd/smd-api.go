@@ -2623,14 +2623,14 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	var addEthernetInterfacesToNICInfo = func(eths []schemas.EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
 		// append NIC info to component endpoint
 		nicInfo := make([]*rf.EthernetNICInfo, len(eths))
-		for _, eth := range eths {
-			nicInfo = append(nicInfo, &rf.EthernetNICInfo{
+		for i, eth := range eths {
+			nicInfo[i] = &rf.EthernetNICInfo{
 				InterfaceEnabled: &enabled,        // NOTE: get via RF "InterfaceEnabled"
 				RedfishId:        eth.URI,         // NOTE: what should this value be from RF?
 				Oid:              eth.URI,         // NOTE: what should this value be from RF?
 				Description:      eth.Description, // NOTE: intentionally set explicitly since this is included in V1
 				MACAddress:       eth.MAC,
-			})
+			}
 		}
 		return nicInfo
 	}
@@ -2639,7 +2639,6 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	for _, system := range root.Systems {
 		var (
 			enabled   = strings.ToLower(system.PowerState) == "on"
-			nicInfo   = addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled)
 			component = base.Component{
 				ID:      root.ID,
 				State:   system.PowerState,
@@ -2661,7 +2660,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 				Enabled:               enabled,
 				RedfishSystemInfo: &rf.ComponentSystemInfo{
 					Actions:    nil,
-					EthNICInfo: nicInfo,
+					EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
 				},
 			}
 		)
