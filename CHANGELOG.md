@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.29.0] - 2024-09-18
+
+### Fixed
+
+- Fixed failing tavern test for ethernet interfaces named DC[0-9A-Za-z]+ 
+- Updated CT/Unit tests to use "docker compose" rather than "docker-compose"
+
 ## [2.28.0] - 2024-07-22
 
 ### Fixed
