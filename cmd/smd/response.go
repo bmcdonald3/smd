@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	base "github.com/Cray-HPE/hms-base/v2"
+	base "github.com/Cray-HPE/hms-base"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 )
 
@@ -58,6 +58,31 @@ func sendResource(w http.ResponseWriter, code int, uri *sm.ResourceURI) {
 		w.Header().Set("Location", uri.URI)
 	}
 	sendJSON(w, code, uri)
+}
+
+
+func sendJsonNewResourceIDArray(w http.ResponseWriter, collectionURI string, uris []*sm.ResourceURI) {
+	if len(uris) == 0 {
+		sendJSON(w, http.StatusNoContent, nil)
+	} else {
+		sendResourceArray(w, http.StatusCreated, collectionURI, uris)
+	}
+}
+
+func sendJsonNewResourceID(w http.ResponseWriter, uri *sm.ResourceURI) {
+	if uri == nil {
+		sendJSON(w, http.StatusNoContent, nil)
+	} else {
+		sendResource(w, http.StatusCreated, uri)
+	}
+}
+
+func sendJsonResourceIDArray(w http.ResponseWriter, uris []*sm.ResourceURI) {
+	if len(uris) == 0 {
+		sendJSON(w, http.StatusNoContent, nil)
+	} else {
+		sendJSON(w, http.StatusOK, uris)
+	}
 }
 
 func sendJsonObject(w http.ResponseWriter, code int, obj interface{}) {
