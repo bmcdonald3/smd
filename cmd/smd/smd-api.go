@@ -2671,9 +2671,10 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 		for _, eth := range manager.EthernetInterfaces {
 			// convert IP address from manager ethernet interface to IPAddressMapping
 			ips := []sm.IPAddressMapping{sm.IPAddressMapping{IPAddr: eth.IP}}
-			cei, err := sm.NewCompEthInterfaceV2(eth.Description, eth.MAC, manager.UUID, ips)
+			cei, err := sm.NewCompEthInterfaceV2(eth.Description, eth.MAC, component.ID, ips)
 			if err != nil {
 				sendJsonError(w, http.StatusBadRequest, err.Error())
+				continue
 			}
 			err = s.db.InsertCompEthInterface(cei)
 			if err != nil {
@@ -2685,6 +2686,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 					// an HMSError and not, e.g. an internal DB error code.
 					sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
 				}
+				continue
 			}
 		}
 	}
