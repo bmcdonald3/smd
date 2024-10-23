@@ -2692,7 +2692,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	}
 
 	// iterate over all of the systems to create components and component endpoints
-	for _, system := range root.Systems {
+	for idx, system := range root.Systems {
 		var (
 			enabled   = strings.ToLower(system.PowerState) == "on"
 			component = base.Component{
@@ -2703,7 +2703,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 			}
 			componentEndpoint = sm.ComponentEndpoint{
 				ComponentDescription: rf.ComponentDescription{
-					ID:             root.ID,
+					ID:             root.ID + fmt.Sprintf("n%d", idx),
 					Type:           base.Node.String(),
 					RedfishType:    rf.ComputerSystemType, // TODO: need to get the RF type
 					RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
