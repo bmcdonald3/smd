@@ -2692,51 +2692,57 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	}
 
 	// iterate over all of the systems to create components and component endpoints
-	for idx, system := range root.Systems {
-		var (
-			enabled   = strings.ToLower(system.PowerState) == "on"
-			component = base.Component{
-				ID:      root.ID,
-				State:   system.PowerState,
-				Type:    base.Node.String(),
-				Enabled: &enabled,
+	knownCEs := make(map[string]string)
+	ceNum := 0
+	for _, system := range root.Systems {
+		// use map to store known component endpoints by UUID to avoid adding duplicates
+		if _, gotten := knownCEs[system.UUID]; !gotten {
+			var (
+				enabled   = strings.ToLower(system.PowerState) == "on"
+				component = base.Component{
+					ID:      root.ID + fmt.Sprintf("n%d", ceNum),
+					State:   system.PowerState,
+					Type:    base.Node.String(),
+					Enabled: &enabled,
+				}
+				componentEndpoint = sm.ComponentEndpoint{
+					ComponentDescription: rf.ComponentDescription{
+						ID:             root.ID + fmt.Sprintf("n%d", ceNum),
+						Type:           base.Node.String(),
+						RedfishType:    rf.ComputerSystemType, // TODO: need to get the RF type
+						RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
+						UUID:           system.UUID,           // TODO: need to get the UUID (UUID)
+						RfEndpointID:   root.ID,
+					},
+					RfEndpointFQDN:        "",
+					URL:                   system.URI,
+					ComponentEndpointType: "ComponentEndpointComputerSystem",
+					Enabled:               enabled,
+					RedfishSystemInfo: &rf.ComponentSystemInfo{
+						Actions:    nil,
+						EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
+					},
+				}
+			)
+			knownCEs[system.UUID] = componentEndpoint.ComponentDescription.ID
+			ceNum++
+
+			// components
+			rowsAffected, err := s.db.InsertComponent(&component)
+			if err != nil {
+				sendJsonError(w, http.StatusInternalServerError,
+					fmt.Sprintf("failed to insert %d component(s): %w", rowsAffected, err))
+				return fmt.Errorf("failed to insert %d component(s): %w", rowsAffected, err)
 			}
-			componentEndpoint = sm.ComponentEndpoint{
-				ComponentDescription: rf.ComponentDescription{
-					ID:             root.ID + fmt.Sprintf("n%d", idx),
-					Type:           base.Node.String(),
-					RedfishType:    rf.ComputerSystemType, // TODO: need to get the RF type
-					RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
-					UUID:           system.UUID,           // TODO: need to get the UUID (UUID)
-					RfEndpointID:   root.ID,
-				},
-				RfEndpointFQDN:        "",
-				URL:                   system.URI,
-				ComponentEndpointType: "ComponentEndpointComputerSystem",
-				Enabled:               enabled,
-				RedfishSystemInfo: &rf.ComponentSystemInfo{
-					Actions:    nil,
-					EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
-				},
+
+			// component endpoints
+			err = s.db.UpsertCompEndpoint(&componentEndpoint)
+			if err != nil {
+				sendJsonError(w, http.StatusInternalServerError,
+					fmt.Sprintf("failed to upsert component endpoint: %w", err))
+				return fmt.Errorf("failed to upsert component endpoint: %w", err)
 			}
-		)
-
-		// components
-		rowsAffected, err := s.db.InsertComponent(&component)
-		if err != nil {
-			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed to insert %d component(s): %w", rowsAffected, err))
-			return fmt.Errorf("failed to insert %d component(s): %w", rowsAffected, err)
 		}
-
-		// component endpoints
-		err = s.db.UpsertCompEndpoint(&componentEndpoint)
-		if err != nil {
-			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed to upsert component endpoint: %w", err))
-			return fmt.Errorf("failed to upsert component endpoint: %w", err)
-		}
-
 	}
 
 	return nil
