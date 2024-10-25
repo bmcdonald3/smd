@@ -2701,6 +2701,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 				enabled   = strings.ToLower(system.PowerState) == "on"
 				component = base.Component{
 					ID:      root.ID + fmt.Sprintf("n%d", ceNum),
+					NID:     json.Number(ceNum+1),
 					State:   system.PowerState,
 					Type:    base.Node.String(),
 					Enabled: &enabled,
