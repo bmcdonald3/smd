@@ -10,12 +10,11 @@ permissions: write-all # Necessary for the generate-build-provenance action with
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Set up Go 1.21
+      - name: Set up Go 1.23
         uses: actions/setup-go@v5
         with:
-          go-version: 1.21
+          go-version: 1.23
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Docker Login
@@ -39,11 +38,11 @@ jobs:
           echo "BUILD_USER=$(whoami)" >> $GITHUB_ENV
 
       - name: Release with goreleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          version: latest
+          version: '~> v2'
           args: release --clean
         id: goreleaser
 
@@ -59,22 +58,22 @@ jobs:
           echo "digest=$(cat digest.txt)" >> $GITHUB_OUTPUT
           
       - name: Attest smd binary
-        uses: github-early-access/generate-build-provenance@main
+        uses: actions/attest-build-provenance@v1
         with:
           subject-path: dist/smd
           
       - name: Attest smd-init binary
-        uses: github-early-access/generate-build-provenance@main
+        uses: actions/attest-build-provenance@v1
         with:
           subject-path: dist/smd-init
           
       - name: Attest smd-loader binary
-        uses: github-early-access/generate-build-provenance@main
+        uses: actions/attest-build-provenance@v1
         with:
           subject-path: dist/smd-loader
           
       - name: generate build provenance
-        uses: github-early-access/generate-build-provenance@main
+        uses: actions/attest-build-provenance@v1
         with:
           subject-name: ghcr.io/openchami/smd
           subject-digest: ${{ steps.process_goreleaser_output.outputs.digest }}

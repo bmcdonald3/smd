@@ -62,14 +62,32 @@ builds:
       - dynamic
 
 dockers:
-  - 
-    image_templates:
-      - ghcr.io/openchami/{{.ProjectName}}:latest
-      - ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}
-      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}
-      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}
+  - image_templates:
+      - &amd64_linux_image ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-amd64
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}-amd64
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-amd64
+    use: buildx
     build_flag_templates:
       - "--pull"
+      - "--platform=linux/amd64"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    goarch: amd64
+    extra_files:
+      - LICENSE
+      - CHANGELOG.md
+      - README.md
+      - migrations/
+  - image_templates:
+      - &arm64v8_linux_image ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-arm64
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}-arm64
+      - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-arm64
+    use: buildx
+    build_flag_templates:
+      - "--pull"
+      - "--platform=linux/arm64"
       - "--label=org.opencontainers.image.created={{.Date}}"
       - "--label=org.opencontainers.image.title={{.ProjectName}}"
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
@@ -79,9 +97,28 @@ dockers:
       - CHANGELOG.md
       - README.md
       - migrations/
+    goarch: arm64
 
+docker_manifests:
+  - name_template: "ghcr.io/openchami/{{.ProjectName}}:latest"
+    image_templates:
+      - *amd64_linux_image
+      - *arm64v8_linux_image
 
+  - name_template: "ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}"
+    image_templates:
+      - *amd64_linux_image
+      - *arm64v8_linux_image
 
+  - name_template: "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}"
+    image_templates:
+      - *amd64_linux_image
+      - *arm64v8_linux_image
+
+  - name_template: "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}"
+    image_templates:
+      - *amd64_linux_image
+      - *arm64v8_linux_image
 
 archives:
   - format: tar.gz
@@ -103,7 +140,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
