@@ -37,10 +37,10 @@ jobs:
           echo "BUILD_USER=$(whoami)" >> $GITHUB_ENV
 
       - name: Build with goreleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          version: latest
+          version: '~> v2'
           args: build --clean --snapshot
         id: goreleaser
