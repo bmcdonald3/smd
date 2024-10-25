@@ -63,7 +63,7 @@ builds:
 
 dockers:
   - image_templates:
-      - ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-amd64
+      - &amd64_linux_image ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-amd64
       - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}-amd64
       - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-amd64
     use: buildx
@@ -81,7 +81,7 @@ dockers:
       - README.md
       - migrations/
   - image_templates:
-      - ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-arm64
+      - &arm64v8_linux_image ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-arm64
       - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}-arm64
       - ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-arm64
     use: buildx
@@ -100,20 +100,25 @@ dockers:
     goarch: arm64
 
 docker_manifests:
+  - name_template: "ghcr.io/openchami/{{.ProjectName}}:latest"
+    image_templates:
+      - *amd64_linux_image
+      - *arm64v8_linux_image
+
   - name_template: "ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}"
     image_templates:
-      - "ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-amd64"
-      - "ghcr.io/openchami/{{.ProjectName}}:{{ .Tag }}-arm64"
+      - *amd64_linux_image
+      - *arm64v8_linux_image
 
   - name_template: "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}"
     image_templates:
-      - "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}-amd64"
-      - "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}-arm64"
+      - *amd64_linux_image
+      - *arm64v8_linux_image
 
   - name_template: "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}"
     image_templates:
-      - "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-amd64"
-      - "ghcr.io/openchami/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}-arm64"
+      - *amd64_linux_image
+      - *arm64v8_linux_image
 
 archives:
   - format: tar.gz
@@ -135,7 +140,7 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
