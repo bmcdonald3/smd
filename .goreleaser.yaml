@@ -25,7 +25,8 @@ builds:
          -X main.GitState={{ .Env.GIT_STATE }} \
          -X main.BuildHost={{ .Env.BUILD_HOST }} \
          -X main.GoVersion={{ .Env.GO_VERSION }} \
-         -X main.BuildUser={{ .Env.BUILD_USER }}"
+         -X main.BuildUser={{ .Env.BUILD_USER }} \
+         -extldflags '-static'"
     goos:
       - linux
       - darwin
@@ -34,7 +35,6 @@ builds:
       - arm64
     tags:
       - musl
-      - dynamic
     
   - id: smd-init
     main: ./cmd/smd-init/
@@ -47,7 +47,6 @@ builds:
       - arm64
     tags:
       - musl
-      - dynamic
   - id: smd-loader
     main: ./cmd/smd-loader/
     binary: smd-loader
@@ -59,7 +58,6 @@ builds:
       - arm64
     tags:
       - musl
-      - dynamic
 
 dockers:
   - image_templates:
