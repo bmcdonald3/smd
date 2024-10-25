@@ -17,10 +17,10 @@ builds:
          -X main.Version={{.Version}} \
          -X main.GitBranch={{.Branch}} \
          -X main.GitTag={{.Tag}} \
-         -X main.GitState={{if .IsDirty}}dirty{{else}}clean{{end}} \
-         -X main.BuildHost={{.Env.HOSTNAME}} \
-         -X main.GoVersion={{.Env.GOVERSION}} \
-         -X main.BuildUser={{.Env.USER}}"
+         -X main.GitState=$(if git diff-index --quiet HEAD --; then echo 'clean'; else echo 'dirty'; fi) \
+         -X main.BuildHost=$(hostname) \
+         -X main.GoVersion=$(go version | awk '{print $3}') \
+         -X main.BuildUser=$(whoami)"
     goos:
       - linux
     goarch:
