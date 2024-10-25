@@ -732,6 +732,8 @@ func (s *SmD) setDSN() {
 }
 
 func main() {
+	PrintVersionInfo()
+
 	var s SmD
 	var err error
 
