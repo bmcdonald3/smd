@@ -2695,13 +2695,23 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	knownCEs := make(map[string]string)
 	ceNum := 0
 	for _, system := range root.Systems {
+		var nid json.Number
+		nidJNum, err := json.Marshal(ceNum+1)
+		if err != nil {
+			s.Log(LOG_NOTICE, "failed to marshal NID %d into json: %v", ceNum+1, err)
+		} else {
+			err = json.Unmarshal(nidJNum, &nid)
+			if err != nil {
+				s.Log(LOG_NOTICE, "failed to unmarshal NID %d into json.Number: %v", ceNum+1, err)
+			}
+		}
 		// use map to store known component endpoints by UUID to avoid adding duplicates
 		if _, gotten := knownCEs[system.UUID]; !gotten {
 			var (
 				enabled   = strings.ToLower(system.PowerState) == "on"
 				component = base.Component{
 					ID:      root.ID + fmt.Sprintf("n%d", ceNum),
-					NID:     json.Number(ceNum+1),
+					NID:     nid,
 					State:   system.PowerState,
 					Type:    base.Node.String(),
 					Enabled: &enabled,
