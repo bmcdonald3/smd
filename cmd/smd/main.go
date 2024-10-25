@@ -40,6 +40,7 @@ import (
 	"github.com/Cray-HPE/hms-certs/pkg/hms_certs"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
 	sstorage "github.com/Cray-HPE/hms-securestorage"
+	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
 	"github.com/OpenCHAMI/smd/v2/internal/hbtdapi"
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
 	"github.com/OpenCHAMI/smd/v2/internal/pgmigrate"
@@ -47,15 +48,8 @@ import (
 	"github.com/OpenCHAMI/smd/v2/pkg/rf"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi/v5"
-	jwtauth "github.com/OpenCHAMI/jwtauth/v5"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
-)
-
-var (
-	version = "dev"
-	commit  = "none"
-	date    = "unknown"
 )
 
 const (
@@ -779,8 +773,8 @@ func main() {
 			serviceName)
 	}
 
-	s.LogAlways("Starting... " + serviceName + " " + version + " " + commit + "\n")
-
+	s.LogAlways("Starting... " + serviceName + " " + Version + " " + GitCommit + "\n")
+	s.LogAlways(VersionInfo())
 	// Route logs from Redfish interrogration to main smd log.
 	rf.SetLogger(s.lg)
 	// Route logs for sm module to main smd log

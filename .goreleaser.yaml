@@ -11,6 +11,16 @@ builds:
   - id: smd
     main: ./cmd/smd/
     binary: smd
+    ldflags:
+      - "-X main.GitCommit={{.Commit}} \
+         -X main.BuildTime={{.Timestamp}} \
+         -X main.Version={{.Version}} \
+         -X main.GitBranch={{.Branch}} \
+         -X main.GitTag={{.Tag}} \
+         -X main.GitState={{if .IsDirty}}dirty{{else}}clean{{end}} \
+         -X main.BuildHost={{.Env.HOSTNAME}} \
+         -X main.GoVersion={{.Env.GOVERSION}} \
+         -X main.BuildUser={{.Env.USER}}"
     goos:
       - linux
     goarch:
