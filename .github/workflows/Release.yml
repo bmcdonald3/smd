@@ -57,22 +57,37 @@ jobs:
           node process.js
           echo "digest=$(cat digest.txt)" >> $GITHUB_OUTPUT
           
-      - name: Attest smd binary
+      - name: Attest smd binary linux_amd64
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: dist/smd
+          subject-path: dist/smd_linux_amd64_v1/smd
           
-      - name: Attest smd-init binary
+      - name: Attest smd-init binary linux_amd64
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: dist/smd-init
+          subject-path: dist/smd-init_linux_amd64_v1/smd-init
           
-      - name: Attest smd-loader binary
+      - name: Attest smd-loader binary linux_amd64
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: dist/smd-loader
+          subject-path: dist/smd-loader_linux_amd64_v1/smd-loader
+
+      - name: Attest smd binary linux_arm64
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/smd_linux_arm64_v1/smd
+            
+      - name: Attest smd-init binary linux_arm64
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/smd-init_linux_arm64_v1/smd-init
+            
+      - name: Attest smd-loader binary linux_arm64
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/smd-loader_linux_arm64_v1/smd-loader
           
-      - name: generate build provenance
+      - name: generate build provenance of docker container
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ghcr.io/openchami/smd
