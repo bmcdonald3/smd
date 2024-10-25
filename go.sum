@@ -190,8 +190,6 @@ github.com/openchami/chi-middleware/auth v0.0.0-20240812224658-b16b83c70700 h1:X
 github.com/openchami/chi-middleware/auth v0.0.0-20240812224658-b16b83c70700/go.mod h1:kswb9kU5cZAFRAvf1dAUJRWbQyjDEb0qkxW4ncDdEXg=
 github.com/openchami/chi-middleware/log v0.0.0-20240812224658-b16b83c70700 h1:Gzt5f6RK39CHvY3SJudzBb/RK4tVh/S3CpJ0eQlbNdg=
 github.com/openchami/chi-middleware/log v0.0.0-20240812224658-b16b83c70700/go.mod h1:UuXvr2loD4MtvZeKr57W0WpBs+gm0KM1kdtcXrE8M6s=
-github.com/openchami/schemas v0.0.0-20240819151820-7a7e0fd6c9d7 h1:5rh4vZFp+FuSt3YeyoK1HR2gX83xmBtH9nNavmbKptY=
-github.com/openchami/schemas v0.0.0-20240819151820-7a7e0fd6c9d7/go.mod h1:3dridLqXvAdO0ypPXuxnXRgaK2h/dItVKGseCgFQ13k=
 github.com/openchami/schemas v0.0.0-20240822140637-d8f34a22a2d4 h1:XuGfSgAuuR8/TIWRDMSGF6VKSr/OMYD7kGtJSk9oemM=
 github.com/openchami/schemas v0.0.0-20240822140637-d8f34a22a2d4/go.mod h1:3dridLqXvAdO0ypPXuxnXRgaK2h/dItVKGseCgFQ13k=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
