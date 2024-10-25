@@ -11,16 +11,20 @@ builds:
   - id: smd
     main: ./cmd/smd/
     binary: smd
+    # export GIT_STATE=$(if git diff-index --quiet HEAD --; then echo 'clean'; else echo 'dirty'; fi)
+    # export BUILD_HOST=$(hostname)
+    # export GO_VERSION=$(go version | awk '{print $3}')
+    # export BUILD_USER=$(whoami)
     ldflags:
       - "-X main.GitCommit={{.Commit}} \
          -X main.BuildTime={{.Timestamp}} \
          -X main.Version={{.Version}} \
          -X main.GitBranch={{.Branch}} \
          -X main.GitTag={{.Tag}} \
-         -X main.GitState=$(if git diff-index --quiet HEAD --; then echo 'clean'; else echo 'dirty'; fi) \
-         -X main.BuildHost=$(hostname) \
-         -X main.GoVersion=$(go version | awk '{print $3}') \
-         -X main.BuildUser=$(whoami)"
+         -X main.GitState=${GIT_STATE:-unknown} \
+         -X main.BuildHost=${BUILD_HOST:-unknown} \
+         -X main.GoVersion=${GO_VERSION:-unknown} \
+         -X main.BuildUser=${BUILD_USER:-unknown}"
     goos:
       - linux
     goarch:
