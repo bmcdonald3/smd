@@ -58,7 +58,7 @@ jobs:
           echo "digest=$(cat digest.txt)" >> $GITHUB_OUTPUT
           
       - name: Attest smd binary linux_amd64
-        uses: attest-build-provenance@v1
+        uses: actions/attest-build-provenance@v1
         with:
           subject-path: dist/smd_linux_amd64_v1/smd
           
