@@ -10,12 +10,21 @@ permissions: write-all # Necessary for the generate-build-provenance action with
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: alpine:3.20
     steps:
-      - name: Install Dependencies
+      - name: Install musl and cross-compilation tools
         run: |
-          apk add --no-cache bash go libc-dev gcc musl-dev
+          sudo apt-get update
+          sudo apt-get install -y musl-tools musl musl-dev
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+          sudo apt-get install -y g++-aarch64-linux-gnu
+          sudo apt-get install -y gcc-x86-64-linux-gnu
+          sudo apt-get install -y g++-x86-64-linux-gnu
+          sudo apt-get install -y qemu-user-static
+          sudo apt-get install -y binfmt-support
+          sudo update-binfmts --enable qemu-aarch64
+          sudo update-binfmts --display qemu-aarch64
+          sudo update-binfmts --enable qemu-arm
+          sudo update-binfmts --display qemu-armk
       - name: Set up Go 1.23
         uses: actions/setup-go@v5
         with:
