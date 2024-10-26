@@ -22,6 +22,10 @@ jobs:
           sudo apt-get install -y binfmt-support
           sudo update-binfmts --enable qemu-aarch64
           sudo update-binfmts --display qemu-aarch64
+          sudo update-binfmts --enable qemu-x86-64
+          sudo update-binfmts --display qemu-x86-64
+          sudo update-binfmts --enable qemu-arm
+          sudo update-binfmts --display qemu-arm
           
       - name: Set up Go 1.23
         uses: actions/setup-go@v5
