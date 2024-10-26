@@ -10,7 +10,12 @@ permissions: write-all # Necessary for the generate-build-provenance action with
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: alpine:3.20
     steps:
+      - name: Install Dependencies
+        run: |
+          apk add --no-cache bash go libc-dev gcc musl-dev
       - name: Set up Go 1.23
         uses: actions/setup-go@v5
         with:
