@@ -52,6 +52,7 @@ jobs:
           echo "BUILD_HOST=$(hostname)" >> $GITHUB_ENV
           echo "GO_VERSION=$(go version | awk '{print $3}')" >> $GITHUB_ENV
           echo "BUILD_USER=$(whoami)" >> $GITHUB_ENV
+          echo "CGO_ENABLED=1" >> $GITHUB_ENV
 
       - name: Build with goreleaser
         uses: goreleaser/goreleaser-action@v6
@@ -61,3 +62,13 @@ jobs:
           version: '~> v2'
           args: build --clean --snapshot
         id: goreleaser
+      - name: Verify binaries are static
+        run: |
+            for binary in dist/*amd64_v1/*; do
+              if file "$binary" | grep -q "statically linked"; then
+                echo "$binary is statically linked"
+              else
+                echo "$binary is not statically linked"
+              fi
+            done
+    
