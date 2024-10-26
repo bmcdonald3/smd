@@ -63,6 +63,11 @@ builds:
       - arm64
     tags:
       - musl
+    env:
+      - CGO_ENABLED=1
+    asmflags:
+      - "GOARCH=arm64:CC=gcc-aarch64-linux-gnu"
+      - "GOARCH=amd64:CC=musl-gcc"
   - id: smd-loader
     main: ./cmd/smd-loader/
     binary: smd-loader
@@ -85,6 +90,11 @@ builds:
       - arm64
     tags:
       - musl
+    env:
+      - CGO_ENABLED=1
+    asmflags:
+      - "GOARCH=arm64:CC=gcc-aarch64-linux-gnu"
+      - "GOARCH=amd64:CC=musl-gcc"
 
 dockers:
   - image_templates:
