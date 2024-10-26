@@ -98,6 +98,7 @@ func nodeNids(hsmURL string) {
 }
 
 func main() {
+	PrintVersionInfo()
 	var cancel context.CancelFunc
 	ctx, cancel = context.WithCancel(context.Background())
 

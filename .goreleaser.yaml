@@ -39,6 +39,17 @@ builds:
   - id: smd-init
     main: ./cmd/smd-init/
     binary: smd-init
+    ldflags:
+      - "-X main.GitCommit={{.Commit}} \
+         -X main.BuildTime={{.Timestamp}} \
+         -X main.Version={{.Version}} \
+         -X main.GitBranch={{.Branch}} \
+         -X main.GitTag={{.Tag}} \
+         -X main.GitState={{ .Env.GIT_STATE }} \
+         -X main.BuildHost={{ .Env.BUILD_HOST }} \
+         -X main.GoVersion={{ .Env.GO_VERSION }} \
+         -X main.BuildUser={{ .Env.BUILD_USER }} \
+         -extldflags '-static'"
     goos:
       - linux
       - darwin
@@ -50,6 +61,17 @@ builds:
   - id: smd-loader
     main: ./cmd/smd-loader/
     binary: smd-loader
+    ldflags:
+      - "-X main.GitCommit={{.Commit}} \
+         -X main.BuildTime={{.Timestamp}} \
+         -X main.Version={{.Version}} \
+         -X main.GitBranch={{.Branch}} \
+         -X main.GitTag={{.Tag}} \
+         -X main.GitState={{ .Env.GIT_STATE }} \
+         -X main.BuildHost={{ .Env.BUILD_HOST }} \
+         -X main.GoVersion={{ .Env.GO_VERSION }} \
+         -X main.BuildUser={{ .Env.BUILD_USER }} \
+         -extldflags '-static'"
     goos:
       - linux
       - darwin
