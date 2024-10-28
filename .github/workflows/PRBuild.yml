@@ -9,41 +9,27 @@ on:
     
 
 jobs:
-  build:
+  prbuild:
     runs-on: ubuntu-latest
     steps:
-      - name: Install musl and cross-compilation tools
+      - name: Install cross-compilation tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y musl-tools musl musl-dev
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-          sudo apt-get install -y gcc-x86-64-linux-gnu g++-x86-64-linux-gnu
-          sudo apt-get install -y qemu-user-static
-          sudo apt-get install -y binfmt-support
-          sudo update-binfmts --enable qemu-aarch64
-          sudo update-binfmts --display qemu-aarch64
-          sudo update-binfmts --enable qemu-arm
-          sudo update-binfmts --display qemu-arm
-          
+
       - name: Set up Go 1.23
         uses: actions/setup-go@v5
         with:
-          go-version: 1.23
+          go-version: stable
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-        
-      - name: Docker Login
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-tags: 1
           fetch-depth: 1
-          
+
       # Set environment variables required by GoReleaser
       - name: Set build environment variables
         run: |
@@ -52,7 +38,6 @@ jobs:
           echo "GO_VERSION=$(go version | awk '{print $3}')" >> $GITHUB_ENV
           echo "BUILD_USER=$(whoami)" >> $GITHUB_ENV
           echo "CGO_ENABLED=1" >> $GITHUB_ENV
-          echo "CC=musl-gcc" >> $GITHUB_ENV
 
       - name: Build with goreleaser
         uses: goreleaser/goreleaser-action@v6
@@ -62,13 +47,3 @@ jobs:
           version: '~> v2'
           args: build --clean --snapshot
         id: goreleaser
-      - name: Verify binaries are static
-        run: |
-            for binary in dist/*amd64_v1/*; do
-              if file "$binary" | grep -q "statically linked"; then
-                echo "$binary is statically linked"
-              else
-                echo "$binary is not statically linked"
-              fi
-            done
-    

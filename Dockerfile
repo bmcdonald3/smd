@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM chainguard/wolfi-base:latest
 
 RUN apk add --no-cache tini
 

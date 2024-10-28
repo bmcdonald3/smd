@@ -1,7 +1,3 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-version: 2
-
 project_name: smd
 before:
   hooks:
@@ -25,22 +21,22 @@ builds:
          -X main.GitState={{ .Env.GIT_STATE }} \
          -X main.BuildHost={{ .Env.BUILD_HOST }} \
          -X main.GoVersion={{ .Env.GO_VERSION }} \
-         -X main.BuildUser={{ .Env.BUILD_USER }} \
-         -extldflags '-static'"
+         -X main.BuildUser={{ .Env.BUILD_USER }} "
     goos:
       - linux
       - darwin
     goarch:
       - amd64
       - arm64
-    tags:
-      - musl
     env:
       - CGO_ENABLED=1
-    asmflags:
-      - "GOARCH=arm64:CC=gcc-aarch64-linux-gnu"
-      - "GOARCH=amd64:CC=musl-gcc"
-    
+      - >-
+        CC={{- if eq .Os "linux" -}}
+            {{- if eq .Arch "amd64" -}}gcc{{- else -}}aarch64-linux-gnu-gcc{{- end -}}
+        {{- else if eq .Os "darwin" -}}
+            {{- if eq .Arch "amd64" -}}clang{{- else -}}clang -target arm64-apple-macos11{{- end -}}
+        {{- end }}
+
   - id: smd-init
     main: ./cmd/smd-init/
     binary: smd-init
@@ -53,21 +49,22 @@ builds:
          -X main.GitState={{ .Env.GIT_STATE }} \
          -X main.BuildHost={{ .Env.BUILD_HOST }} \
          -X main.GoVersion={{ .Env.GO_VERSION }} \
-         -X main.BuildUser={{ .Env.BUILD_USER }} \
-         -extldflags '-static'"
+         -X main.BuildUser={{ .Env.BUILD_USER }} "
     goos:
       - linux
       - darwin
     goarch:
       - amd64
       - arm64
-    tags:
-      - musl
     env:
       - CGO_ENABLED=1
-    asmflags:
-      - "GOARCH=arm64:CC=gcc-aarch64-linux-gnu"
-      - "GOARCH=amd64:CC=musl-gcc"
+      - >-
+        CC={{- if eq .Os "linux" -}}
+            {{- if eq .Arch "amd64" -}}gcc{{- else -}}aarch64-linux-gnu-gcc{{- end -}}
+        {{- else if eq .Os "darwin" -}}
+            {{- if eq .Arch "amd64" -}}clang{{- else -}}clang -target arm64-apple-macos11{{- end -}}
+        {{- end }}
+
   - id: smd-loader
     main: ./cmd/smd-loader/
     binary: smd-loader
@@ -80,21 +77,21 @@ builds:
          -X main.GitState={{ .Env.GIT_STATE }} \
          -X main.BuildHost={{ .Env.BUILD_HOST }} \
          -X main.GoVersion={{ .Env.GO_VERSION }} \
-         -X main.BuildUser={{ .Env.BUILD_USER }} \
-         -extldflags '-static'"
+         -X main.BuildUser={{ .Env.BUILD_USER }} "
     goos:
       - linux
       - darwin
     goarch:
       - amd64
       - arm64
-    tags:
-      - musl
     env:
       - CGO_ENABLED=1
-    asmflags:
-      - "GOARCH=arm64:CC=gcc-aarch64-linux-gnu"
-      - "GOARCH=amd64:CC=musl-gcc"
+      - >-
+        CC={{- if eq .Os "linux" -}}
+            {{- if eq .Arch "amd64" -}}gcc{{- else -}}aarch64-linux-gnu-gcc{{- end -}}
+        {{- else if eq .Os "darwin" -}}
+            {{- if eq .Arch "amd64" -}}clang{{- else -}}clang -target arm64-apple-macos11{{- end -}}
+        {{- end }}
 
 dockers:
   - image_templates:
@@ -182,7 +179,6 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-
 
 # The lines beneath this are called `modelines`. See `:help modeline`
 # Feel free to remove those if you don't want/use them.
