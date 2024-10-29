@@ -174,6 +174,7 @@ func parseCmdLine() {
 var lg = log.New(os.Stdout, "", log.Lshortfile|log.LstdFlags|log.Lmicroseconds)
 
 func main() {
+	PrintVersionInfo()
 	parseCmdLine()
 
 	lg.Printf("smd-init: Starting...")
