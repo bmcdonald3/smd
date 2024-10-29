@@ -1,7 +1,4 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
 version: 2
-
 project_name: smd
 before:
   hooks:
@@ -30,34 +27,47 @@ builds:
     goos:
       - linux
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
-    tags:
-      - musl
-    
+    goamd64:
+      - v4
+    env:
+      - CGO_ENABLED=0
+
   - id: smd-init
     main: ./cmd/smd-init/
     binary: smd-init
     goos:
       - linux
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
-    tags:
-      - musl
+    goamd64:
+      - v4
+
+    env:
+      - CGO_ENABLED=0
+
+
   - id: smd-loader
     main: ./cmd/smd-loader/
     binary: smd-loader
     goos:
       - linux
       - darwin
+      - windows
     goarch:
       - amd64
       - arm64
-    tags:
-      - musl
+    goamd64:
+      - v4
+
+    env:
+      - CGO_ENABLED=0
 
 dockers:
   - image_templates:
@@ -73,6 +83,7 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
     goarch: amd64
+    goamd64: v4
     extra_files:
       - LICENSE
       - CHANGELOG.md
@@ -134,7 +145,26 @@ archives:
       - CHANGELOG.md
       - README.md
 
-
+nfpms:
+        - id: smd
+          formats: 
+          - deb
+          - rpm
+          - apk
+          maintainer: "Alex Lovell-Troy <alovelltroy@lanl.gov>"
+          description: "SMD is a tool for managing the inventory of an HPC system.  Read more at https://www.openchami.org"
+          homepage: "https://www.openchami.org"
+          license: MIT
+          section: utils
+          priority: optional
+          contents:
+            - src: dist/smd_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else }}{{ .Arch }}{{ end }}/smd
+              dst: /usr/local/bin/smd
+            - src: dist/smd-init_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else }}{{ .Arch }}{{ end }}/smd-init
+              dst: /usr/local/bin/smd-init
+            - src: dist/smd-loader_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else }}{{ .Arch }}{{ end }}/smd-loader
+              dst: /usr/local/bin/smd-loader
+    
 checksum:
   name_template: 'checksums.txt'
 snapshot:
