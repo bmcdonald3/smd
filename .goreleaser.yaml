@@ -1,4 +1,4 @@
-version: 2
+version: 2.4
 project_name: smd
 before:
   hooks:
@@ -32,6 +32,7 @@ builds:
       - arm64
     goamd64:
       - v4
+
     env:
       - CGO_ENABLED=0
 
@@ -85,6 +86,7 @@ builds:
     goamd64:
       - v4
 
+
     env:
       - CGO_ENABLED=0
 
@@ -103,6 +105,7 @@ dockers:
       - "--label=org.opencontainers.image.version={{.Version}}"
     goarch: amd64
     goamd64: v4
+
     extra_files:
       - LICENSE
       - CHANGELOG.md
@@ -177,11 +180,11 @@ nfpms:
           section: utils
           priority: optional
           contents:
-            - src: dist/smd_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else }}{{ .Arch }}{{ end }}/smd
+            - src: dist/smd_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else if eq .Arch "arm64" }}{{ .Arch }}_{{ .Arm64 }}{{ else }}{{ .Arch }}{{ end }}/smd
               dst: /usr/local/bin/smd
-            - src: dist/smd-init_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else }}{{ .Arch }}{{ end }}/smd-init
+            - src: dist/smd-init_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else if eq .Arch "arm64" }}{{ .Arch }}_{{ .Arm64 }}{{ else }}{{ .Arch }}{{ end }}/smd-init
               dst: /usr/local/bin/smd-init
-            - src: dist/smd-loader_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else }}{{ .Arch }}{{ end }}/smd-loader
+            - src: dist/smd-loader_{{ .Os }}_{{ if eq .Arch "amd64" }}{{ .Arch }}_{{ .Amd64 }}{{ else if eq .Arch "arm64" }}{{ .Arch }}_{{ .Arm64 }}{{ else }}{{ .Arch }}{{ end }}/smd-loader
               dst: /usr/local/bin/smd-loader
     
 checksum:
