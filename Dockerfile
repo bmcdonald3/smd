@@ -4,8 +4,10 @@ RUN apk add --no-cache tini
 
 # Include curl in the final image.
 RUN set -ex \
-    && apk -U upgrade \
-    && apk add --no-cache curl
+    && apk update \
+    && apk add --no-cache curl tini \
+    && rm -rf /var/cache/apk/*  \
+    && rm -rf /tmp/*
 
 COPY smd /
 COPY smd-loader /

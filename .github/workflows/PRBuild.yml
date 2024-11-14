@@ -17,7 +17,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
-      - name: Set up Go 1.23
+      - name: Set up latest stable Go
         uses: actions/setup-go@v5
         with:
           go-version: stable

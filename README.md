@@ -40,12 +40,13 @@ Once the environment variables are set, you can build the project locally using 
 
 Follow the installation instructions from [GoReleaser’s documentation](https://goreleaser.com/install/).
 
-1. Run GoReleaser in snapshot mode with the --snapshot and --skip-publish flags to create a local build without attempting to release it:
+1. Run GoReleaser in snapshot mode with the --snapshot flag to create a local build without attempting to release it:
   ```bash
-  goreleaser release --snapshot --skip-publish --clean
+  goreleaser release --snapshot --clean
   ```
 2.	Check the dist/ directory for the built binaries, which will include the metadata from the environment variables. You can inspect the binary output to confirm that the metadata was correctly embedded.
 
+__NOTE__ If you see errors, ensure that you are using the same version of goreleaser that is being used in the [Release Action](.github/workflows/Release.yml)
 
 
 The rest of this README is unchanged from the HPE version.
