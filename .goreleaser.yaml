@@ -31,7 +31,7 @@ builds:
       - amd64
       - arm64
     goamd64:
-      - v4
+      - v3
 
     env:
       - CGO_ENABLED=0
@@ -57,7 +57,7 @@ builds:
       - amd64
       - arm64
     goamd64:
-      - v4
+      - v3
 
     env:
       - CGO_ENABLED=0
@@ -84,7 +84,7 @@ builds:
       - amd64
       - arm64
     goamd64:
-      - v4
+      - v3
 
 
     env:
@@ -104,7 +104,7 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Version}}"
     goarch: amd64
-    goamd64: v4
+    goamd64: v3
 
     extra_files:
       - LICENSE
