@@ -2763,13 +2763,14 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 				} else {
 					// Send this message as 500 or 400 plus error message if it is
 					// an HMSError and not, e.g. an internal DB error code.
-					sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
+					sendJsonDBError(w, "", "operation failed during store.", err)
 				}
 				if forceUpdate {
-					// try deleting and reinserting the CompEthInterface
+					// try deleting and reinserting the CompEthInterface since there is not an upsert/update function
 					rowAffected, err := s.db.DeleteCompEthInterfaceByID(cei.ID)
 					if err != nil {
-
+						sendJsonDBError(w, "", "operation failed trying to delete component ethernet interface.", err)
+						continue
 					}
 					if rowAffected {
 						err = s.db.InsertCompEthInterface(cei)
@@ -2779,7 +2780,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 						} else {
 							// Send this message as 500 or 400 plus error message if it is
 							// an HMSError and not, e.g. an internal DB error code.
-							sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
+							sendJsonDBError(w, "", "operation  failed during store.", err)
 						}
 					}
 				}
