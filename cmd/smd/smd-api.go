@@ -2163,14 +2163,23 @@ func (s *SmD) doRedfishEndpointsDeleteAll(w http.ResponseWriter, r *http.Request
 }
 
 // UPDATE existing RedfishEndpoint entry in full (or all least all
-// user-writable portions).
+// user-writable portions) or CREATE if it does not exists.
 func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
+	var (
+		xname = base.NormalizeHMSCompID(chi.URLParam(r, "xname"))
+		rep   rf.RawRedfishEP
+		cred  compcreds.CompCredentials
+		body  []byte
+		err   error
+	)
 
-	xname := base.NormalizeHMSCompID(chi.URLParam(r, "xname"))
+	body, err = io.ReadAll(r.Body)
+	if err != nil {
+		sendJsonError(w, http.StatusInternalServerError,
+			"error reading response body "+err.Error())
+	}
 
-	var rep rf.RawRedfishEP
-	var cred compcreds.CompCredentials
-	body, err := ioutil.ReadAll(r.Body)
+	// We expect the RedfishEndpoint to be in JSON format in the request body.
 	err = json.Unmarshal(body, &rep)
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
@@ -2186,6 +2195,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 			"xname in URL and PUT body do not match")
 		return
 	}
+
 	// Make sure the information submitted is a proper endpoint and will
 	// not update the entry with invalid data.
 	epd, err := rf.NewRedfishEPDescription(&rep)
@@ -2194,6 +2204,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 			"couldn't validate endpoint data: "+err.Error())
 		return
 	}
+
 	// Package it up into a SM RedfishEndpoint representation and send to DB.
 	ep := sm.NewRedfishEndpoint(epd)
 	if s.writeVault {
@@ -2207,6 +2218,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 			ep.Password = ""
 		}
 	}
+
 	retEP, affectedIDs, err := s.db.UpdateRFEndpointNoDiscInfo(ep)
 	if err != nil {
 		s.lg.Printf("failed: %s %s, Err: %s", r.RemoteAddr, string(body), err)
@@ -2220,11 +2232,45 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	} else if retEP == nil {
-		// No error, but no update: Resource was not found.
-		s.lg.Printf("doRedfishEndpointPut: No such entry %s", rep.ID)
-		sendJsonError(w, http.StatusNotFound, "No such entry: "+rep.ID)
-		return
+		// Create a new RedfishEndpoint in DB.
+		err = s.db.InsertRFEndpoint(ep)
+		if err != nil {
+			s.lg.Printf("failed: %s Err: %s", r.RemoteAddr, err)
+			if err == hmsds.ErrHMSDSDuplicateKey {
+				sendJsonError(w, http.StatusConflict, "operation would conflict "+
+					"with an existing resource that has the same FQDN or xname ID.")
+			} else {
+				sendJsonError(w, http.StatusInternalServerError,
+					"operation 'POST' failed during store. ")
+			}
+			return
+		}
+
 	}
+
+	// parse incoming data to add components, component endpoints, and ethernet interfaces
+	var (
+		schemaVersion = s.getSchemaVersion(w, body)
+		eps           = &sm.RedfishEndpointArray{
+			RedfishEndpoints: []*sm.RedfishEndpoint{ep},
+		}
+	)
+	if schemaVersion <= 0 {
+		// parse data and populate component endpoints before inserting into db
+		err = s.parseRedfishEndpointData(w, eps, body)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed parsing post data: %w", err))
+		}
+	} else {
+		// parse data using the new inventory data format (will conform to schema)
+		err = s.parseRedfishEndpointDataV2(w, body, true)
+		if err != nil {
+			sendJsonError(w, http.StatusInternalServerError,
+				fmt.Sprintf("failed parsing post data (V2): %w", err))
+		}
+	}
+
 	// Store credentials that are given in vault
 	if s.writeVault {
 		// Don't store empty credentials
@@ -2254,17 +2300,28 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 		scn := NewJobSCN(affectedIDs, data, s)
 		s.wp.Queue(scn)
 	}
+
 	// Do discovery if needed on new Endpoints.  Should never want to
 	// force this since it can cause both the new and old discovery to
 	// fail.  A manual discovery would be the recovery mechanism.
 	// TODO:  Add auto-force based on time delta.
-	go s.discoverFromEndpoint(ep, 0, false)
+	//
+	// Discovery can optionally be disabled with the --disable-discovery
+	// flag from the CLI.
+	if !s.disableDiscovery {
+		go s.discoverFromEndpoint(ep, 0, false)
+	}
+
+	//
+	// Create RedfishEndpoints, Components, and ComponentEndpoints from
+	// the "systems" and "managers" properties found in the request body
+	// in JSON format.
+	//
 
 	s.lg.Printf("succeeded: %s %s", r.RemoteAddr, string(body))
 
 	// Send 200 status (success
 	sendJsonRFEndpointRsp(w, retEP)
-
 }
 
 // PATCH existing RedfishEndpoint entry but only the fields specified.
@@ -2481,22 +2538,31 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 	// Do discovery if needed on new Endpoints.  Should never need to
 	// force this because the endpoint should always be new, else we would
 	// have already failed the operation.
+	//
+	// Discovery can optionally be disabled with the --disable-discovery
+	// flag from the CLI.
 	if !s.disableDiscovery {
 		go s.discoverFromEndpoints(eps.RedfishEndpoints, 0, true, false)
 	}
+
+	//
+	// Create RedfishEndpoints, Components, and ComponentEndpoints from
+	// the "systems" and "managers" properties found in the request body
+	// in JSON format.
+	//
 
 	// check for the data format sent via the schema version
 	schemaVersion := s.getSchemaVersion(w, body)
 	if schemaVersion <= 0 {
 		// parse data and populate component endpoints before inserting into db
-		err = s.parseRedfishPostData(w, eps, body)
+		err = s.parseRedfishEndpointData(w, eps, body)
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed parsing post data: %w", err))
 		}
 	} else {
 		// parse data using the new inventory data format (will conform to schema)
-		err = s.parseRedfishPostDataV2(w, body)
+		err = s.parseRedfishEndpointDataV2(w, body, false)
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed parsing post data (V2): %w", err))
@@ -2506,12 +2572,11 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 	// Send a URI array of the created resources, along with 201 (created).
 	uris := eps.GetResourceURIArray(s.redfishEPBaseV2)
 	sendJsonNewResourceIDArray(w, s.redfishEPBaseV2, uris)
-	return
 }
 
 // Parse the incoming JSON data, extracts specific keys, and writes the data
 // to the database
-func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpointArray, data []byte) error {
+func (s *SmD) parseRedfishEndpointData(w http.ResponseWriter, eps *sm.RedfishEndpointArray, data []byte) error {
 	s.lg.Printf("parsing request data using default parsing method...")
 	var obj map[string]any
 	err := json.Unmarshal(data, &obj)
@@ -2600,7 +2665,7 @@ func (s *SmD) parseRedfishPostData(w http.ResponseWriter, eps *sm.RedfishEndpoin
 	return nil
 }
 
-func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
+func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, forceUpdate bool) error {
 	s.lg.Printf("parsing request data using V2 parsing method...")
 
 	// NOTE: temporary definition for manager
@@ -2664,7 +2729,15 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed to insert %d component(s): %w", rowsAffected, err))
-			return fmt.Errorf("failed to insert %d component(s): %w", rowsAffected, err)
+			if forceUpdate {
+				// upsert here to keep allow returning error for duplicates when not forcing updates
+				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
+				if err != nil {
+					return fmt.Errorf("failed to update component: %w", err)
+				}
+			} else {
+				return fmt.Errorf("failed to insert %d component(s): %w", rowsAffected, err)
+			}
 		}
 
 		// create a new ethernet interface with reference to the component above
@@ -2679,12 +2752,38 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 			err = s.db.InsertCompEthInterface(cei)
 			if err != nil {
 				if err == hmsds.ErrHMSDSDuplicateKey {
-					sendJsonError(w, http.StatusConflict, "operation would conflict "+
-						"with an existing component ethernet interface that has the same MAC address.")
+					if forceUpdate {
+						// Duplicate key detected, but foreceUpdate enabled, so we delete and readd.
+
+						// try deleting and reinserting the CompEthInterface since there is not an upsert/update function
+						rowAffected, err := s.db.DeleteCompEthInterfaceByID(cei.ID)
+						if err != nil {
+							sendJsonDBError(w, "", "operation failed trying to delete component ethernet interface.", err)
+							continue
+						}
+						if rowAffected {
+							err = s.db.InsertCompEthInterface(cei)
+							if err != nil {
+								if err == hmsds.ErrHMSDSDuplicateKey {
+									sendJsonError(w, http.StatusConflict, "operation would conflict "+
+										"with an existing component ethernet interface that has the same MAC address.")
+								} else {
+									// Send this message as 500 or 400 plus error message if it is
+									// an HMSError and not, e.g. an internal DB error code.
+									sendJsonDBError(w, "", "operation  failed during store.", err)
+								}
+							}
+						}
+					} else {
+						// forceUpdate was not enabled when duplicate key was found, so we err.
+						sendJsonError(w, http.StatusConflict, "operation would conflict "+
+							"with an existing component ethernet interface that has the same MAC address.")
+					}
 				} else {
+					// Some other error occurred that we want to let the user know about.
 					// Send this message as 500 or 400 plus error message if it is
 					// an HMSError and not, e.g. an internal DB error code.
-					sendJsonDBError(w, "", "operation 'POST' failed during store.", err)
+					sendJsonDBError(w, "", "operation failed during store.", err)
 				}
 				continue
 			}
@@ -2696,7 +2795,7 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 	ceNum := 0
 	for _, system := range root.Systems {
 		var nid json.Number
-		nidJNum, err := json.Marshal(ceNum+1)
+		nidJNum, err := json.Marshal(ceNum + 1)
 		if err != nil {
 			s.Log(LOG_NOTICE, "failed to marshal NID %d into json: %v", ceNum+1, err)
 		} else {
@@ -2743,6 +2842,12 @@ func (s *SmD) parseRedfishPostDataV2(w http.ResponseWriter, data []byte) error {
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed to insert %d component(s): %w", rowsAffected, err))
+
+				// upsert here to keep allow returning error for duplicates when not forcing updates
+				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
+				if err != nil {
+					return fmt.Errorf("failed to update component: %w", err)
+				}
 				return fmt.Errorf("failed to insert %d component(s): %w", rowsAffected, err)
 			}
 
