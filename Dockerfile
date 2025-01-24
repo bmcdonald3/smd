@@ -1,6 +1,6 @@
 # MIT License
 #
-# (C) Copyright [2019-2024] Hewlett Packard Enterprise Development LP
+# (C) Copyright [2019-2025] Hewlett Packard Enterprise Development LP
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -56,7 +56,7 @@ RUN set -ex \
 
 
 ### Final Stage ###
-FROM artifactory.algol60.net/docker.io/alpine:3.15
+FROM artifactory.algol60.net/docker.io/alpine:3.21
 LABEL maintainer="Hewlett Packard Enterprise" 
 EXPOSE 27779
 STOPSIGNAL SIGTERM
@@ -84,12 +84,12 @@ ENV VAULT_SKIP_VERIFY="true"
 ENV SMD_RVAULT="true"
 ENV SMD_WVAULT="true"
 
-ENV RF_MSG_HOST "cray-shared-kafka-kafka-bootstrap.services.svc.cluster.local:9092:cray-dmtf-resource-event"
-ENV LOGLEVEL 2
+ENV RF_MSG_HOST="cray-shared-kafka-kafka-bootstrap.services.svc.cluster.local:9092:cray-dmtf-resource-event"
+ENV LOGLEVEL=2
 
-ENV SMD_SLS_HOST "http://cray-sls/v1"
+ENV SMD_SLS_HOST="http://cray-sls/v1"
 
-ENV SMD_HBTD_HOST "http://cray-hbtd/hmi/v1"
+ENV SMD_HBTD_HOST="http://cray-hbtd/hmi/v1"
 
 ENV SMD_HWINVHIST_AGE_MAX_DAYS=365
 
