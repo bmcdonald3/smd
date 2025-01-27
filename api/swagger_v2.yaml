@@ -4157,7 +4157,7 @@ paths:
             $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              uri: /hsm/v2/Inventory/a4bf012b7311
+              URI: /hsm/v2/Inventory/a4bf012b7311
         "400":
           description: Bad Request
           schema:
@@ -4877,7 +4877,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v2/groups/mygrouplabel
+              - URI: /hsm/v2/groups/mygrouplabel
         "400":
           description: Bad Request
           schema:
@@ -5108,7 +5108,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v2/groups/mygrouplabel/members/x0c0s1b0n0
+              - URI: /hsm/v2/groups/mygrouplabel/members/x0c0s1b0n0
         "400":
           description: Bad Request - e.g. malformed string
           schema:
@@ -5160,10 +5160,10 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v2/groups/compute/members/x0c0s1b0n0
-              - uri: /hsm/v2/groups/compute/members/x0c0s1b0n1
-              - uri: /hsm/v2/groups/compute/members/x0c0s3b0n0
-              - uri: /hsm/v2/groups/compute/members/x0c0s3b0n1
+              - URI: /hsm/v2/groups/compute/members/x0c0s1b0n0
+              - URI: /hsm/v2/groups/compute/members/x0c0s1b0n1
+              - URI: /hsm/v2/groups/compute/members/x0c0s3b0n0
+              - URI: /hsm/v2/groups/compute/members/x0c0s3b0n1
         "400":
           description: Bad Request - e.g. malformed string
           schema:
@@ -5288,7 +5288,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v2/partitions/p1
+              - URI: /hsm/v2/partitions/p1
         "400":
           description: Bad Request
           schema:
@@ -5507,7 +5507,7 @@ paths:
               $ref: '#/definitions/ResourceURI.1.0.0'
           examples:
             application/json:
-              - uri: /hsm/v2/partitions/p1/members/x0c0s1b0n0
+              - URI: /hsm/v2/partitions/p1/members/x0c0s1b0n0
         "400":
           description: Bad Request - Bad partition_name or malformed string?
           schema:
