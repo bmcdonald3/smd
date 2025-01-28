@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v2.18.0]
+
+- Added PUT to /group/{id}/members
+- Added RedfishEndpoint data parsing for PUT (POST already has)
+- Added scorecard.yaml to CI
+- Added windows OS build target
+- Fixed PUT to RedfishEndpoints not creating if not extant
+- Fixed 'URI' case in swagger_v2.yaml
+- Updated amd64 from v1 to v3
+- Updated arm64 to v8.0
+- Updated goreleaser to v2.4
+
+## [v2.17.7]
+
+- Refectored MUSL builds in CI (again)
+- Use latest stable Go instead of 1.23
+
+## [v2.17.6]
+
+- Refactored MUSL installation in CI
+
+## [v2.17.5]
+
+- Fixed running of release action without container for CI
+
+## [v2.17.4]
+
+- Fixed running of release action in container for CI
+
+## [v2.17.3]
+
+- Updated goreleaser to build all binaries statically and with version info
+
+## [v2.17.2]
+
+- Updated arm64_v1 to arm64 for CI builds
+
+## [v2.17.1]
+
+- Fixed attestation and builds in CI for multiple architectures
+
+## [v2.17.0]
+
+- Added logic to parse manager data in SMD API (SchemaVersion = 1)
+- Added version info to print on startup
+- Added arm64 builds for binaries and containers
+- Added building for pull requests to CI
+- Fixed NID assignment when parsing Redfish data
+- Update Go to 1.23
+
+## [2.16.1]
+
+- Fixed issue with EthernetNICInfo being added incorrectly
+- Refactor response.go for clearer error reporting
+- Added a few forgotten functions
+
 ## [2.16.0]
 
 - Added new parsing method to handle new data format
