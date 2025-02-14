@@ -1,5 +1,3 @@
-# README.md
-
 # State Management Database (SMD)
 
 ## Table of Contents
