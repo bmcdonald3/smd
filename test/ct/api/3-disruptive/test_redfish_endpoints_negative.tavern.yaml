@@ -450,7 +450,7 @@ stages:
                 enum:
                   - 400
 
-  # todo ochami added the ability to put a non-existent RFEndpoint
+  # todo OpenCHAMI added the ability to put a non-existent RFEndpoint
   # PUT /Inventory/RedfishEndpoints/{xname} non-existent
   # - name: hsmAPIRedfishEndpointPUT - non-existent
   #   request:
