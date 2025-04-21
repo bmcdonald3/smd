@@ -2261,6 +2261,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed parsing post data: %v", err))
+			return
 		}
 	} else {
 		// parse data using the new inventory data format (will conform to schema)
@@ -2268,6 +2269,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
 				fmt.Sprintf("failed parsing post data (V2): %v", err))
+			return
 		}
 	}
 
@@ -2560,6 +2562,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed parsing post data: %v", err))
+				return
 			}
 		} else {
 			// parse data using the new inventory data format (will conform to schema)
@@ -2567,6 +2570,7 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed parsing post data (V2): %v", err))
+				return
 			}
 		}
 	}
@@ -2583,8 +2587,8 @@ func (s *SmD) parseRedfishEndpointData(w http.ResponseWriter, eps *sm.RedfishEnd
 	var obj map[string]any
 	err := json.Unmarshal(data, &obj)
 	if err != nil {
-		sendJsonError(w, http.StatusInternalServerError,
-			fmt.Sprintf("failed to unmarshal data: %v", err))
+		s.lg.Printf("failed to unmarshal data: %v", err)
+		return err
 	}
 
 	// systems
@@ -2718,6 +2722,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 
 	// function to create CompEthInterfaceV2 from collection of EthernetInterfaces
 	var createCompEthInterfacesV2 = func(component base.Component, eths []schemas.EthernetInterface) {
+		// todo sendJson*() can only be called once. Update this func to only call it once, either by building the err or returning on the first error.
 		for _, eth := range eths {
 			// convert IP address from manager ethernet interface to IPAddressMapping
 			ips := []sm.IPAddressMapping{sm.IPAddressMapping{IPAddr: eth.IP}}
