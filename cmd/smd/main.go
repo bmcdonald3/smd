@@ -31,6 +31,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
 	"sync"
@@ -50,6 +51,14 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/hashicorp/go-retryablehttp"
 	"github.com/sirupsen/logrus"
+)
+
+type SmdFlavor string
+
+const (
+	OpenCHAMI        = "OpenCHAMI"
+	CSM              = "CSM"
+	UnknownSmdFlavor = "UnknownSmdFlavor"
 )
 
 const (
@@ -93,17 +102,21 @@ type SmD struct {
 	dbPort    int
 	dbOpts    string
 
-	tlsCert      string
-	tlsKey       string
-	proxyURL     string
-	httpListen   string
-	msgbusListen string
-	logLevelIn   int
-
+	logDir           string
+	tlsCert          string
+	tlsKey           string
+	proxyURL         string
+	httpListen       string
+	msgbusListen     string
+	logLevelIn       int
+	msgbusConfig     MsgBusConfigWrapper
+	msgbusHandle     MsgbusHandleWrapper
 	hwInvHistAgeMax  int
 	smapCompEP       *SyncMap
 	genTestPayloads  string
 	disableDiscovery bool
+	openchami        bool
+	zerolog          bool
 
 	// v2 APIs
 	apiRootV2           string
@@ -177,6 +190,18 @@ const (
 )
 
 var serviceName string
+
+func getSmdFlavor() (smdFlavor SmdFlavor, moduleName string) {
+	info, _ := debug.ReadBuildInfo()
+	moduleName = info.Path
+	m := strings.ToLower(moduleName)
+	if strings.HasPrefix(m, "github.com/openchami") {
+		return OpenCHAMI, moduleName
+	} else if strings.HasPrefix(m, "github.com/cray-hpe") {
+		return CSM, moduleName
+	}
+	return UnknownSmdFlavor, moduleName
+}
 
 func (s *SmD) Log(lvl LogLevel, format string, a ...interface{}) {
 	if int(lvl) <= int(s.lgLvl) {
@@ -527,7 +552,7 @@ func (s *SmD) GetHTTPClient() *retryablehttp.Client {
 var applyMigrations bool
 
 // Parse command line options.
-func (s *SmD) parseCmdLine() {
+func (s *SmD) parseCmdLine(openchamiDefault, zeroLogDefault bool) {
 	flag.StringVar(&s.msgbusListen, "msg-host", "",
 		"Host:Port:Topic for message bus. Not used if unset")
 	flag.StringVar(&s.slsUrl, "sls-url", "",
@@ -555,6 +580,8 @@ func (s *SmD) parseCmdLine() {
 	flag.StringVar(&s.jwksURL, "jwks-url", "", "Set the JWKS URL to fetch public key for validation")
 	flag.BoolVar(&applyMigrations, "migrate", false, "Apply all database migrations before starting")
 	flag.BoolVar(&s.disableDiscovery, "disable-discovery", false, "Disable discovery-related subroutines")
+	flag.BoolVar(&s.openchami, "openchami", openchamiDefault, "Enabled OpenCHAMI features")
+	flag.BoolVar(&s.zerolog, "zerolog", zeroLogDefault, "Enabled zerolog")
 	help := flag.Bool("h", false, "Print help and exit")
 
 	flag.Parse()
@@ -734,6 +761,12 @@ func (s *SmD) setDSN() {
 func main() {
 	PrintVersionInfo()
 
+	flavor, moduleName := getSmdFlavor()
+	openchamiDefault := flavor == OpenCHAMI
+	zerologDefault := flavor == OpenCHAMI
+	fmt.Printf("SMD flavor: %s, moduleName: %s, MsgbusBuild: %t, RFEventMonitorBuild: %t, openChamiDefault: %t, zerologDefault: %t\n",
+		flavor, moduleName, MSG_BUS_BUILD, RF_EVENT_MONITOR_BUILD, openchamiDefault, zerologDefault)
+
 	var s SmD
 	var err error
 
@@ -760,7 +793,7 @@ func main() {
 	s.sysInfoBaseV2 = s.apiRootV2 + "/sysinfo"
 	s.powerMapBaseV2 = s.sysInfoBaseV2 + "/powermaps"
 
-	s.parseCmdLine()
+	s.parseCmdLine(openchamiDefault, zerologDefault)
 
 	// Set up logging for State Manager
 	s.lg = log.New(os.Stdout, "", log.Lshortfile|log.LstdFlags|log.Lmicroseconds)
@@ -916,16 +949,13 @@ func main() {
 	s.wpRFEvent.Run()
 
 	// Start monitoring message bus, if configured
-	// s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
-	// if s.msgbusListen != "" {
-	// if err := s.MsgBusConfig(s.msgbusListen); err != nil {
-	// s.LogAlways("WARNING: Cannot parse message bus host: %s", err)
-	// } else {
-	// go s.StartRFEventMonitor()
-	// }
-	// } else {
-	// s.LogAlways("No message bus host given (msg-host == \"%v\"). Not listening for events on the message bus.", s.msgbusListen)
-	// }
+	if s.openchami {
+		s.LogAlways("OpenCHAMI: No redfish event monitoring.")
+	} else {
+		s.smapCompEP = NewSyncMap(ComponentEndpointSMap(&s))
+		go s.StartRFEventMonitor()
+		s.LogAlways("Started redfish event monitoring.")
+	}
 
 	// Start the component lock cleanup thread
 	s.CompReservationCleanup()

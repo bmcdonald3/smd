@@ -382,7 +382,6 @@ func (s *SmD) getHMSValues(valSelect HMSValueSelect, w http.ResponseWriter, r *h
 
 // Get single HMS component by xname ID
 func (s *SmD) doComponentGet(w http.ResponseWriter, r *http.Request) {
-	// TODO: get route variables using chi instead of mux
 
 	xname := base.NormalizeHMSCompID(chi.URLParam(r, "xname"))
 
@@ -2177,6 +2176,7 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
 			"error reading response body "+err.Error())
+		return
 	}
 
 	// We expect the RedfishEndpoint to be in JSON format in the request body.
@@ -2260,14 +2260,16 @@ func (s *SmD) doRedfishEndpointPut(w http.ResponseWriter, r *http.Request) {
 		err = s.parseRedfishEndpointData(w, eps, body)
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed parsing post data: %w", err))
+				fmt.Sprintf("failed parsing post data: %v", err))
+			return
 		}
 	} else {
 		// parse data using the new inventory data format (will conform to schema)
 		err = s.parseRedfishEndpointDataV2(w, body, true)
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed parsing post data (V2): %w", err))
+				fmt.Sprintf("failed parsing post data (V2): %v", err))
+			return
 		}
 	}
 
@@ -2551,21 +2553,25 @@ func (s *SmD) doRedfishEndpointsPost(w http.ResponseWriter, r *http.Request) {
 	// in JSON format.
 	//
 
-	// check for the data format sent via the schema version
-	schemaVersion := s.getSchemaVersion(w, body)
-	if schemaVersion <= 0 {
-		// parse data and populate component endpoints before inserting into db
-		err = s.parseRedfishEndpointData(w, eps, body)
-		if err != nil {
-			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed parsing post data: %w", err))
-		}
-	} else {
-		// parse data using the new inventory data format (will conform to schema)
-		err = s.parseRedfishEndpointDataV2(w, body, false)
-		if err != nil {
-			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed parsing post data (V2): %w", err))
+	if s.openchami {
+		// check for the data format sent via the schema version
+		schemaVersion := s.getSchemaVersion(w, body)
+		if schemaVersion <= 0 {
+			// parse data and populate component endpoints before inserting into db
+			err = s.parseRedfishEndpointData(w, eps, body)
+			if err != nil {
+				sendJsonError(w, http.StatusInternalServerError,
+					fmt.Sprintf("failed parsing post data: %v", err))
+				return
+			}
+		} else {
+			// parse data using the new inventory data format (will conform to schema)
+			err = s.parseRedfishEndpointDataV2(w, body, false)
+			if err != nil {
+				sendJsonError(w, http.StatusInternalServerError,
+					fmt.Sprintf("failed parsing post data (V2): %v", err))
+				return
+			}
 		}
 	}
 
@@ -2581,8 +2587,8 @@ func (s *SmD) parseRedfishEndpointData(w http.ResponseWriter, eps *sm.RedfishEnd
 	var obj map[string]any
 	err := json.Unmarshal(data, &obj)
 	if err != nil {
-		sendJsonError(w, http.StatusInternalServerError,
-			fmt.Sprintf("failed to unmarshal data: %v", err))
+		s.lg.Printf("failed to unmarshal data: %v", err)
+		return err
 	}
 
 	// systems
@@ -2694,8 +2700,8 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 	err = json.Unmarshal(data, &root)
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
-			fmt.Sprintf("failed to unmarshal Redfish data: %w", err))
-		return fmt.Errorf("failed to unmarshal Redfish data: %w", err)
+			fmt.Sprintf("failed to unmarshal Redfish data: %v", err))
+		return fmt.Errorf("failed to unmarshal Redfish data: %v", err)
 	}
 
 	// function to add EthernetInterface to NICs
@@ -2716,6 +2722,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 
 	// function to create CompEthInterfaceV2 from collection of EthernetInterfaces
 	var createCompEthInterfacesV2 = func(component base.Component, eths []schemas.EthernetInterface) {
+		// todo sendJson*() can only be called once. Update this func to only call it once, either by building the err or returning on the first error.
 		for _, eth := range eths {
 			// convert IP address from manager ethernet interface to IPAddressMapping
 			ips := []sm.IPAddressMapping{sm.IPAddressMapping{IPAddr: eth.IP}}
@@ -2781,7 +2788,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 		rowsAffected, err := s.db.InsertComponent(&component)
 		if err != nil {
 			sendJsonError(w, http.StatusInternalServerError,
-				fmt.Sprintf("failed to insert %d component(s): %w", rowsAffected, err))
+				fmt.Sprintf("failed to insert %d component(s): %v", rowsAffected, err))
 			if forceUpdate {
 				// upsert here to keep allow returning error for duplicates when not forcing updates
 				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
@@ -2851,22 +2858,22 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 			rowsAffected, err := s.db.InsertComponent(&component)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
-					fmt.Sprintf("failed to insert %d component(s): %w", rowsAffected, err))
+					fmt.Sprintf("failed to insert %d component(s): %v", rowsAffected, err))
 
 				// upsert here to keep allow returning error for duplicates when not forcing updates
 				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
 				if err != nil {
 					return fmt.Errorf("failed to update component: %w", err)
 				}
-				return fmt.Errorf("failed to insert %d component(s): %w", rowsAffected, err)
+				return fmt.Errorf("failed to insert %d component(s): %v", rowsAffected, err)
 			}
 
 			// component endpoints
 			err = s.db.UpsertCompEndpoint(&componentEndpoint)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
-					fmt.Sprintf("failed to upsert component endpoint: %w", err))
-				return fmt.Errorf("failed to upsert component endpoint: %w", err)
+					fmt.Sprintf("failed to upsert component endpoint: %v", err))
+				return fmt.Errorf("failed to upsert component endpoint: %v", err)
 			}
 		}
 	}
@@ -2887,7 +2894,7 @@ func (s *SmD) getSchemaVersion(w http.ResponseWriter, data []byte) int {
 	err = json.Unmarshal(data, &root)
 	if err != nil {
 		sendJsonError(w, http.StatusInternalServerError,
-			fmt.Sprintf("failed to unmarshal data: %w", err))
+			fmt.Sprintf("failed to unmarshal data: %v", err))
 	}
 
 	// try and extract schema version and set if valid
@@ -4538,6 +4545,7 @@ func (s *SmD) doGroupPatch(w http.ResponseWriter, r *http.Request) {
 		s.lg.Printf("doGroupPatch(): Request must have at least one patch field.")
 		sendJsonError(w, http.StatusBadRequest,
 			"Request must have at least one patch field.")
+		return
 	}
 	if sm.VerifyGroupField(label) != nil {
 		s.lg.Printf("doGroupPatch(): Invalid group label.")
@@ -5034,6 +5042,7 @@ func (s *SmD) doPartitionPatch(w http.ResponseWriter, r *http.Request) {
 		s.lg.Printf("doPartitionPatch(): Request must have at least one patch field.")
 		sendJsonError(w, http.StatusBadRequest,
 			"Request must have at least one patch field.")
+		return
 	}
 	if sm.VerifyGroupField(name) != nil {
 		s.lg.Printf("doPartitionPatch(): Invalid partition name.")
@@ -5132,14 +5141,17 @@ func (s *SmD) doPartitionMembersPost(w http.ResponseWriter, r *http.Request) {
 			"error decoding JSON "+err.Error())
 		return
 	}
-	s.lg.Printf("doParitionMembersPost(): Skipping 'xname' check.")
-	// normID := base.NormalizeHMSCompID(memberIn.ID)
-	// if !base.IsHMSCompIDValid(normID) {
-	// 	s.lg.Printf("doPartitionMembersPost(): Invalid xname ID.")
-	// 	sendJsonError(w, http.StatusBadRequest, "invalid xname ID")
-	// 	return
-	// }
 	normID := memberIn.ID
+	if !s.openchami {
+		// CSM requires that the ID is an xname.
+		// OpenCHAMI allows for any string.
+		normID = base.NormalizeHMSCompID(memberIn.ID)
+		if !base.IsHMSCompIDValid(normID) {
+			s.lg.Printf("doPartitionMembersPost(): Invalid xname ID.")
+			sendJsonError(w, http.StatusBadRequest, "invalid xname ID")
+			return
+		}
+	}
 	id, err := s.db.AddPartitionMember(name, normID)
 	if err != nil {
 		s.lg.Printf("doPartitionMembersPost(): %s %s Err: %s", r.RemoteAddr,

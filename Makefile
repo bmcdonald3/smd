@@ -49,7 +49,7 @@ image:
 	docker build $(NO_CACHE) --pull $(DOCKER_ARGS) --tag '$(NAME):$(VERSION)' -f Dockerfile .
 
 unittest:
-	./runUnitTest.sh
+	go test -cover -v -tags musl ./...
 
 snyk:
 	./runSnyk.sh
@@ -84,7 +84,7 @@ coverage:
 	go test -cover -v -tags musl ./cmd/* ./internal/* ./pkg/*
 
 clean:
-	rm -f smd smd-init smd-loader smd-native smd-init-native
+	rm -f smd smd-init smd-init-native smd-loader smd-loader-native smd-native
 	go clean -testcache
 	go clean -cache
 	go clean -modcache

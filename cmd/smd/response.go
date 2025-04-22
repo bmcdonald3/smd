@@ -1,3 +1,25 @@
+// MIT License
+//
+// (C) Copyright [2018-2023] Hewlett Packard Enterprise Development LP
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+// OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+// ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+
 package main
 
 import (
@@ -17,7 +39,7 @@ type Response struct {
 func sendJSON(w http.ResponseWriter, code int, data interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
-	if data != nil {
+	if data != nil && code != http.StatusNoContent {
 		if err := json.NewEncoder(w).Encode(data); err != nil {
 			fmt.Printf("Couldn't encode JSON: %s\n", err)
 		}
@@ -40,7 +62,11 @@ func sendJsonDBError(w http.ResponseWriter, prefix, internalErr string, err erro
 	if base.IsHMSError(err) {
 		sendJsonError(w, http.StatusBadRequest, prefix+err.Error())
 	} else {
-		sendJsonError(w, http.StatusInternalServerError, internalErr)
+		if internalErr != "" {
+			sendJsonError(w, http.StatusInternalServerError, internalErr)
+		} else {
+			sendJsonError(w, http.StatusInternalServerError, "failed to query DB.")
+		}
 	}
 }
 
@@ -59,7 +85,6 @@ func sendResource(w http.ResponseWriter, code int, uri *sm.ResourceURI) {
 	}
 	sendJSON(w, code, uri)
 }
-
 
 func sendJsonNewResourceIDArray(w http.ResponseWriter, collectionURI string, uris []*sm.ResourceURI) {
 	if len(uris) == 0 {
