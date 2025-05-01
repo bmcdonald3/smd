@@ -29,7 +29,7 @@ import (
 
 	base "github.com/Cray-HPE/hms-base"
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
-	"github.com/OpenCHAMI/smd/v2/pkg/rf"
+	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
 )
 
 ////////////////////////////////////////////////////////////////////////////
