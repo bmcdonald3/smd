@@ -81,7 +81,8 @@ type ComponentSystemInfo struct {
 	Actions    *ComputerSystemActions `json:"Actions,omitempty"`
 	EthNICInfo []*EthernetNICInfo     `json:"EthernetNICInfo,omitempty"`
 	PowerCtlInfo
-	Controls   []*Control             `json:"Controls,omitempty"`
+	Controls []*Control `json:"Controls,omitempty"`
+	PowerURL string     `json:"PowerURL,omitempty"`
 }
 
 type ComponentManagerInfo struct {
@@ -142,10 +143,10 @@ type CrayPwrLimit struct {
 }
 
 type PwrCtlOEMHPE struct {
-	PowerLimit CrayPwrLimit     `json:"PowerLimit"`
-	PowerRegulationEnabled bool `json:"PowerRegulationEnabled"`
-	Status     string           `json:"Status"`
-	Target     string           `json:"Target"`
+	PowerLimit             CrayPwrLimit `json:"PowerLimit"`
+	PowerRegulationEnabled bool         `json:"PowerRegulationEnabled"`
+	Status                 string       `json:"Status"`
+	Target                 string       `json:"Target"`
 }
 
 type PwrCtlRelatedItem struct {
@@ -416,10 +417,10 @@ func (c *EpChassis) discoverLocalPhase2() {
 	// Check if we have something valid to insert into the data store
 	hmsType := base.GetHMSType(c.ID)
 	if (!base.IsHMSTypeContainer(hmsType) &&
-	    hmsType != base.MgmtSwitch &&
+		hmsType != base.MgmtSwitch &&
 		hmsType != base.MgmtHLSwitch &&
 		hmsType != base.CDUMgmtSwitch) ||
-	    c.Type != hmsType.String() {
+		c.Type != hmsType.String() {
 		errlog.Printf("Error: Bad xname ID ('%s') or Type ('%s' != %s) for %s\n",
 			c.ID, c.Type, hmsType.String(), c.ChassisURL)
 		c.LastStatus = VerificationFailed
@@ -935,7 +936,7 @@ type EpSystem struct {
 	// associate it with nodes (systems) so we record it here.
 	Assembly        *EpAssembly       `json:"Assembly"`
 	NodeAccelRisers EpNodeAccelRisers `json:"NodeAccelRisers"`
-	
+
 	// HpeDevice info comes from the Chassis level HPE OEM Links but we
 	// associate it with nodes (systems) so we record it here. We discover
 	// GPUs on HPE hardware as an HpeDevice.
@@ -1192,7 +1193,7 @@ func (s *EpSystem) discoverRemotePhase1() {
 					}
 				}
 				control := Control{
-					URL: url.Oid,
+					URL:     url.Oid,
 					Control: rfControl,
 				}
 				s.Controls = append(s.Controls, &control)
@@ -1226,7 +1227,7 @@ func (s *EpSystem) discoverRemotePhase1() {
 					if s.PowerInfo.OEM.HPE.Links.AccPowerService.Oid == "" {
 						break
 					}
-					
+
 					path = s.PowerInfo.OEM.HPE.Links.AccPowerService.Oid
 					hpeAccPowerServiceJSON, err := s.epRF.GETRelative(path)
 					if err != nil || hpeAccPowerServiceJSON == nil {
@@ -2159,7 +2160,7 @@ func (p *EpProcessor) discoverLocalPhase2() {
 			errlog.Printf("Using untrackable FRUID: %s\n", generatedFRUID)
 		}
 		p.FRUID = generatedFRUID
-		
+
 		// Discover processor arch
 		if p.Type == base.Processor.String() {
 			p.Arch = GetProcessorArch(p)
@@ -2345,7 +2346,7 @@ func (m *EpMemory) discoverLocalPhase2() {
 	if m.MemoryRF.Status.State == "" && m.MemoryRF.SerialNumber == "NO DIMM" {
 		m.MemoryRF.Status.State = "Absent"
 	}
-	
+
 	if m.MemoryRF.Status.State != "Absent" {
 		m.Status = "Populated"
 		m.State = base.StatePopulated.String()

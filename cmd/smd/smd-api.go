@@ -2686,9 +2686,14 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 		EthernetInterfaces []schemas.EthernetInterface `json:"ethernet_interfaces,omitempty"`
 	}
 
+	type SMDInventoryDetailWrapper struct {
+		schemas.InventoryDetail
+		PowerURL string `json:"PowerURL,omitempty"`
+	}
+
 	type Root struct {
 		redfish.RedfishEndpoint
-		Systems  []schemas.InventoryDetail
+		Systems  []SMDInventoryDetailWrapper
 		Managers []Manager
 	}
 	var (
@@ -2738,7 +2743,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 						// Duplicate key detected, but foreceUpdate enabled, so we delete and readd.
 
 						// try deleting and reinserting the CompEthInterface since there is not an upsert/update function
-						rowAffected, err := s.db.DeleteCompEthInterfaceByID(cei.ID)
+						rowAffected, err := s.db.DeleteCompEthInterfaceByID(cei.ID) // Assuming original bool return
 						if err != nil {
 							sendJsonDBError(w, "", "operation failed trying to delete component ethernet interface.", err)
 							continue
@@ -2845,6 +2850,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 					RedfishSystemInfo: &rf.ComponentSystemInfo{
 						Actions:    nil,
 						EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
+						PowerURL:   system.PowerURL, // This is the only added line for functionality
 					},
 				}
 			)
