@@ -2688,7 +2688,12 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 
 	type SMDInventoryDetailWrapper struct {
 		schemas.InventoryDetail
+		SystemName    string                    `json:"Name,omitempty"`    // Name of the computer system
+		SystemActions *rf.ComputerSystemActions `json:"Actions,omitempty"` // Actions for the computer system
+
 		PowerURL string `json:"PowerURL,omitempty"`
+
+		FetchedPowerData rf.PowerCtlInfo `json:"FetchedPowerData,omitempty"`
 	}
 
 	type Root struct {
@@ -2848,9 +2853,10 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 					ComponentEndpointType: "ComponentEndpointComputerSystem",
 					Enabled:               enabled,
 					RedfishSystemInfo: &rf.ComponentSystemInfo{
-						Actions:    nil,
-						EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
-						PowerURL:   system.PowerURL, // This is the only added line for functionality
+						Actions:      nil,
+						EthNICInfo:   addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
+						PowerURL:     system.PowerURL,
+						PowerCtlInfo: system.FetchedPowerData,
 					},
 				}
 			)
