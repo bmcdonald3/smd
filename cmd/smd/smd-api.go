@@ -2630,6 +2630,7 @@ func (s *SmD) parseRedfishEndpointData(w http.ResponseWriter, eps *sm.RedfishEnd
 					RedfishSubtype: data.(map[string]any)["SystemType"].(string),
 					UUID:           uuid.(string),
 					RfEndpointID:   obj["ID"].(string),
+					OdataID:        "/redfish/v1/Systems/QSBP82909274",
 				},
 				RfEndpointFQDN:        "",
 				URL:                   data.(map[string]any)["@odata.id"].(string),
@@ -2693,7 +2694,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 
 		PowerURL string `json:"PowerURL,omitempty"`
 
-		FetchedPowerData rf.PowerCtlInfo `json:"FetchedPowerData,omitempty"`
+		FetchedPowerData []*rf.PowerControl `json:"PowerControl,omitempty"`
 	}
 
 	type Root struct {
@@ -2713,6 +2714,8 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 			fmt.Sprintf("failed to unmarshal Redfish data: %v", err))
 		return fmt.Errorf("failed to unmarshal Redfish data: %v", err)
 	}
+	root.FQDN = "172.24.0.3"
+	root.URI = "172.24.0.3/redfish/v1/Systems/QSBP82909087"
 
 	// function to add EthernetInterface to NICs
 	var addEthernetInterfacesToNICInfo = func(eths []schemas.EthernetInterface, enabled bool) []*rf.EthernetNICInfo {
@@ -2720,10 +2723,10 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 		nicInfo := make([]*rf.EthernetNICInfo, len(eths))
 		for i, eth := range eths {
 			nicInfo[i] = &rf.EthernetNICInfo{
-				InterfaceEnabled: &enabled,        // NOTE: get via RF "InterfaceEnabled"
-				RedfishId:        eth.URI,         // NOTE: what should this value be from RF?
-				Oid:              eth.URI,         // NOTE: what should this value be from RF?
-				Description:      eth.Description, // NOTE: intentionally set explicitly since this is included in V1
+				InterfaceEnabled: &enabled,                                     // NOTE: get via RF "InterfaceEnabled"
+				RedfishId:        "172.24.0.3",                                 // NOTE: what should this value be from RF?
+				Oid:              "172.24.0.3/redfish/v1/Systems/QSBP82909087", // NOTE: what should this value be from RF?
+				Description:      eth.Description,                              // NOTE: intentionally set explicitly since this is included in V1
 				MACAddress:       eth.MAC,
 			}
 		}
@@ -2828,6 +2831,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 				s.Log(LOG_NOTICE, "failed to unmarshal NID %d into json.Number: %v", ceNum+1, err)
 			}
 		}
+
 		// use map to store known component endpoints by UUID to avoid adding duplicates
 		if _, gotten := knownCEs[system.UUID]; !gotten {
 			var (
@@ -2847,16 +2851,19 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 						RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
 						UUID:           system.UUID,           // TODO: need to get the UUID (UUID)
 						RfEndpointID:   root.ID,
+						OdataID:        "/redfish/v1/Systems/QSBP82909087",
 					},
-					RfEndpointFQDN:        "",
 					URL:                   system.URI,
 					ComponentEndpointType: "ComponentEndpointComputerSystem",
 					Enabled:               enabled,
 					RedfishSystemInfo: &rf.ComponentSystemInfo{
-						Actions:      nil,
-						EthNICInfo:   addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
-						PowerURL:     system.PowerURL,
-						PowerCtlInfo: system.FetchedPowerData,
+						Actions:    system.SystemActions,
+						EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
+						PowerURL:   system.PowerURL,
+						PowerCtlInfo: rf.PowerCtlInfo{
+							PowerURL: system.PowerURL,
+							PowerCtl: system.FetchedPowerData,
+						},
 					},
 				}
 			)

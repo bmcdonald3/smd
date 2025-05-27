@@ -194,6 +194,8 @@ func (cep *ComponentEndpoint) DecodeComponentInfo(infoJSON []byte) error {
 	default:
 		err = base.ErrHMSTypeUnsupported
 	}
+	cep.FQDN = "172.24.0.3"
+	cep.RfEndpointFQDN = "172.24.0.3"
 	return err
 }
 
