@@ -73,6 +73,7 @@ type ComponentFilter struct {
 	// private options
 	writeLock bool   // default is false
 	label     string // Labels query for logging, etc.
+	skipValidation bool
 
 	// State OR flag subclause without ORing the whole query.  For the
 	// target state and clause, since one or the other can be right but
@@ -227,6 +228,16 @@ func IDs(ids []string) CompFiltFunc {
 			}
 		}
 	}
+}
+
+// SkipValidation is a CompFiltFunc that tells the database query
+// to not normalize or validate component IDs.
+func SkipValidation() CompFiltFunc {
+    return func(f *ComponentFilter) {
+        if f != nil {
+            f.skipValidation = true
+        }
+    }
 }
 
 // Filter includes just this id.  Overwrites other ID calls.

@@ -2787,7 +2787,7 @@ func (s *SmD) parseRedfishEndpointData(w http.ResponseWriter, eps *sm.RedfishEnd
 			}
 
 			// finally, insert component endpoint into DB
-			err = s.db.UpsertCompEndpoint(&cep)
+			err = s.db.UpsertCompEndpoint(&cep, false)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed to upsert component endpoint: %v", err))
@@ -2996,7 +2996,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 			}
 
 			// component endpoints
-			err = s.db.UpsertCompEndpoint(&componentEndpoint)
+			err = s.db.UpsertCompEndpoint(&componentEndpoint, true)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed to upsert component endpoint: %v", err))
@@ -3108,7 +3108,7 @@ func (s *SmD) parsePDUData(w http.ResponseWriter, data []byte, forceUpdate bool)
 	}
 	if len(endpointsToUpsert) > 0 {
 		for _, cep := range endpointsToUpsert {
-			if err := s.db.UpsertCompEndpoint(cep); err != nil {
+			if err := s.db.UpsertCompEndpoint(cep, true); err != nil {
 				s.lg.Printf("ERROR: failed to upsert component endpoint %s: %v", cep.ID, err)
 			}
 		}
