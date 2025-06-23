@@ -2941,7 +2941,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 				s.Log(LOG_NOTICE, "failed to unmarshal NID %d into json.Number: %v", ceNum+1, err)
 			}
 		}
-	
+		// use map to store known component endpoints by UUID to avoid adding duplicates
 		if _, gotten := knownCEs[system.UUID]; !gotten {
 			var enabled bool
 			var powerState string
@@ -2949,7 +2949,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 				enabled = strings.ToLower(system.Power.State) == "on"
 				powerState = system.Power.State
 			}
-	
+
 			var component = base.Component{
 				ID:      root.ID + fmt.Sprintf("n%d", ceNum),
 				NID:     nid,
@@ -2957,19 +2957,19 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 				Type:    xnametypes.Node.String(),
 				Enabled: &enabled,
 			}
-	
+
 			var powerURL string
 			var newPowerControl []*rf.PowerControl
 			var systemPath string
 			var rfActions *rf.ComputerSystemActions
-	
+
 			sysURL, err := url.Parse(system.URI)
 			if err != nil {
 				s.Log(LOG_NOTICE, "failed to parse system URI '%s': %v", system.URI, err)
 			} else {
 				systemPath = sysURL.Path
 			}
-	
+
 			if len(system.Actions) > 0 {
 				rfActions = &rf.ComputerSystemActions{
 					ComputerSystemReset: rf.ActionReset{
@@ -2979,11 +2979,11 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 					},
 				}
 			}
-	
+
 			if system.Links != nil && len(system.Links.Chassis) > 0 {
 				chassisPath := system.Links.Chassis[0]
 				powerURL = chassisPath + "/Power"
-	
+
 				newPowerControl = []*rf.PowerControl{
 					{
 						ResourceID: rf.ResourceID{
@@ -3000,15 +3000,15 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 			} else {
 				s.Log(LOG_NOTICE, "system '%s' has no chassis link in payload; cannot construct power information.", system.UUID)
 			}
-	
+
 			componentEndpoint := sm.ComponentEndpoint{
 				ComponentDescription: rf.ComponentDescription{
 					ID:             root.ID + fmt.Sprintf("n%d", ceNum),
 					Type:           xnametypes.Node.String(),
 					OdataID:        systemPath,
-					RedfishType:    rf.ComputerSystemType,
-					RedfishSubtype: system.SystemType,
-					UUID:           system.UUID,
+					RedfishType:    rf.ComputerSystemType, // TODO: need to get the RF type
+					RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
+					UUID:           system.UUID,           // TODO: need to get the UUID (UUID)
 					RfEndpointID:   root.ID,
 				},
 				RfEndpointFQDN:        "",
@@ -3025,23 +3025,27 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 					},
 				},
 			}
-	
+
+			// add the corresponding CompEthInterfaceV2 for each ComponentEndpoint created
 			createCompEthInterfacesV2(component, system.EthernetInterfaces)
 			knownCEs[system.UUID] = componentEndpoint.ComponentDescription.ID
 			ceNum++
-	
+
+			// components
 			rowsAffected, err := s.db.InsertComponent(&component)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed to insert %d component(s): %v", rowsAffected, err))
-	
+
+				// upsert here to keep allow returning error for duplicates when not forcing updates
 				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
 				if err != nil {
 					return fmt.Errorf("failed to update component: %w", err)
 				}
 				return fmt.Errorf("failed to insert %d component(s): %v", rowsAffected, err)
 			}
-	
+
+			// component endpoints
 			err = s.db.UpsertCompEndpoint(&componentEndpoint)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
@@ -3050,6 +3054,9 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 			}
 		}
 	}
+
+	return nil
+}
 
 // getSchemaVersion() tries to extract the schema version from the JSON data.
 func (s *SmD) getSchemaVersion(w http.ResponseWriter, data []byte) int {
