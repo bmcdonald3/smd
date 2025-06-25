@@ -34,14 +34,13 @@ import (
 
 	base "github.com/Cray-HPE/hms-base/v2"
 	compcreds "github.com/Cray-HPE/hms-compcredentials"
+	"github.com/Cray-HPE/hms-xname/xnametypes"
 	"github.com/OpenCHAMI/smd/v2/internal/hmsds"
 	rf "github.com/OpenCHAMI/smd/v2/pkg/redfish"
 	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/go-chi/chi/v5"
 	"github.com/openchami/schemas/schemas"
 	redfish "github.com/openchami/schemas/schemas/csm"
-	"github.com/Cray-HPE/hms-xname/xnametypes"
-
 )
 
 type componentArrayIn struct {
@@ -544,7 +543,7 @@ func (s *SmD) doComponentsPost(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	changeMap, err := s.db.UpsertComponents(compsIn.Components, compsIn.Force, false)
+	changeMap, err := s.db.UpsertComponents(compsIn.Components, compsIn.Force)
 	if err != nil {
 		sendJsonDBError(w, "operation 'Post Components' failed: ", "", err)
 		s.LogAlways("failed: %s %s, Err: %s", r.RemoteAddr, string(body), err)
@@ -1121,7 +1120,7 @@ func (s *SmD) doComponentPut(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	changeMap, err := s.db.UpsertComponents([]*base.Component{component}, compIn.Force, false)
+	changeMap, err := s.db.UpsertComponents([]*base.Component{component}, compIn.Force)
 	if err != nil {
 		sendJsonDBError(w, "operation 'PUT' failed: ", "", err)
 		s.lg.Printf("failed: %s %s, Err: %s", r.RemoteAddr, string(body), err)
@@ -2787,7 +2786,7 @@ func (s *SmD) parseRedfishEndpointData(w http.ResponseWriter, eps *sm.RedfishEnd
 			}
 
 			// finally, insert component endpoint into DB
-			err = s.db.UpsertCompEndpoint(&cep, false)
+			err = s.db.UpsertCompEndpoint(&cep)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed to upsert component endpoint: %v", err))
@@ -2918,7 +2917,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 				fmt.Sprintf("failed to insert %d component(s): %v", rowsAffected, err))
 			if forceUpdate {
 				// upsert here to keep allow returning error for duplicates when not forcing updates
-				_, err := s.db.UpsertComponents([]*base.Component{&component}, false, false)
+				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
 				if err != nil {
 					return fmt.Errorf("failed to update component: %w", err)
 				}
@@ -2988,7 +2987,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 					fmt.Sprintf("failed to insert %d component(s): %v", rowsAffected, err))
 
 				// upsert here to keep allow returning error for duplicates when not forcing updates
-				_, err := s.db.UpsertComponents([]*base.Component{&component}, false, false)
+				_, err := s.db.UpsertComponents([]*base.Component{&component}, false)
 				if err != nil {
 					return fmt.Errorf("failed to update component: %w", err)
 				}
@@ -2996,7 +2995,7 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 			}
 
 			// component endpoints
-			err = s.db.UpsertCompEndpoint(&componentEndpoint, true)
+			err = s.db.UpsertCompEndpoint(&componentEndpoint)
 			if err != nil {
 				sendJsonError(w, http.StatusInternalServerError,
 					fmt.Sprintf("failed to upsert component endpoint: %v", err))
@@ -3051,7 +3050,7 @@ func (s *SmD) parsePDUData(w http.ResponseWriter, data []byte, forceUpdate bool)
 		Enabled: &root.Enabled,
 	}
 
-	if _, err := s.db.UpsertComponents([]*base.Component{pduControllerComponent}, forceUpdate, true); err != nil {
+	if _, err := s.db.UpsertComponents([]*base.Component{pduControllerComponent}, forceUpdate); err != nil {
 		err_str := fmt.Sprintf("failed to upsert PDU controller component for %s: %v", root.ID, err)
 		sendJsonError(w, http.StatusInternalServerError, err_str)
 		return fmt.Errorf(err_str)
@@ -3078,7 +3077,7 @@ func (s *SmD) parsePDUData(w http.ResponseWriter, data []byte, forceUpdate bool)
 			Enabled: &enabled,
 		}
 		componentsToUpsert = append(componentsToUpsert, component)
-	
+
 		controlPath := fmt.Sprintf("/jaws/control/outlets/%s", originalID)
 		monitorPath := fmt.Sprintf("/jaws/monitor/outlets/%s", originalID)
 
@@ -3116,7 +3115,7 @@ func (s *SmD) parsePDUData(w http.ResponseWriter, data []byte, forceUpdate bool)
 	}
 
 	if len(componentsToUpsert) > 0 {
-		if _, err := s.db.UpsertComponents(componentsToUpsert, forceUpdate, true); err != nil {
+		if _, err := s.db.UpsertComponents(componentsToUpsert, forceUpdate); err != nil {
 			err_str := fmt.Sprintf("failed to upsert PDU outlet components for %s: %v", root.ID, err)
 			sendJsonError(w, http.StatusInternalServerError, err_str)
 			return fmt.Errorf(err_str)
@@ -3124,7 +3123,7 @@ func (s *SmD) parsePDUData(w http.ResponseWriter, data []byte, forceUpdate bool)
 	}
 	if len(endpointsToUpsert) > 0 {
 		for _, cep := range endpointsToUpsert {
-			if err := s.db.UpsertCompEndpoint(cep, true); err != nil {
+			if err := s.db.UpsertCompEndpoint(cep); err != nil {
 				s.lg.Printf("ERROR: failed to upsert component endpoint %s: %v", cep.ID, err)
 			}
 		}
@@ -5480,7 +5479,7 @@ func (s *SmD) doPartitionMembersPost(w http.ResponseWriter, r *http.Request) {
 	if !s.openchami {
 		// CSM requires that the ID is an xname.
 		// OpenCHAMI allows for any string.
-	        normID = xnametypes.NormalizeHMSCompID(memberIn.ID)
+		normID = xnametypes.NormalizeHMSCompID(memberIn.ID)
 		if !xnametypes.IsHMSCompIDValid(normID) {
 			s.lg.Printf("doPartitionMembersPost(): Invalid xname ID.")
 			sendJsonError(w, http.StatusBadRequest, "invalid xname ID")
