@@ -563,7 +563,12 @@ func (d *hmsdbPg) UpsertComponents(comps []*base.Component, force bool) (map[str
 		ids[i] = comp.ID
 	}
 	// Lock components for update
-	affectedComps, err := t.GetComponentsTx(IDs(ids), From("UpsertComponents"))
+	filterOpts := []CompFiltFunc{
+		IDs(ids),
+		From("UpsertComponents"),
+	}
+	filterOpts = append(filterOpts)
+	affectedComps, err := t.GetComponentsTx(filterOpts...)
 	if err != nil {
 		t.Rollback()
 		return nil, err

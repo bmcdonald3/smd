@@ -33,8 +33,8 @@ import (
 	"time"
 
 	base "github.com/Cray-HPE/hms-base/v2"
-	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 	"github.com/Cray-HPE/hms-xname/xnametypes"
+	"github.com/OpenCHAMI/smd/v2/pkg/sm"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
@@ -668,7 +668,8 @@ func (t *hmsdbPgTx) InsertComponentTx(c *base.Component) (int64, error) {
 		enabledFlg = *c.Enabled
 	}
 	// Normalize key
-	normID := xnametypes.NormalizeHMSCompID(c.ID)
+	var normID string
+	normID = xnametypes.NormalizeHMSCompID(c.ID)
 
 	// Perform insert
 	result, err := stmt.ExecContext(t.ctx,
@@ -754,8 +755,9 @@ func (t *hmsdbPgTx) InsertComponentsTx(comps []*base.Component) ([]string, error
 		Columns(compColsDefault...)
 
 	for _, c := range comps {
+		var normID string
 		// Normalize key
-		normID := xnametypes.NormalizeHMSCompID(c.ID)
+		normID = xnametypes.NormalizeHMSCompID(c.ID)
 		// Take out duplicates so that we don't get errors for modifying a row multiple times.
 		if _, ok := valueMap[normID]; ok {
 			continue
@@ -3357,9 +3359,9 @@ func (t *hmsdbPgTx) UpsertCompEndpointTx(cep *sm.ComponentEndpoint) error {
 		t.LogAlways("UpsertCompEndpointTx: decode CompInfo: %s", err)
 	}
 	// Ensure endpoint name is normalized and valid
-	normID := xnametypes.VerifyNormalizeCompID(cep.ID)
+	var normID = xnametypes.VerifyNormalizeCompID(cep.ID)
 	if normID == "" {
-		t.LogAlways("UpsertCompEndpointTx(%s): %s", normID, ErrHMSDSArgBadID)
+		t.LogAlways("UpsertCompEndpointTx(%s): %s", cep.ID, ErrHMSDSArgBadID)
 		return ErrHMSDSArgBadID
 	}
 	// Perform insert
