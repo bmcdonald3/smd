@@ -29,6 +29,8 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"path"
 	"strconv"
 	"strings"
 
@@ -2934,46 +2936,95 @@ func (s *SmD) parseRedfishEndpointDataV2(w http.ResponseWriter, data []byte, for
 	knownCEs := make(map[string]string)
 	ceNum := 0
 	for _, system := range root.Systems {
-		var nid json.Number
-		nidJNum, err := json.Marshal(ceNum + 1)
-		if err != nil {
-			s.Log(LOG_NOTICE, "failed to marshal NID %d into json: %v", ceNum+1, err)
-		} else {
-			err = json.Unmarshal(nidJNum, &nid)
-			if err != nil {
-				s.Log(LOG_NOTICE, "failed to unmarshal NID %d into json.Number: %v", ceNum+1, err)
-			}
-		}
 		// use map to store known component endpoints by UUID to avoid adding duplicates
 		if _, gotten := knownCEs[system.UUID]; !gotten {
-			var (
-				enabled   = strings.ToLower(system.PowerState) == "on"
-				component = base.Component{
-					ID:      root.ID + fmt.Sprintf("n%d", ceNum),
-					NID:     nid,
-					State:   system.PowerState,
-					Type:    xnametypes.Node.String(),
-					Enabled: &enabled,
+
+			// If the current system object is missing power data, find a more
+			// complete version for the same UUID before proceeding.
+			if system.Power == nil || len(system.Power.PowerControlIDS) == 0 {
+				for _, s_inner := range root.Systems {
+					if s_inner.UUID == system.UUID && s_inner.Power != nil && len(s_inner.Power.PowerControlIDS) > 0 {
+						system = s_inner
+						break
+					}
 				}
-				componentEndpoint = sm.ComponentEndpoint{
-					ComponentDescription: rf.ComponentDescription{
-						ID:             root.ID + fmt.Sprintf("n%d", ceNum),
-						Type:           xnametypes.Node.String(),
-						RedfishType:    rf.ComputerSystemType, // TODO: need to get the RF type
-						RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
-						UUID:           system.UUID,           // TODO: need to get the UUID (UUID)
-						RfEndpointID:   root.ID,
-					},
-					RfEndpointFQDN:        "",
-					URL:                   system.URI,
-					ComponentEndpointType: "ComponentEndpointComputerSystem",
-					Enabled:               enabled,
-					RedfishSystemInfo: &rf.ComponentSystemInfo{
-						Actions:    nil,
-						EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
-					},
+			}
+
+			var nid json.Number
+			nidJNum, err := json.Marshal(ceNum + 1)
+			if err != nil {
+				s.Log(LOG_NOTICE, "failed to marshal NID %d into json: %v", ceNum+1, err)
+			} else {
+				err = json.Unmarshal(nidJNum, &nid)
+				if err != nil {
+					s.Log(LOG_NOTICE, "failed to unmarshal NID %d into json.Number: %v", ceNum+1, err)
 				}
-			)
+			}
+
+			enabled := true
+			component := base.Component{
+				ID:      root.ID + fmt.Sprintf("n%d", ceNum),
+				NID:     nid,
+				State:   "On",
+				Type:    xnametypes.Node.String(),
+				Enabled: &enabled,
+			}
+
+			computerSystemActions := &rf.ComputerSystemActions{
+				ComputerSystemReset: rf.ActionReset{
+					AllowableValues: system.Actions,
+					Target:          fmt.Sprintf("%s/Actions/ComputerSystem.Reset", system.URI),
+					RFActionInfo:    fmt.Sprintf("%s/ResetActionInfo", system.URI),
+				},
+			}
+
+			parsedURI, _ := url.Parse(system.URI)
+			var powerURL string
+			var powerControls []*rf.PowerControl
+			if system.Links != nil && len(system.Links.Chassis) > 0 {
+				powerURL = path.Join(path.Dir(system.Links.Chassis[0]), "Power")
+				if system.Power != nil && len(system.Power.PowerControlIDS) > 0 {
+					powerControls = make([]*rf.PowerControl, len(system.Power.PowerControlIDS))
+					for i, pcID := range system.Power.PowerControlIDS {
+						parts := strings.Split(pcID, "/")
+						memberID := parts[len(parts)-1]
+						powerControls[i] = &rf.PowerControl{
+							ResourceID: rf.ResourceID{Oid: pcID},
+							MemberId:   memberID,
+							Name:       "System Power Control",
+							RelatedItem: []*rf.ResourceID{
+								{Oid: parsedURI.Path},
+								{Oid: system.Links.Chassis[0]},
+							},
+						}
+					}
+				}
+			}
+
+			componentEndpoint := sm.ComponentEndpoint{
+				ComponentDescription: rf.ComponentDescription{
+					ID:             root.ID + fmt.Sprintf("n%d", ceNum),
+					Type:           xnametypes.Node.String(),
+					RedfishType:    rf.ComputerSystemType, // TODO: need to get the RF type
+					RedfishSubtype: system.SystemType,     // TODO: need to get the RF subtype (SystemType)
+					UUID:           system.UUID,           // TODO: need to get the UUID (UUID)
+					OdataID:        parsedURI.Path,
+					RfEndpointID:   root.ID,
+				},
+				RfEndpointFQDN:        root.FQDN,
+				URL:                   parsedURI.Path,
+				ComponentEndpointType: "ComponentEndpointComputerSystem",
+				Enabled:               enabled,
+				RedfishSystemInfo: &rf.ComponentSystemInfo{
+					Name:       system.Name,
+					Actions:    computerSystemActions,
+					EthNICInfo: addEthernetInterfacesToNICInfo(system.EthernetInterfaces, enabled),
+					PowerCtlInfo: rf.PowerCtlInfo{
+						PowerURL: powerURL,
+						PowerCtl: powerControls,
+					},
+				},
+			}
 
 			// add the corresponding CompEthInterfaceV2 for each ComponentEndpoint created
 			createCompEthInterfacesV2(component, system.EthernetInterfaces)
