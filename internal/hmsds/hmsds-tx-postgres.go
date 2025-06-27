@@ -668,8 +668,7 @@ func (t *hmsdbPgTx) InsertComponentTx(c *base.Component) (int64, error) {
 		enabledFlg = *c.Enabled
 	}
 	// Normalize key
-	var normID string
-	normID = xnametypes.NormalizeHMSCompID(c.ID)
+	var normID = xnametypes.NormalizeHMSCompID(c.ID)
 
 	// Perform insert
 	result, err := stmt.ExecContext(t.ctx,
@@ -755,9 +754,8 @@ func (t *hmsdbPgTx) InsertComponentsTx(comps []*base.Component) ([]string, error
 		Columns(compColsDefault...)
 
 	for _, c := range comps {
-		var normID string
 		// Normalize key
-		normID = xnametypes.NormalizeHMSCompID(c.ID)
+		var normID = xnametypes.NormalizeHMSCompID(c.ID)
 		// Take out duplicates so that we don't get errors for modifying a row multiple times.
 		if _, ok := valueMap[normID]; ok {
 			continue
